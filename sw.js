@@ -1,17 +1,23 @@
 /*
   SafarSaathi Network-First with Offline Caching Service Worker
+  Universal PWA & Play Store (TWA) Compatible
 */
-const CACHE_NAME = 'safarsaathi-v14-offline-ready';
+const CACHE_NAME = 'safarsaathi-v15-pwa-final';
 
-// Core assets to pre-cache on install
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/car-bg.jpg',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/feature-graphic-1024x500.png'
+  './',
+  './index.html',
+  './admin.html',
+  './privacy.html',
+  './manifest.json',
+  './car-bg.jpg',
+  './car-bg.png',
+  './icon-192.png',
+  './icon-192-maskable.png',
+  './icon-512.png',
+  './icon-512-maskable.png',
+  './safarsaathi_app_logo_1024.png',
+  './feature-graphic-1024x500.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -41,15 +47,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Network-First with cache.put(event.request, responseClone)
 self.addEventListener('fetch', (event) => {
-  // Only intercept GET HTTP/HTTPS requests
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // Network response milne par use cache.put(event.request, responseClone) karke save karein
         if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -59,12 +62,10 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        // Agar network fail ho (offline mode), toh cache se response serve karein
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse;
-          // Fallback for navigation requests
           if (event.request.mode === 'navigate') {
-            return caches.match('/index.html') || caches.match('/');
+            return caches.match('./index.html') || caches.match('./') || caches.match('/index.html') || caches.match('/');
           }
         });
       })

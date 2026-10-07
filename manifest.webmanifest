@@ -2,13 +2,13 @@
   "name": "SafarSaathi: Carpooling Assam",
   "short_name": "SafarSaathi",
   "description": "Verified peer-to-peer carpooling and intercity ride sharing network across Assam and North-East India.",
-  "start_url": "/?tab=passenger",
-  "id": "/",
-  "scope": "/",
+  "start_url": "./index.html",
+  "id": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#1d4ed8",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "lang": "en",
   "dir": "ltr",
   "categories": [
@@ -63,7 +63,7 @@
       "name": "Find Rides",
       "short_name": "Find",
       "description": "Search available carpool rides in Assam",
-      "url": "/?tab=passenger",
+      "url": "./index.html?tab=passenger",
       "icons": [
         {
           "src": "icon-192.png",
@@ -75,7 +75,7 @@
       "name": "Post a Ride",
       "short_name": "Post",
       "description": "Post empty vehicle seats as a driver",
-      "url": "/?tab=driver",
+      "url": "./index.html?tab=driver",
       "icons": [
         {
           "src": "icon-192.png",
@@ -84,10 +84,10 @@
       ]
     },
     {
-      "name": "My Bookings",
-      "short_name": "Bookings",
-      "description": "View your confirmed boarding passes and tickets",
-      "url": "/?tab=tickets",
+      "name": "Profile & KYC",
+      "short_name": "Profile",
+      "description": "Manage your profile, identity and 48-hour bookings",
+      "url": "./index.html?tab=profile",
       "icons": [
         {
           "src": "icon-192.png",

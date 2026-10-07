@@ -575,11 +575,12 @@
       measurementId: "G-0PB4K9PWVD"
     };
     let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
-    if (localStorage.getItem('ss_admin_pin') === '1234' || !localStorage.getItem('ss_admin_pin')) {
+    if (localStorage.getItem('ss_admin_pin') !== '1432') {
       localStorage.setItem('ss_admin_pin', '1432');
     }
     let adminPin = localStorage.getItem('ss_admin_pin') || '1432';
     let adminDb = null;
+    const CLOUDFLARE_WORKER_URL = "https://sparkling-math-5523.amanroy030892.workers.dev";
     let adminFirestoreInitialized = false;
 
     function checkAdminLogin() {
