@@ -1742,7 +1742,7 @@
 <button class="btn btn-primary" onclick="checkEmbeddedAdminLogin()" style="height: 48px; font-size: 1rem;" type="button">
           🔓 Unlock Admin Dashboard ➔
         </button>
-<div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.75rem;">Default Security PIN: <strong>1234</strong></div>
+<div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.75rem;">Authorized Administrator Access Only</div>
 </div>
 <!-- Admin Main Dashboard (Hidden until PIN entered) -->
 <div id="emb-admin-dashboard" style="display: none;">
@@ -1862,12 +1862,15 @@
 <footer>
 <div style="font-weight: 800; font-size: 1rem; color: #ffffff; margin-bottom: 6px;">SafarSaathi Carpooling Network</div>
 <div>Live Real-Time Vehicles Only • Auto-Hides Full Cars • Direct QR Payments • Mutual Rating &amp; Feedback System</div>
-<div style="margin-top: 6px; font-size: 0.72rem; color: #94a3b8;">
-<a href="#admin" onclick="showAdminFromFooter(); return false;" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">
-        🔐 Owner Portal Login (Admin PIN: 1234)
-      </a>
-<span style="margin: 0 8px; opacity: 0.5;">•</span>
-<a href="privacy.html" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;" target="_blank">📜 Privacy Policy</a>
+<div style="margin-top: 8px; font-size: 0.78rem; color: #cbd5e1; display: flex; flex-direction: column; gap: 5px; align-items: center;">
+  <div>
+    <span>Email: <a href="mailto:support@safarsaathi.com" style="color: #38bdf8; text-decoration: none; font-weight: 700;">support@safarsaathi.com</a></span>
+    <span style="margin: 0 8px; opacity: 0.5;">•</span>
+    <span>Website: <a href="https://charming-starburst-0a807c.netlify.app/" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: 700;">https://charming-starburst-0a807c.netlify.app/</a></span>
+  </div>
+  <div style="margin-top: 3px;">
+    <a href="privacy.html" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8; font-size: 0.75rem;" target="_blank">📜 Privacy Policy</a>
+  </div>
 </div>
 </footer>
 <!-- JAVASCRIPT LOGIC (100% BULLETPROOF & TESTED) -->
@@ -3543,7 +3546,7 @@
         document.getElementById('emb-admin-dashboard').style.display = 'block';
         loadEmbeddedAdminDashboard();
       } else {
-        alert('Invalid Security PIN! Please enter the correct 4-digit PIN (Default: 1234).');
+        alert('Invalid Security PIN! Please enter the correct PIN (Default: 1432).');
         document.getElementById('emb-admin-pin-input').value = '';
         document.getElementById('emb-admin-pin-input').focus();
       }
@@ -4579,8 +4582,15 @@
       rides.unshift(newRide);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
-      if (typeof syncRideToFirestore === 'function') {
-        syncRideToFirestore(newRide);
+      if (typeof db !== 'undefined' && db) {
+        try {
+          const cleanDoc = JSON.parse(JSON.stringify(newRide));
+          db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true })
+            .then(() => console.log('✓ Ride successfully synced to Google Cloud Firestore across all devices!'))
+            .catch(err => console.error('Firestore write ride error:', err));
+        } catch(e) {
+          console.error('Error syncing ride to firestore:', e);
+        }
       }
 
       // Secure Pure Notification WhatsApp Alert to Admin (+91 6901027507) - NO AUTO-ACTIVATION LINK (Driver cannot self-activate!)
@@ -4933,8 +4943,15 @@
 
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
-      if (typeof syncBookingToFirestore === 'function') {
-        syncBookingToFirestore(booking);
+      if (typeof db !== 'undefined' && db) {
+        try {
+          const cleanBk = JSON.parse(JSON.stringify(booking));
+          db.collection('ss_bookings').doc(booking.bookingId).set(cleanBk, { merge: true })
+            .then(() => console.log('✓ Booking synced to Google Cloud Firestore across all devices:', booking.bookingId))
+            .catch(err => console.error('Firestore write booking error:', err));
+        } catch(e) {
+          console.error('Error syncing booking to firestore:', e);
+        }
       }
 
       const p4Container = document.getElementById('page4-ticket-container');
@@ -5086,8 +5103,15 @@
       rides.unshift(newRide);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
-      if (typeof syncRideToFirestore === 'function') {
-        syncRideToFirestore(newRide);
+      if (typeof db !== 'undefined' && db) {
+        try {
+          const cleanDoc = JSON.parse(JSON.stringify(newRide));
+          db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true })
+            .then(() => console.log('✓ Ride successfully synced to Google Cloud Firestore across all devices!'))
+            .catch(err => console.error('Firestore write ride error:', err));
+        } catch(e) {
+          console.error('Error syncing ride to firestore:', e);
+        }
       }
 
       // Secure Pure Notification WhatsApp Alert to Admin - NO APPROVAL LINK (Driver cannot self-activate!)
