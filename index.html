@@ -955,23 +955,25 @@
 <main>
 <!-- ==================== 1. DRIVER SECTION ==================== -->
 <section id="section-driver" style="display: none;">
-<!-- Driver Wizard Progress Bar -->
+<!-- Driver Wizard Progress Bar (5 Steps) -->
 <div class="step-progress-bar">
 <div class="step-badge active" id="d-step-1-ind" onclick="goToDriverStep(1)">1. Route</div>
-<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.72rem;">➔</span>
 <div class="step-badge" id="d-step-2-ind" onclick="goToDriverStep(2)">2. Vehicle</div>
-<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-<div class="step-badge" id="d-step-3-ind" onclick="goToDriverStep(3)">3. Platform Fee</div>
-<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-<div class="step-badge" id="d-step-4-ind" onclick="goToDriverStep(4)">4. Live Dashboard</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.72rem;">➔</span>
+<div class="step-badge" id="d-step-3-ind" onclick="goToDriverStep(3)">3. Your QR</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.72rem;">➔</span>
+<div class="step-badge" id="d-step-4-ind" onclick="goToDriverStep(4)">4. Fee</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.72rem;">➔</span>
+<div class="step-badge" id="d-step-5-ind" onclick="goToDriverStep(5)">5. Dashboard</div>
 </div>
-<!-- Main Driver Card -->
+<!-- Main Driver Card Container -->
 <div class="app-card">
 <!-- ==================== DRIVER STEP 1: ROUTE & SCHEDULE (ZERO SCROLL) ==================== -->
 <div class="step-flip-card" id="driver-step-1">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
 <div>
-<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 1 of 4</div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 1 of 5</div>
 <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Route &amp; Travel Schedule</h2>
 </div>
 <span style="font-size: 0.7rem; background: #0284c7; color: white; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">Driver Post</span>
@@ -1018,12 +1020,12 @@
             </button>
 </div>
 </div>
-<!-- ==================== DRIVER STEP 2: VEHICLE & PRICING (ZERO SCROLL) ==================== -->
+<!-- ==================== DRIVER STEP 2: VEHICLE & FARE IN RS (FIXED OVERLAP) ==================== -->
 <div class="step-flip-card" id="driver-step-2" style="display: none;">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
 <div>
-<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 2 of 4</div>
-<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Car, Seats &amp; Driver Details</h2>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 2 of 5</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Car, Seats &amp; Fare Details</h2>
 </div>
 <button class="btn btn-secondary" onclick="goToDriverStep(1)" style="padding: 2px 8px; font-size: 0.74rem; border-radius: 6px;" type="button">⬅️ Edit Route</button>
 </div>
@@ -1050,11 +1052,12 @@
 <option value="7">7 Seats Empty (Innova/Ertiga)</option>
 </select>
 </div>
+<!-- CLEAN FARE IN RS (NO OVERLAPPING, PURE VISIBILITY) -->
 <div class="form-group" style="margin: 0;">
-<label>Fare Per Seat (₹)*</label>
-<div style="position: relative;">
-<span style="position: absolute; left: 12px; top: 8px; font-weight: 900; color: #38bdf8; font-size: 1.1rem;">₹</span>
-<input class="form-control" id="df-fare" placeholder="300" style="padding-left: 28px; font-weight: 900; color: #4ade80;" type="number" value="300"/>
+<label>Fare Per Seat (Rs.)*</label>
+<div style="display: flex; align-items: center; background: rgba(2, 6, 23, 0.95); border: 1.5px solid rgba(56, 189, 248, 0.5); border-radius: 12px; overflow: hidden;">
+<span style="padding: 0.65rem 0.85rem; background: rgba(15, 23, 42, 0.95); color: #38bdf8; font-weight: 900; font-size: 0.95rem; border-right: 1.5px solid rgba(56, 189, 248, 0.35);">Rs.</span>
+<input class="form-control" id="df-fare" placeholder="300" style="border: none !important; background: transparent !important; padding-left: 0.75rem !important; font-weight: 900; color: #4ade80; font-size: 1.15rem; width: 100%;" type="number" value="300"/>
 </div>
 </div>
 </div>
@@ -1078,18 +1081,60 @@
               ⬅️ Previous (Route)
             </button>
 <button class="btn btn-primary" onclick="proceedToDriverStep3()" style="flex: 1.5; padding: 0.75rem; font-weight: 800; border-radius: 10px;" type="button">
-              Next: Platform Fee (Step 3 ➔)
+              Next: Upload Receiving QR (Step 3 ➔)
             </button>
 </div>
 </div>
-<!-- ==================== DRIVER STEP 3: ₹100 PLATFORM FEE & QR (ZERO SCROLL) ==================== -->
+<!-- ==================== DRIVER STEP 3: UPLOAD DRIVER'S OWN RECEIVING QR CODE ==================== -->
 <div class="step-flip-card" id="driver-step-3" style="display: none;">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
 <div>
-<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 3 of 4</div>
-<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">₹100 Platform Fee &amp; Verification</h2>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 3 of 5</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Upload Your Receiving QR Code</h2>
 </div>
 <button class="btn btn-secondary" onclick="goToDriverStep(2)" style="padding: 2px 8px; font-size: 0.74rem; border-radius: 6px;" type="button">⬅️ Edit Car</button>
+</div>
+<p style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 0.85rem;">
+            Upload your PhonePe / Google Pay / Paytm QR code. When passengers book seats, they will pay your fare directly to this QR! Both phone numbers unlock upon payment confirmation.
+          </p>
+<div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed #0284c7; border-radius: 16px; padding: 1.25rem; text-align: center; margin-bottom: 0.85rem;">
+<div style="font-size: 2.2rem; margin-bottom: 0.4rem;">📸</div>
+<strong style="display: block; font-size: 0.95rem; color: #ffffff; margin-bottom: 0.35rem;">
+              Select &amp; Upload Your UPI QR Image:
+            </strong>
+<p style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 0.85rem;">
+              (Take a screenshot of your Google Pay / PhonePe / Paytm receiving QR and upload here)
+            </p>
+<input accept="image/*" class="form-control" id="df-qr-file" onchange="handleDriverQrUpload(event)" style="max-width: 320px; margin: 0 auto;" type="file"/>
+<!-- Uploaded Preview Box -->
+<div id="df-qr-preview-box" style="display: none; margin-top: 0.85rem;">
+<div style="font-size: 0.8rem; font-weight: 800; color: #4ade80; margin-bottom: 6px;">✓ Driver Payment QR Loaded:</div>
+<img id="df-qr-preview" style="max-width: 140px; max-height: 140px; border-radius: 10px; border: 2px solid #38bdf8;"/>
+</div>
+</div>
+<!-- Driver Receiving UPI ID -->
+<div class="form-group" style="margin-bottom: 0.85rem;">
+<label>Your Receiving UPI ID (For Direct Fare Credit)*</label>
+<input class="form-control" id="df-driver-upi" placeholder="e.g. 9864012345@upi" type="text" value="9864012345@upi"/>
+</div>
+<!-- Navigation Buttons (Step 3 ➔ Step 4) -->
+<div style="display: flex; gap: 0.5rem; margin-top: 0.85rem;">
+<button class="btn btn-secondary" onclick="goToDriverStep(2)" style="flex: 1; padding: 0.75rem; border-radius: 10px;" type="button">
+              ⬅️ Previous (Vehicle)
+            </button>
+<button class="btn btn-primary" onclick="proceedToDriverStep4()" style="flex: 1.5; padding: 0.75rem; font-weight: 800; border-radius: 10px;" type="button">
+              Next: Platform Fee (Step 4 ➔)
+            </button>
+</div>
+</div>
+<!-- ==================== DRIVER STEP 4: ₹100 PLATFORM FEE & VERIFICATION ==================== -->
+<div class="step-flip-card" id="driver-step-4" style="display: none;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 4 of 5</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">₹100 Platform Fee &amp; Verification</h2>
+</div>
+<button class="btn btn-secondary" onclick="goToDriverStep(3)" style="padding: 2px 8px; font-size: 0.74rem; border-radius: 6px;" type="button">⬅️ Edit QR</button>
 </div>
 <!-- SafarSaathi Official QR -->
 <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid #0284c7; border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
@@ -1102,31 +1147,26 @@
               6901027507@nyes
             </div>
 </div>
-<!-- Driver's Receiving UPI ID -->
-<div class="form-group" style="margin-bottom: 0.65rem;">
-<label>Your Receiving UPI ID (For Passenger Payments)*</label>
-<input class="form-control" id="df-driver-upi" placeholder="e.g. 9864012345@upi" type="text" value="9864012345@upi"/>
-</div>
 <!-- 12-Digit UTR -->
 <div class="form-group" style="margin-bottom: 0.75rem;">
 <label>12-Digit Bank Payment UTR Number (for ₹100)*</label>
 <input class="form-control" id="df-utr" maxlength="12" placeholder="e.g. 987654321012" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; letter-spacing: 1px; border: 1.5px solid #0284c7;" type="text"/>
 </div>
-<!-- Buttons (Step 3 ➔ Step 4) -->
+<!-- Buttons (Step 4 ➔ Step 5) -->
 <div style="display: flex; gap: 0.5rem; margin-top: 0.85rem;">
-<button class="btn btn-secondary" onclick="goToDriverStep(2)" style="flex: 1; padding: 0.75rem; border-radius: 10px;" type="button">
-              ⬅️ Previous (Vehicle)
+<button class="btn btn-secondary" onclick="goToDriverStep(3)" style="flex: 1; padding: 0.75rem; border-radius: 10px;" type="button">
+              ⬅️ Previous (Your QR)
             </button>
 <button class="btn btn-primary" onclick="submitDriverRideDirect()" style="flex: 1.5; padding: 0.75rem; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 14px rgba(29,78,216,0.45);" type="button">
               🚀 Submit &amp; Activate Ride ➔
             </button>
 </div>
 </div>
-<!-- ==================== DRIVER STEP 4: ACTIVE DASHBOARD (MY POSTED VEHICLES) ==================== -->
-<div class="step-flip-card" id="driver-step-4" style="display: none;">
+<!-- ==================== DRIVER STEP 5: ACTIVE DASHBOARD (MY POSTED VEHICLES) ==================== -->
+<div class="step-flip-card" id="driver-step-5" style="display: none;">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
 <div>
-<div style="font-size: 0.72rem; color: #22c55e; font-weight: 800; text-transform: uppercase;">Step 4 of 4 • Active</div>
+<div style="font-size: 0.72rem; color: #22c55e; font-weight: 800; text-transform: uppercase;">Step 5 of 5 • Active</div>
 <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Driver Live Dashboard</h2>
 </div>
 <button class="btn btn-primary" onclick="goToDriverStep(1)" style="padding: 0.3rem 0.75rem; font-size: 0.75rem; border-radius: 8px;" type="button">
@@ -1140,7 +1180,7 @@
               WhatsApp alert sent to Admin (+91 6901027507) for 1-tap activation. Once verified, your car will appear live on Passenger Search!
             </p>
 </div>
-<!-- My Posted Vehicles List (Only shown here in Step 4!) -->
+<!-- My Posted Vehicles List (Only shown here in Step 5!) -->
 <h3 style="font-size: 1rem; font-weight: 800; color: white; margin: 0.75rem 0 0.5rem;">My Active &amp; Managed Vehicles:</h3>
 <div id="driver-posted-rides-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
 <div style="display: flex; justify-content: space-between; margin-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.75rem;">
@@ -4938,6 +4978,148 @@
         openSingleRideRouteModalObject(activeRide, false);
       }
     }
-    </script>
+    
+
+
+    // =========================================================================
+    // 📸 DRIVER RECEIVING QR UPLOAD & 5-STEP ENGINE
+    // =========================================================================
+    let driverUploadedQrData = '';
+
+    function handleDriverQrUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        driverUploadedQrData = evt.target.result;
+        const preview = document.getElementById('df-qr-preview');
+        const box = document.getElementById('df-qr-preview-box');
+        if (preview) preview.src = driverUploadedQrData;
+        if (box) box.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function goToDriverStep(stepNum) {
+      for (let s = 1; s <= 5; s++) {
+        const el = document.getElementById('driver-step-' + s);
+        const ind = document.getElementById('d-step-' + s + '-ind');
+        if (el) el.style.display = (s === stepNum) ? 'block' : 'none';
+        if (ind) {
+          ind.classList.toggle('active', s === stepNum);
+          ind.classList.toggle('completed', s < stepNum);
+        }
+      }
+      if (stepNum === 5 && typeof renderDriverPostedRides === 'function') {
+        renderDriverPostedRides();
+      }
+      if (typeof window !== 'undefined' && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function proceedToDriverStep3() {
+      const model = (document.getElementById('df-model')?.value || '').trim();
+      const plate = (document.getElementById('df-plate')?.value || '').trim();
+      const name = (document.getElementById('df-name')?.value || '').trim();
+      const phone = (document.getElementById('df-phone')?.value || '').trim();
+      const fare = parseInt(document.getElementById('df-fare')?.value) || 0;
+
+      if (!model || !plate) {
+        alert('Please enter your Car Model and License Plate Number!');
+        return;
+      }
+      if (!name) {
+        alert('Please enter your Driver Full Name!');
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        alert('Please enter a valid 10-digit WhatsApp phone number!');
+        return;
+      }
+      if (fare <= 0) {
+        alert('Please enter your Fare Per Seat in Rs.!');
+        return;
+      }
+
+      goToDriverStep(3); // Step 3 is Driver's own QR upload
+    }
+
+    function proceedToDriverStep4() {
+      const driverUpi = (document.getElementById('df-driver-upi')?.value || '').trim();
+      if (!driverUpi && !driverUploadedQrData) {
+        alert('Please either upload your UPI QR screenshot or enter your UPI ID so passengers can pay you directly!');
+        return;
+      }
+      goToDriverStep(4); // Step 4 is ₹100 platform fee
+    }
+
+    function submitDriverRideDirect() {
+      const from = (document.getElementById('df-from')?.value || 'Guwahati').trim();
+      const to = (document.getElementById('df-to')?.value || 'Shillong').trim();
+      const date = document.getElementById('df-date')?.value || getTomorrowDate(1);
+      const time = document.getElementById('df-time')?.value || '08:30';
+      const model = (document.getElementById('df-model')?.value || 'Swift Dzire').trim();
+      const plate = (document.getElementById('df-plate')?.value || 'AS 01 BP 4921').trim();
+      const seats = parseInt(document.getElementById('df-seats')?.value) || 3;
+      const fare = parseInt(document.getElementById('df-fare')?.value) || 300;
+      const name = (document.getElementById('df-name')?.value || 'Bikram Das').trim();
+      const phone = (document.getElementById('df-phone')?.value || '9864012345').trim();
+      const driverUpi = (document.getElementById('df-driver-upi')?.value || phone + '@upi').trim();
+      const utr = (document.getElementById('df-utr')?.value || '').trim();
+
+      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
+        alert('Please enter a valid 12-digit payment UTR number for your ₹100 platform fee!');
+        document.getElementById('df-utr')?.focus();
+        return;
+      }
+
+      const newRide = {
+        id: 'RIDE-' + Math.floor(1000 + Math.random() * 9000),
+        driverName: name,
+        driverPhone: phone,
+        driverUpi: driverUpi,
+        driverQr: driverUploadedQrData || 'mitali_qr_compact.svg',
+        farePerSeat: fare,
+        origin: from,
+        destination: to,
+        date: date,
+        time: time,
+        seatsAvailable: seats,
+        totalSeats: seats,
+        vehicleModel: model,
+        vehicleNumber: plate,
+        platformFeeUtr: utr,
+        status: 'PENDING_APPROVAL',
+        postedAt: new Date().toISOString()
+      };
+
+      rides.unshift(newRide);
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+
+      if (typeof syncRideToFirestore === 'function') {
+        syncRideToFirestore(newRide);
+      }
+
+      // 1-Tap WhatsApp Admin Link
+      const adminPin = '1234';
+      const netlifyAppUrl = window.location.origin + window.location.pathname;
+      const oneTapApproveUrl = `${netlifyAppUrl}?approveRide=${newRide.id}&pin=${adminPin}`;
+      const waMsg = `*SAFARSAATHI NEW RIDE VERIFICATION REQUEST*%0A%0A` +
+        `🚗 *Ride ID:* ${newRide.id}%0A` +
+        `👤 *Driver:* ${name} (${phone})%0A` +
+        `🛣️ *Route:* ${from} ➔ ${to}%0A` +
+        `📅 *Date:* ${date} at ${time}%0A` +
+        `💰 *₹100 Platform Fee UTR:* ${utr}%0A%0A` +
+        `*1-TAP ADMIN ACTIVATION LINK:*%0A${encodeURIComponent(oneTapApproveUrl)}`;
+
+      window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
+
+      showToast('🎉 Ride submitted! 1-Tap activation link sent to Admin WhatsApp.', '#15803d');
+      playChimeAlert();
+
+      goToDriverStep(5);
+    }
+</script>
 </body>
 </html>
