@@ -2332,9 +2332,8 @@
       const banner = document.getElementById('driver-success-banner');
       banner.style.display = 'block';
       const isLive = (pendingDriverRide.status === 'ACTIVE');
-      const activationLink = `https://charming-starburst-0a807c.netlify.app/admin.html?approveRide=${pendingDriverRide.id}&pin=1234`;
       const adminWhatsAppMsg = encodeURIComponent(
-        `🚗 *SAFARSAATHI - DRIVER LISTING & ₹100 UTR SUBMISSION*\n` +
+        `🚗 *SAFARSAATHI - NEW RIDE PENDING VERIFICATION*\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
         `Hello Admin,\n` +
         `New vehicle registered on SafarSaathi:\n` +
@@ -2344,10 +2343,8 @@
         `💰 *Listing Fee Paid:* ₹100 to Jana SFB (6901027507@nyes)\n` +
         `🔢 *12-Digit UTR:* *${utr}*\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
-        `👉 *1-TAP ADMIN ACTIVATION LINK:*\n` +
-        `${activationLink}\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n` +
-        `*(Admin: Jana SFB me ₹100 aate hi upar link par tap karein, gaadi turant Customer Portal par 100% LIVE ho jayegi!)*`
+        `🔒 *ADMIN ACTION REQUIRED:*\n` +
+        `Please check your Jana SFB app for ₹100 credit with UTR ${utr}. Then login to your Secure Admin Panel to Verify & Activate this vehicle.`
       );
 
       // Auto-trigger WhatsApp message to Admin (+91 6901027507)
@@ -3899,18 +3896,7 @@
         showAdminFromFooter();
       }
 
-      // 1-Tap WhatsApp Activation via URL Query Parameter
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const approveRideId = urlParams.get('approveRide');
-        const passedPin = urlParams.get('pin');
-        if (approveRideId && passedPin === '1234') {
-          setTimeout(() => {
-            embeddedAdminApproveRide(approveRideId);
-            showEmbeddedAdminToast(`🎉 1-TAP ACTIVATION: Vehicle ${approveRideId} verified and now 100% LIVE!`, '#15803d');
-          }, 500);
-        }
-      } catch(e) {}
+      // Strict Admin Security: URL parameter auto-activation disabled. Rides can strictly only be approved inside Admin Panel with secret PIN.
     });
   
     function syncLatestData() {
@@ -4597,21 +4583,24 @@
         syncRideToFirestore(newRide);
       }
 
-      // 1-Tap WhatsApp Admin Link
-      const adminPin = '1234';
-      const netlifyAppUrl = window.location.origin + window.location.pathname;
-      const oneTapApproveUrl = `${netlifyAppUrl}?approveRide=${newRide.id}&pin=${adminPin}`;
-      const waMsg = `*SAFARSAATHI NEW RIDE VERIFICATION REQUEST*%0A%0A` +
+      // Secure Pure Notification WhatsApp Alert to Admin (+91 6901027507) - NO AUTO-ACTIVATION LINK (Driver cannot self-activate!)
+      const waMsg = `*SAFARSAATHI NEW RIDE PENDING VERIFICATION*%0A%0A` +
         `🚗 *Ride ID:* ${newRide.id}%0A` +
-        `👤 *Driver:* ${name} (${phone})%0A` +
+        `👤 *Driver Name:* ${name}%0A` +
+        `📞 *Driver WhatsApp:* ${phone}%0A` +
         `🛣️ *Route:* ${from} ➔ ${to}%0A` +
-        `📅 *Date:* ${date} at ${time}%0A` +
-        `💰 *₹100 Platform Fee UTR:* ${utr}%0A%0A` +
-        `*1-TAP ADMIN ACTIVATION LINK:*%0A${encodeURIComponent(oneTapApproveUrl)}`;
+        `📅 *Schedule:* ${date} at ${time}%0A` +
+        `🚙 *Vehicle:* ${model} (${plate})%0A` +
+        `💺 *Seats:* ${seats} Seats @ Rs. ${fare} / seat%0A%0A` +
+        `💰 *₹100 Platform Fee UTR:* ${utr}%0A` +
+        `🏦 *Bank Payee:* Jana Small Finance Bank (6901027507@nyes)%0A%0A` +
+        `🔒 *ACTION REQUIRED FOR ADMIN (+91 6901027507):*%0A` +
+        `Please check your Jana SFB app for Rs. 100 credit with UTR ${utr}.%0A` +
+        `Then open your Secure Admin Panel to Verify & Activate this vehicle.`;
 
       window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
 
-      showToast('🎉 Ride submitted! 1-Tap activation link sent to Admin WhatsApp.', '#15803d');
+      showToast('🎉 Ride submitted! Notification sent to Admin WhatsApp for verification.', '#15803d');
       playChimeAlert();
 
       goToDriverStep(4);
@@ -5101,21 +5090,22 @@
         syncRideToFirestore(newRide);
       }
 
-      // 1-Tap WhatsApp Admin Link
-      const adminPin = '1234';
-      const netlifyAppUrl = window.location.origin + window.location.pathname;
-      const oneTapApproveUrl = `${netlifyAppUrl}?approveRide=${newRide.id}&pin=${adminPin}`;
-      const waMsg = `*SAFARSAATHI NEW RIDE VERIFICATION REQUEST*%0A%0A` +
+      // Secure Pure Notification WhatsApp Alert to Admin - NO APPROVAL LINK (Driver cannot self-activate!)
+      const waMsg = `*SAFARSAATHI NEW RIDE PENDING VERIFICATION*%0A%0A` +
         `🚗 *Ride ID:* ${newRide.id}%0A` +
         `👤 *Driver:* ${name} (${phone})%0A` +
         `🛣️ *Route:* ${from} ➔ ${to}%0A` +
-        `📅 *Date:* ${date} at ${time}%0A` +
-        `💰 *₹100 Platform Fee UTR:* ${utr}%0A%0A` +
-        `*1-TAP ADMIN ACTIVATION LINK:*%0A${encodeURIComponent(oneTapApproveUrl)}`;
+        `📅 *Schedule:* ${date} at ${time}%0A` +
+        `🚙 *Vehicle:* ${model} (${plate})%0A` +
+        `💺 *Seats:* ${seats} Seats @ Rs. ${fare}/seat%0A%0A` +
+        `💰 *₹100 Platform Fee UTR:* ${utr}%0A` +
+        `🏦 *Bank:* Jana Small Finance Bank (6901027507@nyes)%0A%0A` +
+        `🔒 *ACTION REQUIRED FOR ADMIN (+91 6901027507):*%0A` +
+        `Please check your Jana SFB app for Rs. 100 credit with UTR ${utr}. Then login to your Secure Admin Panel to Approve or Reject this ride.`;
 
       window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
 
-      showToast('🎉 Ride submitted! 1-Tap activation link sent to Admin WhatsApp.', '#15803d');
+      showToast('🎉 Ride submitted! Notification sent to Admin WhatsApp for verification.', '#15803d');
       playChimeAlert();
 
       goToDriverStep(5);

@@ -1119,28 +1119,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       initAdminFirestore();
 
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const approveRideId = urlParams.get('approveRide');
-        const passedPin = urlParams.get('pin');
-        const storedPin = localStorage.getItem('ss_admin_pin') || '1234';
-
-        if (approveRideId && (passedPin === storedPin || passedPin === '1234')) {
-          // Auto login admin
-          document.getElementById('admin-login-screen').style.display = 'none';
-          document.getElementById('admin-main-portal').style.display = 'block';
-          document.getElementById('btn-logout').style.display = 'inline-flex';
-          loadDashboardData();
-
-          // Wait brief moment for rides to load, then execute 1-tap activation!
-          setTimeout(() => {
-            adminApproveRide(approveRideId);
-            showAdminToast(`🎉 1-TAP WHATSAPP ACTIVATION SUCCESS! Vehicle verified in Jana SFB and is now 100% LIVE on Customer Portal!`, '#15803d');
-          }, 450);
-        }
-      } catch(e) {
-        console.log('1-Tap WhatsApp error:', e);
-      }
+      // Strict Admin Security: URL parameter auto-activation disabled.
     });
   
     function syncAdminData() {
