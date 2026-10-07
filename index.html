@@ -1,175 +1,25 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>SafarSaathi - Cute & Smart Carpooling Network</title>
-  
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <meta name="theme-color" content="#0f172a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="SafarSaathi">
-
-  <!-- Google Firebase SDK for 100% Free Real Telecom SMS OTP (10,000 Free SMS/Month) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <style>
-
-    /* FULL-PAGE KIA CARENS DIMMED BACKGROUND ACROSS ALL PAGES */
-    body {
-      background: 
-        linear-gradient(rgba(10, 15, 30, 0.45), rgba(10, 15, 30, 0.55)),
-        url('car-bg.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #ffffff;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    #app-shell {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    header {
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1.5px solid rgba(255, 255, 255, 0.15);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-tabs {
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(16px);
-      border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
-      display: flex;
-      justify-content: space-around;
-      padding: 0.4rem 0.5rem;
-      position: sticky;
-      top: 56px;
-      z-index: 95;
-    }
-
-    main {
-      flex: 1;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0.75rem 1rem 2rem;
-      box-sizing: border-box;
-    }
-
-    /* Screen-Fitting Dark Frosted Glass Cards (Car photo clearly visible behind) */
-    .app-card {
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 20px;
-      padding: 1.25rem 1.4rem;
-      border: 1.5px solid rgba(255, 255, 255, 0.22);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.5);
-      margin-bottom: 1.25rem;
-      color: #ffffff;
-      box-sizing: border-box;
-    }
-
-    .ride-card {
-      background: rgba(15, 23, 42, 0.90);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 18px;
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      padding: 1.15rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      color: #ffffff;
-      margin-bottom: 1rem;
-    }
-
-    .form-control {
-      padding: 0.75rem 1rem;
-      border: 1.5px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      font-size: 0.95rem;
-      outline: none;
-      background: rgba(15, 23, 42, 0.75);
-      color: #ffffff;
-      box-sizing: border-box;
-      width: 100%;
-    }
-
-    .form-control:focus {
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-
-    @media (max-width: 480px) {
-      .form-row {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-      }
-    }
-
-    /* Page Wizard Progress Bar */
-    .step-progress-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      max-width: 580px;
-      margin: 0 auto 1rem;
-      padding: 0.4rem 0.85rem;
-      background: rgba(15, 23, 42, 0.90);
-      backdrop-filter: blur(12px);
-      border-radius: 9999px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .step-badge {
-      font-size: 0.76rem;
-      font-weight: 700;
-      color: #94a3b8;
-      padding: 3px 10px;
-      border-radius: 9999px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .step-badge.active {
-      background: #0284c7;
-      color: #ffffff;
-      box-shadow: 0 0 12px rgba(2, 132, 199, 0.6);
-    }
-
-    .step-badge.completed {
-      color: #22c55e;
-    }
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<title>SafarSaathi - Cute &amp; Smart Carpooling Network</title>
+<link href="manifest.json" rel="manifest"/>
+<link href="icon-192.png" rel="apple-touch-icon"/>
+<link href="icon-192.png" rel="icon" sizes="192x192" type="image/png"/>
+<meta content="#0f172a" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="SafarSaathi" name="apple-mobile-web-app-title"/>
+<!-- Google Firebase SDK for 100% Free Real Telecom SMS OTP (10,000 Free SMS/Month) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
     :root {
       --bg-dark: #0f172a;
       --bg-darker: #020617;
@@ -197,7 +47,15 @@
     }
 
     /* Cute Background with Subtle Car & Roadtrip Pattern */
-    
+    body {
+      background: 
+        linear-gradient(180deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.93) 40%, rgba(2, 6, 23, 0.98) 100%),
+        url('car-bg.jpg') no-repeat center top fixed;
+      background-size: cover;
+      color: var(--text-dark);
+      min-height: 100vh;
+      position: relative;
+    }
 
     /* Global Header (Black & Blue Theme) */
     header {
@@ -784,25 +642,149 @@
     .admin-table tr:hover { background: #f8fafc; }
 
   
-    /* RAZOR-SHARP TEXT & HIGH CONTRAST TYPOGRAPHY */
+    /* =========================================================================
+       CLEAN NO-PHOTO BACKGROUND & BLUE/BLACK NAV TABS THEME
+       ========================================================================= */
     * {
       -webkit-font-smoothing: antialiased !important;
       -moz-osx-font-smoothing: grayscale !important;
       text-rendering: optimizeLegibility !important;
+      box-sizing: border-box;
     }
 
+    /* PURE LUXURY DARK GRADIENT (NO BACKGROUND PHOTO) */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+      background: linear-gradient(135deg, #091e3a 0%, #0f172a 45%, #020617 100%) !important;
+      background-image: none !important;
+      background-color: #0f172a !important;
       color: #ffffff !important;
-      letter-spacing: 0.012em !important;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
     }
 
-    /* Headings and Titles - Ultra Crisp White */
-    h1, h2, h3, h4, .card-title {
-      color: #ffffff !important;
+    #app-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Sticky Header */
+    header {
+      background: #091e3a !important;
+      border-bottom: 2px solid #1e3a8a !important;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* Nav Tabs Bar: Solid Background, Zero Gap */
+    .nav-tabs-wrapper {
+      background: #091e3a !important;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.25) !important;
+      padding: 0.45rem 0.65rem !important;
+      position: sticky;
+      top: 56px;
+      z-index: 95;
+    }
+
+    .tab-bar {
+      max-width: 540px !important;
+      margin: 0 auto !important;
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      background: #020617 !important;
+      padding: 5px !important;
+      border-radius: 16px !important;
+      gap: 8px !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+    }
+
+    /* BUTTONS ARE SOLID VIBRANT BLUE BY DEFAULT */
+    .tab-btn {
+      width: 100% !important;
+      padding: 0.65rem 0.3rem !important;
+      border-radius: 12px !important;
       font-weight: 900 !important;
-      letter-spacing: 0.02em !important;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
+      font-size: 0.86rem !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.35rem !important;
+      transition: all 0.22s ease !important;
+      background: #1d4ed8 !important; /* VIBRANT SOLID BLUE */
+      color: #ffffff !important; /* PURE CRISP WHITE */
+      border: 1.5px solid #3b82f6 !important;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35) !important;
+    }
+
+    .tab-btn:hover {
+      background: #2563eb !important;
+      color: #ffffff !important;
+    }
+
+    /* WHEN SELECTED, IT TURNS SOLID DEEP BLACK */
+    .tab-btn.active {
+      background: #020617 !important; /* PURE SOLID BLACK */
+      color: #ffffff !important;
+      border: 2px solid #38bdf8 !important;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.65), inset 0 0 10px rgba(56, 189, 248, 0.2) !important;
+    }
+
+    /* Main Container: Compact, Starts Immediately Below Tabs (NO EMPTY GAP) */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0.65rem 0.85rem 2rem !important;
+    }
+
+    /* Dark High-Contrast Cards */
+    .app-card {
+      background: rgba(15, 23, 42, 0.95) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+      border-radius: 20px !important;
+      padding: 1.25rem 1.4rem !important;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55) !important;
+      margin-bottom: 1rem !important;
+      color: #ffffff !important;
+    }
+
+    .ride-card {
+      background: rgba(15, 23, 42, 0.98) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+      border-radius: 18px !important;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4) !important;
+      padding: 1.15rem !important;
+      color: #ffffff !important;
+      margin-bottom: 0.85rem !important;
+    }
+
+    /* Crisp High-Contrast Input Fields */
+    .form-control {
+      background: rgba(2, 6, 23, 0.95) !important;
+      color: #ffffff !important;
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.5) !important;
+      border-radius: 12px !important;
+      padding: 0.65rem 0.9rem !important;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+      width: 100% !important;
+    }
+
+    .form-control::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    .form-control:focus {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
+      outline: none !important;
     }
 
     label {
@@ -813,63 +795,60 @@
       display: block;
     }
 
-    .card-subtitle, p, span {
-      color: #e2e8f0;
-    }
-
-    /* Crisp High-Contrast Input Fields */
-    .form-control {
-      background: rgba(2, 6, 23, 0.92) !important;
-      color: #ffffff !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-      border: 1.5px solid rgba(56, 189, 248, 0.5) !important;
-      border-radius: 12px !important;
-      padding: 0.65rem 0.9rem !important;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-
-    .form-control::placeholder {
-      color: #94a3b8 !important;
-      font-weight: 500 !important;
-    }
-
-    .form-control:focus {
-      border-color: #38bdf8 !important;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
-      outline: none !important;
-    }
-
-    /* Solid Frosted Glass Cards (Car photo clearly visible, text 100% sharp) */
-    .app-card {
-      background: rgba(15, 23, 42, 0.93) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-      border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
-      border-radius: 20px !important;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-      color: #ffffff !important;
-    }
-
-    .ride-card {
+    /* Step Progress Indicator */
+    .step-progress-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 540px;
+      margin: 0 auto 0.75rem !important;
+      padding: 0.35rem 0.75rem !important;
       background: rgba(15, 23, 42, 0.95) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
-      border-radius: 18px !important;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4) !important;
-      color: #ffffff !important;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
     }
 
-</style>
+    .step-badge {
+      font-size: 0.74rem !important;
+      font-weight: 800 !important;
+      color: #94a3b8;
+      padding: 3px 9px !important;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-  <!-- Leaflet.js for Live GPS Interactive Route Map (OpenStreetMap) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    .step-badge.active {
+      background: #0284c7 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(2, 132, 199, 0.6) !important;
+    }
 
-  <style>
+    .step-badge.completed {
+      color: #22c55e !important;
+    }
+
+    /* 3D Smooth Step Flip Animation */
+    .step-flip-card {
+      animation: flipStepCard 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      transform-origin: center top !important;
+    }
+    @keyframes flipStepCard {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    </style>
+<!-- Leaflet.js for Live GPS Interactive Route Map (OpenStreetMap) -->
+<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
+<script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
     /* Leaflet Custom Marker & Live Map Styles */
     .leaflet-popup-content-wrapper {
       border-radius: 14px;
@@ -943,1170 +922,916 @@
       100% { transform: scale(1.8); opacity: 0; }
     }
   </style>
-
 </head>
 <body>
-  <div id="app-shell">
-
-  <!-- Google Invisible ReCAPTCHA Container for Firebase Phone Auth -->
-  <div id="recaptcha-container"></div>
-
-  <!-- Top In-App Live Alert Notification -->
-  <div id="driver-live-alert-bar">
-    <span id="driver-live-alert-text">🔔 New Booking Alert: A passenger just booked a seat in your car!</span>
-    <button onclick="dismissDriverLiveAlert()" style="margin-left: 12px; background: none; border: none; color: #93c5fd; font-weight: 900; cursor: pointer;">✕</button>
-  </div>
-
-  <!-- Header -->
-  <header>
-    <div class="header-inner">
-      <a href="#" class="app-brand" onclick="showSection('driver'); return false;">
+<!-- Google Invisible ReCAPTCHA Container for Firebase Phone Auth -->
+<div id="recaptcha-container"></div>
+<!-- Top In-App Live Alert Notification -->
+<div id="driver-live-alert-bar">
+<span id="driver-live-alert-text">🔔 New Booking Alert: A passenger just booked a seat in your car!</span>
+<button onclick="dismissDriverLiveAlert()" style="margin-left: 12px; background: none; border: none; color: #93c5fd; font-weight: 900; cursor: pointer;">✕</button>
+</div>
+<!-- Header -->
+<header>
+<div class="header-inner">
+<a class="app-brand" href="#" onclick="showSection('driver'); return false;">
         🚗 <span><span class="highlight">Safar</span>Saathi</span>
-      </a>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div id="cloud-network-status-badge" onclick="showCloudNetworkInfo()" style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: rgba(255,255,255,0.12); color: #93c5fd; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: 1px solid rgba(147, 197, 253, 0.3);">
-          <span id="cloud-network-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
-          <span id="cloud-network-label">Connecting Cloud...</span>
-        </div>
-        <div class="verified-badge">
+</a>
+<div style="display: flex; align-items: center; gap: 0.5rem;">
+<div id="cloud-network-status-badge" onclick="showCloudNetworkInfo()" style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: rgba(255,255,255,0.12); color: #93c5fd; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: 1px solid rgba(147, 197, 253, 0.3);">
+<span id="cloud-network-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+<span id="cloud-network-label">Connecting Cloud...</span>
+</div>
+<div class="verified-badge">
           ✨ Verified Carpools
         </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- NAVIGATION TABS (100% MOBILE RESPONSIVE - PERFECT 3-COLUMN FIT) -->
-  <div class="nav-tabs-wrapper">
-    <div class="tab-bar">
-      <button class="tab-btn driver-tab active" id="tab-btn-driver" onclick="showSection('driver')">
-        <span class="tab-btn-icon">🚗</span>
-        <span class="tab-btn-label"><span class="desktop-only">Driver: </span>Post Ride</span>
-      </button>
-      <button class="tab-btn active" id="tab-btn-passenger" onclick="showSection('passenger')">
-        <span class="tab-btn-icon">🔍</span>
-        <span class="tab-btn-label"><span class="desktop-only">Passenger: </span>Find Ride</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-tickets" onclick="showSection('tickets')">
-        <span class="tab-btn-icon">🎟️</span>
-        <span class="tab-btn-label"><span class="desktop-only">My </span>Bookings (<span id="my-tickets-count">0</span>)</span>
-      </button>
-    </div>
-  </div>
-
-  <main>
-
-    <!-- ==================== 1. DRIVER SECTION ==================== -->
-    <section id="section-driver" style="display: none;">
-      <!-- Driver Wizard Progress Bar -->
-      <div class="step-progress-bar">
-        <div id="d-step-1-ind" class="step-badge active" onclick="goToDriverStep(1)">1. Route</div>
-        <span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-        <div id="d-step-2-ind" class="step-badge" onclick="goToDriverStep(2)">2. Vehicle</div>
-        <span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-        <div id="d-step-3-ind" class="step-badge" onclick="goToDriverStep(3)">3. Platform Fee</div>
-        <span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-        <div id="d-step-4-ind" class="step-badge" onclick="goToDriverStep(4)">4. Live Cars</div>
-      </div>
-      
-        </div>
-      </div>
-
-      <!-- Driver Instant Alert Card -->
-      <div id="driver-booking-notification-card" style="display: none; background: #eff6ff; border: 2px solid #2563eb; border-radius: 18px; padding: 1.25rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <strong style="color: #1e3a8a; font-size: 1rem;">🔔 Instant Driver Alert: Confirmed Passenger Booking!</strong>
-          <span style="background: #2563eb; color: white; padding: 2px 8px; border-radius: 9999px; font-size: 0.72rem; font-weight: 900;">CONFIRMED</span>
-        </div>
-        <div id="driver-booking-notification-details" style="font-size: 0.88rem; color: #1e293b; line-height: 1.45;"></div>
-      </div>
-
-      <!-- Success Alert Banner (Shows after posting ride) -->
-      <div class="alert-banner alert-success" id="driver-success-banner">
-        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; color: #1e3a8a;">🎉 Congratulations! Your Ride is Now Active!</h3>
-        <p style="font-size: 0.88rem; margin-bottom: 10px;" id="driver-success-msg">Your vehicle is now visible on the passenger portal for searching and direct seat booking.</p>
-        <button class="btn btn-primary" style="width: auto; padding: 0.55rem 1.25rem; font-size: 0.85rem;" onclick="showSection('passenger')">
-          🔍 View Live Listing on Passenger Screen ➔
-        </button>
-      </div>
-
-      <!-- Main Driver Posting Card -->
-      <div class="app-card">
-        
-        <!-- DRIVER STEP 1: JOURNEY & VEHICLE DETAILS + RATE PER SEAT -->
-        <!-- DRIVER STEP 1: ROUTE & TRAVEL SCHEDULE (ZERO SCROLL) -->
-        <div id="driver-step-1">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; padding: 0.35rem 0.75rem; background: rgba(15,23,42,0.85); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
-            <span style="font-size: 0.8rem; font-weight: 800; color: #38bdf8;">🚙 Step 1 of 4: Route & Travel Schedule</span>
-            <span style="font-size: 0.7rem; background: #0284c7; color: white; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">Driver Post</span>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Origin (From)*</label>
-              <input type="text" id="df-from" class="form-control" placeholder="e.g. Guwahati" oninput="updateDriverRoutePreview()">
-            </div>
-            <div class="form-group">
-              <label>Destination (To)*</label>
-              <input type="text" id="df-to" class="form-control" placeholder="e.g. Shillong or Jorhat" oninput="updateDriverRoutePreview()">
-            </div>
-          </div>
-
-          <!-- Quick Corridor Chips for Drivers -->
-          <div style="margin: 0.35rem 0 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;">
-            <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Popular:</span>
-            <button type="button" class="btn" onclick="setDriverRoute('Guwahati', 'Shillong')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;">Guwahati ➔ Shillong</button>
-            <button type="button" class="btn" onclick="setDriverRoute('Guwahati', 'Jorhat')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;">Guwahati ➔ Jorhat</button>
-            <button type="button" class="btn" onclick="setDriverRoute('Guwahati', 'Nagaon')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;">Guwahati ➔ Nagaon</button>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Travel Date*</label>
-              <input type="date" id="df-date" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Departure Time*</label>
-              <input type="time" id="df-time" class="form-control" value="08:30">
-            </div>
-          </div>
-
-          <div id="df-route-preview-badge" style="display: none; background: rgba(2, 132, 199, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.8rem; color: #bae6fd; margin-bottom: 0.75rem; justify-content: space-between; align-items: center;">
-            <div>
+</div>
+</div>
+</header>
+<!-- NAVIGATION TABS (100% MOBILE RESPONSIVE - PERFECT 3-COLUMN FIT) -->
+<div class="nav-tabs-wrapper">
+<div class="tab-bar"><button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')"><span class="tab-btn-icon">🚗</span> <span class="tab-btn-label">Post Ride</span></button><button class="tab-btn active" id="tab-btn-passenger" onclick="showSection('passenger')"><span class="tab-btn-icon">🔍</span> <span class="tab-btn-label">Find Ride</span></button><button class="tab-btn" id="tab-btn-tickets" onclick="showSection('tickets')"><span class="tab-btn-icon">🎟️</span> <span class="tab-btn-label">Bookings (<span id="my-tickets-count">0</span>)</span></button></div>
+</div>
+<main>
+<!-- ==================== 1. DRIVER SECTION ==================== -->
+<section id="section-driver" style="display: none;">
+<!-- Driver Wizard Progress Bar -->
+<div class="step-progress-bar">
+<div class="step-badge active" id="d-step-1-ind" onclick="goToDriverStep(1)">1. Route</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<div class="step-badge" id="d-step-2-ind" onclick="goToDriverStep(2)">2. Vehicle</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<div class="step-badge" id="d-step-3-ind" onclick="goToDriverStep(3)">3. Platform Fee</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<div class="step-badge" id="d-step-4-ind" onclick="goToDriverStep(4)">4. Live Dashboard</div>
+</div>
+<!-- Main Driver Card -->
+<div class="app-card">
+<!-- ==================== DRIVER STEP 1: ROUTE & SCHEDULE (ZERO SCROLL) ==================== -->
+<div class="step-flip-card" id="driver-step-1">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 1 of 4</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Route &amp; Travel Schedule</h2>
+</div>
+<span style="font-size: 0.7rem; background: #0284c7; color: white; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">Driver Post</span>
+</div>
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Origin (From)*</label>
+<input class="form-control" id="df-from" oninput="updateDriverRoutePreview()" placeholder="e.g. Guwahati" type="text" value="Guwahati"/>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Destination (To)*</label>
+<input class="form-control" id="df-to" oninput="updateDriverRoutePreview()" placeholder="e.g. Shillong or Jorhat" type="text" value="Shillong"/>
+</div>
+</div>
+<!-- Quick Corridor Chips for Drivers -->
+<div style="margin: 0.35rem 0 0.75rem; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;">
+<span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Popular:</span>
+<button class="btn" onclick="setDriverRoute('Guwahati', 'Shillong')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;" type="button">Guwahati ➔ Shillong</button>
+<button class="btn" onclick="setDriverRoute('Guwahati', 'Jorhat')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;" type="button">Guwahati ➔ Jorhat</button>
+<button class="btn" onclick="setDriverRoute('Guwahati', 'Nagaon')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;" type="button">Guwahati ➔ Nagaon</button>
+</div>
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Travel Date*</label>
+<input class="form-control" id="df-date" type="date"/>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Departure Time*</label>
+<input class="form-control" id="df-time" type="time" value="08:30"/>
+</div>
+</div>
+<div id="df-route-preview-badge" style="display: none; background: rgba(2, 132, 199, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.45rem 0.75rem; border-radius: 10px; font-size: 0.78rem; color: #bae6fd; margin-bottom: 0.75rem; justify-content: space-between; align-items: center;">
+<div>
               🛣️ <strong id="df-route-preview-text">Route: Guwahati ➔ Shillong</strong> • <span id="df-route-preview-dist">~98 km (~2h 45m)</span>
-            </div>
-            <button type="button" onclick="previewDriverRouteOnMap()" style="background: #0284c7; color: white; border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: 700;">
-              🗺️ Route Map
+</div>
+<button onclick="previewDriverRouteOnMap()" style="background: #0284c7; color: white; border: none; padding: 2px 7px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; font-weight: 700;" type="button">
+              🗺️ Map
             </button>
-          </div>
-
-          <!-- Next Button -->
-          <div style="margin-top: 1rem;">
-            <button type="button" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 800; border-radius: 12px; cursor: pointer;" onclick="goToDriverStep1B()">
-              Next: Vehicle & Fare Details (Step 2 ➔)
+</div>
+<!-- Next Button (Step 1 ➔ Step 2) -->
+<div style="margin-top: 1rem;">
+<button class="btn btn-primary" onclick="goToDriverStep(2)" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 800; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 14px rgba(29,78,216,0.4);" type="button">
+              Next: Vehicle &amp; Fare Details (Step 2 ➔)
             </button>
-          </div>
-        </div>
-
-        <!-- DRIVER STEP 1B: VEHICLE & PRICING (ZERO SCROLL) -->
-        <div id="driver-step-1b" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; padding: 0.35rem 0.75rem; background: rgba(15,23,42,0.85); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
-            <span style="font-size: 0.8rem; font-weight: 800; color: #38bdf8;">🚗 Step 2 of 4: Car, Seats & Driver Details</span>
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(1)" style="padding: 2px 8px; font-size: 0.74rem; border-radius: 6px;">⬅️ Edit Route</button>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Vehicle Model*</label>
-              <input type="text" id="df-model" class="form-control" placeholder="e.g. Kia Carens, Maruti Dzire">
-            </div>
-            <div class="form-group">
-              <label>License Plate Number*</label>
-              <input type="text" id="df-plate" class="form-control" placeholder="e.g. AS 01 AB 1234">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Empty Seats Available*</label>
-              <select id="df-seats" class="form-control">
-                <option value="1">1 Seat Empty</option>
-                <option value="2">2 Seats Empty</option>
-                <option value="3" selected>3 Seats Empty</option>
-                <option value="4">4 Seats Empty</option>
-                <option value="5">5 Seats Empty</option>
-                <option value="6">6 Seats Empty (SUV)</option>
-                <option value="7">7 Seats Empty (Innova/Ertiga)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Fare Per Seat (₹)*</label>
-              <div style="position: relative;">
-                <span style="position: absolute; left: 12px; top: 8px; font-weight: 900; color: #38bdf8; font-size: 1.1rem;">₹</span>
-                <input type="number" id="df-fare" class="form-control" placeholder="300" value="300" style="padding-left: 28px; font-weight: 900; color: #4ade80;">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Driver Full Name*</label>
-              <input type="text" id="df-name" class="form-control" placeholder="e.g. Bikram Das">
-            </div>
-            <div class="form-group">
-              <label>WhatsApp Number*</label>
-              <input type="tel" id="df-phone" class="form-control" placeholder="10-digit number" maxlength="10">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Pickup Landmark & Notes</label>
-            <input type="text" id="df-notes" class="form-control" placeholder="e.g. Near Paltan Bazar, AC available">
-          </div>
-
-          <!-- Navigation Buttons -->
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(1)" style="flex: 1; padding: 0.75rem; border-radius: 10px;">
+</div>
+</div>
+<!-- ==================== DRIVER STEP 2: VEHICLE & PRICING (ZERO SCROLL) ==================== -->
+<div class="step-flip-card" id="driver-step-2" style="display: none;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 2 of 4</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Car, Seats &amp; Driver Details</h2>
+</div>
+<button class="btn btn-secondary" onclick="goToDriverStep(1)" style="padding: 2px 8px; font-size: 0.74rem; border-radius: 6px;" type="button">⬅️ Edit Route</button>
+</div>
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Vehicle Model*</label>
+<input class="form-control" id="df-model" placeholder="e.g. Maruti Dzire, Innova" type="text" value="Swift Dzire"/>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>License Plate Number*</label>
+<input class="form-control" id="df-plate" placeholder="e.g. AS 01 AB 1234" type="text" value="AS 01 BP 4921"/>
+</div>
+</div>
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Empty Seats Available*</label>
+<select class="form-control" id="df-seats">
+<option value="1">1 Seat Empty</option>
+<option value="2">2 Seats Empty</option>
+<option selected="" value="3">3 Seats Empty</option>
+<option value="4">4 Seats Empty</option>
+<option value="5">5 Seats Empty</option>
+<option value="6">6 Seats Empty (SUV)</option>
+<option value="7">7 Seats Empty (Innova/Ertiga)</option>
+</select>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Fare Per Seat (₹)*</label>
+<div style="position: relative;">
+<span style="position: absolute; left: 12px; top: 8px; font-weight: 900; color: #38bdf8; font-size: 1.1rem;">₹</span>
+<input class="form-control" id="df-fare" placeholder="300" style="padding-left: 28px; font-weight: 900; color: #4ade80;" type="number" value="300"/>
+</div>
+</div>
+</div>
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Driver Full Name*</label>
+<input class="form-control" id="df-name" placeholder="e.g. Bikram Das" type="text" value="Bikram Das"/>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>WhatsApp Number*</label>
+<input class="form-control" id="df-phone" maxlength="10" placeholder="10-digit number" type="tel" value="9864012345"/>
+</div>
+</div>
+<div class="form-group" style="margin-bottom: 0.75rem;">
+<label>Pickup Landmark &amp; Notes</label>
+<input class="form-control" id="df-notes" placeholder="e.g. Near Paltan Bazar, AC available" type="text"/>
+</div>
+<!-- Navigation Buttons (Step 2 ➔ Step 3) -->
+<div style="display: flex; gap: 0.5rem; margin-top: 0.85rem;">
+<button class="btn btn-secondary" onclick="goToDriverStep(1)" style="flex: 1; padding: 0.75rem; border-radius: 10px;" type="button">
               ⬅️ Previous (Route)
             </button>
-            <button type="button" class="btn btn-primary" onclick="proceedToDriverStep2()" style="flex: 1.5; padding: 0.75rem; font-weight: 800; border-radius: 10px;">
+<button class="btn btn-primary" onclick="proceedToDriverStep3()" style="flex: 1.5; padding: 0.75rem; font-weight: 800; border-radius: 10px;" type="button">
               Next: Platform Fee (Step 3 ➔)
             </button>
-          </div>
-        </div>
-
-        <!-- DRIVER STEP 2: UPLOAD DRIVER'S OWN RECEIVING QR CODE -->
-        <div id="driver-step-2" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <h2 class="card-title" style="margin-bottom: 0;">Step 2: Upload Your Receiving QR Code</h2>
-            <span style="font-size: 0.75rem; font-weight: 800; background: #e0e7ff; color: #1e3a8a; padding: 3px 10px; border-radius: 9999px;">Step 2 of 3</span>
-          </div>
-          <p class="card-subtitle">Upload your PhonePe / Google Pay / Paytm QR code. When customers book seats, they will pay your fare directly to this QR!</p>
-
-          <div style="background: #f8fafc; border: 2px dashed #93c5fd; border-radius: 16px; padding: 1.5rem; text-align: center; margin-bottom: 1.25rem;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📸</div>
-            <strong style="display: block; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.5rem;">
-              Select & Upload Your UPI QR Image:
-            </strong>
-            <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem;">
-              (Take a screenshot of your Google Pay / PhonePe / Paytm receiving QR and upload here)
+</div>
+</div>
+<!-- ==================== DRIVER STEP 3: ₹100 PLATFORM FEE & QR (ZERO SCROLL) ==================== -->
+<div class="step-flip-card" id="driver-step-3" style="display: none;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 3 of 4</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">₹100 Platform Fee &amp; Verification</h2>
+</div>
+<button class="btn btn-secondary" onclick="goToDriverStep(2)" style="padding: 2px 8px; font-size: 0.74rem; border-radius: 6px;" type="button">⬅️ Edit Car</button>
+</div>
+<!-- SafarSaathi Official QR -->
+<div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid #0284c7; border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
+<div style="font-weight: 800; font-size: 0.88rem; color: #ffffff;">Pay ₹100 Platform Fee to Activate</div>
+<div style="font-size: 0.74rem; color: #94a3b8;">Jana Small Finance Bank • 6901027507@nyes</div>
+<div style="margin: 0.4rem auto; width: 130px; height: 130px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 4px; border: 2px solid #0284c7;">
+<img alt="SafarSaathi QR" src="mitali_qr_compact.svg" style="width: 100%; height: 100%; object-fit: contain;"/>
+</div>
+<div style="background: rgba(2,132,199,0.25); color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; font-weight: 800; display: inline-block;">
+              6901027507@nyes
+            </div>
+</div>
+<!-- Driver's Receiving UPI ID -->
+<div class="form-group" style="margin-bottom: 0.65rem;">
+<label>Your Receiving UPI ID (For Passenger Payments)*</label>
+<input class="form-control" id="df-driver-upi" placeholder="e.g. 9864012345@upi" type="text" value="9864012345@upi"/>
+</div>
+<!-- 12-Digit UTR -->
+<div class="form-group" style="margin-bottom: 0.75rem;">
+<label>12-Digit Bank Payment UTR Number (for ₹100)*</label>
+<input class="form-control" id="df-utr" maxlength="12" placeholder="e.g. 987654321012" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; letter-spacing: 1px; border: 1.5px solid #0284c7;" type="text"/>
+</div>
+<!-- Buttons (Step 3 ➔ Step 4) -->
+<div style="display: flex; gap: 0.5rem; margin-top: 0.85rem;">
+<button class="btn btn-secondary" onclick="goToDriverStep(2)" style="flex: 1; padding: 0.75rem; border-radius: 10px;" type="button">
+              ⬅️ Previous (Vehicle)
+            </button>
+<button class="btn btn-primary" onclick="submitDriverRideDirect()" style="flex: 1.5; padding: 0.75rem; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 14px rgba(29,78,216,0.45);" type="button">
+              🚀 Submit &amp; Activate Ride ➔
+            </button>
+</div>
+</div>
+<!-- ==================== DRIVER STEP 4: ACTIVE DASHBOARD (MY POSTED VEHICLES) ==================== -->
+<div class="step-flip-card" id="driver-step-4" style="display: none;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<div>
+<div style="font-size: 0.72rem; color: #22c55e; font-weight: 800; text-transform: uppercase;">Step 4 of 4 • Active</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Driver Live Dashboard</h2>
+</div>
+<button class="btn btn-primary" onclick="goToDriverStep(1)" style="padding: 0.3rem 0.75rem; font-size: 0.75rem; border-radius: 8px;" type="button">
+              ➕ Post Another Ride
+            </button>
+</div>
+<!-- Success Alert Card -->
+<div style="background: rgba(34, 197, 94, 0.15); border: 1.5px solid #22c55e; border-radius: 14px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
+<strong style="color: #4ade80; font-size: 0.95rem; display: block;">🎉 Ride Submitted for Instant Approval!</strong>
+<p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0;">
+              WhatsApp alert sent to Admin (+91 6901027507) for 1-tap activation. Once verified, your car will appear live on Passenger Search!
             </p>
-            <input type="file" id="df-qr-file" accept="image/*" class="form-control" style="max-width: 340px; margin: 0 auto;" onchange="handleDriverQrUpload(event)">
-            
-            <div style="margin: 0.85rem 0; font-size: 0.82rem; color: #64748b; font-weight: 700;">— OR ENTER YOUR UPI ID —</div>
-            <div class="form-group" style="max-width: 340px; margin: 0 auto;">
-              <input type="text" id="df-upi" class="form-control" placeholder="e.g. 9864012345@upi" value="9864012345@upi" style="text-align: center;">
-            </div>
-
-            <!-- Uploaded Preview Box -->
-            <div id="df-qr-preview-box" style="display: none; margin-top: 1rem;">
-              <div style="font-size: 0.8rem; font-weight: 800; color: #15803d; margin-bottom: 6px;">✓ Driver Payment QR Loaded:</div>
-              <img id="df-qr-preview" style="max-width: 160px; max-height: 160px; border-radius: 12px; border: 2px solid #2563eb; box-shadow: var(--shadow-md);">
-            </div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-            <button type="button" class="btn btn-primary" style="height: 52px; font-size: 1.05rem;" onclick="goToDriverStep3()">
-              ➡️ Next: Pay ₹100 Platform Activation Fee ➔
+</div>
+<!-- My Posted Vehicles List (Only shown here in Step 4!) -->
+<h3 style="font-size: 1rem; font-weight: 800; color: white; margin: 0.75rem 0 0.5rem;">My Active &amp; Managed Vehicles:</h3>
+<div id="driver-posted-rides-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+<div style="display: flex; justify-content: space-between; margin-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.75rem;">
+<button class="btn btn-secondary" onclick="goToDriverStep(1)" style="padding: 0.5rem 1rem; border-radius: 8px;" type="button">
+              ➕ Post Another Ride
             </button>
-            <button type="button" class="btn btn-outline" style="font-size: 0.9rem;" onclick="backToDriverStep1()">
-              ⬅️ Back to Journey Details
+<button class="btn btn-secondary" onclick="showSection('passenger')" style="padding: 0.5rem 1rem; border-radius: 8px; color: #38bdf8; border: 1px solid #38bdf8;" type="button">
+              🔍 View Passenger Portal ➔
             </button>
-          </div>
-        </div>
-
-        <!-- DRIVER STEP 3: PAY ₹100 PLATFORM LISTING CHARGE ON SAFARSAATHI QR -->
-        <div id="driver-step-3" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <h2 class="card-title" style="margin-bottom: 0;">Step 3: Pay ₹100 on SafarSaathi QR to Go Live</h2>
-            <span style="font-size: 0.75rem; font-weight: 800; background: #0f172a; color: #ffffff; padding: 3px 10px; border-radius: 9999px;">Step 3 of 3 (Final)</span>
-          </div>
-          <p class="card-subtitle">Pay the platform activation charge on SafarSaathi's official QR code below to make your ride live on the customer portal</p>
-
-          <!-- Ride Summary Preview -->
-          <div id="payment-ride-summary" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; padding: 0.9rem 1.1rem; margin-bottom: 1rem; font-size: 0.9rem;"></div>
-
-          <!-- SafarSaathi Official Platform QR Card -->
-          <div class="payment-step-card">
-            <div style="font-weight: 900; font-size: 1.15rem; color: #0f172a;">
-              SafarSaathi Official Platform QR Code
-            </div>
-            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
-              Payee: SafarSaathi • Jana SFB (6901027507@nyes)
-            </div>
-
-            <!-- Visible Platform QR Code -->
-            <div style="margin: 0.85rem auto; width: 180px; height: 180px; background: white; border: 2px solid var(--primary-blue); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md);">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" width="180" height="180" shape-rendering="crispEdges"><rect width="180" height="180" fill="white"/><path d="M0,0h1v1h-1zM1,0h1v1h-1zM2,0h1v1h-1zM3,0h1v1h-1zM4,0h1v1h-1zM5,0h1v1h-1zM6,0h1v1h-1zM9,0h1v1h-1zM15,0h1v1h-1zM16,0h1v1h-1zM18,0h1v1h-1zM19,0h1v1h-1zM20,0h1v1h-1zM22,0h1v1h-1zM23,0h1v1h-1zM24,0h1v1h-1zM25,0h1v1h-1zM28,0h1v1h-1zM30,0h1v1h-1zM31,0h1v1h-1zM32,0h1v1h-1zM33,0h1v1h-1zM34,0h1v1h-1zM35,0h1v1h-1zM36,0h1v1h-1zM0,1h1v1h-1zM6,1h1v1h-1zM8,1h1v1h-1zM9,1h1v1h-1zM11,1h1v1h-1zM12,1h1v1h-1zM21,1h1v1h-1zM22,1h1v1h-1zM26,1h1v1h-1zM27,1h1v1h-1zM28,1h1v1h-1zM30,1h1v1h-1zM36,1h1v1h-1zM0,2h1v1h-1zM2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM6,2h1v1h-1zM9,2h1v1h-1zM10,2h1v1h-1zM11,2h1v1h-1zM14,2h1v1h-1zM16,2h1v1h-1zM20,2h1v1h-1zM21,2h1v1h-1zM22,2h1v1h-1zM26,2h1v1h-1zM27,2h1v1h-1zM28,2h1v1h-1zM30,2h1v1h-1zM32,2h1v1h-1zM33,2h1v1h-1zM34,2h1v1h-1zM36,2h1v1h-1zM0,3h1v1h-1zM2,3h1v1h-1zM3,3h1v1h-1zM4,3h1v1h-1zM6,3h1v1h-1zM8,3h1v1h-1zM9,3h1v1h-1zM11,3h1v1h-1zM16,3h1v1h-1zM23,3h1v1h-1zM24,3h1v1h-1zM25,3h1v1h-1zM26,3h1v1h-1zM28,3h1v1h-1zM30,3h1v1h-1zM32,3h1v1h-1zM33,3h1v1h-1zM34,3h1v1h-1zM36,3h1v1h-1zM0,4h1v1h-1zM2,4h1v1h-1zM3,4h1v1h-1zM4,4h1v1h-1zM6,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM13,4h1v1h-1zM14,4h1v1h-1zM15,4h1v1h-1zM17,4h1v1h-1zM19,4h1v1h-1zM20,4h1v1h-1zM21,4h1v1h-1zM22,4h1v1h-1zM23,4h1v1h-1zM25,4h1v1h-1zM30,4h1v1h-1zM32,4h1v1h-1zM33,4h1v1h-1zM34,4h1v1h-1zM36,4h1v1h-1zM0,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM10,5h1v1h-1zM13,5h1v1h-1zM14,5h1v1h-1zM15,5h1v1h-1zM16,5h1v1h-1zM17,5h1v1h-1zM20,5h1v1h-1zM21,5h1v1h-1zM27,5h1v1h-1zM30,5h1v1h-1zM36,5h1v1h-1zM0,6h1v1h-1zM1,6h1v1h-1zM2,6h1v1h-1zM3,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM12,6h1v1h-1zM14,6h1v1h-1zM16,6h1v1h-1zM18,6h1v1h-1zM20,6h1v1h-1zM22,6h1v1h-1zM24,6h1v1h-1zM26,6h1v1h-1zM28,6h1v1h-1zM30,6h1v1h-1zM31,6h1v1h-1zM32,6h1v1h-1zM33,6h1v1h-1zM34,6h1v1h-1zM35,6h1v1h-1zM36,6h1v1h-1zM12,7h1v1h-1zM13,7h1v1h-1zM15,7h1v1h-1zM21,7h1v1h-1zM22,7h1v1h-1zM24,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM0,8h1v1h-1zM1,8h1v1h-1zM2,8h1v1h-1zM3,8h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM9,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM15,8h1v1h-1zM19,8h1v1h-1zM24,8h1v1h-1zM25,8h1v1h-1zM26,8h1v1h-1zM29,8h1v1h-1zM31,8h1v1h-1zM33,8h1v1h-1zM35,8h1v1h-1zM2,9h1v1h-1zM3,9h1v1h-1zM4,9h1v1h-1zM5,9h1v1h-1zM7,9h1v1h-1zM15,9h1v1h-1zM16,9h1v1h-1zM19,9h1v1h-1zM20,9h1v1h-1zM21,9h1v1h-1zM22,9h1v1h-1zM23,9h1v1h-1zM26,9h1v1h-1zM28,9h1v1h-1zM29,9h1v1h-1zM34,9h1v1h-1zM2,10h1v1h-1zM3,10h1v1h-1zM4,10h1v1h-1zM6,10h1v1h-1zM11,10h1v1h-1zM12,10h1v1h-1zM18,10h1v1h-1zM21,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM27,10h1v1h-1zM30,10h1v1h-1zM34,10h1v1h-1zM36,10h1v1h-1zM1,11h1v1h-1zM2,11h1v1h-1zM3,11h1v1h-1zM9,11h1v1h-1zM10,11h1v1h-1zM11,11h1v1h-1zM14,11h1v1h-1zM16,11h1v1h-1zM18,11h1v1h-1zM19,11h1v1h-1zM21,11h1v1h-1zM23,11h1v1h-1zM27,11h1v1h-1zM35,11h1v1h-1zM2,12h1v1h-1zM3,12h1v1h-1zM4,12h1v1h-1zM5,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM10,12h1v1h-1zM11,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM20,12h1v1h-1zM24,12h1v1h-1zM25,12h1v1h-1zM26,12h1v1h-1zM27,12h1v1h-1zM28,12h1v1h-1zM30,12h1v1h-1zM31,12h1v1h-1zM32,12h1v1h-1zM34,12h1v1h-1zM35,12h1v1h-1zM0,13h1v1h-1zM1,13h1v1h-1zM5,13h1v1h-1zM7,13h1v1h-1zM9,13h1v1h-1zM10,13h1v1h-1zM12,13h1v1h-1zM13,13h1v1h-1zM14,13h1v1h-1zM15,13h1v1h-1zM17,13h1v1h-1zM18,13h1v1h-1zM20,13h1v1h-1zM21,13h1v1h-1zM22,13h1v1h-1zM23,13h1v1h-1zM24,13h1v1h-1zM28,13h1v1h-1zM29,13h1v1h-1zM33,13h1v1h-1zM0,14h1v1h-1zM1,14h1v1h-1zM2,14h1v1h-1zM6,14h1v1h-1zM13,14h1v1h-1zM14,14h1v1h-1zM15,14h1v1h-1zM16,14h1v1h-1zM17,14h1v1h-1zM20,14h1v1h-1zM21,14h1v1h-1zM27,14h1v1h-1zM29,14h1v1h-1zM30,14h1v1h-1zM31,14h1v1h-1zM33,14h1v1h-1zM36,14h1v1h-1zM0,15h1v1h-1zM1,15h1v1h-1zM2,15h1v1h-1zM3,15h1v1h-1zM4,15h1v1h-1zM8,15h1v1h-1zM10,15h1v1h-1zM12,15h1v1h-1zM13,15h1v1h-1zM15,15h1v1h-1zM20,15h1v1h-1zM21,15h1v1h-1zM24,15h1v1h-1zM26,15h1v1h-1zM28,15h1v1h-1zM29,15h1v1h-1zM3,16h1v1h-1zM5,16h1v1h-1zM6,16h1v1h-1zM7,16h1v1h-1zM8,16h1v1h-1zM10,16h1v1h-1zM12,16h1v1h-1zM14,16h1v1h-1zM15,16h1v1h-1zM17,16h1v1h-1zM19,16h1v1h-1zM20,16h1v1h-1zM24,16h1v1h-1zM25,16h1v1h-1zM26,16h1v1h-1zM27,16h1v1h-1zM30,16h1v1h-1zM31,16h1v1h-1zM32,16h1v1h-1zM33,16h1v1h-1zM34,16h1v1h-1zM2,17h1v1h-1zM7,17h1v1h-1zM15,17h1v1h-1zM16,17h1v1h-1zM19,17h1v1h-1zM21,17h1v1h-1zM23,17h1v1h-1zM25,17h1v1h-1zM29,17h1v1h-1zM33,17h1v1h-1zM35,17h1v1h-1zM0,18h1v1h-1zM1,18h1v1h-1zM2,18h1v1h-1zM3,18h1v1h-1zM5,18h1v1h-1zM6,18h1v1h-1zM7,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM12,18h1v1h-1zM17,18h1v1h-1zM18,18h1v1h-1zM22,18h1v1h-1zM24,18h1v1h-1zM26,18h1v1h-1zM27,18h1v1h-1zM28,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM36,18h1v1h-1zM1,19h1v1h-1zM3,19h1v1h-1zM8,19h1v1h-1zM9,19h1v1h-1zM11,19h1v1h-1zM14,19h1v1h-1zM16,19h1v1h-1zM19,19h1v1h-1zM20,19h1v1h-1zM21,19h1v1h-1zM29,19h1v1h-1zM30,19h1v1h-1zM35,19h1v1h-1zM36,19h1v1h-1zM0,20h1v1h-1zM2,20h1v1h-1zM4,20h1v1h-1zM5,20h1v1h-1zM6,20h1v1h-1zM7,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM11,20h1v1h-1zM17,20h1v1h-1zM19,20h1v1h-1zM22,20h1v1h-1zM25,20h1v1h-1zM26,20h1v1h-1zM27,20h1v1h-1zM28,20h1v1h-1zM30,20h1v1h-1zM31,20h1v1h-1zM32,20h1v1h-1zM34,20h1v1h-1zM1,21h1v1h-1zM4,21h1v1h-1zM5,21h1v1h-1zM9,21h1v1h-1zM10,21h1v1h-1zM12,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM15,21h1v1h-1zM19,21h1v1h-1zM20,21h1v1h-1zM21,21h1v1h-1zM23,21h1v1h-1zM25,21h1v1h-1zM28,21h1v1h-1zM29,21h1v1h-1zM33,21h1v1h-1zM34,21h1v1h-1zM0,22h1v1h-1zM1,22h1v1h-1zM2,22h1v1h-1zM3,22h1v1h-1zM4,22h1v1h-1zM5,22h1v1h-1zM6,22h1v1h-1zM7,22h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM15,22h1v1h-1zM16,22h1v1h-1zM27,22h1v1h-1zM28,22h1v1h-1zM30,22h1v1h-1zM31,22h1v1h-1zM35,22h1v1h-1zM36,22h1v1h-1zM0,23h1v1h-1zM1,23h1v1h-1zM2,23h1v1h-1zM3,23h1v1h-1zM5,23h1v1h-1zM8,23h1v1h-1zM10,23h1v1h-1zM12,23h1v1h-1zM13,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM18,23h1v1h-1zM20,23h1v1h-1zM21,23h1v1h-1zM22,23h1v1h-1zM24,23h1v1h-1zM26,23h1v1h-1zM27,23h1v1h-1zM28,23h1v1h-1zM30,23h1v1h-1zM32,23h1v1h-1zM33,23h1v1h-1zM36,23h1v1h-1zM0,24h1v1h-1zM3,24h1v1h-1zM4,24h1v1h-1zM5,24h1v1h-1zM6,24h1v1h-1zM12,24h1v1h-1zM14,24h1v1h-1zM15,24h1v1h-1zM17,24h1v1h-1zM20,24h1v1h-1zM22,24h1v1h-1zM23,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM27,24h1v1h-1zM30,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM34,24h1v1h-1zM36,24h1v1h-1zM0,25h1v1h-1zM2,25h1v1h-1zM4,25h1v1h-1zM5,25h1v1h-1zM7,25h1v1h-1zM9,25h1v1h-1zM16,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM23,25h1v1h-1zM28,25h1v1h-1zM29,25h1v1h-1zM34,25h1v1h-1zM35,25h1v1h-1zM0,26h1v1h-1zM2,26h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM9,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM15,26h1v1h-1zM16,26h1v1h-1zM18,26h1v1h-1zM21,26h1v1h-1zM22,26h1v1h-1zM24,26h1v1h-1zM26,26h1v1h-1zM27,26h1v1h-1zM28,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM32,26h1v1h-1zM34,26h1v1h-1zM35,26h1v1h-1zM36,26h1v1h-1zM0,27h1v1h-1zM2,27h1v1h-1zM4,27h1v1h-1zM7,27h1v1h-1zM8,27h1v1h-1zM11,27h1v1h-1zM14,27h1v1h-1zM15,27h1v1h-1zM16,27h1v1h-1zM19,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM26,27h1v1h-1zM27,27h1v1h-1zM29,27h1v1h-1zM31,27h1v1h-1zM35,27h1v1h-1zM36,27h1v1h-1zM0,28h1v1h-1zM2,28h1v1h-1zM3,28h1v1h-1zM6,28h1v1h-1zM8,28h1v1h-1zM11,28h1v1h-1zM15,28h1v1h-1zM17,28h1v1h-1zM23,28h1v1h-1zM24,28h1v1h-1zM25,28h1v1h-1zM28,28h1v1h-1zM29,28h1v1h-1zM30,28h1v1h-1zM31,28h1v1h-1zM32,28h1v1h-1zM34,28h1v1h-1zM35,28h1v1h-1zM36,28h1v1h-1zM8,29h1v1h-1zM9,29h1v1h-1zM10,29h1v1h-1zM12,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM16,29h1v1h-1zM17,29h1v1h-1zM18,29h1v1h-1zM19,29h1v1h-1zM22,29h1v1h-1zM23,29h1v1h-1zM26,29h1v1h-1zM28,29h1v1h-1zM32,29h1v1h-1zM33,29h1v1h-1zM35,29h1v1h-1zM0,30h1v1h-1zM1,30h1v1h-1zM2,30h1v1h-1zM3,30h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM8,30h1v1h-1zM10,30h1v1h-1zM13,30h1v1h-1zM14,30h1v1h-1zM15,30h1v1h-1zM17,30h1v1h-1zM21,30h1v1h-1zM22,30h1v1h-1zM25,30h1v1h-1zM28,30h1v1h-1zM30,30h1v1h-1zM32,30h1v1h-1zM33,30h1v1h-1zM35,30h1v1h-1zM36,30h1v1h-1zM0,31h1v1h-1zM6,31h1v1h-1zM9,31h1v1h-1zM12,31h1v1h-1zM13,31h1v1h-1zM16,31h1v1h-1zM18,31h1v1h-1zM19,31h1v1h-1zM21,31h1v1h-1zM22,31h1v1h-1zM24,31h1v1h-1zM28,31h1v1h-1zM32,31h1v1h-1zM35,31h1v1h-1zM36,31h1v1h-1zM0,32h1v1h-1zM2,32h1v1h-1zM3,32h1v1h-1zM4,32h1v1h-1zM6,32h1v1h-1zM8,32h1v1h-1zM9,32h1v1h-1zM12,32h1v1h-1zM14,32h1v1h-1zM15,32h1v1h-1zM17,32h1v1h-1zM20,32h1v1h-1zM21,32h1v1h-1zM22,32h1v1h-1zM24,32h1v1h-1zM25,32h1v1h-1zM27,32h1v1h-1zM28,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM32,32h1v1h-1zM33,32h1v1h-1zM34,32h1v1h-1zM36,32h1v1h-1zM0,33h1v1h-1zM2,33h1v1h-1zM3,33h1v1h-1zM4,33h1v1h-1zM6,33h1v1h-1zM8,33h1v1h-1zM10,33h1v1h-1zM15,33h1v1h-1zM16,33h1v1h-1zM18,33h1v1h-1zM20,33h1v1h-1zM23,33h1v1h-1zM26,33h1v1h-1zM27,33h1v1h-1zM28,33h1v1h-1zM29,33h1v1h-1zM30,33h1v1h-1zM31,33h1v1h-1zM32,33h1v1h-1zM33,33h1v1h-1zM35,33h1v1h-1zM36,33h1v1h-1zM0,34h1v1h-1zM2,34h1v1h-1zM3,34h1v1h-1zM4,34h1v1h-1zM6,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM11,34h1v1h-1zM12,34h1v1h-1zM15,34h1v1h-1zM16,34h1v1h-1zM17,34h1v1h-1zM21,34h1v1h-1zM28,34h1v1h-1zM30,34h1v1h-1zM35,34h1v1h-1zM36,34h1v1h-1zM0,35h1v1h-1zM6,35h1v1h-1zM8,35h1v1h-1zM9,35h1v1h-1zM10,35h1v1h-1zM11,35h1v1h-1zM14,35h1v1h-1zM16,35h1v1h-1zM19,35h1v1h-1zM20,35h1v1h-1zM21,35h1v1h-1zM22,35h1v1h-1zM23,35h1v1h-1zM24,35h1v1h-1zM27,35h1v1h-1zM28,35h1v1h-1zM30,35h1v1h-1zM31,35h1v1h-1zM33,35h1v1h-1zM36,35h1v1h-1zM0,36h1v1h-1zM1,36h1v1h-1zM2,36h1v1h-1zM3,36h1v1h-1zM4,36h1v1h-1zM5,36h1v1h-1zM6,36h1v1h-1zM8,36h1v1h-1zM9,36h1v1h-1zM11,36h1v1h-1zM16,36h1v1h-1zM19,36h1v1h-1zM21,36h1v1h-1zM22,36h1v1h-1zM23,36h1v1h-1zM24,36h1v1h-1zM25,36h1v1h-1zM26,36h1v1h-1zM30,36h1v1h-1zM31,36h1v1h-1zM32,36h1v1h-1zM34,36h1v1h-1zM35,36h1v1h-1zM36,36h1v1h-1z" fill="#0f172a"/></svg>
-            </div>
-
-            <div class="qr-badge-amount">₹100.00</div>
-            <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-              One-Time Platform Listing Charge
-            </div>
-
-            <div style="background: #e0e7ff; color: #1e3a8a; padding: 0.45rem 0.9rem; border-radius: 8px; font-family: monospace; font-size: 0.95rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;" onclick="copyUpiId('6901027507@nyes')" title="Copy UPI ID">
-              <span>6901027507@nyes</span> 📋
-            </div>
-
-            <!-- Dedicated UPI App Buttons -->
-            <div style="margin-top: 1.25rem; text-align: left;">
-              <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 8px; text-align: center;">
-                Choose your preferred app to pay ₹100:
-              </span>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-                <a href="phonepe://pay?pa=6901027507@nyes&pn=SafarSaathi&am=100&cu=INR&tn=Ride_Listing_Fee" class="btn-upi-app phonepe-btn">
-                  🟣 PhonePe
-                </a>
-                <a href="tez://upi/pay?pa=6901027507@nyes&pn=SafarSaathi&am=100&cu=INR&tn=Ride_Listing_Fee" class="btn-upi-app gpay-btn">
-                  🔵 Google Pay
-                </a>
-                <a href="paytmmp://pay?pa=6901027507@nyes&pn=SafarSaathi&am=100&cu=INR&tn=Ride_Listing_Fee" class="btn-upi-app paytm-btn">
-                  🔷 Paytm
-                </a>
-                <a href="upi://pay?pa=6901027507@nyes&pn=SafarSaathi&am=100&cu=INR&tn=Ride_Listing_Fee" class="btn-upi-app other-btn">
-                  💳 Other UPI Apps
-                </a>
-              </div>
-            </div>
-
-            <!-- UTR & Payment Proof Upload with Gemini AI Engine -->
-            <div style="margin-top: 1.25rem; text-align: left; background: white; padding: 1rem; border-radius: 14px; border: 2px solid #3b82f6; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.1);">
-              
-              <!-- Gemini AI Header -->
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px dashed #cbd5e1;">
-                <div style="display: flex; align-items: center; gap: 0.45rem;">
-                  <span style="font-size: 1.25rem;">✨</span>
-                  <strong style="color: #1e3a8a; font-size: 0.92rem;">Gemini AI Automated Verification Engine</strong>
-                </div>
-                <span style="background: #dbeafe; color: #1e40af; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">AI Powered</span>
-              </div>
-
-              <label style="font-size: 0.85rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 4px;">
-                12-Digit UPI UTR / Reference Number after paying ₹100*:
-              </label>
-              <input type="text" id="df-utr" class="form-control" placeholder="e.g. 987654321012" value="" maxlength="12" style="font-size: 1.05rem; font-weight: 800; letter-spacing: 2px; color: #1e40af; font-family: monospace;">
-              
-              <!-- Optional Screenshot Upload for AI Vision Scan -->
-              <div style="margin-top: 0.75rem;">
-                <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">
-                  📸 Optional: Upload GPay / PhonePe / Paytm Payment Screenshot
-                </label>
-                <input type="file" id="df-receipt-screenshot" accept="image/*" class="form-control" style="font-size: 0.8rem;">
-              </div>
-
-              <span style="font-size: 0.75rem; color: #166534; display: block; margin-top: 6px; font-weight: 600;">
-                🤖 Gemini AI scans your ₹100 payment receipt and UTR instantly. Upon verification, your car is activated 100% LIVE on the Customer Portal with zero waiting time!
-              </span>
-            </div>
-          </div>
-
-          <!-- AI Scanning Animation Card (Hidden initially) -->
-          <div id="ai-scan-progress-box" style="display: none !important; background: #0f172a; color: white; padding: 1.25rem; border-radius: 16px; margin: 1rem 0; border: 1.5px solid #38bdf8; box-shadow: 0 10px 25px rgba(15,23,42,0.3);">
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-              <div style="font-size: 1.75rem; animation: spin 2s linear infinite;">✨</div>
-              <div>
-                <strong style="font-size: 1rem; color: #38bdf8; display: block;">Gemini AI Automated Confirmation Engine</strong>
-                <span style="font-size: 0.78rem; color: #94a3b8;">Analyzing ₹100 banking receipt & UTR checksum...</span>
-              </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.82rem; font-family: monospace;">
-              <div id="ai-step-1" style="color: #94a3b8;">⏳ Step 1: Validating 12-digit UTR checksum...</div>
-              <div id="ai-step-2" style="color: #94a3b8;">⏳ Step 2: Verifying Payee 6901027507@nyes (Jana SFB)...</div>
-              <div id="ai-step-3" style="color: #94a3b8;">⏳ Step 3: Checking ₹100.00 platform charge credit...</div>
-              <div id="ai-step-4" style="color: #94a3b8;">⏳ Step 4: Issuing official Gemini AI Certificate & Publishing...</div>
-            </div>
-          </div>
-
-          <!-- Submit Buttons -->
-          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-            <button type="button" id="btn-submit-driver-live" class="btn btn-primary" style="height: 54px; font-size: 1.05rem; background: #1d4ed8; border-color: #1d4ed8; box-shadow: 0 4px 16px rgba(29, 78, 216, 0.35); font-weight: 900;" onclick="submitDriverPaymentAndGoLive()">
-              🚀 Submit ₹100 UTR for Admin Verification ➔
-            </button>
-            <button type="button" class="btn btn-outline" style="font-size: 0.9rem;" onclick="backToDriverStep2()">
-              ⬅️ Back to QR Upload
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- My Posted Rides (Driver List) -->
-      <div class="app-card">
-        <h3 class="card-title">My Posted Vehicles</h3>
-        <p class="card-subtitle">Active and completed ride listings managed by you:</p>
-        <div id="driver-posted-rides-list" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
-      </div>
-    </section>
-
-
-    <!-- ==================== 2. PASSENGER / CUSTOMER SECTION ==================== -->
-    <section id="section-passenger">
-      <!-- Passenger Wizard Progress Bar -->
-      <div class="step-progress-bar">
-        <div id="p-step-1-ind" class="step-badge active" onclick="goToPassengerPage(1)">1. Search</div>
-        <span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-        <div id="p-step-2-ind" class="step-badge" onclick="goToPassengerPage(2)">2. Available Cars</div>
-        <span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-        <div id="p-step-3-ind" class="step-badge" onclick="goToPassengerPage(3)">3. Book Seat</div>
-        <span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
-        <div id="p-step-4-ind" class="step-badge" onclick="goToPassengerPage(4)">4. Boarding Pass</div>
-      </div>
-
-      <!-- ==================== PASSENGER PAGE 1: SEARCH ROUTE & LIVE MAP ==================== -->
-      <div id="passenger-page-1">
-        <!-- Compact Step Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; padding: 0.4rem 0.85rem; background: rgba(15,23,42,0.85); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
-          <span style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;">🚗 Step 1 of 4: Route Search</span>
-          <span style="font-size: 0.72rem; background: #0284c7; color: white; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">Assam Network</span>
-        </div>
-
-        <!-- Search Form Card -->
-        <div class="app-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <h2 class="card-title" style="margin: 0; color: #ffffff; font-size: 1.2rem;">Find Available Carpool</h2>
-            <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">Zero Commission</span>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">Origin (From):</label>
-              <input type="text" id="ps-from" class="form-control" placeholder="e.g. Guwahati">
-            </div>
-            <div class="form-group">
-              <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">Destination (To):</label>
-              <input type="text" id="ps-to" class="form-control" placeholder="e.g. Shillong or Jorhat">
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0.75rem;">
-            <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">Date of Journey:</label>
-            <input type="date" id="ps-date" class="form-control">
-          </div>
-
-          <!-- Quick Route Suggestions -->
-          <div style="margin: 0.5rem 0 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;">
-            <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">Popular Routes:</span>
-            <button type="button" class="btn" onclick="selectQuickRoute('Guwahati', 'Shillong')" style="padding: 3px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;">Guwahati ➔ Shillong</button>
-            <button type="button" class="btn" onclick="selectQuickRoute('Guwahati', 'Jorhat')" style="padding: 3px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;">Guwahati ➔ Jorhat</button>
-            <button type="button" class="btn" onclick="selectQuickRoute('Guwahati', 'Tezpur')" style="padding: 3px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;">Guwahati ➔ Tezpur</button>
-          </div>
-
-          <!-- Optional Map Bar -->
-          <div style="padding: 0.75rem 1rem; background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span>🗺️</span>
-              <span style="font-size: 0.82rem; color: #bae6fd; font-weight: 600;">Live GPS Corridor Map & Real-Time Tracking</span>
-            </div>
-            <button type="button" class="btn btn-secondary" onclick="openLiveRadarMapModal()" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; border-radius: 8px; background: rgba(15,23,42,0.8); color: #38bdf8; border: 1px solid #38bdf8; cursor: pointer;">
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 2. PASSENGER / CUSTOMER SECTION ==================== -->
+<section id="section-passenger" style="display: block;">
+<!-- Passenger Wizard Progress Bar -->
+<div class="step-progress-bar">
+<div class="step-badge active" id="p-step-1-ind" onclick="goToPassengerPage(1)">1. Search</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<div class="step-badge" id="p-step-2-ind" onclick="goToPassengerPage(2)">2. Available Cars</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<div class="step-badge" id="p-step-3-ind" onclick="goToPassengerPage(3)">3. Book Seat</div>
+<span style="color: rgba(255,255,255,0.3); font-size: 0.75rem;">➔</span>
+<div class="step-badge" id="p-step-4-ind" onclick="goToPassengerPage(4)">4. Boarding Pass</div>
+</div>
+<!-- ==================== PASSENGER PAGE 1: SEARCH ROUTE ==================== -->
+<div class="step-flip-card" id="passenger-page-1">
+<!-- Compact Step Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; padding: 0.35rem 0.75rem; background: rgba(15,23,42,0.85); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
+<span style="font-size: 0.8rem; font-weight: 800; color: #38bdf8;">🚗 Step 1 of 4: Route Search</span>
+<span style="font-size: 0.7rem; background: #0284c7; color: white; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">Assam Network</span>
+</div>
+<!-- Search Form Card -->
+<div class="app-card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+<h2 class="card-title" style="margin: 0; color: #ffffff; font-size: 1.15rem;">Find Available Carpool</h2>
+<span style="font-size: 0.72rem; background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">Zero Commission</span>
+</div>
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Origin (From):</label>
+<input class="form-control" id="ps-from" placeholder="e.g. Guwahati" type="text" value="Guwahati"/>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Destination (To):</label>
+<input class="form-control" id="ps-to" placeholder="e.g. Shillong or Jorhat" type="text" value="Shillong"/>
+</div>
+</div>
+<div class="form-group" style="margin-bottom: 0.6rem;">
+<label>Date of Journey:</label>
+<input class="form-control" id="ps-date" type="date"/>
+</div>
+<!-- Quick Route Suggestions -->
+<div style="margin: 0.4rem 0 0.85rem; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;">
+<span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Popular:</span>
+<button class="btn" onclick="selectQuickRoute('Guwahati', 'Shillong')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;" type="button">Guwahati ➔ Shillong</button>
+<button class="btn" onclick="selectQuickRoute('Guwahati', 'Jorhat')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;" type="button">Guwahati ➔ Jorhat</button>
+<button class="btn" onclick="selectQuickRoute('Guwahati', 'Nagaon')" style="padding: 2px 7px; font-size: 0.74rem; background: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 6px;" type="button">Guwahati ➔ Nagaon</button>
+</div>
+<!-- Optional Map Bar -->
+<div style="padding: 0.6rem 0.85rem; background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+<div style="display: flex; align-items: center; gap: 8px;">
+<span>🗺️</span>
+<span style="font-size: 0.78rem; color: #bae6fd; font-weight: 600;">Live GPS Route Map &amp; Radar</span>
+</div>
+<button class="btn btn-secondary" onclick="openLiveRadarMapModal()" style="padding: 0.3rem 0.75rem; font-size: 0.75rem; border-radius: 8px; background: rgba(15,23,42,0.8); color: #38bdf8; border: 1px solid #38bdf8; cursor: pointer;" type="button">
               📍 Open Map ➔
             </button>
-          </div>
-
-          <!-- Next Page Button -->
-          <button type="button" class="btn btn-primary" onclick="proceedFromSearchToCars()" style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 800; border-radius: 14px; box-shadow: 0 4px 16px rgba(29, 78, 216, 0.45); cursor: pointer;">
+</div>
+<!-- Next Page Button -->
+<button class="btn btn-primary" onclick="proceedFromSearchToCars()" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 16px rgba(29, 78, 216, 0.45); cursor: pointer;" type="button">
             🔍 Find Available Cars (Next Page ➔)
           </button>
-        </div>
-      </div>
-
-      <!-- ==================== PASSENGER PAGE 2: AVAILABLE CARS (CAR-BY-CAR CAROUSEL) ==================== -->
-      <div id="passenger-page-2" style="display: none;">
-        <div class="app-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 2 of 4</div>
-              <h2 style="font-size: 1.2rem; font-weight: 900; color: #ffffff; margin: 0;">Available Vehicles on Route</h2>
-            </div>
-            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 8px;">
+</div>
+</div>
+<!-- ==================== PASSENGER PAGE 2: AVAILABLE CARS (CAROUSEL) ==================== -->
+<div class="step-flip-card" id="passenger-page-2" style="display: none;">
+<div class="app-card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.4rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 2 of 4</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Available Vehicles on Route</h2>
+</div>
+<button class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.3rem 0.75rem; font-size: 0.75rem; border-radius: 8px;" type="button">
               ⬅️ Edit Search
             </button>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
-            <span style="font-size: 0.85rem; color: #93c5fd; font-weight: 700;" id="passenger-rides-count-label">Loading rides...</span>
-            <button type="button" class="btn btn-secondary" onclick="openLiveRadarMapModal()" style="padding: 0.3rem 0.75rem; font-size: 0.78rem; border-radius: 8px; color: #38bdf8; border: 1px solid #38bdf8;">
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+<span id="passenger-rides-count-label" style="font-size: 0.82rem; color: #93c5fd; font-weight: 700;">Loading rides...</span>
+<button class="btn btn-secondary" onclick="openLiveRadarMapModal()" style="padding: 0.25rem 0.65rem; font-size: 0.75rem; border-radius: 6px; color: #38bdf8; border: 1px solid #38bdf8;" type="button">
               🗺️ Route Map
             </button>
-          </div>
-
-          <!-- Rides Carousel Container (Shows 1 car at a time with Prev/Next, NO vertical scroll) -->
-          <div id="passenger-rides-container"></div>
-
-          <!-- Bottom Navigation -->
-          <div style="display: flex; justify-content: space-between; margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.75rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.5rem 1rem; font-weight: 700; border-radius: 8px;">
+</div>
+<!-- Rides Carousel Container -->
+<div id="passenger-rides-container"></div>
+<!-- Bottom Navigation -->
+<div style="display: flex; justify-content: space-between; margin-top: 0.85rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.65rem;">
+<button class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.45rem 0.95rem; font-weight: 700; border-radius: 8px;" type="button">
               ⬅️ Previous Page (Search)
             </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================== PASSENGER PAGE 3: SEAT SELECTION & DIRECT PAYMENT ==================== -->
-      <div id="passenger-page-3" style="display: none;">
-        <div class="app-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 3 of 4</div>
-              <h2 style="font-size: 1.2rem; font-weight: 900; color: #ffffff; margin: 0;">Seat Selection & Direct Payment</h2>
-            </div>
-            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(2)" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 8px;">
+</div>
+</div>
+</div>
+<!-- ==================== PASSENGER PAGE 3: SEAT SELECTION & PAYMENT ==================== -->
+<div class="step-flip-card" id="passenger-page-3" style="display: none;">
+<div class="app-card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.4rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 3 of 4</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Seat Selection &amp; Direct Payment</h2>
+</div>
+<button class="btn btn-secondary" onclick="goToPassengerPage(2)" style="padding: 0.3rem 0.75rem; font-size: 0.75rem; border-radius: 8px;" type="button">
               ⬅️ Change Car
             </button>
-          </div>
-
-          <!-- Selected Ride Summary -->
-          <div id="page3-ride-summary" style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid #0284c7; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 1rem;">
-          </div>
-
-          <!-- Seat Selection -->
-          <div class="form-group" style="margin-bottom: 0.75rem;">
-            <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">Number of Seats to Reserve:</label>
-            <div style="display: flex; gap: 0.5rem; margin-top: 0.35rem;" id="page3-seat-buttons-container">
-            </div>
-          </div>
-
-          <!-- Fare Calculation Box -->
-          <div style="background: rgba(34, 197, 94, 0.15); border: 1.5px solid #22c55e; border-radius: 12px; padding: 0.65rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <span style="font-size: 0.82rem; color: #86efac; font-weight: 700;">Total Travel Fare:</span>
-              <div style="font-size: 0.75rem; color: #cbd5e1;">Zero commission • 100% goes directly to driver</div>
-            </div>
-            <div id="page3-total-fare-text" style="font-size: 1.4rem; font-weight: 900; color: #4ade80;">₹0</div>
-          </div>
-
-          <!-- Driver UPI QR Code & Instructions -->
-          <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; padding: 1rem; text-align: center; margin-bottom: 1rem;">
-            <div style="font-weight: 800; font-size: 0.9rem; color: #ffffff; margin-bottom: 0.4rem;">📱 Pay Driver Directly via PhonePe / GPay / Paytm</div>
-            <div id="page3-qr-box" style="margin: 0.4rem auto; width: 150px; height: 150px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; border: 2px solid #0284c7;">
-            </div>
-            <div id="page3-driver-upi-text" style="font-family: monospace; font-weight: 700; color: #38bdf8; font-size: 0.85rem; margin-top: 0.3rem;">UPI: driver@upi</div>
-          </div>
-
-          <!-- Passenger Details -->
-          <div class="form-row">
-            <div class="form-group">
-              <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">Your Full Name*</label>
-              <input type="text" id="p3-name" class="form-control" placeholder="e.g. Rahul Sharma">
-            </div>
-            <div class="form-group">
-              <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">Your WhatsApp Number*</label>
-              <input type="tel" id="p3-phone" class="form-control" placeholder="10-digit mobile number">
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top: 0.5rem;">
-            <label style="color: #cbd5e1; font-weight: 700; font-size: 0.85rem;">12-Digit Bank Payment UTR Number*</label>
-            <input type="text" id="p3-utr" class="form-control" maxlength="12" placeholder="e.g. 427819283741" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; letter-spacing: 1px; border: 1.5px solid #0284c7;">
-            <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 2px;">Enter the 12-digit UTR/Ref from your transaction receipt.</div>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="button" class="btn btn-primary" onclick="submitBookingFromPage3()" style="width: 100%; padding: 0.9rem; font-size: 1.05rem; font-weight: 800; border-radius: 12px; margin-top: 1rem; box-shadow: 0 4px 16px rgba(29, 78, 216, 0.45); cursor: pointer;">
-            🚀 Confirm Payment & Request Seat (Next Page ➔)
+</div>
+<!-- Selected Ride Summary -->
+<div id="page3-ride-summary" style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid #0284c7; padding: 0.65rem 0.85rem; border-radius: 12px; margin-bottom: 0.85rem;">
+</div>
+<!-- Seat Selection -->
+<div class="form-group" style="margin-bottom: 0.65rem;">
+<label>Number of Seats to Reserve:</label>
+<div id="page3-seat-buttons-container" style="display: flex; gap: 0.45rem; margin-top: 0.3rem;">
+</div>
+</div>
+<!-- Fare Calculation Box -->
+<div style="background: rgba(34, 197, 94, 0.15); border: 1.5px solid #22c55e; border-radius: 12px; padding: 0.55rem 0.85rem; margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+<div>
+<span style="font-size: 0.8rem; color: #86efac; font-weight: 700;">Total Travel Fare:</span>
+<div style="font-size: 0.72rem; color: #cbd5e1;">Zero commission • 100% goes directly to driver</div>
+</div>
+<div id="page3-total-fare-text" style="font-size: 1.35rem; font-weight: 900; color: #4ade80;">₹0</div>
+</div>
+<!-- Driver UPI QR Code -->
+<div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.85rem;">
+<div style="font-weight: 800; font-size: 0.85rem; color: #ffffff; margin-bottom: 0.35rem;">📱 Pay Driver Directly via PhonePe / GPay / Paytm</div>
+<div id="page3-qr-box" style="margin: 0.35rem auto; width: 140px; height: 140px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; border: 2px solid #0284c7;">
+</div>
+<div id="page3-driver-upi-text" style="font-family: monospace; font-weight: 700; color: #38bdf8; font-size: 0.82rem; margin-top: 0.25rem;">UPI: driver@upi</div>
+</div>
+<!-- Passenger Details -->
+<div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
+<div class="form-group" style="margin: 0;">
+<label>Your Full Name*</label>
+<input class="form-control" id="p3-name" placeholder="e.g. Rahul Sharma" type="text"/>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>WhatsApp Number*</label>
+<input class="form-control" id="p3-phone" placeholder="10-digit number" type="tel"/>
+</div>
+</div>
+<div class="form-group" style="margin-top: 0.45rem;">
+<label>12-Digit Bank Payment UTR Number*</label>
+<input class="form-control" id="p3-utr" maxlength="12" placeholder="e.g. 427819283741" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; letter-spacing: 1px; border: 1.5px solid #0284c7;" type="text"/>
+<div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Enter the 12-digit UTR from your PhonePe/GPay transaction receipt.</div>
+</div>
+<!-- Submit Button -->
+<button class="btn btn-primary" onclick="submitBookingFromPage3()" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 800; border-radius: 12px; margin-top: 0.85rem; box-shadow: 0 4px 16px rgba(29, 78, 216, 0.45); cursor: pointer;" type="button">
+            🚀 Confirm Payment &amp; Request Seat (Next Page ➔)
           </button>
-
-          <!-- Back Button -->
-          <div style="display: flex; justify-content: flex-start; margin-top: 0.75rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(2)" style="padding: 0.45rem 0.95rem; border-radius: 8px;">
+<!-- Back Button -->
+<div style="display: flex; justify-content: flex-start; margin-top: 0.65rem;">
+<button class="btn btn-secondary" onclick="goToPassengerPage(2)" style="padding: 0.4rem 0.85rem; border-radius: 8px;" type="button">
               ⬅️ Previous Page (Car Selection)
             </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================== PASSENGER PAGE 4: BOARDING PASS & CONFIRMATION ==================== -->
-      <div id="passenger-page-4" style="display: none;">
-        <div class="app-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 4 of 4 • Confirmation</div>
-              <h2 style="font-size: 1.2rem; font-weight: 900; color: #ffffff; margin: 0;">Digital Boarding Pass</h2>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="goToPassengerPage(1)" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; border-radius: 8px;">
+</div>
+</div>
+</div>
+<!-- ==================== PASSENGER PAGE 4: BOARDING PASS ==================== -->
+<div class="step-flip-card" id="passenger-page-4" style="display: none;">
+<div class="app-card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<div>
+<div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; text-transform: uppercase;">Step 4 of 4 • Confirmation</div>
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Digital Boarding Pass</h2>
+</div>
+<button class="btn btn-primary" onclick="goToPassengerPage(1)" style="padding: 0.3rem 0.75rem; font-size: 0.78rem; border-radius: 8px;" type="button">
               🔄 Book Another Trip
             </button>
-          </div>
-
-          <div id="page4-ticket-container">
-          </div>
-
-          <div style="display: flex; justify-content: space-between; margin-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.55rem 1.1rem; border-radius: 8px;">
+</div>
+<div id="page4-ticket-container">
+</div>
+<div style="display: flex; justify-content: space-between; margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
+<button class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.45rem 0.95rem; border-radius: 8px;" type="button">
               🏠 Return to Route Search
             </button>
-            <button type="button" class="btn btn-secondary" onclick="showSection('tickets')" style="padding: 0.55rem 1.1rem; border-radius: 8px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8;">
+<button class="btn btn-secondary" onclick="showSection('tickets')" style="padding: 0.45rem 0.95rem; border-radius: 8px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8;" type="button">
               🎟️ View All My Bookings ➔
             </button>
-          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 3. MY TICKETS SECTION ==================== -->
+<section id="section-tickets" style="display: none;">
+<div class="app-card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+<h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🎟️ My Bookings &amp; Boarding Passes</h2>
+<span style="font-size: 0.72rem; background: #16a34a; color: white; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">Verified Passes</span>
+</div>
+<div id="tickets-container"></div>
+</div>
+</section>
+</main>
+<!-- ==================== MODAL: CUSTOMER SEAT SELECTION ➔ DRIVER QR PAYMENT ➔ REAL FIREBASE SMS OTP ==================== -->
+<div class="modal-backdrop" id="booking-modal">
+<div class="modal-card">
+<div class="modal-header">
+<h3 id="bm-modal-title">Book Seat</h3>
+<button class="btn-close" onclick="closeModal('booking-modal')">×</button>
+</div>
+<!-- Ride Summary -->
+<div id="booking-ride-summary" style="background: var(--light-blue); border: 1px solid var(--border-blue); padding: 0.85rem; border-radius: 14px; font-size: 0.88rem; margin-bottom: 1rem;"></div>
+<!-- CUSTOMER STAGE 1: SELECT SEATS & ENTER PICKUP/DROP -->
+<div id="cstep-seats-details">
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.82rem; font-weight: 800; color: #166534; margin-bottom: 1rem;">
+          Step 1: Choose how many seats you need &amp; enter your route landmarks
         </div>
-      </div>
-    </section>
-
-
-    <!-- ==================== 3. MY TICKETS SECTION ==================== -->
-    <section id="section-tickets" style="display: none;">
-      <div class="hero-banner" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 70%, #3b82f6 100%); border: 1.5px solid #2563eb;">
-        <div class="hero-content">
-          <h1>My Digital Boarding Passes & Tickets</h1>
-          <p>Confirmed bookings with unlocked driver mobile numbers and feedback rating options:</p>
-        </div>
-        <div class="hero-art">
-          <div style="position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 14px 32px rgba(0,0,0,0.5), 0 0 25px rgba(56, 189, 248, 0.35); border: 2px solid rgba(255, 255, 255, 0.3); max-width: 220px;">
-            <img src="car-bg.jpg" alt="SafarSaathi Digital Boarding Pass" style="width: 100%; height: auto; display: block; object-fit: cover;">
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent); padding: 8px 10px; font-size: 0.72rem; font-weight: 800; color: #38bdf8; display: flex; justify-content: space-between; align-items: center;">
-              <span>🎫 Boarding Pass</span>
-              <span style="background: #15803d; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.65rem;">Confirmed</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="app-card">
-        <div id="tickets-container" style="display: flex; flex-direction: column; gap: 1.25rem;"></div>
-      </div>
-    </section>
-
-  </main>
-
-
-    </div><!-- /#app-shell -->
-
-  <!-- ==================== MODAL: CUSTOMER SEAT SELECTION ➔ DRIVER QR PAYMENT ➔ REAL FIREBASE SMS OTP ==================== -->
-  <div class="modal-backdrop" id="booking-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="bm-modal-title">Book Seat</h3>
-        <button class="btn-close" onclick="closeModal('booking-modal')">&times;</button>
-      </div>
-
-      <!-- Ride Summary -->
-      <div id="booking-ride-summary" style="background: var(--light-blue); border: 1px solid var(--border-blue); padding: 0.85rem; border-radius: 14px; font-size: 0.88rem; margin-bottom: 1rem;"></div>
-
-      <!-- CUSTOMER STAGE 1: SELECT SEATS & ENTER PICKUP/DROP -->
-      <div id="cstep-seats-details">
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.82rem; font-weight: 800; color: #166534; margin-bottom: 1rem;">
-          Step 1: Choose how many seats you need & enter your route landmarks
-        </div>
-
-        <!-- Interactive Seat Picker with Live Calculation -->
-        <div class="form-group">
-          <label>Select Number of Seats (1 to 7)*</label>
-          <div class="seat-grid-picker" id="seat-chips-container"></div>
-          <input type="hidden" id="bm-selected-seats" value="1">
-          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 0.85rem 1rem; margin-top: 8px;" id="seat-selection-summary">
-            <!-- Dynamic calculation filled by JS -->
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Boarding Point / Landmark*</label>
-          <input type="text" id="bm-pickup" class="form-control" placeholder="e.g. Paltan Bazar Railway Station, Main Circle">
-        </div>
-
-        <div class="form-group">
-          <label>Drop-off Point / Landmark*</label>
-          <input type="text" id="bm-drop" class="form-control" placeholder="e.g. Police Bazar, Secretariat, or destination landmark">
-        </div>
-
-        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
-          <button type="button" class="btn btn-secondary" style="width: auto;" onclick="closeModal('booking-modal')">Cancel</button>
-          <button type="button" class="btn btn-primary" style="width: auto;" onclick="proceedToCustomerDriverPayment()">
+<!-- Interactive Seat Picker with Live Calculation -->
+<div class="form-group">
+<label>Select Number of Seats (1 to 7)*</label>
+<div class="seat-grid-picker" id="seat-chips-container"></div>
+<input id="bm-selected-seats" type="hidden" value="1"/>
+<div id="seat-selection-summary" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 0.85rem 1rem; margin-top: 8px;">
+<!-- Dynamic calculation filled by JS -->
+</div>
+</div>
+<div class="form-group">
+<label>Boarding Point / Landmark*</label>
+<input class="form-control" id="bm-pickup" placeholder="e.g. Paltan Bazar Railway Station, Main Circle" type="text"/>
+</div>
+<div class="form-group">
+<label>Drop-off Point / Landmark*</label>
+<input class="form-control" id="bm-drop" placeholder="e.g. Police Bazar, Secretariat, or destination landmark" type="text"/>
+</div>
+<div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+<button class="btn btn-secondary" onclick="closeModal('booking-modal')" style="width: auto;" type="button">Cancel</button>
+<button class="btn btn-primary" onclick="proceedToCustomerDriverPayment()" style="width: auto;" type="button">
             💳 Next: Pay Driver via Driver's QR ➔
           </button>
-        </div>
-      </div>
-
-      <!-- CUSTOMER STAGE 2: PAY DRIVER ON DRIVER'S UPLOADED QR CODE -->
-      <div id="cstep-driver-payment" style="display: none;">
-        <div style="text-align: center; margin-bottom: 1rem;">
-          <span style="font-size: 0.75rem; font-weight: 800; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 9999px;">Step 2 of 3</span>
-          <h3 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-top: 4px;">Pay Driver Directly on Their QR Code</h3>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">Scan the driver's uploaded QR code below to pay the exact fare for your selected seats.</p>
-        </div>
-
-        <!-- Payable Breakdown Box -->
-        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 0.95rem 1.15rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; text-transform:uppercase;">Payable to Driver:</div>
-            <strong style="font-size: 1rem; color: #0f172a;" id="dp-driver-name">Driver Name</strong>
-            <div style="font-size: 0.75rem; color: #64748b;" id="dp-seats-breakdown">1 Seat × ₹300</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 1.6rem; font-weight: 900; color: #1d4ed8;" id="dp-total-fare">₹300</div>
-            <div style="font-size: 0.72rem; color: #166534; font-weight: 800;">✓ Direct to Driver Account</div>
-          </div>
-        </div>
-
-        <!-- Driver's Uploaded QR Box -->
-        <div class="payment-step-card" style="margin-top: 0;">
-          <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-bottom: 6px;">
+</div>
+</div>
+<!-- CUSTOMER STAGE 2: PAY DRIVER ON DRIVER'S UPLOADED QR CODE -->
+<div id="cstep-driver-payment" style="display: none;">
+<div style="text-align: center; margin-bottom: 1rem;">
+<span style="font-size: 0.75rem; font-weight: 800; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 9999px;">Step 2 of 3</span>
+<h3 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-top: 4px;">Pay Driver Directly on Their QR Code</h3>
+<p style="font-size: 0.85rem; color: var(--text-muted);">Scan the driver's uploaded QR code below to pay the exact fare for your selected seats.</p>
+</div>
+<!-- Payable Breakdown Box -->
+<div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 0.95rem 1.15rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+<div>
+<div style="font-size: 0.72rem; color: #64748b; font-weight: 700; text-transform:uppercase;">Payable to Driver:</div>
+<strong id="dp-driver-name" style="font-size: 1rem; color: #0f172a;">Driver Name</strong>
+<div id="dp-seats-breakdown" style="font-size: 0.75rem; color: #64748b;">1 Seat × ₹300</div>
+</div>
+<div style="text-align: right;">
+<div id="dp-total-fare" style="font-size: 1.6rem; font-weight: 900; color: #1d4ed8;">₹300</div>
+<div style="font-size: 0.72rem; color: #166534; font-weight: 800;">✓ Direct to Driver Account</div>
+</div>
+</div>
+<!-- Driver's Uploaded QR Box -->
+<div class="payment-step-card" style="margin-top: 0;">
+<div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-bottom: 6px;">
             Driver's Uploaded QR Code
           </div>
-
-          <!-- Render Uploaded Image or Dynamic Fallback QR -->
-          <div id="driver-qr-render-area" style="margin: 0.5rem auto; min-height: 180px; display: flex; align-items: center; justify-content: center;"></div>
-
-          <div style="background: #ffffff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 0.4rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 6px;" onclick="copyDriverUpiId()" title="Copy Driver UPI ID">
-            <span id="dp-driver-upi-text">driver@upi</span> 📋
+<!-- Render Uploaded Image or Dynamic Fallback QR -->
+<div id="driver-qr-render-area" style="margin: 0.5rem auto; min-height: 180px; display: flex; align-items: center; justify-content: center;"></div>
+<div onclick="copyDriverUpiId()" style="background: #ffffff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 0.4rem 0.8rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 6px;" title="Copy Driver UPI ID">
+<span id="dp-driver-upi-text">driver@upi</span> 📋
           </div>
-
-          <!-- Direct App Buttons pointing to Driver's UPI ID -->
-          <div style="margin-top: 1rem; text-align: left;">
-            <span style="font-size: 0.8rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 6px; text-align: center;">
+<!-- Direct App Buttons pointing to Driver's UPI ID -->
+<div style="margin-top: 1rem; text-align: left;">
+<span style="font-size: 0.8rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 6px; text-align: center;">
               Or tap your installed app to pay driver:
             </span>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-              <a href="#" id="btn-pay-driver-phonepe" class="btn-upi-app phonepe-btn">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+<a class="btn-upi-app phonepe-btn" href="#" id="btn-pay-driver-phonepe">
                 🟣 PhonePe
               </a>
-              <a href="#" id="btn-pay-driver-gpay" class="btn-upi-app gpay-btn">
+<a class="btn-upi-app gpay-btn" href="#" id="btn-pay-driver-gpay">
                 🔵 Google Pay
               </a>
-              <a href="#" id="btn-pay-driver-paytm" class="btn-upi-app paytm-btn">
+<a class="btn-upi-app paytm-btn" href="#" id="btn-pay-driver-paytm">
                 🔷 Paytm
               </a>
-              <a href="#" id="btn-pay-driver-other" class="btn-upi-app other-btn">
+<a class="btn-upi-app other-btn" href="#" id="btn-pay-driver-other">
                 💳 Other UPI Apps
               </a>
-            </div>
-          </div>
-
-          <!-- Customer UTR Input -->
-          <div style="margin-top: 1rem; text-align: left; background: white; padding: 1rem; border-radius: 12px; border: 1.5px solid #bfdbfe;">
-            <label style="font-size: 0.85rem; font-weight: 800; color: var(--text-dark); display: block; margin-bottom: 4px;">
+</div>
+</div>
+<!-- Customer UTR Input -->
+<div style="margin-top: 1rem; text-align: left; background: white; padding: 1rem; border-radius: 12px; border: 1.5px solid #bfdbfe;">
+<label style="font-size: 0.85rem; font-weight: 800; color: var(--text-dark); display: block; margin-bottom: 4px;">
               Enter 12-Digit UPI UTR / Transaction Reference Number*:
             </label>
-            <input type="text" id="dp-utr-input" class="form-control" placeholder="12-digit UTR from your PhonePe/GPay receipt" value="" maxlength="12" style="font-size: 1rem; font-weight: 700; letter-spacing: 1px;">
-            <span style="font-size: 0.75rem; color: #1e40af; display: block; margin-top: 6px;">
-              🔒 100% Secure: The driver verifies this UTR in their UPI app before your seat & ticket are confirmed.
+<input class="form-control" id="dp-utr-input" maxlength="12" placeholder="12-digit UTR from your PhonePe/GPay receipt" style="font-size: 1rem; font-weight: 700; letter-spacing: 1px;" type="text" value=""/>
+<span style="font-size: 0.75rem; color: #1e40af; display: block; margin-top: 6px;">
+              🔒 100% Secure: The driver verifies this UTR in their UPI app before your seat &amp; ticket are confirmed.
             </span>
-          </div>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-          <button type="button" class="btn btn-primary" style="height: 52px; font-size: 1.05rem;" onclick="proceedToCustomerMobileOtp()">
-            📱 I Have Paid: Enter Mobile & Receive Real SMS OTP ➔
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 0.5rem;">
+<button class="btn btn-primary" onclick="proceedToCustomerMobileOtp()" style="height: 52px; font-size: 1.05rem;" type="button">
+            📱 I Have Paid: Enter Mobile &amp; Receive Real SMS OTP ➔
           </button>
-          <button type="button" class="btn btn-outline" style="font-size: 0.85rem;" onclick="backToCustomerSeats()">
+<button class="btn btn-outline" onclick="backToCustomerSeats()" style="font-size: 0.85rem;" type="button">
             ⬅️ Back to Seat Selection
           </button>
-        </div>
-      </div>
-
-      <!-- CUSTOMER STAGE 3: WHATSAPP LOGIN & VERIFICATION (100% FREE & ZERO SMS DELAY) -->
-      <div id="cstep-mobile-otp" style="display: none;">
-        
-        <!-- Big Prominent WhatsApp Requirement Banner -->
-        <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 16px; padding: 0.9rem 1.1rem; margin-bottom: 1.25rem; text-align: left; display: flex; align-items: flex-start; gap: 0.85rem; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.15);">
-          <span style="font-size: 2rem; line-height: 1;">💬</span>
-          <div>
-            <strong style="color: #15803d; font-size: 1rem; display: block; margin-bottom: 3px; letter-spacing: 0.5px;">
+</div>
+</div>
+<!-- CUSTOMER STAGE 3: WHATSAPP LOGIN & VERIFICATION (100% FREE & ZERO SMS DELAY) -->
+<div id="cstep-mobile-otp" style="display: none;">
+<!-- Big Prominent WhatsApp Requirement Banner -->
+<div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 16px; padding: 0.9rem 1.1rem; margin-bottom: 1.25rem; text-align: left; display: flex; align-items: flex-start; gap: 0.85rem; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.15);">
+<span style="font-size: 2rem; line-height: 1;">💬</span>
+<div>
+<strong style="color: #15803d; font-size: 1rem; display: block; margin-bottom: 3px; letter-spacing: 0.5px;">
               ⚠️ IMPORTANT NOTICE: ONLY LOGIN WITH WHATSAPP NUMBER
             </strong>
-            <span style="font-size: 0.84rem; color: #166534; line-height: 1.45; display: block;">
+<span style="font-size: 0.84rem; color: #166534; line-height: 1.45; display: block;">
               Kripya sirf apna active <strong>WhatsApp Mobile Number</strong> hi enter karein. Ticket confirmation, Boarding PIN, aur Driver pickup details seedhe aapke WhatsApp par send ki jayengi.
             </span>
-          </div>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 1rem;">
-          <span style="font-size: 0.75rem; font-weight: 800; background: #dcfce7; color: #166534; padding: 3px 10px; border-radius: 9999px;">
+</div>
+</div>
+<div style="text-align: center; margin-bottom: 1rem;">
+<span style="font-size: 0.75rem; font-weight: 800; background: #dcfce7; color: #166534; padding: 3px 10px; border-radius: 9999px;">
             Step 3 of 3 (WhatsApp Verification)
           </span>
-          <h3 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-top: 6px;">WhatsApp Login & Passenger Details</h3>
-        </div>
-
-        <!-- Phone input sub-step -->
-        <div id="substep-phone-input">
-          <div class="form-group" style="margin-bottom: 0.85rem;">
-            <label style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">Passenger Full Name*</label>
-            <input type="text" id="bm-name" class="form-control" placeholder="Enter your full name">
-          </div>
-          
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-              <label style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0;">
+<h3 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-top: 6px;">WhatsApp Login &amp; Passenger Details</h3>
+</div>
+<!-- Phone input sub-step -->
+<div id="substep-phone-input">
+<div class="form-group" style="margin-bottom: 0.85rem;">
+<label style="font-size: 0.85rem; font-weight: 800; color: #0f172a;">Passenger Full Name*</label>
+<input class="form-control" id="bm-name" placeholder="Enter your full name" type="text"/>
+</div>
+<div class="form-group" style="margin-bottom: 1rem;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+<label style="font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0;">
                 10-Digit WhatsApp Mobile Number*
               </label>
-              <span style="background: #25d366; color: white; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 4px;">
+<span style="background: #25d366; color: white; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 4px;">
                 Only WhatsApp Number
               </span>
-            </div>
-            <input type="tel" id="bm-phone" class="form-control" placeholder="10-digit WhatsApp number (e.g. 9864012345)" maxlength="10" style="font-size: 1.05rem; font-weight: 700; letter-spacing: 1px;">
-            <span style="font-size: 0.75rem; color: #166534; display: block; margin-top: 4px; font-weight: 600;">
+</div>
+<input class="form-control" id="bm-phone" maxlength="10" placeholder="10-digit WhatsApp number (e.g. 9864012345)" style="font-size: 1.05rem; font-weight: 700; letter-spacing: 1px;" type="tel"/>
+<span style="font-size: 0.75rem; color: #166534; display: block; margin-top: 4px; font-weight: 600;">
               ✓ Zero SMS Charges • Instant 1-Tap Verification
             </span>
-          </div>
-
-          <button type="button" class="btn btn-primary" style="height: 52px; font-size: 1.05rem; background: #25d366; border-color: #22c55e; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);" onclick="sendCustomerWhatsAppVerification()">
-            💬 Verify & Continue via WhatsApp ➔
+</div>
+<button class="btn btn-primary" onclick="sendCustomerWhatsAppVerification()" style="height: 52px; font-size: 1.05rem; background: #25d366; border-color: #22c55e; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);" type="button">
+            💬 Verify &amp; Continue via WhatsApp ➔
           </button>
-        </div>
-
-        <!-- Verification sub-step -->
-        <div id="substep-otp-verify" style="display: none; background: #f0fdf4; border: 2px dashed #22c55e; padding: 1.25rem 1rem; border-radius: 16px; text-align: center; margin-top: 1rem;">
-          <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">💬</div>
-          <h4 style="font-size: 1.15rem; font-weight: 900; color: #15803d; margin-bottom: 4px;">
+</div>
+<!-- Verification sub-step -->
+<div id="substep-otp-verify" style="display: none; background: #f0fdf4; border: 2px dashed #22c55e; padding: 1.25rem 1rem; border-radius: 16px; text-align: center; margin-top: 1rem;">
+<div style="font-size: 1.75rem; margin-bottom: 0.4rem;">💬</div>
+<h4 style="font-size: 1.15rem; font-weight: 900; color: #15803d; margin-bottom: 4px;">
             WhatsApp Verification Generated
           </h4>
-          <p style="font-size: 0.85rem; color: #166534; margin-bottom: 1rem;">
+<p style="font-size: 0.85rem; color: #166534; margin-bottom: 1rem;">
             WhatsApp Number: <strong id="bm-target-phone" style="color: #0f172a; font-size: 1rem;">+91 XXXXX XXXXX</strong>
-          </p>
-
-          <!-- 6-digit PIN Box -->
-          <div style="background: white; border: 1.5px solid #86efac; border-radius: 14px; padding: 0.85rem; margin-bottom: 1rem; text-align: center;">
-            <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Your Security Verification PIN</div>
-            <div id="bm-display-wa-pin" style="font-size: 1.85rem; font-weight: 900; letter-spacing: 8px; color: #1e40af; font-family: monospace; margin: 4px 0;">
+</p>
+<!-- 6-digit PIN Box -->
+<div style="background: white; border: 1.5px solid #86efac; border-radius: 14px; padding: 0.85rem; margin-bottom: 1rem; text-align: center;">
+<div style="font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Your Security Verification PIN</div>
+<div id="bm-display-wa-pin" style="font-size: 1.85rem; font-weight: 900; letter-spacing: 8px; color: #1e40af; font-family: monospace; margin: 4px 0;">
               582910
             </div>
-            <div style="font-size: 0.75rem; color: #15803d; font-weight: 600;">
+<div style="font-size: 0.75rem; color: #15803d; font-weight: 600;">
               ✓ Auto-assigned to your WhatsApp booking
             </div>
-          </div>
-
-          <!-- 1-Tap Open WhatsApp Button -->
-          <div style="margin-bottom: 1rem;">
-            <a id="btn-open-wa-otp" href="#" target="_blank" class="btn" style="background: #25d366; color: white; text-decoration: none; height: 50px; font-size: 0.98rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
-              <span>📲</span> <strong>Open WhatsApp & Send Booking to Driver ➔</strong>
-            </a>
-          </div>
-
-          <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 1rem;">
+</div>
+<!-- 1-Tap Open WhatsApp Button -->
+<div style="margin-bottom: 1rem;">
+<a class="btn" href="#" id="btn-open-wa-otp" style="background: #25d366; color: white; text-decoration: none; height: 50px; font-size: 0.98rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);" target="_blank">
+<span>📲</span> <strong>Open WhatsApp &amp; Send Booking to Driver ➔</strong>
+</a>
+</div>
+<div style="font-size: 0.78rem; color: #64748b; margin-bottom: 1rem;">
             WhatsApp par message bhejne ke baad niche button dabakar booking submit karein:
           </div>
-
-          <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
-            <button type="button" class="btn btn-secondary" style="width: auto; padding: 0.65rem 1rem;" onclick="backToPhoneInput()">
+<div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+<button class="btn btn-secondary" onclick="backToPhoneInput()" style="width: auto; padding: 0.65rem 1rem;" type="button">
               ⬅️ Change Number
             </button>
-            <button type="button" class="btn btn-primary" style="width: auto; padding: 0.65rem 1.25rem; background: #16a34a; border-color: #16a34a;" onclick="verifyOtpAndConfirmSeat()">
-              ✅ Confirm & Submit Booking ➔
+<button class="btn btn-primary" onclick="verifyOtpAndConfirmSeat()" style="width: auto; padding: 0.65rem 1.25rem; background: #16a34a; border-color: #16a34a;" type="button">
+              ✅ Confirm &amp; Submit Booking ➔
             </button>
-          </div>
-        </div>
-
-        <div style="margin-top: 1rem;">
-          <button type="button" class="btn btn-outline" style="font-size: 0.85rem;" onclick="backToDriverPaymentStep()">
+</div>
+</div>
+<div style="margin-top: 1rem;">
+<button class="btn btn-outline" onclick="backToDriverPaymentStep()" style="font-size: 0.85rem;" type="button">
             ⬅️ Back to Driver Payment QR
           </button>
-        </div>
-      </div>
-
-      <!-- CUSTOMER STAGE 4: AWAITING DRIVER PAYMENT CONFIRMATION -->
-      <div id="cstep-awaiting-approval" style="display: none; text-align: center; padding: 0.5rem 0;">
-        <div style="width: 64px; height: 64px; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 0.75rem;">
+</div>
+</div>
+<!-- CUSTOMER STAGE 4: AWAITING DRIVER PAYMENT CONFIRMATION -->
+<div id="cstep-awaiting-approval" style="display: none; text-align: center; padding: 0.5rem 0;">
+<div style="width: 64px; height: 64px; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 0.75rem;">
           ⏳
         </div>
-        <span style="font-size: 0.75rem; font-weight: 800; background: #fef3c7; color: #92400e; padding: 3px 12px; border-radius: 9999px;">Payment Verification Pending</span>
-        <h3 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-top: 6px; margin-bottom: 4px;">Booking Requested — Awaiting Driver Approval</h3>
-        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
+<span style="font-size: 0.75rem; font-weight: 800; background: #fef3c7; color: #92400e; padding: 3px 12px; border-radius: 9999px;">Payment Verification Pending</span>
+<h3 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-top: 6px; margin-bottom: 4px;">Booking Requested — Awaiting Driver Approval</h3>
+<p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
           Your payment UTR has been submitted to the driver. The confirmed Boarding Pass and contact details will unlock as soon as the driver verifies receipt in their UPI app.
         </p>
-
-        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1rem; margin-bottom: 1rem; text-align: left; font-size: 0.88rem;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span style="color: #64748b;">Driver:</span>
-            <strong id="appr-driver-name" style="color: #0f172a;">-</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span style="color: #64748b;">Route & Seats:</span>
-            <strong id="appr-route-seats" style="color: #0f172a;">-</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-            <span style="color: #64748b;">Total Amount:</span>
-            <strong id="appr-total-amount" style="color: #15803d; font-size: 1.05rem;">-</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-            <span style="color: #64748b;">Submitted 12-Digit UTR:</span>
-            <strong id="appr-utr-number" style="color: #1e40af; font-family: monospace; letter-spacing: 1px;">-</strong>
-          </div>
-        </div>
-
-        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 0.85rem; font-size: 0.82rem; color: #166534; margin-bottom: 1.25rem; text-align: left;">
-          <strong>🛡️ Anti-Fraud Payment Protocol:</strong><br>
+<div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1rem; margin-bottom: 1rem; text-align: left; font-size: 0.88rem;">
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+<span style="color: #64748b;">Driver:</span>
+<strong id="appr-driver-name" style="color: #0f172a;">-</strong>
+</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+<span style="color: #64748b;">Route &amp; Seats:</span>
+<strong id="appr-route-seats" style="color: #0f172a;">-</strong>
+</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+<span style="color: #64748b;">Total Amount:</span>
+<strong id="appr-total-amount" style="color: #15803d; font-size: 1.05rem;">-</strong>
+</div>
+<div style="display: flex; justify-content: space-between; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
+<span style="color: #64748b;">Submitted 12-Digit UTR:</span>
+<strong id="appr-utr-number" style="color: #1e40af; font-family: monospace; letter-spacing: 1px;">-</strong>
+</div>
+</div>
+<div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 0.85rem; font-size: 0.82rem; color: #166534; margin-bottom: 1.25rem; text-align: left;">
+<strong>🛡️ Anti-Fraud Payment Protocol:</strong><br/>
           Send your payment receipt and UTR directly to the driver on WhatsApp. The driver will tap "Confirm Payment Received" in their portal to immediately unlock your seat and Digital Boarding Pass!
         </div>
-
-        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-          <a id="btn-whatsapp-driver-receipt" href="#" target="_blank" class="btn" style="background: #25d366; color: white; height: 50px; font-size: 0.98rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; border-radius: 12px;">
-            <span>💬</span> <strong>WhatsApp Payment Receipt & UTR to Driver ➔</strong>
-          </a>
-          <button type="button" class="btn btn-outline" onclick="closeModal('booking-modal'); showSection('passenger', 'tickets');">
+<div style="display: flex; flex-direction: column; gap: 0.6rem;">
+<a class="btn" href="#" id="btn-whatsapp-driver-receipt" style="background: #25d366; color: white; height: 50px; font-size: 0.98rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; border-radius: 12px;" target="_blank">
+<span>💬</span> <strong>WhatsApp Payment Receipt &amp; UTR to Driver ➔</strong>
+</a>
+<button class="btn btn-outline" onclick="closeModal('booking-modal'); showSection('passenger', 'tickets');" type="button">
             📋 Track Status in 'My Bookings'
           </button>
+</div>
+<div style="font-size: 0.78rem; color: #64748b; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+<span style="animation: spin 1.5s linear infinite; display: inline-block;">🔄</span> Live sync active: Checking driver approval every 3 seconds...
         </div>
-
-        <div style="font-size: 0.78rem; color: #64748b; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-          <span style="animation: spin 1.5s linear infinite; display: inline-block;">🔄</span> Live sync active: Checking driver approval every 3 seconds...
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- ==================== MODAL: DIGITAL BOARDING PASS & UNLOCKED NUMBERS ==================== -->
-  
-  <!-- ==================== MODAL: INTERACTIVE LIVE ROUTE MAP & GPS NAVIGATION ==================== -->
-  <div class="modal-backdrop" id="route-map-modal">
-    <div class="modal-card" style="max-width: 680px; padding: 0; overflow: hidden; border-radius: 20px;">
-      <div class="modal-header" style="padding: 1rem 1.25rem; background: linear-gradient(135deg, #091e3a, #1d4ed8); color: white; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="display: inline-block; width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e;"></span>
-            <h3 id="rm-modal-title" style="margin: 0; color: white; font-size: 1.15rem;">Live Route Map & GPS Tracker</h3>
-          </div>
-          <div id="rm-modal-subtitle" style="font-size: 0.8rem; color: #93c5fd; margin-top: 3px;">Real-Time Corridor Telemetry • Assam & North East</div>
-        </div>
-        <button class="btn-close" onclick="closeModal('route-map-modal')" style="color: white; font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
-      </div>
-
-      <!-- Quick Route Summary Stats -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; background: #f8fafc; padding: 0.85rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem;">
-        <div>
-          <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Route</div>
-          <div id="rm-stat-route" style="font-weight: 800; color: #0f172a;">Guwahati ➔ Shillong</div>
-        </div>
-        <div>
-          <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Distance</div>
-          <div id="rm-stat-dist" style="font-weight: 800; color: #0284c7;">~98 km</div>
-        </div>
-        <div>
-          <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Est. Travel Time</div>
-          <div id="rm-stat-time" style="font-weight: 800; color: #166534;">~2h 45m</div>
-        </div>
-        <div>
-          <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Vehicle / Driver</div>
-          <div id="rm-stat-driver" style="font-weight: 800; color: #7c3aed;">Verified Driver</div>
-        </div>
-      </div>
-
-      <!-- Live Map Container -->
-      <div id="single-route-map-container" style="height: 360px; width: 100%; position: relative; background: #cbd5e1; z-index: 1;"></div>
-
-      <!-- Action Footer with Turn-by-Turn GPS button -->
-      <div style="padding: 1rem 1.25rem; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 0.6rem; flex-wrap: wrap;">
-        <a id="rm-btn-gmaps" href="#" target="_blank" class="btn btn-secondary" style="flex: 1; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 700; border-radius: 10px; font-size: 0.85rem;">
+</div>
+</div>
+</div>
+<!-- ==================== MODAL: DIGITAL BOARDING PASS & UNLOCKED NUMBERS ==================== -->
+<!-- ==================== MODAL: INTERACTIVE LIVE ROUTE MAP & GPS NAVIGATION ==================== -->
+<div class="modal-backdrop" id="route-map-modal">
+<div class="modal-card" style="max-width: 680px; padding: 0; overflow: hidden; border-radius: 20px;">
+<div class="modal-header" style="padding: 1rem 1.25rem; background: linear-gradient(135deg, #091e3a, #1d4ed8); color: white; display: flex; justify-content: space-between; align-items: center;">
+<div>
+<div style="display: flex; align-items: center; gap: 8px;">
+<span style="display: inline-block; width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e;"></span>
+<h3 id="rm-modal-title" style="margin: 0; color: white; font-size: 1.15rem;">Live Route Map &amp; GPS Tracker</h3>
+</div>
+<div id="rm-modal-subtitle" style="font-size: 0.8rem; color: #93c5fd; margin-top: 3px;">Real-Time Corridor Telemetry • Assam &amp; North East</div>
+</div>
+<button class="btn-close" onclick="closeModal('route-map-modal')" style="color: white; font-size: 1.5rem; background: none; border: none; cursor: pointer;">×</button>
+</div>
+<!-- Quick Route Summary Stats -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; background: #f8fafc; padding: 0.85rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem;">
+<div>
+<div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Route</div>
+<div id="rm-stat-route" style="font-weight: 800; color: #0f172a;">Guwahati ➔ Shillong</div>
+</div>
+<div>
+<div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Distance</div>
+<div id="rm-stat-dist" style="font-weight: 800; color: #0284c7;">~98 km</div>
+</div>
+<div>
+<div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Est. Travel Time</div>
+<div id="rm-stat-time" style="font-weight: 800; color: #166534;">~2h 45m</div>
+</div>
+<div>
+<div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase; font-weight: 700;">Vehicle / Driver</div>
+<div id="rm-stat-driver" style="font-weight: 800; color: #7c3aed;">Verified Driver</div>
+</div>
+</div>
+<!-- Live Map Container -->
+<div id="single-route-map-container" style="height: 360px; width: 100%; position: relative; background: #cbd5e1; z-index: 1;"></div>
+<!-- Action Footer with Turn-by-Turn GPS button -->
+<div style="padding: 1rem 1.25rem; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 0.6rem; flex-wrap: wrap;">
+<a class="btn btn-secondary" href="#" id="rm-btn-gmaps" style="flex: 1; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 700; border-radius: 10px; font-size: 0.85rem;" target="_blank">
           🌐 Turn-by-Turn Google Maps GPS ➔
         </a>
-        <button id="rm-btn-book" type="button" class="btn btn-primary" style="flex: 1; min-width: 170px; border-radius: 10px; font-weight: 700;">
+<button class="btn btn-primary" id="rm-btn-book" style="flex: 1; min-width: 170px; border-radius: 10px; font-weight: 700;" type="button">
           💺 Book This Car Now
         </button>
-        <button type="button" class="btn btn-secondary" onclick="closeModal('route-map-modal')" style="min-width: 80px; border-radius: 10px;">
+<button class="btn btn-secondary" onclick="closeModal('route-map-modal')" style="min-width: 80px; border-radius: 10px;" type="button">
           Close
         </button>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="modal-backdrop" id="ticket-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>Confirmed Digital Boarding Pass</h3>
-        <button class="btn-close" onclick="closeModal('ticket-modal')">&times;</button>
-      </div>
-
-      <!-- Instant Contact Unlock Banner -->
-      <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 0.75rem 1rem; border-radius: 14px; font-size: 0.88rem; color: #166534; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-        <span style="font-size: 1.5rem;">🔓</span>
-        <div>
-          <strong>Driver & Passenger Phone Numbers Exchanged!</strong><br>
-          Payment & OTP verified. You can now call or message each other directly.
+</div>
+</div>
+</div>
+<div class="modal-backdrop" id="ticket-modal">
+<div class="modal-card">
+<div class="modal-header">
+<h3>Confirmed Digital Boarding Pass</h3>
+<button class="btn-close" onclick="closeModal('ticket-modal')">×</button>
+</div>
+<!-- Instant Contact Unlock Banner -->
+<div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 0.75rem 1rem; border-radius: 14px; font-size: 0.88rem; color: #166534; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+<span style="font-size: 1.5rem;">🔓</span>
+<div>
+<strong>Driver &amp; Passenger Phone Numbers Exchanged!</strong><br/>
+          Payment &amp; OTP verified. You can now call or message each other directly.
         </div>
-      </div>
-
-      <div id="ticket-modal-content"></div>
-
-      <div style="display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap;">
-        <button type="button" class="btn" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-weight: 700; border-radius: 10px;" onclick="openSingleRouteFromCurrentTicket()">🗺️ Live Journey Map & GPS</button>
-        <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save Ticket</button>
-        <button class="btn btn-secondary" onclick="closeModal('ticket-modal')">Close</button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ==================== MODAL: FEEDBACK & RATING (FOR DRIVERS & PASSENGERS) ==================== -->
-  <div class="modal-backdrop" id="feedback-modal">
-    <div class="modal-card" style="max-width: 440px;">
-      <div class="modal-header">
-        <h3 id="fb-modal-title">Trip Feedback & Rating</h3>
-        <button class="btn-close" onclick="closeModal('feedback-modal')">&times;</button>
-      </div>
-
-      <div style="text-align: center; margin-bottom: 1rem;">
-        <div style="font-size: 0.85rem; color: var(--text-muted);" id="fb-target-subtitle">Rate your travel experience:</div>
-        
-        <!-- Interactive Star Picker -->
-        <div class="star-rating-box" id="star-rating-container" style="justify-content: center;">
-          <span class="star active" onclick="setFeedbackRating(1)">★</span>
-          <span class="star active" onclick="setFeedbackRating(2)">★</span>
-          <span class="star active" onclick="setFeedbackRating(3)">★</span>
-          <span class="star active" onclick="setFeedbackRating(4)">★</span>
-          <span class="star active" onclick="setFeedbackRating(5)">★</span>
-        </div>
-        <input type="hidden" id="fb-rating-value" value="5">
-      </div>
-
-      <!-- Quick Feedback Tags -->
-      <div style="font-size: 0.8rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Select highlights:</div>
-      <div class="feedback-tags-box" id="feedback-tags-container"></div>
-
-      <div class="form-group">
-        <label>Your Comments (Optional):</label>
-        <textarea id="fb-comments-input" class="form-control" rows="3" placeholder="Share your experience (e.g. smooth ride, on-time, polite)..."></textarea>
-      </div>
-
-      <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
-        <button type="button" class="btn btn-secondary" style="width: auto;" onclick="closeModal('feedback-modal')">Cancel</button>
-        <button type="button" class="btn btn-primary" style="width: auto;" onclick="submitUserFeedback()">
+</div>
+<div id="ticket-modal-content"></div>
+<div style="display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap;">
+<button class="btn" onclick="openSingleRouteFromCurrentTicket()" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; font-weight: 700; border-radius: 10px;" type="button">🗺️ Live Journey Map &amp; GPS</button>
+<button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save Ticket</button>
+<button class="btn btn-secondary" onclick="closeModal('ticket-modal')">Close</button>
+</div>
+</div>
+</div>
+<!-- ==================== MODAL: FEEDBACK & RATING (FOR DRIVERS & PASSENGERS) ==================== -->
+<div class="modal-backdrop" id="feedback-modal">
+<div class="modal-card" style="max-width: 440px;">
+<div class="modal-header">
+<h3 id="fb-modal-title">Trip Feedback &amp; Rating</h3>
+<button class="btn-close" onclick="closeModal('feedback-modal')">×</button>
+</div>
+<div style="text-align: center; margin-bottom: 1rem;">
+<div id="fb-target-subtitle" style="font-size: 0.85rem; color: var(--text-muted);">Rate your travel experience:</div>
+<!-- Interactive Star Picker -->
+<div class="star-rating-box" id="star-rating-container" style="justify-content: center;">
+<span class="star active" onclick="setFeedbackRating(1)">★</span>
+<span class="star active" onclick="setFeedbackRating(2)">★</span>
+<span class="star active" onclick="setFeedbackRating(3)">★</span>
+<span class="star active" onclick="setFeedbackRating(4)">★</span>
+<span class="star active" onclick="setFeedbackRating(5)">★</span>
+</div>
+<input id="fb-rating-value" type="hidden" value="5"/>
+</div>
+<!-- Quick Feedback Tags -->
+<div style="font-size: 0.8rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Select highlights:</div>
+<div class="feedback-tags-box" id="feedback-tags-container"></div>
+<div class="form-group">
+<label>Your Comments (Optional):</label>
+<textarea class="form-control" id="fb-comments-input" placeholder="Share your experience (e.g. smooth ride, on-time, polite)..." rows="3"></textarea>
+</div>
+<div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
+<button class="btn btn-secondary" onclick="closeModal('feedback-modal')" style="width: auto;" type="button">Cancel</button>
+<button class="btn btn-primary" onclick="submitUserFeedback()" style="width: auto;" type="button">
           ⭐ Submit Feedback
         </button>
-      </div>
-    </div>
-  </div>
-
-
-  
-    <!-- ==================== 4. SECRET OWNER / ADMIN PORTAL SECTION ==================== -->
-    <section id="section-admin" style="display: none;">
-      
-      <!-- Admin Login Box -->
-      <div id="emb-admin-login" style="max-width: 380px; margin: 2rem auto; background: white; border: 1.5px solid #cbd5e1; border-radius: 20px; padding: 1.75rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.06);">
-        <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔐</div>
-        <h2 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">SafarSaathi Owner Portal</h2>
-        <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1.25rem;">Enter executive 4-digit PIN to access live moderation, revenue counter, and ₹100 UTR verification:</p>
-        
-        <div class="form-group" style="margin-bottom: 1rem;">
-          <input type="password" id="emb-admin-pin-input" class="form-control" placeholder="••••" maxlength="4" style="text-align: center; font-size: 1.75rem; font-weight: 900; letter-spacing: 8px;">
-        </div>
-
-        <button type="button" class="btn btn-primary" style="height: 48px; font-size: 1rem;" onclick="checkEmbeddedAdminLogin()">
+</div>
+</div>
+</div>
+<!-- ==================== 4. SECRET OWNER / ADMIN PORTAL SECTION ==================== -->
+<section id="section-admin" style="display: none;">
+<!-- Admin Login Box -->
+<div id="emb-admin-login" style="max-width: 380px; margin: 2rem auto; background: white; border: 1.5px solid #cbd5e1; border-radius: 20px; padding: 1.75rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.06);">
+<div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔐</div>
+<h2 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">SafarSaathi Owner Portal</h2>
+<p style="font-size: 0.82rem; color: #64748b; margin-bottom: 1.25rem;">Enter executive 4-digit PIN to access live moderation, revenue counter, and ₹100 UTR verification:</p>
+<div class="form-group" style="margin-bottom: 1rem;">
+<input class="form-control" id="emb-admin-pin-input" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.75rem; font-weight: 900; letter-spacing: 8px;" type="password"/>
+</div>
+<button class="btn btn-primary" onclick="checkEmbeddedAdminLogin()" style="height: 48px; font-size: 1rem;" type="button">
           🔓 Unlock Admin Dashboard ➔
         </button>
-        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.75rem;">Default Security PIN: <strong>1234</strong></div>
-      </div>
-
-      <!-- Admin Main Dashboard (Hidden until PIN entered) -->
-      <div id="emb-admin-dashboard" style="display: none;">
-        <div id="emb-admin-toast-banner" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999999; width: 92%; max-width: 540px; background: #15803d; color: #ffffff; padding: 14px 20px; border-radius: 14px; font-weight: 800; font-size: 1rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.35); border: 2px solid #86efac; color: #ffffff; padding: 12px 18px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; text-align: center; box-shadow: 0 8px 24px rgba(21, 128, 61, 0.35); margin-bottom: 1.25rem; border: 1.5px solid #86efac;"></div>
-        
-        <!-- Header Banner -->
-        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); border-radius: 18px; padding: 1.25rem 1.5rem; color: white; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-          <div>
-            <span style="background: rgba(255,255,255,0.18); font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">Executive Mode Active</span>
-            <h2 style="font-size: 1.35rem; font-weight: 900; margin-top: 4px; color: white;">SafarSaathi Admin & Moderation Center</h2>
-            <div style="font-size: 0.8rem; color: #93c5fd;">Verify Driver ₹100 Platform Fees • Audit Bookings • Revenue Tracker</div>
-          </div>
-          <button type="button" class="btn btn-secondary" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.8rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3);" onclick="embeddedAdminLogout()">
-            🔒 Lock & Logout
+<div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.75rem;">Default Security PIN: <strong>1234</strong></div>
+</div>
+<!-- Admin Main Dashboard (Hidden until PIN entered) -->
+<div id="emb-admin-dashboard" style="display: none;">
+<div id="emb-admin-toast-banner" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999999; width: 92%; max-width: 540px; background: #15803d; color: #ffffff; padding: 14px 20px; border-radius: 14px; font-weight: 800; font-size: 1rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.35); border: 2px solid #86efac; color: #ffffff; padding: 12px 18px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; text-align: center; box-shadow: 0 8px 24px rgba(21, 128, 61, 0.35); margin-bottom: 1.25rem; border: 1.5px solid #86efac;"></div>
+<!-- Header Banner -->
+<div style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); border-radius: 18px; padding: 1.25rem 1.5rem; color: white; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+<div>
+<span style="background: rgba(255,255,255,0.18); font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">Executive Mode Active</span>
+<h2 style="font-size: 1.35rem; font-weight: 900; margin-top: 4px; color: white;">SafarSaathi Admin &amp; Moderation Center</h2>
+<div style="font-size: 0.8rem; color: #93c5fd;">Verify Driver ₹100 Platform Fees • Audit Bookings • Revenue Tracker</div>
+</div>
+<button class="btn btn-secondary" onclick="embeddedAdminLogout()" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.8rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3);" type="button">
+            🔒 Lock &amp; Logout
           </button>
-        </div>
-
-        <!-- Metric Stat Cards -->
-        <div class="stat-grid">
-          <div class="stat-card">
-            <div class="val" id="emb-stat-revenue" style="color: #15803d;">₹0</div>
-            <div class="lbl">Platform Revenue (₹100/Ride)</div>
-          </div>
-          <div class="stat-card">
-            <div class="val" id="emb-stat-pending-fees" style="color: #b45309;">0</div>
-            <div class="lbl">Pending ₹100 Verifications</div>
-          </div>
-          <div class="stat-card">
-            <div class="val" id="emb-stat-active-rides">0</div>
-            <div class="lbl">Active Live Vehicles</div>
-          </div>
-          <div class="stat-card">
-            <div class="val" id="emb-stat-bookings">0</div>
-            <div class="lbl">Total Bookings</div>
-          </div>
-        </div>
-
-        <!-- Verification Mode Banner -->
-        <div style="background: white; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-          <div>
-            <strong style="font-size: 0.88rem; color: #0f172a;">Driver ₹100 Listing Fee Verification Mode:</strong>
-            <div style="font-size: 0.78rem; color: #64748b;">Controls whether newly posted vehicles appear immediately or require Admin ₹100 check.</div>
-          </div>
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 800; color: #1e40af;">
-            <input type="checkbox" id="emb-toggle-auto-approve" style="width: 18px; height: 18px;" onchange="toggleEmbeddedAutoApprove(this.checked)">
-            <span>Instant Auto-Approval (Bypass Check)</span>
-          </label>
-        </div>
-
-        <!-- Tabs -->
-        <div class="admin-tabs">
-          <button type="button" class="admin-tab-btn active" id="emb-tab-vehicles" onclick="switchEmbeddedAdminTab('vehicles')">
-            🚗 Driver Vehicles & ₹100 Fees (<span id="emb-count-vehicles">0</span>)
+</div>
+<!-- Metric Stat Cards -->
+<div class="stat-grid">
+<div class="stat-card">
+<div class="val" id="emb-stat-revenue" style="color: #15803d;">₹0</div>
+<div class="lbl">Platform Revenue (₹100/Ride)</div>
+</div>
+<div class="stat-card">
+<div class="val" id="emb-stat-pending-fees" style="color: #b45309;">0</div>
+<div class="lbl">Pending ₹100 Verifications</div>
+</div>
+<div class="stat-card">
+<div class="val" id="emb-stat-active-rides">0</div>
+<div class="lbl">Active Live Vehicles</div>
+</div>
+<div class="stat-card">
+<div class="val" id="emb-stat-bookings">0</div>
+<div class="lbl">Total Bookings</div>
+</div>
+</div>
+<!-- Verification Mode Banner -->
+<div style="background: white; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+<div>
+<strong style="font-size: 0.88rem; color: #0f172a;">Driver ₹100 Listing Fee Verification Mode:</strong>
+<div style="font-size: 0.78rem; color: #64748b;">Controls whether newly posted vehicles appear immediately or require Admin ₹100 check.</div>
+</div>
+<label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 800; color: #1e40af;">
+<input id="emb-toggle-auto-approve" onchange="toggleEmbeddedAutoApprove(this.checked)" style="width: 18px; height: 18px;" type="checkbox"/>
+<span>Instant Auto-Approval (Bypass Check)</span>
+</label>
+</div>
+<!-- Tabs -->
+<div class="admin-tabs">
+<button class="admin-tab-btn active" id="emb-tab-vehicles" onclick="switchEmbeddedAdminTab('vehicles')" type="button">
+            🚗 Driver Vehicles &amp; ₹100 Fees (<span id="emb-count-vehicles">0</span>)
           </button>
-          <button type="button" class="admin-tab-btn" id="emb-tab-bookings" onclick="switchEmbeddedAdminTab('bookings')">
+<button class="admin-tab-btn" id="emb-tab-bookings" onclick="switchEmbeddedAdminTab('bookings')" type="button">
             🎫 Passenger Bookings (<span id="emb-count-bookings">0</span>)
           </button>
-        </div>
-
-        <!-- TAB 1: VEHICLES & ₹100 UTRs -->
-        <div id="emb-view-vehicles" class="app-card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div>
-              <h3 class="card-title">Driver Vehicle Listings & UTR Verification</h3>
-              <p class="card-subtitle">Verify ₹100 fee in Jana SFB account (6901027507@nyes) before activating ride:</p>
-            </div>
-            <button type="button" class="btn btn-secondary" style="width: auto; font-size: 0.78rem; padding: 0.4rem 0.75rem;" onclick="exportAdminCsv('rides')">
+</div>
+<!-- TAB 1: VEHICLES & ₹100 UTRs -->
+<div class="app-card" id="emb-view-vehicles">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+<div>
+<h3 class="card-title">Driver Vehicle Listings &amp; UTR Verification</h3>
+<p class="card-subtitle">Verify ₹100 fee in Jana SFB account (6901027507@nyes) before activating ride:</p>
+</div>
+<button class="btn btn-secondary" onclick="exportAdminCsv('rides')" style="width: auto; font-size: 0.78rem; padding: 0.4rem 0.75rem;" type="button">
               📥 Export CSV
             </button>
-          </div>
-          <div style="overflow-x: auto;">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Vehicle</th>
-                  <th>Driver</th>
-                  <th>Route</th>
-                  <th>Seats</th>
-                  <th>Rate</th>
-                  <th>₹100 Listing UTR</th>
-                  <th>Status</th>
-                  <th>Admin Action</th>
-                </tr>
-              </thead>
-              <tbody id="emb-vehicles-table-body"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TAB 2: BOOKINGS -->
-        <div id="emb-view-bookings" class="app-card" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div>
-              <h3 class="card-title">Passenger Bookings & Payment Audits</h3>
-              <p class="card-subtitle">All seat reservations, passenger UTRs, and driver verification states:</p>
-            </div>
-            <button type="button" class="btn btn-secondary" style="width: auto; font-size: 0.78rem; padding: 0.4rem 0.75rem;" onclick="exportAdminCsv('bookings')">
+</div>
+<div style="overflow-x: auto;">
+<table class="admin-table">
+<thead>
+<tr>
+<th>Vehicle</th>
+<th>Driver</th>
+<th>Route</th>
+<th>Seats</th>
+<th>Rate</th>
+<th>₹100 Listing UTR</th>
+<th>Status</th>
+<th>Admin Action</th>
+</tr>
+</thead>
+<tbody id="emb-vehicles-table-body"></tbody>
+</table>
+</div>
+</div>
+<!-- TAB 2: BOOKINGS -->
+<div class="app-card" id="emb-view-bookings" style="display: none;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+<div>
+<h3 class="card-title">Passenger Bookings &amp; Payment Audits</h3>
+<p class="card-subtitle">All seat reservations, passenger UTRs, and driver verification states:</p>
+</div>
+<button class="btn btn-secondary" onclick="exportAdminCsv('bookings')" style="width: auto; font-size: 0.78rem; padding: 0.4rem 0.75rem;" type="button">
               📥 Export CSV
             </button>
-          </div>
-          <div style="overflow-x: auto;">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Ticket Ref</th>
-                  <th>Passenger</th>
-                  <th>Driver</th>
-                  <th>Route</th>
-                  <th>Seats</th>
-                  <th>Fare</th>
-                  <th>Passenger UTR</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="emb-bookings-table-body"></tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-  <!-- Footer -->
-  <footer>
-    <div style="font-weight: 800; font-size: 1rem; color: #ffffff; margin-bottom: 6px;">SafarSaathi Carpooling Network</div>
-    <div>Live Real-Time Vehicles Only • Auto-Hides Full Cars • Direct QR Payments • Mutual Rating & Feedback System</div>
-    <div style="margin-top: 6px; font-size: 0.72rem; color: #94a3b8;">
-      <a href="#admin" onclick="showAdminFromFooter(); return false;" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">
+</div>
+<div style="overflow-x: auto;">
+<table class="admin-table">
+<thead>
+<tr>
+<th>Ticket Ref</th>
+<th>Passenger</th>
+<th>Driver</th>
+<th>Route</th>
+<th>Seats</th>
+<th>Fare</th>
+<th>Passenger UTR</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="emb-bookings-table-body"></tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer>
+<div style="font-weight: 800; font-size: 1rem; color: #ffffff; margin-bottom: 6px;">SafarSaathi Carpooling Network</div>
+<div>Live Real-Time Vehicles Only • Auto-Hides Full Cars • Direct QR Payments • Mutual Rating &amp; Feedback System</div>
+<div style="margin-top: 6px; font-size: 0.72rem; color: #94a3b8;">
+<a href="#admin" onclick="showAdminFromFooter(); return false;" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">
         🔐 Owner Portal Login (Admin PIN: 1234)
       </a>
-      <span style="margin: 0 8px; opacity: 0.5;">•</span>
-      <a href="privacy.html" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">📜 Privacy Policy</a>
-    </div>
-  </footer>
-
-
-  <!-- JAVASCRIPT LOGIC (100% BULLETPROOF & TESTED) -->
-  <script>
+<span style="margin: 0 8px; opacity: 0.5;">•</span>
+<a href="privacy.html" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;" target="_blank">📜 Privacy Policy</a>
+</div>
+</footer>
+<!-- JAVASCRIPT LOGIC (100% BULLETPROOF & TESTED) -->
+<script>
     // ZERO DEMO RIDES - Only real vehicles posted by drivers will exist
     let rawStoredRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
     let rides = rawStoredRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
@@ -4169,474 +3894,6 @@
 
 
     // =========================================================================
-    
-    // =========================================================================
-    // 📄 PASSENGER & DRIVER PAGE-BY-PAGE WIZARD ENGINE
-    // =========================================================================
-    let currentPassengerPage = 1;
-    let selectedRideForPage3 = null;
-    let page3SelectedSeats = 1;
-    let currentCarCarouselIndex = 0;
-    let currentFilteredRides = [];
-
-    function goToPassengerPage(pageNum) {
-      currentPassengerPage = pageNum;
-      
-      for (let p = 1; p <= 4; p++) {
-        const el = document.getElementById('passenger-page-' + p);
-        const ind = document.getElementById('p-step-' + p + '-ind');
-        if (el) el.style.display = (p === pageNum) ? 'block' : 'none';
-        if (ind) {
-          ind.classList.toggle('active', p === pageNum);
-          ind.classList.toggle('completed', p < pageNum);
-        }
-      }
-
-      if (pageNum === 2) {
-        renderPassengerRides(rides);
-      }
-
-      if (typeof window !== 'undefined' && window.scrollTo) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    function selectQuickRoute(from, to) {
-      const fromEl = document.getElementById('ps-from');
-      const toEl = document.getElementById('ps-to');
-      if (fromEl) fromEl.value = from;
-      if (toEl) toEl.value = to;
-    }
-
-    function proceedFromSearchToCars() {
-      const from = (document.getElementById('ps-from')?.value || '').trim().toLowerCase();
-      const to = (document.getElementById('ps-to')?.value || '').trim().toLowerCase();
-      const date = document.getElementById('ps-date')?.value || '';
-
-      let filtered = rides.filter(r => {
-        if (r.status !== 'ACTIVE') return false;
-        const bookedCount = bookings
-          .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
-          .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
-        const totalCapacity = parseInt(r.totalSeats) || parseInt(r.seatsAvailable) || 1;
-        const currentRemaining = Math.max(0, totalCapacity - bookedCount);
-        r.seatsAvailable = currentRemaining;
-        if (currentRemaining <= 0) return false;
-        return true;
-      });
-
-      if (from) filtered = filtered.filter(r => r.origin && r.origin.toLowerCase().includes(from));
-      if (to) filtered = filtered.filter(r => r.destination && r.destination.toLowerCase().includes(to));
-      if (date) filtered = filtered.filter(r => r.date === date);
-
-      renderPassengerRides(filtered);
-      goToPassengerPage(2);
-    }
-
-    function renderPassengerRides(list) {
-      const label = document.getElementById('passenger-rides-count-label');
-      
-      currentFilteredRides = (list || rides).filter(r => {
-        if (r.status !== 'ACTIVE') return false;
-        const bookedCount = bookings
-          .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
-          .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
-        const totalCapacity = parseInt(r.totalSeats) || parseInt(r.seatsAvailable) || 1;
-        const currentRemaining = Math.max(0, totalCapacity - bookedCount);
-        r.seatsAvailable = currentRemaining;
-        if (currentRemaining <= 0) return false;
-        return true;
-      });
-
-      if (label) {
-        label.innerText = currentFilteredRides.length + ' Available Vehicle(s)';
-      }
-
-      if (currentCarCarouselIndex >= currentFilteredRides.length) {
-        currentCarCarouselIndex = 0;
-      }
-
-      updateCarCarouselView();
-    }
-
-    function updateCarCarouselView() {
-      const container = document.getElementById('passenger-rides-container');
-      if (!container) return;
-
-      if (currentFilteredRides.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 1.5rem 1rem; color: #cbd5e1;">
-            <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">🚗</div>
-            <strong style="color: white; font-size: 1.05rem; display: block;">No Active Cars on This Route</strong>
-            <p style="font-size: 0.8rem; margin: 0.35rem auto 0.75rem; max-width: 320px; color: #94a3b8;">
-              Currently there are no vacant cars on this corridor. Try another city or check back shortly.
-            </p>
-            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.4rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-              ⬅️ Change Route
-            </button>
-          </div>
-        `;
-        return;
-      }
-
-      const ride = currentFilteredRides[currentCarCarouselIndex];
-      const total = currentFilteredRides.length;
-
-      container.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.78rem; color: #93c5fd;">
-          <span>Vehicle <strong>${currentCarCarouselIndex + 1}</strong> of <strong>${total}</strong></span>
-          <div style="display: flex; gap: 0.4rem;">
-            <button type="button" class="btn btn-secondary" onclick="prevCarInCarousel()" ${currentCarCarouselIndex === 0 ? 'disabled style="opacity: 0.35; padding: 2px 8px; font-size: 0.72rem;"' : 'style="padding: 2px 8px; font-size: 0.72rem;"'}>◀ Prev Car</button>
-            <button type="button" class="btn btn-secondary" onclick="nextCarInCarousel()" ${currentCarCarouselIndex === total - 1 ? 'disabled style="opacity: 0.35; padding: 2px 8px; font-size: 0.72rem;"' : 'style="padding: 2px 8px; font-size: 0.72rem;"'}>Next Car ▶</button>
-          </div>
-        </div>
-
-        <div class="ride-card" style="margin-bottom: 0.5rem; padding: 0.85rem 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <strong style="color: white; font-size: 1rem;">${ride.driverName}</strong>
-              <div style="font-size: 0.74rem; color: #38bdf8;">⭐ 4.9 • Verified Driver • Direct QR Payment</div>
-            </div>
-            <span style="background: #22c55e; color: white; font-size: 0.74rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
-              ${ride.seatsAvailable} Seat(s) Left
-            </span>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin: 0.45rem 0;">
-            <div style="flex: 1;">
-              <div style="font-weight: 800; color: white; font-size: 1rem;">${ride.origin}</div>
-              <div style="font-size: 0.7rem; color: #94a3b8;">Pickup Landmark</div>
-            </div>
-            <span style="color: #38bdf8; font-size: 1.15rem; font-weight: 900;">➔</span>
-            <div style="flex: 1; text-align: right;">
-              <div style="font-weight: 800; color: white; font-size: 1rem;">${ride.destination}</div>
-              <div style="font-size: 0.7rem; color: #94a3b8;">Drop Landmark</div>
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.75); padding: 0.45rem 0.75rem; border-radius: 10px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.12);">
-            <div>
-              🚗 <strong>${ride.vehicleModel}</strong> (${ride.vehicleNumber})<br>
-              📅 <strong>${ride.date}</strong> at <strong>${ride.time}</strong>
-            </div>
-            <div style="text-align: right;">
-              <span style="font-size: 1.25rem; font-weight: 900; color: #4ade80;">₹${ride.farePerSeat}</span>
-              <span style="font-size: 0.7rem; color: #94a3b8;">/seat</span>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 0.45rem; margin-top: 0.4rem;">
-            <button type="button" class="btn btn-secondary" onclick="openSingleRideRouteModal('${ride.id}')" style="flex: 1; font-size: 0.78rem; padding: 0.5rem; border-radius: 8px; color: #38bdf8; border: 1px solid #38bdf8; cursor: pointer;">
-              🗺️ Route GPS
-            </button>
-            <button type="button" class="btn btn-primary" onclick="selectCarAndGoToBooking('${ride.id}')" style="flex: 1.4; font-size: 0.82rem; padding: 0.5rem; font-weight: 800; border-radius: 8px; cursor: pointer;">
-              💺 Book This Car (Next ➔)
-            </button>
-          </div>
-        </div>
-      `;
-    }
-
-    function prevCarInCarousel() {
-      if (currentCarCarouselIndex > 0) {
-        currentCarCarouselIndex--;
-        updateCarCarouselView();
-      }
-    }
-
-    function nextCarInCarousel() {
-      if (currentCarCarouselIndex < currentFilteredRides.length - 1) {
-        currentCarCarouselIndex++;
-        updateCarCarouselView();
-      }
-    }
-
-    function selectCarAndGoToBooking(rideId) {
-      const ride = rides.find(r => r.id === rideId);
-      if (!ride) return;
-
-      selectedRideForPage3 = ride;
-      page3SelectedSeats = 1;
-
-      const summaryBox = document.getElementById('page3-ride-summary');
-      if (summaryBox) {
-        summaryBox.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
-            <div>
-              <strong style="color: white; font-size: 1.05rem;">${ride.origin} ➔ ${ride.destination}</strong>
-              <div style="font-size: 0.78rem; color: #94a3b8;">📅 ${ride.date} at ${ride.time}</div>
-            </div>
-            <div style="text-align: right;">
-              <span style="font-size: 1.25rem; font-weight: 900; color: #4ade80;">₹${ride.farePerSeat}</span>
-              <span style="font-size: 0.72rem; color: #94a3b8;">/seat</span>
-            </div>
-          </div>
-          <div style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.82rem; color: #e2e8f0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.4rem;">
-            <span>🚗 <strong>${ride.vehicleModel}</strong> (${ride.vehicleNumber})</span>
-            <span>👤 Driver: <strong>${ride.driverName}</strong></span>
-          </div>
-        `;
-      }
-
-      const seatContainer = document.getElementById('page3-seat-buttons-container');
-      if (seatContainer) {
-        const available = Math.min(ride.seatsAvailable || 1, 6);
-        let btnHtml = '';
-        for (let i = 1; i <= available; i++) {
-          btnHtml += `<button type="button" class="btn ${i === 1 ? 'btn-primary' : 'btn-secondary'}" onclick="setPage3Seats(${i})" id="btn-seat-${i}" style="flex: 1; padding: 0.5rem; font-weight: 800; border-radius: 8px;">${i}</button>`;
-        }
-        seatContainer.innerHTML = btnHtml;
-      }
-
-      updatePage3Fare();
-
-      const qrBox = document.getElementById('page3-qr-box');
-      const upiText = document.getElementById('page3-driver-upi-text');
-      if (qrBox) {
-        if (ride.driverQr) {
-          qrBox.innerHTML = `<img src="${ride.driverQr}" alt="Driver QR" style="width: 100%; height: 100%; object-fit: contain;">`;
-        } else {
-          qrBox.innerHTML = `<div style="text-align: center; color: #0f172a; font-weight: 800; font-size: 0.82rem;">Scan & Pay<br><strong style="color: #1d4ed8; font-size: 1.05rem;">₹${ride.farePerSeat}</strong></div>`;
-        }
-      }
-      if (upiText) {
-        upiText.innerText = `UPI ID: ${ride.driverUpi || ride.driverPhone + '@upi'}`;
-      }
-
-      goToPassengerPage(3);
-    }
-
-    function setPage3Seats(num) {
-      if (!selectedRideForPage3) return;
-      page3SelectedSeats = num;
-      const maxSeats = Math.min(selectedRideForPage3.seatsAvailable || 1, 6);
-      for (let i = 1; i <= maxSeats; i++) {
-        const btn = document.getElementById('btn-seat-' + i);
-        if (btn) {
-          btn.className = (i === num) ? 'btn btn-primary' : 'btn btn-secondary';
-        }
-      }
-      updatePage3Fare();
-    }
-
-    function updatePage3Fare() {
-      if (!selectedRideForPage3) return;
-      const total = (selectedRideForPage3.farePerSeat || 0) * page3SelectedSeats;
-      const fareEl = document.getElementById('page3-total-fare-text');
-      if (fareEl) fareEl.innerText = '₹' + total;
-    }
-
-    function submitBookingFromPage3() {
-      if (!selectedRideForPage3) {
-        alert('Please select a car first.');
-        goToPassengerPage(2);
-        return;
-      }
-
-      const name = (document.getElementById('p3-name')?.value || '').trim();
-      const phone = (document.getElementById('p3-phone')?.value || '').trim();
-      const utr = (document.getElementById('p3-utr')?.value || '').trim();
-
-      if (!name) {
-        alert('Please enter your full name.');
-        document.getElementById('p3-name')?.focus();
-        return;
-      }
-
-      if (!phone || phone.length < 10) {
-        alert('Please enter a valid 10-digit WhatsApp phone number.');
-        document.getElementById('p3-phone')?.focus();
-        return;
-      }
-
-      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
-        alert('Please enter a valid 12-digit payment UTR number from your PhonePe/GPay receipt.');
-        document.getElementById('p3-utr')?.focus();
-        return;
-      }
-
-      const totalFare = selectedRideForPage3.farePerSeat * page3SelectedSeats;
-
-      const booking = {
-        bookingId: 'TKT-' + Math.floor(100000 + Math.random() * 900000),
-        pin: Math.floor(1000 + Math.random() * 9000),
-        rideId: selectedRideForPage3.id,
-        driverName: selectedRideForPage3.driverName,
-        driverPhone: selectedRideForPage3.driverPhone,
-        driverUpi: selectedRideForPage3.driverUpi,
-        vehicleModel: selectedRideForPage3.vehicleModel,
-        vehicleNumber: selectedRideForPage3.vehicleNumber,
-        origin: selectedRideForPage3.origin,
-        destination: selectedRideForPage3.destination,
-        travelDate: selectedRideForPage3.date,
-        travelTime: selectedRideForPage3.time,
-        passengerName: name,
-        passengerPhone: phone,
-        seatsBooked: page3SelectedSeats,
-        farePerSeat: selectedRideForPage3.farePerSeat,
-        totalFare: totalFare,
-        pickupPoint: selectedRideForPage3.origin + ' (Main Highway Pickup)',
-        dropPoint: selectedRideForPage3.destination + ' (City Drop Landmark)',
-        passengerUtr: utr,
-        status: 'AWAITING_DRIVER_CONFIRMATION',
-        timestamp: new Date().toISOString()
-      };
-
-      bookings.push(booking);
-      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
-
-      const bookedCount = bookings
-        .filter(b => b.rideId === selectedRideForPage3.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
-        .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
-
-      const totalCapacity = parseInt(selectedRideForPage3.totalSeats) || parseInt(selectedRideForPage3.seatsAvailable) || 1;
-      const currentRemaining = Math.max(0, totalCapacity - bookedCount);
-      selectedRideForPage3.seatsAvailable = currentRemaining;
-
-      if (currentRemaining <= 0) {
-        selectedRideForPage3.status = 'FULL';
-      }
-
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
-
-      if (typeof syncBookingToFirestore === 'function') {
-        syncBookingToFirestore(booking);
-      }
-
-      const p4Container = document.getElementById('page4-ticket-container');
-      if (p4Container) {
-        p4Container.innerHTML = generateTicketHtml(booking);
-      }
-
-      showToast('🎉 Booking requested! Seat locked and awaiting driver verification.', '#15803d');
-      playChimeAlert();
-
-      goToPassengerPage(4);
-    }
-
-    
-    // =========================================================================
-    // 🚙 DRIVER STEP-BY-STEP WIZARD (STRICT ZERO-SCROLL)
-    // =========================================================================
-    function setDriverRoute(from, to) {
-      document.getElementById('df-from').value = from;
-      document.getElementById('df-to').value = to;
-      if (typeof updateDriverRoutePreview === 'function') updateDriverRoutePreview();
-    }
-
-    function goToDriverStep1B() {
-      const from = (document.getElementById('df-from')?.value || '').trim();
-      const to = (document.getElementById('df-to')?.value || '').trim();
-      const date = document.getElementById('df-date')?.value || '';
-
-      if (!from || !to) {
-        alert('Please specify both Origin (From) and Destination (To)!');
-        return;
-      }
-      if (!date) {
-        alert('Please select your Travel Date!');
-        return;
-      }
-
-      goToDriverStep(2); // Step 2 is driver-step-1b
-    }
-
-    function goToDriverStep(stepNum) {
-      // Step mapping:
-      // 1: driver-step-1 (Route & Time)
-      // 2: driver-step-1b (Vehicle & Pricing)
-      // 3: driver-step-2 (Platform Fee)
-      // 4: driver-step-3 (Active Dashboard)
-      const el1 = document.getElementById('driver-step-1');
-      const el1b = document.getElementById('driver-step-1b');
-      const el2 = document.getElementById('driver-step-2');
-      const el3 = document.getElementById('driver-step-3');
-
-      if (el1) el1.style.display = (stepNum === 1) ? 'block' : 'none';
-      if (el1b) el1b.style.display = (stepNum === 2) ? 'block' : 'none';
-      if (el2) el2.style.display = (stepNum === 3) ? 'block' : 'none';
-      if (el3) el3.style.display = (stepNum === 4) ? 'block' : 'none';
-
-      for (let s = 1; s <= 4; s++) {
-        const ind = document.getElementById('d-step-' + s + '-ind');
-        if (ind) {
-          ind.classList.toggle('active', s === stepNum);
-          ind.classList.toggle('completed', s < stepNum);
-        }
-      }
-
-      if (typeof window !== 'undefined' && window.scrollTo) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    function proceedToDriverStep2() {
-      const name = (document.getElementById('df-name')?.value || '').trim();
-      const phone = (document.getElementById('df-phone')?.value || '').trim();
-      const model = (document.getElementById('df-model')?.value || '').trim();
-      const plate = (document.getElementById('df-plate')?.value || '').trim();
-      const fare = parseInt(document.getElementById('df-fare')?.value) || 0;
-      const from = (document.getElementById('df-from')?.value || '').trim();
-      const to = (document.getElementById('df-to')?.value || '').trim();
-      const date = document.getElementById('df-date')?.value || '';
-      const time = document.getElementById('df-time')?.value || '08:30';
-      const seats = parseInt(document.getElementById('df-seats')?.value) || 3;
-      const notes = (document.getElementById('df-notes')?.value || '').trim();
-
-      if (!model || !plate) {
-        alert('Please enter your Car Model (e.g. Kia Carens) and Vehicle Plate Number!');
-        return;
-      }
-      if (!name) {
-        alert('Please enter your Driver Full Name!');
-        return;
-      }
-      if (!phone || phone.length < 10) {
-        alert('Please enter a valid 10-digit WhatsApp mobile phone number!');
-        return;
-      }
-      if (fare <= 0) {
-        alert('Please enter a valid Rate Per Seat (e.g. ₹300)!');
-        return;
-      }
-
-      pendingDriverRide = {
-        id: 'RIDE-' + Math.floor(1000 + Math.random() * 9000),
-        driverName: name,
-        driverPhone: phone,
-        farePerSeat: fare,
-        origin: from,
-        destination: to,
-        date: date,
-        time: time,
-        seatsAvailable: seats,
-        totalSeats: seats,
-        vehicleModel: model,
-        vehicleNumber: plate,
-        notes: notes,
-        status: 'PENDING_APPROVAL',
-        postedAt: new Date().toISOString().replace('T', ' ').slice(0, 16)
-      };
-
-      goToDriverStep(3); // Step 3 is Platform Fee (driver-step-2)
-    }
-
-    function _unusedGoToDriverStep(stepNum) {
-      for (let s = 1; s <= 3; s++) {
-        const stepEl = document.getElementById('driver-step-' + s);
-        const indEl = document.getElementById('d-step-' + s + '-ind');
-        if (stepEl) stepEl.style.display = (s === stepNum) ? 'block' : 'none';
-        if (indEl) {
-          indEl.classList.toggle('active', s === stepNum);
-          indEl.classList.toggle('completed', s < stepNum);
-        }
-      }
-      if (typeof window !== 'undefined' && window.scrollTo) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-
     // 🗺️ SAFARSAATHI ADVANCED LIVE GPS ROUTE MAP & CORRIDOR RADAR
     function updateDriverRoutePreview() {
       const fromEl = document.getElementById('df-from');
@@ -4680,31 +3937,6 @@
         time: document.getElementById('df-time')?.value || '08:30'
       };
       openSingleRideRouteModalObject(mockRide, true);
-    }
-
-    function openSingleRideRouteModal(rideId) {
-      const ride = rides.find(r => r.id === rideId);
-      if (ride) {
-        openSingleRideRouteModalObject(ride, false);
-      }
-    }
-
-    function openLiveRadarMapModal() {
-      const from = (document.getElementById('ps-from')?.value || 'Guwahati').trim() || 'Guwahati';
-      const to = (document.getElementById('ps-to')?.value || 'Shillong').trim() || 'Shillong';
-      const activeRide = rides.find(r => r.status === 'ACTIVE') || {
-        id: 'corridor-preview',
-        origin: from,
-        destination: to,
-        driverName: 'SafarSaathi Verified Fleet',
-        vehicleModel: 'Kia Carens SUV',
-        vehicleNumber: 'AS 01 BP 4921',
-        seatsAvailable: 3,
-        farePerSeat: 350,
-        date: 'Today',
-        time: 'Live Radar'
-      };
-      openSingleRideRouteModalObject(activeRide, false);
     }
 
     function openSingleRideRouteModalObject(ride, isDriverPreview = false) {
@@ -5192,6 +4424,520 @@
       }, 1500);
     }
 
-</script>
+
+
+
+    // =========================================================================
+    // 🎨 DYNAMIC TAB TOGGLER: ALL THREE BLUE, SELECTED TURNS BLACK
+    // =========================================================================
+    function showSection(tab) {
+      document.getElementById('section-driver').style.display = (tab === 'driver') ? 'block' : 'none';
+      document.getElementById('section-passenger').style.display = (tab === 'passenger') ? 'block' : 'none';
+      document.getElementById('section-tickets').style.display = (tab === 'tickets') ? 'block' : 'none';
+
+      const btnDriver = document.getElementById('tab-btn-driver');
+      const btnPass = document.getElementById('tab-btn-passenger');
+      const btnTkt = document.getElementById('tab-btn-tickets');
+
+      if (btnDriver) btnDriver.className = (tab === 'driver') ? 'tab-btn active' : 'tab-btn';
+      if (btnPass) btnPass.className = (tab === 'passenger') ? 'tab-btn active' : 'tab-btn';
+      if (btnTkt) btnTkt.className = (tab === 'tickets') ? 'tab-btn active' : 'tab-btn';
+
+      if (tab === 'passenger') {
+        goToPassengerPage(1);
+      } else if (tab === 'driver') {
+        goToDriverStep(1);
+      } else if (tab === 'tickets') {
+        renderPassengerTickets();
+      }
+
+      if (typeof window !== 'undefined' && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // =========================================================================
+    // 🚙 DRIVER 4-STEP FLIP WIZARD ENGINE
+    // =========================================================================
+    function setDriverRoute(from, to) {
+      document.getElementById('df-from').value = from;
+      document.getElementById('df-to').value = to;
+      if (typeof updateDriverRoutePreview === 'function') updateDriverRoutePreview();
+    }
+
+    function goToDriverStep(stepNum) {
+      for (let s = 1; s <= 4; s++) {
+        const el = document.getElementById('driver-step-' + s);
+        const ind = document.getElementById('d-step-' + s + '-ind');
+        if (el) el.style.display = (s === stepNum) ? 'block' : 'none';
+        if (ind) {
+          ind.classList.toggle('active', s === stepNum);
+          ind.classList.toggle('completed', s < stepNum);
+        }
+      }
+      if (stepNum === 4 && typeof renderDriverPostedRides === 'function') {
+        renderDriverPostedRides();
+      }
+      if (typeof window !== 'undefined' && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function proceedToDriverStep3() {
+      const model = (document.getElementById('df-model')?.value || '').trim();
+      const plate = (document.getElementById('df-plate')?.value || '').trim();
+      const name = (document.getElementById('df-name')?.value || '').trim();
+      const phone = (document.getElementById('df-phone')?.value || '').trim();
+      const fare = parseInt(document.getElementById('df-fare')?.value) || 0;
+
+      if (!model || !plate) {
+        alert('Please enter your Car Model and License Plate Number!');
+        return;
+      }
+      if (!name) {
+        alert('Please enter your Driver Full Name!');
+        return;
+      }
+      if (!phone || phone.length < 10) {
+        alert('Please enter a valid 10-digit WhatsApp phone number!');
+        return;
+      }
+      if (fare <= 0) {
+        alert('Please enter your Fare Per Seat!');
+        return;
+      }
+
+      goToDriverStep(3);
+    }
+
+    function submitDriverRideDirect() {
+      const from = (document.getElementById('df-from')?.value || 'Guwahati').trim();
+      const to = (document.getElementById('df-to')?.value || 'Shillong').trim();
+      const date = document.getElementById('df-date')?.value || getTomorrowDate(1);
+      const time = document.getElementById('df-time')?.value || '08:30';
+      const model = (document.getElementById('df-model')?.value || 'Swift Dzire').trim();
+      const plate = (document.getElementById('df-plate')?.value || 'AS 01 BP 4921').trim();
+      const seats = parseInt(document.getElementById('df-seats')?.value) || 3;
+      const fare = parseInt(document.getElementById('df-fare')?.value) || 300;
+      const name = (document.getElementById('df-name')?.value || 'Bikram Das').trim();
+      const phone = (document.getElementById('df-phone')?.value || '9864012345').trim();
+      const driverUpi = (document.getElementById('df-driver-upi')?.value || phone + '@upi').trim();
+      const utr = (document.getElementById('df-utr')?.value || '').trim();
+
+      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
+        alert('Please enter a valid 12-digit payment UTR number for your ₹100 platform fee!');
+        document.getElementById('df-utr')?.focus();
+        return;
+      }
+
+      const newRide = {
+        id: 'RIDE-' + Math.floor(1000 + Math.random() * 9000),
+        driverName: name,
+        driverPhone: phone,
+        driverUpi: driverUpi,
+        driverQr: 'mitali_qr_compact.svg',
+        farePerSeat: fare,
+        origin: from,
+        destination: to,
+        date: date,
+        time: time,
+        seatsAvailable: seats,
+        totalSeats: seats,
+        vehicleModel: model,
+        vehicleNumber: plate,
+        platformFeeUtr: utr,
+        status: 'PENDING_APPROVAL',
+        postedAt: new Date().toISOString()
+      };
+
+      rides.unshift(newRide);
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+
+      if (typeof syncRideToFirestore === 'function') {
+        syncRideToFirestore(newRide);
+      }
+
+      // 1-Tap WhatsApp Admin Link
+      const adminPin = '1234';
+      const netlifyAppUrl = window.location.origin + window.location.pathname;
+      const oneTapApproveUrl = `${netlifyAppUrl}?approveRide=${newRide.id}&pin=${adminPin}`;
+      const waMsg = `*SAFARSAATHI NEW RIDE VERIFICATION REQUEST*%0A%0A` +
+        `🚗 *Ride ID:* ${newRide.id}%0A` +
+        `👤 *Driver:* ${name} (${phone})%0A` +
+        `🛣️ *Route:* ${from} ➔ ${to}%0A` +
+        `📅 *Date:* ${date} at ${time}%0A` +
+        `💰 *₹100 Platform Fee UTR:* ${utr}%0A%0A` +
+        `*1-TAP ADMIN ACTIVATION LINK:*%0A${encodeURIComponent(oneTapApproveUrl)}`;
+
+      window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
+
+      showToast('🎉 Ride submitted! 1-Tap activation link sent to Admin WhatsApp.', '#15803d');
+      playChimeAlert();
+
+      goToDriverStep(4);
+    }
+
+    // =========================================================================
+    // 📄 PASSENGER 4-PAGE FLIP WIZARD ENGINE
+    // =========================================================================
+    let currentPassengerPage = 1;
+    let selectedRideForPage3 = null;
+    let page3SelectedSeats = 1;
+    let currentCarCarouselIndex = 0;
+    let currentFilteredRides = [];
+
+    function goToPassengerPage(pageNum) {
+      currentPassengerPage = pageNum;
+      
+      for (let p = 1; p <= 4; p++) {
+        const el = document.getElementById('passenger-page-' + p);
+        const ind = document.getElementById('p-step-' + p + '-ind');
+        if (el) el.style.display = (p === pageNum) ? 'block' : 'none';
+        if (ind) {
+          ind.classList.toggle('active', p === pageNum);
+          ind.classList.toggle('completed', p < pageNum);
+        }
+      }
+
+      if (pageNum === 2) {
+        renderPassengerRides(rides);
+      }
+
+      if (typeof window !== 'undefined' && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function selectQuickRoute(from, to) {
+      document.getElementById('ps-from').value = from;
+      document.getElementById('ps-to').value = to;
+    }
+
+    function proceedFromSearchToCars() {
+      const from = (document.getElementById('ps-from')?.value || '').trim().toLowerCase();
+      const to = (document.getElementById('ps-to')?.value || '').trim().toLowerCase();
+      const date = document.getElementById('ps-date')?.value || '';
+
+      let filtered = rides.filter(r => {
+        if (r.status !== 'ACTIVE') return false;
+        const bookedCount = bookings
+          .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
+          .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
+        const totalCapacity = parseInt(r.totalSeats) || parseInt(r.seatsAvailable) || 1;
+        const currentRemaining = Math.max(0, totalCapacity - bookedCount);
+        r.seatsAvailable = currentRemaining;
+        if (currentRemaining <= 0) return false;
+        return true;
+      });
+
+      if (from) filtered = filtered.filter(r => r.origin && r.origin.toLowerCase().includes(from));
+      if (to) filtered = filtered.filter(r => r.destination && r.destination.toLowerCase().includes(to));
+      if (date) filtered = filtered.filter(r => r.date === date);
+
+      renderPassengerRides(filtered);
+      goToPassengerPage(2);
+    }
+
+    function renderPassengerRides(list) {
+      const label = document.getElementById('passenger-rides-count-label');
+      
+      currentFilteredRides = (list || rides).filter(r => {
+        if (r.status !== 'ACTIVE') return false;
+        const bookedCount = bookings
+          .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
+          .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
+        const totalCapacity = parseInt(r.totalSeats) || parseInt(r.seatsAvailable) || 1;
+        const currentRemaining = Math.max(0, totalCapacity - bookedCount);
+        r.seatsAvailable = currentRemaining;
+        if (currentRemaining <= 0) return false;
+        return true;
+      });
+
+      if (label) {
+        label.innerText = currentFilteredRides.length + ' Available Vehicle(s)';
+      }
+
+      if (currentCarCarouselIndex >= currentFilteredRides.length) {
+        currentCarCarouselIndex = 0;
+      }
+
+      updateCarCarouselView();
+    }
+
+    function updateCarCarouselView() {
+      const container = document.getElementById('passenger-rides-container');
+      if (!container) return;
+
+      if (currentFilteredRides.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 1.5rem 1rem; color: #cbd5e1;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">🚗</div>
+            <strong style="color: white; font-size: 1.05rem; display: block;">No Active Cars on This Route</strong>
+            <p style="font-size: 0.8rem; margin: 0.35rem auto 0.75rem; max-width: 320px; color: #94a3b8;">
+              Currently there are no vacant cars on this corridor. Try another city or check back shortly.
+            </p>
+            <button type="button" class="btn btn-secondary" onclick="goToPassengerPage(1)" style="padding: 0.4rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
+              ⬅️ Change Route
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const ride = currentFilteredRides[currentCarCarouselIndex];
+      const total = currentFilteredRides.length;
+
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; font-size: 0.78rem; color: #93c5fd;">
+          <span>Vehicle <strong>${currentCarCarouselIndex + 1}</strong> of <strong>${total}</strong></span>
+          <div style="display: flex; gap: 0.4rem;">
+            <button type="button" class="btn btn-secondary" onclick="prevCarInCarousel()" ${currentCarCarouselIndex === 0 ? 'disabled style="opacity: 0.35; padding: 2px 8px; font-size: 0.72rem;"' : 'style="padding: 2px 8px; font-size: 0.72rem;"'}>◀ Prev Car</button>
+            <button type="button" class="btn btn-secondary" onclick="nextCarInCarousel()" ${currentCarCarouselIndex === total - 1 ? 'disabled style="opacity: 0.35; padding: 2px 8px; font-size: 0.72rem;"' : 'style="padding: 2px 8px; font-size: 0.72rem;"'}>Next Car ▶</button>
+          </div>
+        </div>
+
+        <div class="ride-card" style="margin-bottom: 0.5rem; padding: 0.85rem 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: white; font-size: 1rem;">${ride.driverName}</strong>
+              <div style="font-size: 0.74rem; color: #38bdf8;">⭐ 4.9 • Verified Driver • Direct QR Payment</div>
+            </div>
+            <span style="background: #22c55e; color: white; font-size: 0.74rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
+              ${ride.seatsAvailable} Seat(s) Left
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin: 0.45rem 0;">
+            <div style="flex: 1;">
+              <div style="font-weight: 800; color: white; font-size: 1rem;">${ride.origin}</div>
+              <div style="font-size: 0.7rem; color: #94a3b8;">Pickup Landmark</div>
+            </div>
+            <span style="color: #38bdf8; font-size: 1.15rem; font-weight: 900;">➔</span>
+            <div style="flex: 1; text-align: right;">
+              <div style="font-weight: 800; color: white; font-size: 1rem;">${ride.destination}</div>
+              <div style="font-size: 0.7rem; color: #94a3b8;">Drop Landmark</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.75); padding: 0.45rem 0.75rem; border-radius: 10px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.12);">
+            <div>
+              🚗 <strong>${ride.vehicleModel}</strong> (${ride.vehicleNumber})<br>
+              📅 <strong>${ride.date}</strong> at <strong>${ride.time}</strong>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 1.25rem; font-weight: 900; color: #4ade80;">₹${ride.farePerSeat}</span>
+              <span style="font-size: 0.7rem; color: #94a3b8;">/seat</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.45rem; margin-top: 0.4rem;">
+            <button type="button" class="btn btn-secondary" onclick="openSingleRideRouteModal('${ride.id}')" style="flex: 1; font-size: 0.78rem; padding: 0.5rem; border-radius: 8px; color: #38bdf8; border: 1px solid #38bdf8; cursor: pointer;">
+              🗺️ Route GPS
+            </button>
+            <button type="button" class="btn btn-primary" onclick="selectCarAndGoToBooking('${ride.id}')" style="flex: 1.4; font-size: 0.82rem; padding: 0.5rem; font-weight: 800; border-radius: 8px; cursor: pointer;">
+              💺 Book This Car (Next ➔)
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function prevCarInCarousel() {
+      if (currentCarCarouselIndex > 0) {
+        currentCarCarouselIndex--;
+        updateCarCarouselView();
+      }
+    }
+
+    function nextCarInCarousel() {
+      if (currentCarCarouselIndex < currentFilteredRides.length - 1) {
+        currentCarCarouselIndex++;
+        updateCarCarouselView();
+      }
+    }
+
+    function selectCarAndGoToBooking(rideId) {
+      const ride = rides.find(r => r.id === rideId);
+      if (!ride) return;
+
+      selectedRideForPage3 = ride;
+      page3SelectedSeats = 1;
+
+      const summaryBox = document.getElementById('page3-ride-summary');
+      if (summaryBox) {
+        summaryBox.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+            <div>
+              <strong style="color: white; font-size: 1.05rem;">${ride.origin} ➔ ${ride.destination}</strong>
+              <div style="font-size: 0.78rem; color: #94a3b8;">📅 ${ride.date} at ${ride.time}</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 1.25rem; font-weight: 900; color: #4ade80;">₹${ride.farePerSeat}</span>
+              <span style="font-size: 0.72rem; color: #94a3b8;">/seat</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.82rem; color: #e2e8f0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.4rem;">
+            <span>🚗 <strong>${ride.vehicleModel}</strong> (${ride.vehicleNumber})</span>
+            <span>👤 Driver: <strong>${ride.driverName}</strong></span>
+          </div>
+        `;
+      }
+
+      const seatContainer = document.getElementById('page3-seat-buttons-container');
+      if (seatContainer) {
+        const available = Math.min(ride.seatsAvailable || 1, 6);
+        let btnHtml = '';
+        for (let i = 1; i <= available; i++) {
+          btnHtml += `<button type="button" class="btn ${i === 1 ? 'btn-primary' : 'btn-secondary'}" onclick="setPage3Seats(${i})" id="btn-seat-${i}" style="flex: 1; padding: 0.5rem; font-weight: 800; border-radius: 8px;">${i}</button>`;
+        }
+        seatContainer.innerHTML = btnHtml;
+      }
+
+      updatePage3Fare();
+
+      const qrBox = document.getElementById('page3-qr-box');
+      const upiText = document.getElementById('page3-driver-upi-text');
+      if (qrBox) {
+        if (ride.driverQr) {
+          qrBox.innerHTML = `<img src="${ride.driverQr}" alt="Driver QR" style="width: 100%; height: 100%; object-fit: contain;">`;
+        } else {
+          qrBox.innerHTML = `<div style="text-align: center; color: #0f172a; font-weight: 800; font-size: 0.82rem;">Scan & Pay<br><strong style="color: #1d4ed8; font-size: 1.05rem;">₹${ride.farePerSeat}</strong></div>`;
+        }
+      }
+      if (upiText) {
+        upiText.innerText = `UPI ID: ${ride.driverUpi || ride.driverPhone + '@upi'}`;
+      }
+
+      goToPassengerPage(3);
+    }
+
+    function setPage3Seats(num) {
+      if (!selectedRideForPage3) return;
+      page3SelectedSeats = num;
+      const maxSeats = Math.min(selectedRideForPage3.seatsAvailable || 1, 6);
+      for (let i = 1; i <= maxSeats; i++) {
+        const btn = document.getElementById('btn-seat-' + i);
+        if (btn) {
+          btn.className = (i === num) ? 'btn btn-primary' : 'btn btn-secondary';
+        }
+      }
+      updatePage3Fare();
+    }
+
+    function updatePage3Fare() {
+      if (!selectedRideForPage3) return;
+      const total = (selectedRideForPage3.farePerSeat || 0) * page3SelectedSeats;
+      const fareEl = document.getElementById('page3-total-fare-text');
+      if (fareEl) fareEl.innerText = '₹' + total;
+    }
+
+    function submitBookingFromPage3() {
+      if (!selectedRideForPage3) {
+        alert('Please select a car first.');
+        goToPassengerPage(2);
+        return;
+      }
+
+      const name = (document.getElementById('p3-name')?.value || '').trim();
+      const phone = (document.getElementById('p3-phone')?.value || '').trim();
+      const utr = (document.getElementById('p3-utr')?.value || '').trim();
+
+      if (!name) {
+        alert('Please enter your full name.');
+        document.getElementById('p3-name')?.focus();
+        return;
+      }
+
+      if (!phone || phone.length < 10) {
+        alert('Please enter a valid 10-digit WhatsApp phone number.');
+        document.getElementById('p3-phone')?.focus();
+        return;
+      }
+
+      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
+        alert('Please enter a valid 12-digit payment UTR number from your PhonePe/GPay receipt.');
+        document.getElementById('p3-utr')?.focus();
+        return;
+      }
+
+      const totalFare = selectedRideForPage3.farePerSeat * page3SelectedSeats;
+
+      const booking = {
+        bookingId: 'TKT-' + Math.floor(100000 + Math.random() * 900000),
+        pin: Math.floor(1000 + Math.random() * 9000),
+        rideId: selectedRideForPage3.id,
+        driverName: selectedRideForPage3.driverName,
+        driverPhone: selectedRideForPage3.driverPhone,
+        driverUpi: selectedRideForPage3.driverUpi,
+        vehicleModel: selectedRideForPage3.vehicleModel,
+        vehicleNumber: selectedRideForPage3.vehicleNumber,
+        origin: selectedRideForPage3.origin,
+        destination: selectedRideForPage3.destination,
+        travelDate: selectedRideForPage3.date,
+        travelTime: selectedRideForPage3.time,
+        passengerName: name,
+        passengerPhone: phone,
+        seatsBooked: page3SelectedSeats,
+        farePerSeat: selectedRideForPage3.farePerSeat,
+        totalFare: totalFare,
+        pickupPoint: selectedRideForPage3.origin + ' (Main Highway Pickup)',
+        dropPoint: selectedRideForPage3.destination + ' (City Drop Landmark)',
+        passengerUtr: utr,
+        status: 'AWAITING_DRIVER_CONFIRMATION',
+        timestamp: new Date().toISOString()
+      };
+
+      bookings.push(booking);
+      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+
+      const bookedCount = bookings
+        .filter(b => b.rideId === selectedRideForPage3.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
+        .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
+
+      const totalCapacity = parseInt(selectedRideForPage3.totalSeats) || parseInt(selectedRideForPage3.seatsAvailable) || 1;
+      const currentRemaining = Math.max(0, totalCapacity - bookedCount);
+      selectedRideForPage3.seatsAvailable = currentRemaining;
+
+      if (currentRemaining <= 0) {
+        selectedRideForPage3.status = 'FULL';
+      }
+
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+
+      if (typeof syncBookingToFirestore === 'function') {
+        syncBookingToFirestore(booking);
+      }
+
+      const p4Container = document.getElementById('page4-ticket-container');
+      if (p4Container) {
+        p4Container.innerHTML = generateTicketHtml(booking);
+      }
+
+      showToast('🎉 Booking requested! Seat locked and awaiting driver verification.', '#15803d');
+      playChimeAlert();
+
+      goToPassengerPage(4);
+    }
+
+    function openLiveRadarMapModal() {
+      const from = (document.getElementById('ps-from')?.value || 'Guwahati').trim() || 'Guwahati';
+      const to = (document.getElementById('ps-to')?.value || 'Shillong').trim() || 'Shillong';
+      const activeRide = (typeof rides !== 'undefined' && rides.find(r => r.status === 'ACTIVE')) || {
+        id: 'corridor-preview',
+        origin: from,
+        destination: to,
+        driverName: 'SafarSaathi Verified Fleet',
+        vehicleModel: 'Kia Carens SUV',
+        vehicleNumber: 'AS 01 BP 4921',
+        seatsAvailable: 3,
+        farePerSeat: 350,
+        date: 'Today',
+        time: 'Live Radar'
+      };
+      if (typeof openSingleRideRouteModalObject === 'function') {
+        openSingleRideRouteModalObject(activeRide, false);
+      }
+    }
+    </script>
 </body>
 </html>
