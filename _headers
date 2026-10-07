@@ -1,0 +1,55 @@
+# Global CORS permissions
+/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, OPTIONS
+  Access-Control-Allow-Headers: *
+
+# ONLY sw.js has no-store so service worker updates instantly
+/sw.js
+  Content-Type: application/javascript; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+  Service-Worker-Allowed: /
+
+# ONLY manifest files have no-store so PWA settings update instantly
+/manifest.json
+  Content-Type: application/manifest+json; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# ALLOW CACHING for all photos, images, icons, and graphics
+/*.png
+  Cache-Control: public, max-age=604800, immutable
+  Access-Control-Allow-Origin: *
+
+/*.jpg
+  Cache-Control: public, max-age=604800, immutable
+  Access-Control-Allow-Origin: *
+
+/*.jpeg
+  Cache-Control: public, max-age=604800, immutable
+  Access-Control-Allow-Origin: *
+
+/*.svg
+  Cache-Control: public, max-age=604800, immutable
+  Access-Control-Allow-Origin: *
+
+# ALLOW CACHING for CSS and JS files
+/*.css
+  Cache-Control: public, max-age=86400
+  Access-Control-Allow-Origin: *
+
+/*.js
+  Cache-Control: public, max-age=86400
+  Access-Control-Allow-Origin: *

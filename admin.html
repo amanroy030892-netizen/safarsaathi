@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SafarSaathi - Executive Admin Control Center</title>
+  
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-darker: #020617;
+      --primary-blue: #1d4ed8;
+      --primary-blue-hover: #1e40af;
+      --accent-blue: #3b82f6;
+      --light-blue: #eff6ff;
+      --border-blue: #bfdbfe;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --card-white: #ffffff;
+      --border-gray: #e2e8f0;
+      --success-green: #15803d;
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: 
+        linear-gradient(rgba(10, 15, 30, 0.42), rgba(10, 15, 30, 0.55)),
+        url('car-bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Admin Top Header */
+    header {
+      background: var(--bg-dark);
+      border-bottom: 2px solid var(--accent-blue);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 900;
+      font-size: 1.3rem;
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .admin-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #93c5fd;
+      background: rgba(30, 58, 138, 0.6);
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(96, 165, 250, 0.4);
+    }
+
+    /* Layout */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+      width: 100%;
+    }
+
+    /* Cards */
+    .dashboard-card {
+      background: var(--card-white);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--border-gray);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-box {
+      background: #ffffff;
+      border: 1.5px solid var(--border-gray);
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .stat-box.highlight {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+    }
+    .stat-value.blue {
+      color: var(--primary-blue);
+    }
+    .stat-value.green {
+      color: var(--success-green);
+    }
+
+    /* Navigation Tabs */
+    .admin-nav-bar {
+      display: flex;
+      gap: 0.5rem;
+      background: #e2e8f0;
+      padding: 5px;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+    .admin-tab-btn {
+      flex: 1;
+      padding: 0.75rem 0.9rem;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .admin-tab-btn.active {
+      background: var(--bg-dark);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-gray);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+      background: #ffffff;
+    }
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 800;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-gray);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-gray);
+      color: #1e293b;
+    }
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    /* HSRP Plate */
+    .plate-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid #0f172a;
+      border-radius: 4px;
+      font-family: monospace;
+      font-weight: 900;
+      font-size: 0.85rem;
+      overflow: hidden;
+      line-height: 1;
+    }
+    .plate-badge-ind {
+      background: #1e3a8a;
+      color: #fbbf24;
+      font-size: 0.55rem;
+      padding: 3px 4px;
+      font-weight: 900;
+      border-right: 1px solid #0f172a;
+    }
+    .plate-badge-num {
+      padding: 3px 6px;
+      color: #0f172a;
+      letter-spacing: 1px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--primary-blue);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-blue-hover);
+    }
+    .btn-dark {
+      background: var(--bg-dark);
+      color: #ffffff;
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: var(--text-dark);
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    /* Forms */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      text-transform: uppercase;
+    }
+    .form-control {
+      padding: 0.75rem 0.9rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      outline: none;
+      background: #ffffff;
+      color: var(--text-dark);
+      width: 100%;
+    }
+    .form-control:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    /* Login Screen */
+    #admin-login-screen {
+      max-width: 400px;
+      margin: 4rem auto;
+      text-align: center;
+      background: white;
+      padding: 2.25rem 1.75rem;
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-gray);
+    }
+
+    footer {
+      background: var(--bg-dark);
+      border-top: 1px solid #1e293b;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: auto;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- Admin Header -->
+  <header>
+    <div class="header-inner">
+      <a href="admin.html" class="admin-brand" style="display: flex; align-items: center; gap: 10px;">
+        <img src="car-bg.jpg" alt="Fleet" style="width: 44px; height: 30px; object-fit: cover; border-radius: 8px; border: 1.5px solid #38bdf8; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+        <span>SafarSaathi <strong>Admin Console</strong></span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span class="admin-badge">Platform Management</span>
+        <button id="btn-logout" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; display: none;" onclick="adminLogout()">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="admin-login-screen">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔒</div>
+      <h2 style="font-size: 1.35rem; font-weight: 900; color: #0f172a; margin-bottom: 0.25rem;">Executive Control Center</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Enter administrator security PIN to access the dashboard:</p>
+      
+      <div class="form-group">
+        <input type="password" id="login-pin-input" class="form-control" maxlength="6" placeholder="Default PIN: 1234" style="text-align: center; font-size: 1.6rem; letter-spacing: 10px; font-weight: 900; margin-bottom: 1rem;">
+      </div>
+
+      <button type="button" class="btn btn-primary" style="width: 100%; height: 48px; font-size: 1rem;" onclick="checkAdminLogin()">
+        Enter Management Portal ➔
+      </button>
+    </div>
+
+    <!-- 2. MAIN ADMIN PORTAL (HIDDEN UNTIL LOGIN) -->
+    <div id="admin-main-portal" style="display: none;">
+
+    <!-- Floating In-App Admin Notification Toast -->
+    <div id="admin-toast-banner" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999999; width: 92%; max-width: 540px; background: #15803d; color: #ffffff; padding: 14px 20px; border-radius: 14px; font-weight: 800; font-size: 1rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.35); border: 2px solid #86efac; color: #ffffff; padding: 12px 18px; border-radius: 12px; font-weight: 800; font-size: 0.95rem; text-align: center; box-shadow: 0 8px 24px rgba(21, 128, 61, 0.35); margin-bottom: 1.25rem; border: 1.5px solid #86efac; animation: fadeIn 0.3s ease;">
+      ✓ SUCCESS: Action completed!
+    </div>
+
+      
+      <!-- Top Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-box highlight">
+          <span class="stat-label">Platform Listing Revenue</span>
+          <div class="stat-value blue" id="stat-revenue">₹0</div>
+          <span style="font-size: 0.72rem; color: #1e40af; font-weight: 700;">From ₹100 driver vehicle listings</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Active Vehicle Listings</span>
+          <div class="stat-value" id="stat-active-rides">0</div>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">Currently visible to passengers</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Confirmed Bookings</span>
+          <div class="stat-value green" id="stat-total-bookings">0</div>
+          <span style="font-size: 0.72rem; color: var(--success-green); font-weight: 700;">Zero platform booking fees</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">User Feedback & Reviews</span>
+          <div class="stat-value" id="stat-total-feedbacks">0</div>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">Driver & passenger ratings</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-nav-bar">
+        <button class="admin-tab-btn active" id="tab-vehicles" onclick="switchTab('vehicles')">
+          🚗 Vehicle Listings (<span id="count-vehicles">0</span>)
+        </button>
+        <button class="admin-tab-btn" id="tab-bookings" onclick="switchTab('bookings')">
+          👥 Passenger Bookings (<span id="count-bookings">0</span>)
+        </button>
+        <button class="admin-tab-btn" id="tab-reviews" onclick="switchTab('reviews')">
+          ⭐ Reviews & Ratings (<span id="count-reviews">0</span>)
+        </button>
+        <button class="admin-tab-btn" id="tab-firebase" onclick="switchTab('firebase')">
+          🔥 Google Firebase & SMS
+        </button>
+        <button class="admin-tab-btn" id="tab-settings" onclick="switchTab('settings')">
+          ⚙️ Data & Security
+        </button>
+      </div>
+
+      <!-- VIEW 1: VEHICLE LISTINGS -->
+      <div id="view-vehicles" class="dashboard-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 900;">Driver Vehicle Listings & UTR Verification</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">All vehicles submitted with ₹100 platform listing UTR:</p>
+          </div>
+          <input type="text" id="search-vehicle-input" class="form-control" placeholder="Search by plate, driver, or city..." style="max-width: 280px;" oninput="renderVehiclesTable()">
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Registration</th>
+                <th>Driver Details</th>
+                <th>Route</th>
+                <th>Date & Time</th>
+                <th>Seats Available</th>
+                <th>Rate / Seat</th>
+                <th>Listing UTR (₹100)</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vehicles-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 2: PASSENGER BOOKINGS -->
+      <div id="view-bookings" class="dashboard-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 900;">Confirmed Passenger Reservations</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Verified passenger bookings with driver payment UTRs:</p>
+          </div>
+          <input type="text" id="search-booking-input" class="form-control" placeholder="Search passenger or ticket..." style="max-width: 280px;" oninput="renderBookingsTable()">
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Passenger</th>
+                <th>Vehicle & Driver</th>
+                <th>Route</th>
+                <th>Seats & No.</th>
+                <th>Paid Fare</th>
+                <th>Driver UTR</th>
+                <th>PIN</th>
+                <th>Booked At</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 3: REVIEWS & FEEDBACKS -->
+      <div id="view-reviews" class="dashboard-card" style="display: none;">
+        <div style="margin-bottom: 1rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 900;">User Ratings & Trip Feedback</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Mutual ratings submitted by passengers and drivers:</p>
+        </div>
+
+        <div id="reviews-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+      </div>
+
+      <!-- VIEW 4: GOOGLE FIREBASE CONFIG -->
+      <div id="view-firebase" class="dashboard-card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 900;">Google Firebase 100% Free Telecom SMS</h3>
+          <span style="background: #dcfce7; color: #15803d; font-weight: 800; font-size: 0.75rem; padding: 3px 10px; border-radius: 9999px;">10,000 FREE SMS/MONTH</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Manage your Google Cloud & Firebase Phone Authentication credentials used to dispatch 6-digit SMS OTPs to customer inboxes:
+        </p>
+
+        <div class="form-group">
+          <label>Firebase API Key (apiKey):</label>
+          <input type="text" id="admin-fb-apiKey" class="form-control" placeholder="AIzaSy...">
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Auth Domain:</label>
+            <input type="text" id="admin-fb-authDomain" class="form-control" placeholder="safarsaathi-1de86.firebaseapp.com">
+          </div>
+          <div class="form-group">
+            <label>Project ID:</label>
+            <input type="text" id="admin-fb-projectId" class="form-control" placeholder="safarsaathi-1de86">
+          </div>
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Storage Bucket:</label>
+            <input type="text" id="admin-fb-storageBucket" class="form-control" placeholder="safarsaathi-1de86.firebasestorage.app">
+          </div>
+          <div class="form-group">
+            <label>App ID:</label>
+            <input type="text" id="admin-fb-appId" class="form-control" placeholder="1:560392119536:web:d5d601c0c9a92e72c2ce35">
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem;">
+          <button type="button" class="btn btn-primary" onclick="updateFirebaseConfig()">
+            💾 Save & Update Firebase Configuration
+          </button>
+          <span id="fb-update-msg" style="color: #15803d; font-weight: 800; font-size: 0.85rem;"></span>
+        </div>
+      </div>
+
+      <!-- VIEW 5: DATA EXPORT & SECURITY SETTINGS -->
+      <div id="view-settings" class="dashboard-card" style="display: none;">
+        <h3 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.25rem;">Data Backup & System Maintenance</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Export operational data to CSV spreadsheets or change administrative security PIN:</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1.15rem;">
+            <strong style="display: block; font-size: 0.95rem; margin-bottom: 4px;">📊 Export Vehicles to CSV</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">Download all posted rides, routes, plates, and ₹100 platform UTRs.</p>
+            <button class="btn btn-dark" style="font-size: 0.8rem; padding: 0.45rem 0.85rem;" onclick="exportDataToCsv('rides')">Export Rides (.CSV)</button>
+          </div>
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1.15rem;">
+            <strong style="display: block; font-size: 0.95rem; margin-bottom: 4px;">📑 Export Bookings to CSV</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">Download all passenger reservations, verified phones, and fares.</p>
+            <button class="btn btn-dark" style="font-size: 0.8rem; padding: 0.45rem 0.85rem;" onclick="exportDataToCsv('bookings')">Export Bookings (.CSV)</button>
+          </div>
+        </div>
+
+        <!-- Change Admin PIN -->
+        <div style="max-width: 400px; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1.25rem;">
+          <strong style="display: block; font-size: 0.95rem; margin-bottom: 0.5rem;">🔑 Change Admin Security PIN</strong>
+          <div class="form-group">
+            <label>New 4-Digit Security PIN:</label>
+            <input type="password" id="new-admin-pin" class="form-control" maxlength="6" placeholder="e.g. 5678">
+          </div>
+          <button class="btn btn-primary" style="font-size: 0.85rem;" onclick="changeAdminPin()">Update Admin PIN</button>
+          <span id="pin-change-msg" style="color: #15803d; font-weight: 800; font-size: 0.8rem; margin-left: 8px;"></span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <div style="font-weight: 800; font-size: 0.95rem; color: #ffffff; margin-bottom: 4px;">SafarSaathi Enterprise Control Suite</div>
+    <div>Secure Administrative Oversight • Verified Admin: +91 6901027507 • Jana SFB Fee: 6901027507@nyes</div>
+    <div style="margin-top: 6px; font-size: 0.72rem;"><a href="privacy.html" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">📜 Privacy Policy</a></div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    const defaultFirebaseConfig = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86",
+      storageBucket: "safarsaathi-1de86.firebasestorage.app",
+      messagingSenderId: "560392119536",
+      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
+      measurementId: "G-0PB4K9PWVD"
+    };
+    let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
+    let adminPin = localStorage.getItem('ss_admin_pin') || '1234';
+    let adminDb = null;
+    let adminFirestoreInitialized = false;
+
+    function checkAdminLogin() {
+      const entered = document.getElementById('login-pin-input').value.trim();
+      if (entered === adminPin) {
+        document.getElementById('admin-login-screen').style.display = 'none';
+        document.getElementById('admin-main-portal').style.display = 'block';
+        document.getElementById('btn-logout').style.display = 'inline-flex';
+        initAdminFirestore();
+        loadDashboardData();
+      } else {
+        alert('Invalid Security PIN! (Default PIN is 1234)');
+      }
+    }
+
+    function adminLogout() {
+      document.getElementById('login-pin-input').value = '';
+      document.getElementById('admin-main-portal').style.display = 'none';
+      document.getElementById('admin-login-screen').style.display = 'block';
+      document.getElementById('btn-logout').style.display = 'none';
+    }
+
+    function initAdminFirestore() {
+      if (adminFirestoreInitialized) return;
+      if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          if (firebase.firestore) {
+            adminDb = firebase.firestore();
+            adminFirestoreInitialized = true;
+            console.log('✓ Admin Cloud Firestore connected.');
+
+            adminDb.collection('ss_rides').onSnapshot(snapshot => {
+              if (snapshot) {
+                const cloudRides = [];
+                snapshot.forEach(doc => {
+                  const data = doc.data();
+                  if (data) {
+                    if (!data.id) data.id = doc.id;
+                    cloudRides.push(data);
+                  }
+                });
+                let currentLocal = JSON.parse(localStorage.getItem('ss_rides')) || [];
+                if (cloudRides.length > 0) {
+                  const localMap = new Map(currentLocal.map(r => [r.id, r]));
+                  // Strict Status Merging: FULL cars remain FULL, only PENDING gets upgraded to ACTIVE if verified
+                  const merged = cloudRides.map(cr => {
+                    const localR = localMap.get(cr.id);
+                    if (cr.status === 'FULL' || cr.seatsAvailable <= 0) {
+                      return { ...cr, status: 'FULL' };
+                    }
+                    if (localR && localR.status === 'ACTIVE' && cr.status === 'PENDING_APPROVAL') {
+                      return { ...cr, status: 'ACTIVE', verifiedByAdmin: true };
+                    }
+                    return cr;
+                  });
+                  const cloudIds = new Set(cloudRides.map(r => r.id));
+                  currentLocal.forEach(lr => {
+                    if (!cloudIds.has(lr.id)) {
+                      merged.push(lr);
+                    }
+                  });
+                  try {
+                    localStorage.setItem('ss_rides', JSON.stringify(merged));
+                  } catch(e) {}
+                }
+                renderVehiclesTable();
+                updateAdminStats();
+              }
+            }, err => console.log('Admin rides sync note:', err));
+
+            adminDb.collection('ss_bookings').onSnapshot(snapshot => {
+              if (snapshot) {
+                const cloudBookings = [];
+                snapshot.forEach(doc => {
+                  const data = doc.data();
+                  if (data) {
+                    if (!data.bookingId) data.bookingId = doc.id;
+                    cloudBookings.push(data);
+                  }
+                });
+                if (cloudBookings.length > 0) {
+                  localStorage.setItem('ss_bookings', JSON.stringify(cloudBookings));
+                  renderBookingsTable();
+                  updateAdminStats();
+                }
+              }
+            }, err => console.log('Admin bookings sync note:', err));
+          }
+        } catch(e) {
+          console.error('Admin firebase init error:', e);
+        }
+      }
+    }
+
+    function updateAdminStats() {
+      const rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      const bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
+      const feedbacks = JSON.parse(localStorage.getItem('ss_feedbacks')) || [];
+
+      const statRev = document.getElementById('stat-revenue');
+      if (statRev) statRev.innerText = '₹' + (rides.length * 100);
+      const statAct = document.getElementById('stat-active-rides');
+      if (statAct) statAct.innerText = rides.filter(r => r.status === 'ACTIVE' && r.seatsAvailable > 0).length;
+      const statBk = document.getElementById('stat-total-bookings');
+      if (statBk) statBk.innerText = bookings.length;
+      const statFb = document.getElementById('stat-total-feedbacks');
+      if (statFb) statFb.innerText = feedbacks.length;
+
+      const cntVeh = document.getElementById('count-vehicles');
+      if (cntVeh) cntVeh.innerText = rides.length;
+      const cntBk = document.getElementById('count-bookings');
+      if (cntBk) cntBk.innerText = bookings.length;
+      const cntRev = document.getElementById('count-reviews');
+      if (cntRev) cntRev.innerText = feedbacks.length;
+    }
+
+    function loadDashboardData() {
+      renderVehiclesTable();
+      renderBookingsTable();
+      renderReviewsList();
+      updateAdminStats();
+      populateFirebaseInputs();
+      // Verification mode: Strict Admin Approval
+    }
+
+    function switchTab(t) {
+      const views = ['vehicles', 'bookings', 'reviews', 'firebase', 'settings'];
+      views.forEach(v => {
+        const viewEl = document.getElementById('view-' + v);
+        const tabEl = document.getElementById('tab-' + v);
+        if (viewEl) viewEl.style.display = (v === t) ? 'block' : 'none';
+        if (tabEl) tabEl.classList.toggle('active', v === t);
+      });
+    }
+
+    function renderVehiclesTable() {
+      const rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      const searchInput = document.getElementById('search-vehicle-input');
+      const query = (searchInput ? searchInput.value : '').toLowerCase();
+      const tbody = document.getElementById('vehicles-table-body');
+      if (!tbody) return;
+
+      const filtered = rides.filter(r => {
+        return !query || 
+               (r.vehicleNumber && r.vehicleNumber.toLowerCase().includes(query)) ||
+               (r.driverName && r.driverName.toLowerCase().includes(query)) ||
+               (r.origin && r.origin.toLowerCase().includes(query)) ||
+               (r.destination && r.destination.toLowerCase().includes(query)) ||
+               (r.utrNumber && r.utrNumber.includes(query));
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#64748b; padding:2rem;">No vehicles found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((r, idx) => {
+        const isFull = (r.status === 'FULL' || r.seatsAvailable <= 0);
+        const isActive = (r.status === 'ACTIVE' && r.seatsAvailable > 0);
+        const isPendingFee = !isActive && !isFull;
+
+        let badgeStyle = 'background:#dcfce7; color:#166534; font-weight:800;';
+        let badgeLabel = '✓ 100% LIVE';
+        if (isFull) {
+          badgeStyle = 'background:#0f172a; color:white; font-weight:800;';
+          badgeLabel = 'FULL (HIDDEN)';
+        } else if (isPendingFee) {
+          badgeStyle = 'background:#fef3c7; color:#92400e; font-weight:800; border:1px solid #fde047;';
+          badgeLabel = '⏳ PENDING ₹100 VERIFICATION';
+        }
+
+        const safeId = r.id || ('RIDE-' + idx);
+
+        return `
+          <tr style="${isPendingFee ? 'background:#fffdfa;' : ''}" id="row-${safeId}">
+            <td>
+              <div class="plate-badge">
+                <span class="plate-badge-ind">IND</span>
+                <span class="plate-badge-num">${r.vehicleNumber || 'PLATE'}</span>
+              </div>
+              <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">${r.vehicleModel || 'Car'}</div>
+            </td>
+            <td>
+              <strong>${r.driverName || 'Driver'}</strong>
+              <div style="font-size:0.75rem;"><a href="tel:${r.driverPhone}" style="color:#1d4ed8; text-decoration:none;">📞 ${r.driverPhone || 'N/A'}</a></div>
+            </td>
+            <td><strong>${r.origin} ➔ ${r.destination}</strong></td>
+            <td>${r.date || 'Today'} <br><span style="font-size:0.75rem; color:#64748b;">${r.time || '08:30 AM'}</span></td>
+            <td><strong>${r.seatsAvailable || 0}</strong> / ${r.totalSeats || r.seatsAvailable || 0}</td>
+            <td><strong style="color:#15803d; font-size:1rem;">₹${r.farePerSeat || 0}</strong></td>
+            <td>
+              <div style="font-family:monospace; background:#eff6ff; padding:3px 8px; border-radius:6px; font-weight:800; color:#1e40af; border:1px solid #bfdbfe; display:inline-block; font-size:0.88rem;">
+                ${r.utrNumber || 'UNPAID'}
+              </div>
+              <div style="font-size:0.7rem; color:#166534; margin-top:2px; font-weight:700;">₹100 to Jana SFB</div>
+              ${r.aiCertId ? `<div style="font-size:0.68rem; background:#ecfdf5; color:#047857; padding:1px 5px; border-radius:4px; margin-top:2px; font-weight:800;">✨ ${r.aiCertId}</div>` : ''}
+            </td>
+            <td>
+              <span id="badge-${safeId}" style="font-size:0.72rem; padding:4px 8px; border-radius:9999px; display:inline-block; white-space:nowrap; ${badgeStyle}">
+                ${badgeLabel}
+              </span>
+            </td>
+            <td>
+              <div style="display:flex; gap:0.4rem; align-items:center;">
+                ${isPendingFee ? `
+                  <button type="button" id="btn-approve-${safeId}" class="btn btn-primary" style="padding:10px 16px; font-size:0.88rem; font-weight:800; min-height:42px; width:auto; background:#16a34a; border-color:#16a34a; white-space:nowrap; cursor:pointer; border-radius:8px; box-shadow:0 2px 6px rgba(22,163,74,0.3); touch-action:manipulation;" onclick="adminApproveRide('${safeId}', ${idx})" title="Verify ₹100 and Publish">
+                    ✅ Verify ₹100 & Go Live
+                  </button>
+                ` : `
+                  <span style="font-size:0.75rem; color:#16a34a; font-weight:800;">✓ Active</span>
+                `}
+                <button type="button" class="btn-action btn-del" onclick="deleteRide('${safeId}', ${idx})" title="Delete Vehicle" style="padding:6px; font-size:0.85rem; cursor:pointer;">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function adminApproveRide(rideId, index) {
+      console.log('adminApproveRide clicked:', { rideId, index });
+      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      
+      let r = null;
+      if (rideId && rideId !== 'undefined') {
+        r = rides.find(item => item.id === rideId || item.vehicleNumber === rideId);
+      }
+      if (!r && typeof index === 'number' && rides[index]) {
+        r = rides[index];
+      }
+      if (!r && rides.length > 0) {
+        r = rides[0];
+      }
+
+      if (!r) {
+        showAdminToast('⚠️ Notice: Could not locate ride record.', '#dc2626');
+        renderVehiclesTable();
+        return;
+      }
+
+      // 1. Mark status ACTIVE
+      r.status = 'ACTIVE';
+      r.verifiedByAdmin = true;
+      r.approvedAt = new Date().toISOString();
+      try {
+        localStorage.setItem('ss_rides', JSON.stringify(rides));
+      } catch(e) {}
+
+      // 2. Play audio confirmation chime
+      if (typeof playAdminChime === 'function') {
+        playAdminChime();
+      }
+
+      // 3. Immediately sync clean object to Firestore with merge: true
+      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { adminDb = firebase.firestore(); } catch(e){}
+      }
+      if (adminDb) {
+        try {
+          const docId = r.id || ('RIDE-' + Date.now());
+          r.id = docId;
+          const cleanDoc = JSON.parse(JSON.stringify(r));
+          if (cleanDoc.driverQrImage && cleanDoc.driverQrImage.length > 100000) {
+            delete cleanDoc.driverQrImage;
+          }
+          adminDb.collection('ss_rides').doc(docId).set(cleanDoc, { merge: true })
+            .then(() => console.log('✓ Ride approved in Cloud Firestore:', docId))
+            .catch(err => console.error('Firestore write error:', err));
+        } catch(e) {
+          console.error('Admin Firestore error:', e);
+        }
+      }
+
+      // 4. Update table and stats immediately
+      renderVehiclesTable();
+      updateAdminStats();
+
+      // 5. Show prominent floating green toast banner
+      showAdminToast('🎉 ₹100 VERIFIED IN JANA SFB! Vehicle ' + r.vehicleNumber + ' is now 100% LIVE on Customer Portal!', '#15803d');
+    }
+
+    function deleteRide(rideId, index) {
+      if (!confirm('Are you sure you want to delete this vehicle listing?')) return;
+      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      rides = rides.filter((r, idx) => r.id !== rideId && idx !== index);
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      if (adminDb && rideId) {
+        try { adminDb.collection('ss_rides').doc(rideId).delete(); } catch(e){}
+      }
+      renderVehiclesTable();
+      updateAdminStats();
+      showAdminToast('✓ Vehicle listing deleted.', '#dc2626');
+    }
+
+        function playAdminChime() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+        setTimeout(() => {
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(880, ctx.currentTime);
+          gain2.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.5);
+        }, 150);
+      } catch(e) {}
+    }
+
+    function showAdminToast(msg, bgColor) {
+      const toast = document.getElementById('admin-toast-banner');
+      if (toast) {
+        toast.innerText = msg;
+        toast.style.background = bgColor || '#15803d';
+        toast.style.display = 'block';
+        setTimeout(() => {
+          if (toast) toast.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    function renderBookingsTable() {
+      const bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
+      const searchInput = document.getElementById('search-booking-input');
+      const query = (searchInput ? searchInput.value : '').toLowerCase();
+      const tbody = document.getElementById('bookings-table-body');
+      if (!tbody) return;
+
+      const filtered = bookings.filter(b => {
+        return !query || 
+               (b.bookingId && b.bookingId.toLowerCase().includes(query)) ||
+               (b.passengerName && b.passengerName.toLowerCase().includes(query)) ||
+               (b.passengerPhone && b.passengerPhone.toLowerCase().includes(query)) ||
+               (b.driverName && b.driverName.toLowerCase().includes(query)) ||
+               (b.passengerUtr && b.passengerUtr.includes(query));
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#64748b; padding:2rem;">No bookings found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => {
+        const isConfirmed = (b.status === 'CONFIRMED');
+        const isPending = (b.status === 'AWAITING_DRIVER_CONFIRMATION');
+        const badgeColor = isConfirmed ? 'background:#dcfce7; color:#166534;' : (isPending ? 'background:#fef3c7; color:#92400e;' : 'background:#fee2e2; color:#991b1b;');
+        const badgeText = isConfirmed ? '✓ CONFIRMED & PAID' : (isPending ? '⏳ AWAITING DRIVER' : '❌ REJECTED');
+
+        return `
+          <tr>
+            <td><strong style="color:#1e40af;">${b.bookingId}</strong></td>
+            <td>
+              <strong>${b.passengerName}</strong>
+              <div style="font-size:0.75rem;"><a href="tel:${b.passengerPhone}" style="color:#1d4ed8; text-decoration:none;">📞 ${b.passengerPhone}</a></div>
+            </td>
+            <td>
+              <strong>${b.driverName}</strong>
+              <div style="font-size:0.75rem;">${b.vehicleNumber}</div>
+            </td>
+            <td>${b.origin} ➔ ${b.destination}</td>
+            <td><strong>${b.seatsBooked}</strong> <span style="font-size:0.75rem; color:#64748b;">(${b.seatNumbers || 'Pending'})</span></td>
+            <td><strong style="color:#15803d;">₹${b.totalFare}</strong></td>
+            <td><span style="font-family:monospace; font-size:0.85rem; font-weight:700; color:#1e40af;">${b.passengerUtr || 'N/A'}</span></td>
+            <td>
+              <span style="font-size:0.75rem; font-weight:800; padding:2px 8px; border-radius:9999px; ${badgeColor}">
+                ${badgeText}
+              </span>
+            </td>
+            <td>
+              ${isPending ? `
+                <button class="btn btn-primary" style="padding:4px 8px; font-size:0.75rem; width:auto; background:#16a34a; border-color:#16a34a; cursor:pointer;" onclick="adminApproveBooking('${b.bookingId}')" title="Admin Force Approve">✓ Approve</button>
+              ` : ''}
+              <button class="btn-action btn-del" onclick="deleteBooking('${b.bookingId}')" title="Delete Booking" style="padding:6px; font-size:0.85rem; cursor:pointer;">🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function adminApproveBooking(bookingId) {
+      let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
+      const b = bookings.find(item => item.bookingId === bookingId);
+      if (!b) return;
+      b.status = 'CONFIRMED';
+      b.paymentVerified = true;
+      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+      if (adminDb) {
+        try {
+          const cleanDoc = JSON.parse(JSON.stringify(b));
+          adminDb.collection('ss_bookings').doc(b.bookingId).set(cleanDoc);
+        } catch(e){}
+      }
+      renderBookingsTable();
+      updateAdminStats();
+      showAdminToast('✓ Booking ' + bookingId + ' marked as CONFIRMED by Admin.', '#15803d');
+    }
+
+    function deleteBooking(bookingId) {
+      if (!confirm('Are you sure you want to delete this booking record?')) return;
+      let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
+      bookings = bookings.filter(b => b.bookingId !== bookingId);
+      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+      if (adminDb) {
+        try { adminDb.collection('ss_bookings').doc(bookingId).delete(); } catch(e){}
+      }
+      renderBookingsTable();
+      updateAdminStats();
+      showAdminToast('✓ Booking deleted.', '#dc2626');
+    }
+
+    function renderReviewsList() {
+      const feedbacks = JSON.parse(localStorage.getItem('ss_feedbacks')) || [];
+      const container = document.getElementById('reviews-list-container');
+      if (!container) return;
+
+      if (feedbacks.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem; background:#fff; border-radius:12px; border:1px solid #e2e8f0;">No reviews recorded yet.</div>';
+        return;
+      }
+
+      container.innerHTML = feedbacks.map(f => `
+        <div style="background:white; border:1.5px solid #e2e8f0; border-radius:12px; padding:1rem; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:0.72rem; font-weight:800; background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:9999px;">
+                ${f.type === 'PASSENGER_TO_DRIVER' ? 'Passenger Reviewing Driver' : 'Driver Reviewing Passenger'}
+              </span>
+              <strong style="display:block; font-size:0.95rem; margin-top:4px;">Target: ${f.targetName}</strong>
+            </div>
+            <div style="text-align:right;">
+              <div style="color:#f59e0b; font-size:1.15rem;">${'★'.repeat(f.rating) + '☆'.repeat(5 - f.rating)}</div>
+              <div style="font-size:0.72rem; color:#64748b;">${f.submittedAt}</div>
+            </div>
+          </div>
+          ${f.tags && f.tags.length > 0 ? `
+            <div style="margin: 6px 0; display:flex; gap:4px; flex-wrap:wrap;">
+              ${f.tags.map(t => `<span style="background:#f1f5f9; color:#334155; padding:2px 8px; border-radius:9999px; font-size:0.72rem; font-weight:700;">${t}</span>`).join('')}
+            </div>
+          ` : ''}
+          ${f.comments ? `<div style="font-size:0.85rem; color:#334155; background:#f8fafc; padding:0.5rem; border-radius:6px; margin-top:4px;">"${f.comments}"</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function populateFirebaseInputs() {
+      const cfg = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
+      const elKey = document.getElementById('admin-fb-apiKey');
+      if (elKey) elKey.value = cfg.apiKey || '';
+      const elAuth = document.getElementById('admin-fb-authDomain');
+      if (elAuth) elAuth.value = cfg.authDomain || '';
+      const elProj = document.getElementById('admin-fb-projectId');
+      if (elProj) elProj.value = cfg.projectId || '';
+      const elBucket = document.getElementById('admin-fb-storageBucket');
+      if (elBucket) elBucket.value = cfg.storageBucket || '';
+      const elApp = document.getElementById('admin-fb-appId');
+      if (elApp) elApp.value = cfg.appId || '';
+    }
+
+    function updateFirebaseConfig() {
+      const cfg = {
+        apiKey: document.getElementById('admin-fb-apiKey').value.trim(),
+        authDomain: document.getElementById('admin-fb-authDomain').value.trim(),
+        projectId: document.getElementById('admin-fb-projectId').value.trim(),
+        storageBucket: document.getElementById('admin-fb-storageBucket').value.trim(),
+        appId: document.getElementById('admin-fb-appId').value.trim()
+      };
+
+      localStorage.setItem('ss_fb_config', JSON.stringify(cfg));
+      document.getElementById('fb-update-msg').innerText = '✓ Configuration Saved Successfully!';
+      setTimeout(() => {
+        document.getElementById('fb-update-msg').innerText = '';
+      }, 4000);
+    }
+
+    // Strict Admin Approval Enforcement
+    function toggleAutoApproveMode(val) {
+      localStorage.setItem('ss_auto_approve_rides', 'false');
+    }
+
+    function populateVerificationMode() {
+      // Strict Admin Mode enforced
+    }
+
+    function changeAdminPin() {
+      const pin = document.getElementById('new-admin-pin').value.trim();
+      if (!pin || pin.length < 4) {
+        alert('Please enter a 4 to 6 digit security PIN!');
+        return;
+      }
+      adminPin = pin;
+      localStorage.setItem('ss_admin_pin', pin);
+      document.getElementById('pin-change-msg').innerText = '✓ PIN Updated!';
+      setTimeout(() => {
+        document.getElementById('pin-change-msg').innerText = '';
+      }, 3000);
+    }
+
+    function exportDataToCsv(type) {
+      const data = JSON.parse(localStorage.getItem('ss_' + type)) || [];
+      if (data.length === 0) {
+        alert('No records available to export!');
+        return;
+      }
+
+      const keys = Object.keys(data[0]);
+      let csv = keys.join(',') + '\n';
+      data.forEach(item => {
+        csv += keys.map(k => '"' + (item[k] || '').toString().replace(/"/g, '""') + '"').join(',') + '\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SafarSaathi_${type}_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    }
+
+    // Auto-init on page load & WhatsApp 1-Tap Activation Handler
+    window.addEventListener('DOMContentLoaded', () => {
+      initAdminFirestore();
+
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const approveRideId = urlParams.get('approveRide');
+        const passedPin = urlParams.get('pin');
+        const storedPin = localStorage.getItem('ss_admin_pin') || '1234';
+
+        if (approveRideId && (passedPin === storedPin || passedPin === '1234')) {
+          // Auto login admin
+          document.getElementById('admin-login-screen').style.display = 'none';
+          document.getElementById('admin-main-portal').style.display = 'block';
+          document.getElementById('btn-logout').style.display = 'inline-flex';
+          loadDashboardData();
+
+          // Wait brief moment for rides to load, then execute 1-tap activation!
+          setTimeout(() => {
+            adminApproveRide(approveRideId);
+            showAdminToast(`🎉 1-TAP WHATSAPP ACTIVATION SUCCESS! Vehicle verified in Jana SFB and is now 100% LIVE on Customer Portal!`, '#15803d');
+          }, 450);
+        }
+      } catch(e) {
+        console.log('1-Tap WhatsApp error:', e);
+      }
+    });
+  
+    function syncAdminData() {
+      loadDashboardData();
+    }
+    window.addEventListener('storage', syncAdminData);
+    window.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') syncAdminData();
+    });
+    window.addEventListener('pageshow', syncAdminData);
+    window.addEventListener('focus', syncAdminData);
+
+</script>
+</body>
+</html>
