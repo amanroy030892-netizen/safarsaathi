@@ -1330,6 +1330,15 @@
         </div>
 
       </div>
+
+      <!-- Driver's Posted Vehicles & Live Status (Retained 48 Hours) -->
+      <div class="app-card" style="margin-top: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Your Posted Vehicles & Live Status</h3>
+          <span style="font-size: 0.74rem; color: #38bdf8; font-weight: 800;">48h Active</span>
+        </div>
+        <div id="driver-posted-rides-list" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+      </div>
     </section>
 
 
@@ -2561,20 +2570,12 @@
 
   <!-- JAVASCRIPT LOGIC (100% BULLETPROOF & TESTED) -->
   <script>
-    // =========================================================================
-    // 🧹 FRESH APP PURGE: CLEARS ALL OLD TEST PROFILES & DUMMY POSTS
-    // =========================================================================
-    const APP_CLEAN_BUILD_VERSION = 'v16_clean_fresh_start';
-    if (localStorage.getItem('ss_app_build') !== APP_CLEAN_BUILD_VERSION) {
-      localStorage.clear();
-      localStorage.setItem('ss_app_build', APP_CLEAN_BUILD_VERSION);
-      console.log('[App] All test data purged! App initialized 100% clean and fresh.');
-    }
-
-    // ZERO DEMO RIDES - Only real vehicles posted by drivers will exist
-    let rawStoredRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-    let rides = rawStoredRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
+    // Clean startup: remove legacy demo rides while preserving all real posted/approved rides
+    let rawRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+    let rides = rawRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
     localStorage.setItem('ss_rides', JSON.stringify(rides));
+
+
 
     let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
     let feedbacks = JSON.parse(localStorage.getItem('ss_feedbacks')) || [];
@@ -3196,13 +3197,13 @@
     }
 
     function renderDriverPostedRides() {
-      const container = document.getElementById('driver-posted-rides-list');
-      if (rides.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#64748b;">No active rides posted yet. Complete the form above to list your vehicle.</div>';
-        return;
-      }
+      const container1 = document.getElementById('driver-posted-rides-list');
+      const container2 = document.getElementById('prof-fleet-container');
 
-      container.innerHTML = rides.map(r => {
+      const activeRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
+      const htmlContent = (activeRides.length === 0)
+        ? '<div style="text-align:center; padding:1.5rem; color:#94a3b8; font-size:0.84rem;">No vehicles posted in the last 48 hours. Post your vehicle above to start receiving passengers!</div>'
+        : activeRides.map(r => {
         const isFull = (r.status === 'FULL' || r.seatsAvailable <= 0);
         // Find pending bookings for this ride
         const rideBookings = bookings.filter(b => b.rideId === r.id);
@@ -3291,6 +3292,9 @@
           </div>
         `;
       }).join('');
+
+      if (container1) container1.innerHTML = htmlContent;
+      if (container2) container2.innerHTML = htmlContent;
     }
 
     function deleteDriverRide(id) {
@@ -5190,10 +5194,6 @@
     // 🎨 MASTER TOP TAB CONTROLLER: Post Ride | Find Ride | Profile
     // =========================================================================
     function showSection(tab) {
-      if (tab === 'driver' && typeof isUserLoggedIn === 'function' && !isUserLoggedIn()) {
-        alert('⚠️ गाड़ी पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए कृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
-        tab = 'profile';
-      }
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
       const secProf = document.getElementById('section-profile');

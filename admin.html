@@ -570,12 +570,10 @@
 
   <!-- SCRIPT -->
   <script>
-    // Purge previous test data on version bump
-    const ADMIN_CLEAN_BUILD_VERSION = 'v16_clean_fresh_start';
-    if (localStorage.getItem('ss_app_build') !== ADMIN_CLEAN_BUILD_VERSION) {
-      localStorage.clear();
-      localStorage.setItem('ss_app_build', ADMIN_CLEAN_BUILD_VERSION);
-    }
+    // Clean startup: remove legacy demo rides while preserving all real posted/approved rides
+    let rawAdmRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+    let admRidesClean = rawAdmRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
+    localStorage.setItem('ss_rides', JSON.stringify(admRidesClean));
 
     const defaultFirebaseConfig = {
       apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
