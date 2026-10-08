@@ -1,8 +1,8 @@
 /*
-  SafarSaathi Network-First with Offline Caching Service Worker
-  Universal PWA & Play Store (TWA) Compatible
+  SafarSaathi Network-First with Cache Busting Service Worker v18
+  Forces instant updates across all mobile devices
 */
-const CACHE_NAME = 'safarsaathi-v15-pwa-final';
+const CACHE_NAME = 'safarsaathi-v18-force-fresh';
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,7 +24,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching core shell assets');
+      console.log('[SW] Pre-caching core shell assets v18');
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
         console.warn('[SW] Pre-cache partial fail (non-blocking):', err);
       });
@@ -37,10 +37,8 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            console.log('[SW] Purging old cache:', cache);
-            return caches.delete(cache);
-          }
+          console.log('[SW] Purging cache:', cache);
+          return caches.delete(cache);
         })
       );
     }).then(() => self.clients.claim())
@@ -50,6 +48,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
+  // Network-first strategy: always fetch fresh from network
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {

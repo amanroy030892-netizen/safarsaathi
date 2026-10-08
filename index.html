@@ -2570,6 +2570,15 @@
 
   <!-- JAVASCRIPT LOGIC (100% BULLETPROOF & TESTED) -->
   <script>
+    // Helper: 48-Hour Retention Check (Defaults to true if missing so rides are never hidden accidentally)
+    function isWithin48Hours(timestamp) {
+      if (!timestamp) return true;
+      const ts = new Date(timestamp).getTime();
+      if (isNaN(ts)) return true;
+      const diffHours = (Date.now() - ts) / (1000 * 60 * 60);
+      return diffHours <= 48;
+    }
+
     // Clean startup: remove legacy demo rides while preserving all real posted/approved rides
     let rawRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
     let rides = rawRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
