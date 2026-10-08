@@ -3315,19 +3315,41 @@
       const container2 = document.getElementById('prof-fleet-container');
       if (!container2) return;
 
-      const activeRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
-      if (activeRides.length === 0) {
+      const user = getActiveUserProfile();
+      if (!user || !user.phone) {
         container2.innerHTML = `
           <div style="text-align:center; padding:2rem 1rem; color:#94a3b8; font-size:0.88rem; background:rgba(15,23,42,0.6); border-radius:12px; border:1px dashed rgba(255,255,255,0.15);">
             <div style="font-size:2.2rem; margin-bottom:0.4rem;">🚙</div>
-            <strong style="color:white; display:block; margin-bottom:4px;">No Vehicles Posted Yet</strong>
-            आपने अभी तक कोई गाड़ी पोस्ट नहीं की है। गाड़ी पोस्ट करने के लिए "Post New Vehicle" पर टैप करें।
+            <strong style="color:white; display:block; margin-bottom:4px;">ड्राइवर लॉगिन जरूरी है</strong>
+            अपनी पोस्ट की हुई गाड़ियाँ देखने के लिए कृपया लॉगिन करें।
           </div>
         `;
         return;
       }
 
-      container2.innerHTML = activeRides.map(r => {
+      const userPhoneClean = (user.phone || '').replace(/\D/g, '');
+      const userUidClean = (user.userId || '').replace(/\D/g, '');
+
+      const myRides = rides.filter(r => {
+        if (!isWithin48Hours(r.postedAt || r.createdAt)) return false;
+        const rPhoneClean = (r.driverPhone || '').replace(/\D/g, '');
+        const rIdClean = (r.driverId || '').replace(/\D/g, '');
+        return (rPhoneClean && (rPhoneClean === userPhoneClean || rPhoneClean === userUidClean)) ||
+               (rIdClean && (rIdClean === userUidClean || rIdClean === userPhoneClean));
+      });
+
+      if (myRides.length === 0) {
+        container2.innerHTML = `
+          <div style="text-align:center; padding:2rem 1rem; color:#94a3b8; font-size:0.88rem; background:rgba(15,23,42,0.6); border-radius:12px; border:1px dashed rgba(255,255,255,0.15);">
+            <div style="font-size:2.2rem; margin-bottom:0.4rem;">🚙</div>
+            <strong style="color:white; display:block; margin-bottom:4px;">No Vehicles Posted Yet</strong>
+            आपने अभी तक कोई गाड़ी पोस्ट नहीं की है। गाड़ी पोस्ट करने के लिए "Post Ride" पर टैप करें।
+          </div>
+        `;
+        return;
+      }
+
+      container2.innerHTML = myRides.map(r => {
         const isFull = (r.status === 'FULL' || r.seatsAvailable <= 0);
         const isActive = ((r.status || '').toUpperCase() === 'ACTIVE' && r.seatsAvailable > 0);
         const isPending = !isActive && !isFull;
@@ -5608,14 +5630,42 @@
       const container = document.getElementById('prof-bookings-container');
       if (!container) return;
 
-      const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
-      if (activeBookings.length === 0) {
+      const user = getActiveUserProfile();
+      if (!user || !user.phone) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2rem 1rem; color: #94a3b8;">
+          <div style="text-align: center; padding: 2rem 1rem; color: #94a3b8; background: rgba(15, 23, 42, 0.6); border-radius: 14px; border: 1.5px dashed rgba(56,189,248,0.25);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎟️</div>
+            <strong style="color: white; font-size: 1.05rem; display: block; margin-bottom: 0.35rem;">लॉगिन जरूरी है</strong>
+            <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto 0.85rem; color: #cbd5e1;">
+              अपने बुक किए गए टिकट और बोर्डिंग पास देखने के लिए कृपया लॉगिन करें।
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
+              👤 Log In to Profile ➔
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // STRICT PRIVACY FILTER: Only show bookings made by THIS passenger!
+      const userPhoneClean = (user.phone || '').replace(/\D/g, '');
+      const userUidClean = (user.userId || '').replace(/\D/g, '');
+
+      const myBookings = bookings.filter(b => {
+        if (!isWithin48Hours(b.timestamp || b.bookingTimestamp)) return false;
+        const bPhoneClean = (b.passengerPhone || '').replace(/\D/g, '');
+        const bIdClean = (b.passengerId || '').replace(/\D/g, '');
+        return (bPhoneClean && (bPhoneClean === userPhoneClean || bPhoneClean === userUidClean)) ||
+               (bIdClean && (bIdClean === userUidClean || bIdClean === userPhoneClean));
+      });
+
+      if (myBookings.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; color: #94a3b8; background: rgba(15, 23, 42, 0.6); border-radius: 14px; border: 1.5px dashed rgba(56,189,248,0.25);">
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎟️</div>
             <strong style="color: white; font-size: 1.05rem; display: block; margin-bottom: 0.35rem;">No Bookings Yet</strong>
-            <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto 0.85rem;">
-              You have no active carpool tickets. Browse live cars to book a seat!
+            <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto 0.85rem; color: #cbd5e1;">
+              आपने अभी तक कोई सीट बुक नहीं की है। गाड़ियाँ देखने के लिए "Live Cars" पर जाएं।
             </p>
             <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
               🟢 Browse Live Available Cars ➔
@@ -5625,7 +5675,7 @@
         return;
       }
 
-      container.innerHTML = activeBookings.map(b => {
+      container.innerHTML = myBookings.map(b => {
         const isConfirmed = (b.status === 'CONFIRMED');
         return `
           <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; border-radius: 16px; padding: 1rem; margin-bottom: 0.85rem;">
@@ -5669,24 +5719,54 @@
       const container = document.getElementById('prof-fleet-container');
       if (!container) return;
 
-      const activeRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
-      if (activeRides.length === 0) {
+      const user = getActiveUserProfile();
+      if (!user || !user.phone) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2rem 1rem; color: #94a3b8;">
+          <div style="text-align: center; padding: 2rem 1rem; color: #94a3b8; background: rgba(15, 23, 42, 0.6); border-radius: 14px; border: 1.5px dashed rgba(56,189,248,0.25);">
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚙</div>
-            <strong style="color: white; font-size: 1.05rem; display: block; margin-bottom: 0.35rem;">No Vehicles Listed Yet</strong>
-            <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto 0.85rem;">
-              You haven't posted any rides in the last 48 hours. Post your car to start earning!
+            <strong style="color: white; font-size: 1.05rem; display: block; margin-bottom: 0.35rem;">ड्राइवर लॉगिन जरूरी है</strong>
+            <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto 0.85rem; color: #cbd5e1;">
+              अपनी पोस्ट की हुई गाड़ियाँ देखने और पैसेंजर बुकिंग्स मैनेज करने के लिए कृपया अपने ड्राइवर अकाउंट से लॉगिन करें।
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
-              🚗 Post a Vehicle (Earn ₹300-₹500 / seat) ➔
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
+              👤 Log In to Profile ➔
             </button>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = activeRides.map(r => {
+      // STRICT PRIVACY FILTER: Only show rides posted by THIS specific driver!
+      const userPhoneClean = (user.phone || '').replace(/\D/g, '');
+      const userUidClean = (user.userId || '').replace(/\D/g, '');
+
+      const myRides = rides.filter(r => {
+        if (!isWithin48Hours(r.postedAt || r.createdAt)) return false;
+        const rPhoneClean = (r.driverPhone || '').replace(/\D/g, '');
+        const rIdClean = (r.driverId || '').replace(/\D/g, '');
+
+        const isMatch = (rPhoneClean && (rPhoneClean === userPhoneClean || rPhoneClean === userUidClean)) ||
+                        (rIdClean && (rIdClean === userUidClean || rIdClean === userPhoneClean));
+        return isMatch;
+      });
+
+      if (myRides.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; color: #94a3b8; background: rgba(15, 23, 42, 0.6); border-radius: 14px; border: 1.5px dashed rgba(56,189,248,0.25);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚙</div>
+            <strong style="color: white; font-size: 1.05rem; display: block; margin-bottom: 0.35rem;">No Vehicles Listed by You</strong>
+            <p style="font-size: 0.8rem; max-width: 320px; margin: 0 auto 0.85rem; color: #cbd5e1;">
+              आपने इस अकाउंट से अभी तक कोई गाड़ी पोस्ट नहीं की है। गाड़ी पोस्ट करने के लिए "Post Ride" पर जाएं।
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
+              🚗 Post a Vehicle ➔
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = myRides.map(r => {
         const isFull = (r.status === 'FULL' || r.seatsAvailable <= 0);
         const isActive = ((r.status || '').toUpperCase() === 'ACTIVE' && !isFull);
         const isPending = !isActive && !isFull;
@@ -6490,22 +6570,42 @@
     }
 
     function updateNavCounts() {
-      const activeCarsCount = rides.filter(r => r.status === 'ACTIVE' && isWithin48Hours(r.postedAt || r.createdAt) && r.seatsAvailable > 0).length;
+      // 1. Live Cars count: Global available cars (Public for all)
+      const activeCarsCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.postedAt || r.createdAt) && r.seatsAvailable > 0).length;
       const liveNavEl = document.getElementById('nav-live-count');
       if (liveNavEl) liveNavEl.innerText = activeCarsCount;
 
-      const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
-      const bNavEl = document.getElementById('nav-bookings-count');
-      if (bNavEl) bNavEl.innerText = activeBookings.length;
-
       const user = getActiveUserProfile();
-      let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
-      if (user && user.phone) {
-        const phoneMatch = myRides.filter(r => r.driverPhone === user.phone);
-        if (phoneMatch.length > 0) myRides = phoneMatch;
+      const userPhoneClean = user ? (user.phone || '').replace(/\D/g, '') : '';
+      const userUidClean = user ? (user.userId || '').replace(/\D/g, '') : '';
+
+      // 2. Bookings count: ONLY for the currently logged-in passenger!
+      let myBookingsCount = 0;
+      if (user && userPhoneClean) {
+        myBookingsCount = bookings.filter(b => {
+          if (!isWithin48Hours(b.timestamp || b.bookingTimestamp)) return false;
+          const bPhone = (b.passengerPhone || '').replace(/\D/g, '');
+          const bId = (b.passengerId || '').replace(/\D/g, '');
+          return (bPhone && (bPhone === userPhoneClean || bPhone === userUidClean)) ||
+                 (bId && (bId === userUidClean || bId === userPhoneClean));
+        }).length;
+      }
+      const bNavEl = document.getElementById('nav-bookings-count');
+      if (bNavEl) bNavEl.innerText = myBookingsCount;
+
+      // 3. Fleet count: ONLY for the currently logged-in driver who posted the car!
+      let myFleetCount = 0;
+      if (user && userPhoneClean) {
+        myFleetCount = rides.filter(r => {
+          if (!isWithin48Hours(r.postedAt || r.createdAt)) return false;
+          const rPhone = (r.driverPhone || '').replace(/\D/g, '');
+          const rId = (r.driverId || '').replace(/\D/g, '');
+          return (rPhone && (rPhone === userPhoneClean || rPhone === userUidClean)) ||
+                 (rId && (rId === userUidClean || rId === userPhoneClean));
+        }).length;
       }
       const fNavEl = document.getElementById('nav-fleet-count');
-      if (fNavEl) fNavEl.innerText = myRides.length;
+      if (fNavEl) fNavEl.innerText = myFleetCount;
     }
 
     function renderProfileSection() {
@@ -6736,6 +6836,7 @@
 
       const newRide = {
         id: 'RIDE-' + Math.floor(1000 + Math.random() * 9000),
+        driverId: user ? user.userId : phone,
         driverName: name,
         driverPhoto: (JSON.parse(localStorage.getItem('ss_profile') || '{}').userPhoto || ''),
         driverPhone: phone,
