@@ -565,6 +565,10 @@
   <footer>
     <div style="font-weight: 800; font-size: 0.95rem; color: #ffffff; margin-bottom: 4px;">SafarSaathi Enterprise Control Suite</div>
     <div>Secure Administrative Oversight • Verified Admin: +91 6901027507 • Jana SFB Fee: 6901027507@nyes</div>
+    <div style="margin-top: 6px; font-size: 0.78rem; color: #94a3b8;">
+      Email: <a href="mailto:support@safarsaathi.com" style="color: #38bdf8; text-decoration: none;">support@safarsaathi.com</a> |
+      Website: <a href="https://charming-starburst-0a807c.netlify.app/l" target="_blank" style="color: #38bdf8; text-decoration: none;">https://charming-starburst-0a807c.netlify.app/l</a>
+    </div>
     <div style="margin-top: 6px; font-size: 0.72rem;"><a href="privacy.html" target="_blank" style="color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #94a3b8;">📜 Privacy Policy</a></div>
   </footer>
 
@@ -740,6 +744,25 @@
       loadDashboardData();
       closeManualActivateModal();
       alert(`✓ गाड़ी 100% लाइव हो गई!\\n\\nवाहन: ${model} (${plate})\\nड्राइवर: ${name} (${phone})\\nरूट: ${from} ➔ ${to}\\n₹100 UTR: ${utr}\\n\\nयह गाड़ी अब सफ़रसाथी नेटवर्क पर सभी पैसेंजर्स के लिए 100% लाइव है।`);
+    }
+
+        // ⚡ KVdb.io Cloudflare Edge KV Sync
+    const KVDB_BUCKET_URL = "https://kvdb.io/4y9uJcRjQc2m2zG5vH7xWq/ss_rides";
+
+    function pushAdminRidesToKvdb(ridesArray) {
+      try {
+        const cleanPayload = (ridesArray || JSON.parse(localStorage.getItem('ss_rides')) || []).map(r => {
+          const doc = { ...r };
+          if (doc.driverQr && doc.driverQr.length > 50000) doc.driverQr = 'mitali_qr_compact.svg';
+          return doc;
+        });
+        fetch(KVDB_BUCKET_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cleanPayload)
+        }).then(() => console.log('✓ Admin pushed rides to Cloudflare Edge KV!'))
+          .catch(err => console.log('KV admin write error:', err));
+      } catch(e) {}
     }
 
     function checkAdminLogin() {
@@ -1017,7 +1040,10 @@
             delete cleanDoc.driverQrImage;
           }
           adminDb.collection('ss_rides').doc(docId).set(cleanDoc, { merge: true })
-            .then(() => console.log('✓ Ride approved in Cloud Firestore:', docId))
+            .then(() => {
+              console.log('✓ Ride approved in Cloud Firestore:', docId);
+              pushAdminRidesToKvdb(rides);
+            })
             .catch(err => console.error('Firestore write error:', err));
         } catch(e) {
           console.error('Admin Firestore error:', e);

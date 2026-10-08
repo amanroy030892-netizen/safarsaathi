@@ -1,8 +1,8 @@
 /*
-  SafarSaathi Network-First with Cache Busting Service Worker v18
-  Forces instant updates across all mobile devices
+  SafarSaathi Ultra-Fast Real-Time Service Worker v20
+  Zero Stale Cache • Network-First for Instant Real-Time Sync
 */
-const CACHE_NAME = 'safarsaathi-v18-force-fresh';
+const CACHE_NAME = 'safarsaathi-v20-realtime-engine';
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,9 +24,9 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching core shell assets v18');
+      console.log('[SW v20] Pre-caching core assets');
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-        console.warn('[SW] Pre-cache partial fail (non-blocking):', err);
+        console.warn('[SW v20] Pre-cache partial fail (non-blocking):', err);
       });
     })
   );
@@ -37,7 +37,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
-          console.log('[SW] Purging cache:', cache);
+          console.log('[SW v20] Purging old cache:', cache);
           return caches.delete(cache);
         })
       );
@@ -48,7 +48,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
-  // Network-first strategy: always fetch fresh from network
+  // Strict Network-First Strategy: Never serve stale HTML/JS
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
