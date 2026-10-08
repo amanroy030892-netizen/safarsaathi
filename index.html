@@ -135,7 +135,7 @@
       max-width: 900px;
       margin: 5px auto 0;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       background: #0f172a;
       padding: 3px;
       border-radius: 12px;
@@ -970,31 +970,35 @@
   <!-- NAVIGATION TABS (100% MOBILE RESPONSIVE - PERFECT 3-COLUMN FIT) -->
   <!-- TOP NAVIGATION TABS (5 BUTTONS IN 2 ROWS - EXACT MATCH TO USER SCREENSHOT) -->
   <div class="nav-tabs-wrapper">
-    <!-- ROW 1: 3 Primary Actions -->
+    <!-- ROW 1: Live Cars (Default Home), Post Ride, Find Ride -->
     <div class="tab-bar">
+      <button class="tab-btn active" id="tab-btn-live-cars" onclick="showSection('live-cars')">
+        <span class="tab-btn-icon">🟢</span>
+        <span class="tab-btn-label">Live Cars ( <span id="nav-live-count">0</span> )</span>
+      </button>
       <button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
         <span class="tab-btn-icon">🚗</span>
         <span class="tab-btn-label">Post Ride</span>
       </button>
-      <button class="tab-btn active" id="tab-btn-passenger" onclick="showSection('passenger')">
+      <button class="tab-btn" id="tab-btn-passenger" onclick="showSection('passenger')">
         <span class="tab-btn-icon">🔍</span>
         <span class="tab-btn-label">Find Ride</span>
       </button>
+    </div>
+
+    <!-- ROW 2: Profile, My Bookings, Driver Fleet -->
+    <div class="tab-bar-row2">
       <button class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
         <span class="tab-btn-icon">👤</span>
         <span class="tab-btn-label">Profile</span>
       </button>
-    </div>
-
-    <!-- ROW 2: 2 48-Hour Hub Buttons (My Bookings & Driver Fleet) -->
-    <div class="tab-bar-row2">
       <button class="tab-btn" id="tab-btn-bookings" onclick="showSection('bookings')">
         <span class="tab-btn-icon">🎟️</span>
-        <span class="tab-btn-label">My Bookings ( <span id="nav-bookings-count">0</span> )</span>
+        <span class="tab-btn-label">Bookings ( <span id="nav-bookings-count">0</span> )</span>
       </button>
       <button class="tab-btn" id="tab-btn-fleet" onclick="showSection('fleet')">
         <span class="tab-btn-icon">🚙</span>
-        <span class="tab-btn-label">Driver Fleet ( <span id="nav-fleet-count">0</span> )</span>
+        <span class="tab-btn-label">Fleet ( <span id="nav-fleet-count">0</span> )</span>
       </button>
     </div>
   </div>
@@ -1004,6 +1008,45 @@
     <!-- ==================== 1. DRIVER SECTION ==================== -->
     
     <!-- ==================== 1. DRIVER SECTION (5 FLIP STEPS, ₹100 PER CAR) ==================== -->
+        <!-- ==================== 0. HOME / LIVE CARS SECTION (DEFAULT HOME SCREEN) ==================== -->
+    <section id="section-live-cars" style="display: block;">
+      <div class="app-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <span style="width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #22c55e;"></span>
+              <h2 style="font-size: 1.2rem; font-weight: 900; color: #ffffff; margin: 0;">Live Available Cars in Assam</h2>
+            </div>
+            <p style="font-size: 0.76rem; color: #94a3b8; margin: 2px 0 0 0;">
+              Real-time verified drivers • Pay directly to driver via UPI • Zero commission
+            </p>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="renderLiveCarsHome()" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 8px;">
+            🔄 Refresh Live
+          </button>
+        </div>
+
+        <!-- Quick Route Filter Chips -->
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 0.85rem; scrollbar-width: none;">
+          <button type="button" class="btn active-corridor-chip" id="chip-live-all" onclick="filterLiveCarsByRoute('all')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 800; border-radius: 20px; white-space: nowrap; background: #0284c7; color: white; border: none;">
+            All Routes (<span id="live-count-chip-all">0</span>)
+          </button>
+          <button type="button" class="btn" id="chip-live-shillong" onclick="filterLiveCarsByRoute('Shillong')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+            Guwahati ➔ Shillong
+          </button>
+          <button type="button" class="btn" id="chip-live-jorhat" onclick="filterLiveCarsByRoute('Jorhat')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+            Guwahati ➔ Jorhat
+          </button>
+          <button type="button" class="btn" id="chip-live-nagaon" onclick="filterLiveCarsByRoute('Nagaon')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+            Guwahati ➔ Nagaon
+          </button>
+        </div>
+
+        <!-- Live Cars List Container -->
+        <div id="live-cars-list-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
+      </div>
+    </section>
+
     <section id="section-driver" style="display: none;">
       <!-- Driver Wizard Progress Bar (5 Steps) -->
       <div class="step-progress-bar">
@@ -5202,38 +5245,160 @@
     // =========================================================================
     // 🎨 MASTER TOP TAB CONTROLLER: Post Ride | Find Ride | Profile
     // =========================================================================
+        // =========================================================================
+    // 🟢 LIVE CARS HOME ENGINE (REAL-TIME INSTANT FEED)
+    // =========================================================================
+    let currentLiveRouteFilter = 'all';
+
+    function filterLiveCarsByRoute(route) {
+      currentLiveRouteFilter = route;
+      ['all', 'shillong', 'jorhat', 'nagaon'].forEach(id => {
+        const el = document.getElementById('chip-live-' + id);
+        if (el) {
+          const match = (id === 'all' && route === 'all') || (id !== 'all' && route.toLowerCase() === id);
+          el.style.background = match ? '#0284c7' : 'rgba(255,255,255,0.08)';
+          el.style.color = match ? '#ffffff' : '#cbd5e1';
+          el.style.border = match ? 'none' : '1px solid rgba(255,255,255,0.15)';
+        }
+      });
+      renderLiveCarsHome();
+    }
+
+    function renderLiveCarsHome() {
+      const container = document.getElementById('live-cars-list-container');
+      if (!container) return;
+
+      const activeCars = rides.filter(r => {
+        if (r.status !== 'ACTIVE') return false;
+        if (r.postedAt && !isWithin48Hours(r.postedAt)) return false;
+
+        const bookedCount = bookings
+          .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
+          .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
+        const totalCapacity = parseInt(r.totalSeats) || parseInt(r.seatsAvailable) || 1;
+        const remaining = Math.max(0, totalCapacity - bookedCount);
+        r.seatsAvailable = remaining;
+        if (remaining <= 0) {
+          r.status = 'FULL';
+          return false;
+        }
+
+        if (currentLiveRouteFilter !== 'all') {
+          const dest = (r.destination || '').toLowerCase();
+          const orig = (r.origin || '').toLowerCase();
+          const rf = currentLiveRouteFilter.toLowerCase();
+          if (!dest.includes(rf) && !orig.includes(rf)) return false;
+        }
+
+        return true;
+      });
+
+      const navCountEl = document.getElementById('nav-live-count');
+      if (navCountEl) navCountEl.innerText = activeCars.length;
+
+      const chipAllCount = document.getElementById('live-count-chip-all');
+      if (chipAllCount) chipAllCount.innerText = activeCars.length;
+
+      if (activeCars.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed rgba(56,189,248,0.3); border-radius: 14px;">
+            <div style="font-size: 2.6rem; margin-bottom: 0.5rem;">🚗</div>
+            <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">
+              No Live Cars Available on this Route Right Now
+            </strong>
+            <p style="font-size: 0.82rem; color: #94a3b8; max-width: 380px; margin: 0 auto 1rem;">
+              Drivers are continuously posting new carpools across Assam. You can also post your own vehicle to earn!
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.6rem 1.25rem; font-size: 0.88rem; font-weight: 800; border-radius: 10px; width: auto; display: inline-flex; align-items: center; gap: 6px;">
+              🚗 Post Your Car (Earn ₹300-₹500 / seat) ➔
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = activeCars.map(r => {
+        return `
+          <div class="live-car-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid #0284c7; border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 4px 16px rgba(2,132,199,0.25);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 1.1rem; font-weight: 900; color: #ffffff;">${r.origin} ➔ ${r.destination}</span>
+                  <span style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.68rem; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">🟢 LIVE</span>
+                </div>
+                <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 2px;">
+                  📅 ${r.date || 'Today'} at <strong>${r.time || '08:30 AM'}</strong>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 1.35rem; font-weight: 900; color: #4ade80;">₹${r.farePerSeat || 300}</div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">per seat</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem;">
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Vehicle & Model:</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #ffffff;">🚗 ${r.vehicleModel || 'Car'}</div>
+                <div style="margin-top: 3px; background: #ffffff; color: #000000; font-family: monospace; font-size: 0.78rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; display: inline-block; border: 1px solid #000000;">
+                  IND • ${r.vehicleNumber || 'AS 01'}
+                </div>
+              </div>
+
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Driver:</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #ffffff;">👤 ${r.driverName || 'Verified Driver'}</div>
+                <div style="margin-top: 3px; display: flex; align-items: center; gap: 4px;">
+                  <span style="background: #0284c7; color: white; font-size: 0.72rem; font-weight: 800; padding: 1px 7px; border-radius: 6px;">
+                    💺 ${r.seatsAvailable} Seat(s) Left
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="selectCarAndGoToBooking('${r.id}')" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; font-weight: 800; border-radius: 12px; background: linear-gradient(135deg, #1d4ed8, #0284c7); box-shadow: 0 4px 14px rgba(29,78,216,0.45); display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <span>🎟️ Book Seat (₹${r.farePerSeat || 300}) ➔</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
     function showSection(tab) {
+      const secLive = document.getElementById('section-live-cars');
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
       const secProf = document.getElementById('section-profile');
       const secBookings = document.getElementById('section-bookings');
       const secFleet = document.getElementById('section-fleet');
 
-      // 1. Toggle 5 sections
+      // 1. Toggle 6 sections
+      if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
       if (secDriver) secDriver.style.display = (tab === 'driver') ? 'block' : 'none';
       if (secPass) secPass.style.display = (tab === 'passenger') ? 'block' : 'none';
       if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
       if (secBookings) secBookings.style.display = (tab === 'bookings' || tab === 'tickets') ? 'block' : 'none';
       if (secFleet) secFleet.style.display = (tab === 'fleet') ? 'block' : 'none';
 
-      // 2. Update 5 button active states (EXACT MATCH TO USER SCREENSHOT)
+      // 2. Update 6 button active states
+      const btnLive = document.getElementById('tab-btn-live-cars');
       const btnDriver = document.getElementById('tab-btn-driver');
       const btnPass = document.getElementById('tab-btn-passenger');
       const btnProf = document.getElementById('tab-btn-profile');
       const btnBookings = document.getElementById('tab-btn-bookings');
       const btnFleet = document.getElementById('tab-btn-fleet');
 
+      if (btnLive) btnLive.classList.toggle('active', tab === 'live-cars');
       if (btnDriver) btnDriver.classList.toggle('active', tab === 'driver');
       if (btnPass) btnPass.classList.toggle('active', tab === 'passenger');
-      
-      // In screenshot image.png: Profile is active in Row 1 when Bookings/Fleet are active
-      const isProfActive = (tab === 'profile' || tab === 'bookings' || tab === 'fleet' || tab === 'tickets');
-      if (btnProf) btnProf.classList.toggle('active', isProfActive);
+      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
       if (btnBookings) btnBookings.classList.toggle('active', tab === 'bookings' || tab === 'tickets');
       if (btnFleet) btnFleet.classList.toggle('active', tab === 'fleet');
 
       // 3. Execution logic for selected section
-      if (tab === 'driver') {
+      if (tab === 'live-cars') {
+        renderLiveCarsHome();
+      } else if (tab === 'driver') {
         const user = getActiveUserProfile();
         if (user) {
           if (document.getElementById('df-name') && !document.getElementById('df-name').value) {
@@ -5994,6 +6159,10 @@
     }
 
     function updateNavCounts() {
+      const activeCarsCount = rides.filter(r => r.status === 'ACTIVE' && isWithin48Hours(r.postedAt || r.createdAt) && r.seatsAvailable > 0).length;
+      const liveNavEl = document.getElementById('nav-live-count');
+      if (liveNavEl) liveNavEl.innerText = activeCarsCount;
+
       const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
       const bNavEl = document.getElementById('nav-bookings-count');
       if (bNavEl) bNavEl.innerText = activeBookings.length;
