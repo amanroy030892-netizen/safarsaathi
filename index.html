@@ -5225,20 +5225,20 @@
 
       // 3. Execution logic for selected section
       if (tab === 'driver') {
-        if (!isUserProfileVerified()) {
-          alert('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nगाड़ी पोस्ट करने के लिए हर एक ड्राइवर का आधार AI वेरीफाइड होना अनिवार्य है।\n\nकृपया पहले अपनी प्रोफ़ाइल में अपनी खुद की फ़ोटो और आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।');
-          showSection('profile');
-          startProfileWizard();
-          return;
-        }
         const user = getActiveUserProfile();
-        if (document.getElementById('df-name') && !document.getElementById('df-name').value) {
-          document.getElementById('df-name').value = user.name;
-        }
-        if (document.getElementById('df-phone') && !document.getElementById('df-phone').value) {
-          document.getElementById('df-phone').value = user.phone;
+        if (user) {
+          if (document.getElementById('df-name') && !document.getElementById('df-name').value) {
+            document.getElementById('df-name').value = user.name || '';
+          }
+          if (document.getElementById('df-phone') && !document.getElementById('df-phone').value) {
+            document.getElementById('df-phone').value = user.phone || '';
+          }
+          if (document.getElementById('df-driver-upi') && !document.getElementById('df-driver-upi').value) {
+            document.getElementById('df-driver-upi').value = user.phone ? (user.phone + '@upi') : '';
+          }
         }
         goToDriverStep(1);
+        renderDriverPostedRides();
       } else if (tab === 'passenger') {
         goToPassengerPage(1);
         renderPassengerRides(rides);
