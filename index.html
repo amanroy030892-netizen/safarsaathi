@@ -1256,8 +1256,31 @@
               <img src="mitali_qr_compact.svg" alt="SafarSaathi QR" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
 
-            <div style="background: rgba(2,132,199,0.25); color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; font-weight: 800; display: inline-block;">
+            <div style="background: rgba(2,132,199,0.25); color: #38bdf8; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; font-weight: 800; display: inline-block; margin-bottom: 0.65rem;">
               6901027507@nyes
+            </div>
+
+            <!-- 1-TAP UPI PAYMENT BUTTONS (DIRECT LAUNCH PHONEPE, GOOGLE PAY, PAYTM) -->
+            <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 0.65rem; margin-top: 0.35rem;">
+              <div style="font-size: 0.74rem; color: #94a3b8; font-weight: 700; margin-bottom: 0.45rem;">
+                Tap to pay ₹100 directly from your phone:
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #5f259f; color: white; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(95,37,159,0.35);">
+                  🟣 PhonePe (₹100)
+                </a>
+                <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #1a73e8; color: white; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(26,115,232,0.35);">
+                  🔵 Google Pay (₹100)
+                </a>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <a href="paytmmp://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #00b9f1; color: #020617; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,185,241,0.35);">
+                  📱 Paytm (₹100)
+                </a>
+                <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #16a34a; color: white; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(22,163,74,0.35);">
+                  🇮🇳 Any UPI App
+                </a>
+              </div>
             </div>
           </div>
 
@@ -1442,7 +1465,30 @@
             <div style="font-weight: 800; font-size: 0.85rem; color: #ffffff; margin-bottom: 0.35rem;">📱 Pay Driver Directly via PhonePe / GPay / Paytm</div>
             <div id="page3-qr-box" style="margin: 0.35rem auto; width: 140px; height: 140px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 6px; border: 2px solid #0284c7;">
             </div>
-            <div id="page3-driver-upi-text" style="font-family: monospace; font-weight: 700; color: #38bdf8; font-size: 0.82rem; margin-top: 0.25rem;">UPI: driver@upi</div>
+            <div id="page3-driver-upi-text" style="font-family: monospace; font-weight: 700; color: #38bdf8; font-size: 0.82rem; margin-top: 0.25rem; margin-bottom: 0.65rem;">UPI: driver@upi</div>
+
+            <!-- 1-TAP PASSENGER UPI APP LAUNCH BUTTONS -->
+            <div style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 0.65rem;">
+              <div style="font-size: 0.74rem; color: #94a3b8; font-weight: 700; margin-bottom: 0.45rem;">
+                Tap to pay driver directly via your UPI App:
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+                <a id="p3-btn-phonepe" href="#" class="btn" style="background: #5f259f; color: white; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(95,37,159,0.35);">
+                  🟣 Pay PhonePe
+                </a>
+                <a id="p3-btn-gpay" href="#" class="btn" style="background: #1a73e8; color: white; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(26,115,232,0.35);">
+                  🔵 Pay Google Pay
+                </a>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <a id="p3-btn-paytm" href="#" class="btn" style="background: #00b9f1; color: #020617; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,185,241,0.35);">
+                  📱 Pay Paytm
+                </a>
+                <a id="p3-btn-any-upi" href="#" class="btn" style="background: #16a34a; color: white; padding: 0.55rem 0.3rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none; box-shadow: 0 2px 8px rgba(22,163,74,0.35);">
+                  🇮🇳 Any UPI App
+                </a>
+              </div>
+            </div>
           </div>
 
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem;">
@@ -6154,7 +6200,7 @@
       }
 
       // Secure Pure Notification WhatsApp Alert to Admin (+91 6901027507) - NO ACTIVATION LINK
-      const waMsg = `*SAFARSAATHI NEW RIDE PENDING VERIFICATION*%0A%0A` +
+      const waMsg = `*SAFARSAATHI NEW RIDE PENDING APPROVAL*%0A%0A` +
         `🚗 *Ride ID:* ${newRide.id}%0A` +
         `👤 *Driver Name:* ${name}%0A` +
         `📞 *Driver WhatsApp:* ${phone}%0A` +
@@ -6165,8 +6211,8 @@
         `💰 *₹100 Platform Fee UTR:* ${utr}%0A` +
         `🏦 *Bank Payee:* Jana Small Finance Bank (6901027507@nyes)%0A%0A` +
         `🔒 *ACTION REQUIRED FOR ADMIN (+91 6901027507):*%0A` +
-        `Please check your Jana SFB app for Rs. 100 credit with UTR ${utr}.%0A` +
-        `Then open your Secure Admin Panel to Verify & Activate this vehicle.`;
+        `1. Check Jana SFB app for Rs. 100 credit with UTR ${utr}.%0A` +
+        `2. Open your Admin Panel and enter PIN 1432 to Activate.`;
 
       window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
 
@@ -6433,6 +6479,7 @@
       }
 
       goToPassengerPage(3);
+      updatePage3Fare();
     }
 
     function setPage3Seats(num) {
@@ -6453,6 +6500,20 @@
       const total = (selectedRideForPage3.farePerSeat || 0) * page3SelectedSeats;
       const fareEl = document.getElementById('page3-total-fare-text');
       if (fareEl) fareEl.innerText = 'Rs. ' + total;
+
+      const driverUpi = selectedRideForPage3.driverUpi || (selectedRideForPage3.driverPhone ? selectedRideForPage3.driverPhone + '@upi' : '6901027507@nyes');
+      const driverName = selectedRideForPage3.driverName || 'Driver';
+      const upiBase = `pa=${encodeURIComponent(driverUpi)}&pn=${encodeURIComponent(driverName)}&am=${total}&cu=INR&tn=SafarSaathi%20Seat%20Fare`;
+
+      const btnPhonepe = document.getElementById('p3-btn-phonepe');
+      const btnGpay = document.getElementById('p3-btn-gpay');
+      const btnPaytm = document.getElementById('p3-btn-paytm');
+      const btnAny = document.getElementById('p3-btn-any-upi');
+
+      if (btnPhonepe) btnPhonepe.href = `phonepe://pay?${upiBase}`;
+      if (btnGpay) btnGpay.href = `tez://upi/pay?${upiBase}`;
+      if (btnPaytm) btnPaytm.href = `paytmmp://pay?${upiBase}`;
+      if (btnAny) btnAny.href = `upi://pay?${upiBase}`;
     }
 
     function submitBookingFromPage3() {
