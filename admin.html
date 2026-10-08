@@ -621,6 +621,13 @@
     }
 
     function pollCloudServerBackup() {
+      // 0. High-speed KVDB Cloud Relay
+      fetch('https://kvdb.io/safarsaathi_assam_9864/ss_rides')
+        .then(res => res.json())
+        .then(cloudRides => {
+          if (Array.isArray(cloudRides) && cloudRides.length > 0) mergeAdminRides(cloudRides);
+        }).catch(() => {});
+
       // 1. Firebase Realtime DB REST
       fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json')
         .then(res => res.json())
@@ -1020,6 +1027,10 @@
       // Multi-Cloud Backup Broadcast
       try {
         const payload = JSON.stringify(r);
+        fetch('https://kvdb.io/safarsaathi_assam_9864/ss_rides', {
+          method: 'POST',
+          body: JSON.stringify(rides)
+        }).catch(() => {});
         fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides/${r.id}.json`, {
           method: 'PUT',
           body: payload
