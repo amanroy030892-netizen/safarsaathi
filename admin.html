@@ -565,6 +565,13 @@
 
   <!-- SCRIPT -->
   <script>
+    // Purge previous test data on version bump
+    const ADMIN_CLEAN_BUILD_VERSION = 'v16_clean_fresh_start';
+    if (localStorage.getItem('ss_app_build') !== ADMIN_CLEAN_BUILD_VERSION) {
+      localStorage.clear();
+      localStorage.setItem('ss_app_build', ADMIN_CLEAN_BUILD_VERSION);
+    }
+
     const defaultFirebaseConfig = {
       apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
       authDomain: "safarsaathi-1de86.firebaseapp.com",
