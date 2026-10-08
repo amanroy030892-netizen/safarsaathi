@@ -417,7 +417,12 @@
             <h3 style="font-size: 1.15rem; font-weight: 900;">Driver Vehicle Listings & UTR Verification</h3>
             <p style="font-size: 0.8rem; color: var(--text-muted);">All vehicles submitted with ₹100 platform listing UTR:</p>
           </div>
-          <input type="text" id="search-vehicle-input" class="form-control" placeholder="Search by plate, driver, or city..." style="max-width: 280px;" oninput="renderVehiclesTable()">
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="search-vehicle-input" class="form-control" placeholder="Search by plate, driver, or city..." style="max-width: 220px;" oninput="renderVehiclesTable()">
+            <button type="button" class="btn btn-primary" onclick="openManualActivateModal()" style="padding: 0.5rem 0.85rem; font-size: 0.8rem; font-weight: 800; border-radius: 8px; white-space: nowrap; background: linear-gradient(135deg, #16a34a, #15803d); border-color: #16a34a;">
+              ➕ Activate Paid Ride
+            </button>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -636,6 +641,100 @@
             mergeAdminRides(data);
           }
         }).catch(() => {});
+    }
+
+        function openManualActivateModal() {
+      const el = document.getElementById('manual-activate-modal');
+      if (el) el.style.display = 'flex';
+      const utrEl = document.getElementById('mam-utr');
+      if (utrEl) utrEl.focus();
+    }
+
+    function closeManualActivateModal() {
+      const el = document.getElementById('manual-activate-modal');
+      if (el) el.style.display = 'none';
+    }
+
+    function submitManualActivationModal() {
+      const utr = (document.getElementById('mam-utr')?.value || '').trim();
+      const driverStr = (document.getElementById('mam-driver')?.value || '').trim();
+      const route = (document.getElementById('mam-route')?.value || '').trim();
+      const vehicle = (document.getElementById('mam-vehicle')?.value || '').trim();
+
+      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
+        alert('Please enter valid 12-digit numeric ₹100 UTR number!');
+        document.getElementById('mam-utr')?.focus();
+        return;
+      }
+      if (!driverStr || !route || !vehicle) {
+        alert('Please fill Driver Name/Phone, Route, and Vehicle details!');
+        return;
+      }
+
+      let name = driverStr, phone = '';
+      if (driverStr.includes(',')) {
+        name = driverStr.split(',')[0].trim();
+        phone = driverStr.split(',')[1].trim().replace(/\D/g, '');
+      }
+
+      let from = 'Guwahati', to = 'Shillong';
+      if (route.includes('➔')) {
+        from = route.split('➔')[0].trim();
+        to = route.split('➔')[1].trim();
+      } else if (route.includes('to')) {
+        from = route.split('to')[0].trim();
+        to = route.split('to')[1].trim();
+      }
+
+      let model = 'Car', plate = 'AS 01';
+      if (vehicle.includes(',')) {
+        model = vehicle.split(',')[0].trim();
+        plate = vehicle.split(',')[1].trim();
+      } else {
+        model = vehicle;
+      }
+
+      const rideId = 'RIDE-' + Math.floor(1000 + Math.random() * 9000);
+      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      const newRide = {
+        id: rideId,
+        driverName: name,
+        driverPhone: phone,
+        driverUpi: phone ? phone + '@upi' : '6901027507@nyes',
+        driverQr: 'mitali_qr_compact.svg',
+        farePerSeat: 300,
+        origin: from,
+        destination: to,
+        date: new Date().toISOString().split('T')[0],
+        time: '08:30',
+        seatsAvailable: 3,
+        totalSeats: 3,
+        vehicleModel: model,
+        vehicleNumber: plate,
+        platformFeeUtr: utr,
+        utrNumber: utr,
+        status: 'ACTIVE',
+        verifiedByAdmin: true,
+        postedAt: new Date().toISOString(),
+        approvedAt: new Date().toISOString()
+      };
+
+      rides.unshift(newRide);
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+
+      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { adminDb = firebase.firestore(); } catch(e){}
+      }
+      if (adminDb) {
+        try {
+          adminDb.collection('ss_rides').doc(rideId).set(newRide, { merge: true });
+        } catch(e){}
+      }
+
+      renderVehiclesTable();
+      loadDashboardData();
+      closeManualActivateModal();
+      alert(`✓ गाड़ी 100% लाइव हो गई!\\n\\nवाहन: ${model} (${plate})\\nड्राइवर: ${name} (${phone})\\nरूट: ${from} ➔ ${to}\\n₹100 UTR: ${utr}\\n\\nयह गाड़ी अब सफ़रसाथी नेटवर्क पर सभी पैसेंजर्स के लिए 100% लाइव है।`);
     }
 
     function checkAdminLogin() {
@@ -1198,5 +1297,44 @@
     window.addEventListener('focus', syncAdminData);
 
 </script>
+
+  <!-- MANUAL ACTIVATE MODAL (For activating paid rides directly with UTR) -->
+  <div id="manual-activate-modal" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: #0f172a; border: 2px solid #0284c7; border-radius: 16px; padding: 1.25rem 1.35rem; width: 100%; max-width: 460px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 0.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff; margin: 0;">⚡ Activate Paid Vehicle with UTR</h3>
+        <button type="button" class="btn btn-secondary" onclick="closeManualActivateModal()" style="padding: 2px 8px; font-size: 0.74rem;">✕</button>
+      </div>
+
+      <p style="font-size: 0.76rem; color: #94a3b8; margin: 0 0 0.85rem 0;">
+        ड्राइवर ने ₹100 पे कर दिया है? यहाँ UTR और गाड़ी की जानकारी डालकर सीधे 100% लाइव करें:
+      </p>
+
+      <div class="form-group" style="margin-bottom: 0.65rem;">
+        <label style="font-size: 0.76rem;">12-Digit ₹100 UTR Number*</label>
+        <input type="text" id="mam-utr" class="form-control" placeholder="e.g. 987654321012" maxlength="12" style="font-family: monospace; font-size: 0.95rem; font-weight: 800; color: #fbbf24; border-color: #0284c7;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.65rem;">
+        <label style="font-size: 0.76rem;">Driver Name & WhatsApp Phone*</label>
+        <input type="text" id="mam-driver" class="form-control" placeholder="e.g. Bikram Das, 9864012345" style="font-size: 0.85rem;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.65rem;">
+        <label style="font-size: 0.76rem;">Route (From ➔ To)*</label>
+        <input type="text" id="mam-route" class="form-control" placeholder="e.g. Guwahati ➔ Shillong" value="Guwahati ➔ Shillong" style="font-size: 0.85rem;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.85rem;">
+        <label style="font-size: 0.76rem;">Vehicle Model & License Plate*</label>
+        <input type="text" id="mam-vehicle" class="form-control" placeholder="e.g. Swift Dzire, AS 01 BP 4921" style="font-size: 0.85rem;">
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitManualActivationModal()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; font-weight: 800; border-radius: 10px; background: linear-gradient(135deg, #16a34a, #15803d); border-color: #16a34a;">
+        ✅ Confirm ₹100 & Make 100% Live ➔
+      </button>
+    </div>
+  </div>
+
 </body>
 </html>

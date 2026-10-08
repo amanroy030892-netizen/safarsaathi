@@ -5190,6 +5190,10 @@
     // 🎨 MASTER TOP TAB CONTROLLER: Post Ride | Find Ride | Profile
     // =========================================================================
     function showSection(tab) {
+      if (tab === 'driver' && typeof isUserLoggedIn === 'function' && !isUserLoggedIn()) {
+        alert('⚠️ गाड़ी पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए कृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
+        tab = 'profile';
+      }
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
       const secProf = document.getElementById('section-profile');
@@ -6474,8 +6478,14 @@
     }
 
     function selectCarAndGoToBooking(rideId) {
+      if (!isUserLoggedIn()) {
+        alert('⚠️ सीट बुक करने के लिए रजिस्ट्रेशन/लॉगिन जरूरी है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
+        showSection('profile');
+        setAuthMode('login');
+        return;
+      }
       if (!isUserProfileVerified()) {
-        alert('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nसफ़रसाथी पर सीट बुक करने से पहले पैसेंजर की सुरक्षा हेतु AI आधार वेरिफिकेशन अनिवार्य है।\n\nकृपया पहले अपनी प्रोफ़ाइल में अपनी खुद की फ़ोटो और आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।');
+        alert('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nसफ़रसाथी पर सीट बुक करने से पहले पैसेंजर की सुरक्षा हेतु AI आधार वेरिफिकेशन अनिवार्य है।\n\nकृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।');
         showSection('profile');
         startProfileWizard();
         return;
