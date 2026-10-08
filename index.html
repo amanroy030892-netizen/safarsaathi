@@ -1544,7 +1544,12 @@
 
           <!-- Password Input -->
           <div class="form-group" style="margin-bottom: 0.75rem;">
-            <label id="auth-label-password">Password (पासवर्ड)*</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+              <label id="auth-label-password" style="margin: 0;">Password (पासवर्ड)*</label>
+              <button type="button" id="btn-forgot-password-link" onclick="openForgotPasswordView()" style="background: none; border: none; color: #38bdf8; font-size: 0.74rem; font-weight: 700; cursor: pointer; padding: 0; text-decoration: underline;">
+                ❓ Forgot Password?
+              </button>
+            </div>
             <input type="password" id="auth-input-password" class="form-control" placeholder="Enter your password" value="" style="font-size: 0.95rem; font-weight: 700;">
           </div>
 
@@ -1603,6 +1608,52 @@
           <button type="button" class="btn btn-primary" id="btn-auth-submit" onclick="submitAuthAction()" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(29,78,216,0.45);">
             🚀 Log In to Profile ➔
           </button>
+        </div>
+      </div>
+
+      <!-- SUB-VIEW: Forgot / Reset Password Card (Zero Scrolling) -->
+      <div id="prof-forgot-pwd-view" style="display: none;">
+        <div class="app-card" style="padding: 1.25rem 1.35rem; max-width: 480px; margin: 0 auto;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 0.5rem;">
+            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff; margin: 0;">🔑 Reset Forgotten Password</h3>
+            <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordView()" style="padding: 2px 8px; font-size: 0.74rem;">✕ Back</button>
+          </div>
+
+          <p style="font-size: 0.76rem; color: #94a3b8; margin: 0 0 0.85rem 0;">
+            Enter your registered 10-digit User ID (Mobile number) and Full Legal Name to verify your identity and set a new password.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label>Registered User ID / WhatsApp Number (10 डिजिट)*</label>
+            <input type="tel" id="fp-input-userid" class="form-control" placeholder="Enter your registered 10-digit number" maxlength="10" style="font-size: 0.95rem; font-weight: 700;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label>Registered Full Legal Name (रजिस्टर्ड पूरा नाम)*</label>
+            <input type="text" id="fp-input-name" class="form-control" placeholder="Enter your registered name exactly" style="font-size: 0.95rem; font-weight: 700;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label>Set New Password (नया पासवर्ड)*</label>
+            <input type="password" id="fp-input-new-password" class="form-control" placeholder="Enter new secret password" style="font-size: 0.95rem; font-weight: 700;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Confirm New Password (नया पासवर्ड दोबारा डालें)*</label>
+            <input type="password" id="fp-input-confirm-password" class="form-control" placeholder="Re-type new password" style="font-size: 0.95rem; font-weight: 700;">
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="submitForgotPasswordReset()" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(29,78,216,0.45);">
+            💾 Verify & Set New Password ➔
+          </button>
+
+          <!-- 1-Tap WhatsApp Support Link -->
+          <div style="text-align: center; margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed rgba(255,255,255,0.15);">
+            <span style="font-size: 0.74rem; color: #94a3b8;">Need help recovering your account?</span><br>
+            <a href="https://wa.me/916901027507?text=Hello%20SafarSaathi%20Admin,%20I%20need%20help%20resetting%20my%20password..." target="_blank" style="color: #4ade80; font-size: 0.76rem; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;">
+              💬 Contact Admin on WhatsApp (+91 6901027507)
+            </a>
+          </div>
         </div>
       </div>
 
@@ -5198,6 +5249,9 @@
       const subTitle = document.getElementById('auth-sub');
       const submitBtn = document.getElementById('btn-auth-submit');
 
+      const fpLink = document.getElementById('btn-forgot-password-link');
+      if (fpLink) fpLink.style.display = (mode === 'login') ? 'inline-block' : 'none';
+
       if (mode === 'login') {
         if (btnLog) btnLog.className = 'btn btn-primary';
         if (btnReg) btnReg.className = 'btn btn-secondary';
@@ -5367,6 +5421,8 @@
       const loginView = document.getElementById('prof-login-view');
       const wizView = document.getElementById('prof-wizard-view');
       const pwdView = document.getElementById('prof-change-pwd-view');
+      const fpView = document.getElementById('prof-forgot-pwd-view');
+      if (fpView) fpView.style.display = 'none';
 
       if (cardView) cardView.style.display = 'none';
       if (wizView) wizView.style.display = 'none';
@@ -5439,6 +5495,90 @@
 
       showToast('✓ पासवर्ड सफलतापूर्वक बदल दिया गया है! अगली बार नए पासवर्ड से लॉगिन करें।', '#15803d');
       closeChangePasswordModal();
+    }
+
+        // 5b. Forgot Password Controller
+    function openForgotPasswordView() {
+      const loginView = document.getElementById('prof-login-view');
+      const fpView = document.getElementById('prof-forgot-pwd-view');
+      const cardView = document.getElementById('prof-card-view');
+      const wizView = document.getElementById('prof-wizard-view');
+
+      if (loginView) loginView.style.display = 'none';
+      if (cardView) cardView.style.display = 'none';
+      if (wizView) wizView.style.display = 'none';
+      if (fpView) fpView.style.display = 'block';
+
+      const loginUid = document.getElementById('auth-input-userid')?.value;
+      if (loginUid && document.getElementById('fp-input-userid')) {
+        document.getElementById('fp-input-userid').value = loginUid;
+      }
+      if (document.getElementById('fp-input-name')) document.getElementById('fp-input-name').value = '';
+      if (document.getElementById('fp-input-new-password')) document.getElementById('fp-input-new-password').value = '';
+      if (document.getElementById('fp-input-confirm-password')) document.getElementById('fp-input-confirm-password').value = '';
+    }
+
+    function closeForgotPasswordView() {
+      const loginView = document.getElementById('prof-login-view');
+      const fpView = document.getElementById('prof-forgot-pwd-view');
+      if (fpView) fpView.style.display = 'none';
+      if (loginView) loginView.style.display = 'block';
+    }
+
+    function submitForgotPasswordReset() {
+      const uid = (document.getElementById('fp-input-userid')?.value || '').trim();
+      const name = (document.getElementById('fp-input-name')?.value || '').trim();
+      const newPwd = (document.getElementById('fp-input-new-password')?.value || '').trim();
+      const confPwd = (document.getElementById('fp-input-confirm-password')?.value || '').trim();
+
+      if (!uid || uid.length < 10) {
+        alert('Please enter your 10-digit registered mobile number as User ID.');
+        document.getElementById('fp-input-userid')?.focus();
+        return;
+      }
+      if (!name) {
+        alert('Please enter your registered legal name for identity verification.');
+        document.getElementById('fp-input-name')?.focus();
+        return;
+      }
+      if (!newPwd || newPwd.length < 3) {
+        alert('Please enter a new password of at least 3 characters.');
+        document.getElementById('fp-input-new-password')?.focus();
+        return;
+      }
+      if (newPwd !== confPwd) {
+        alert('❌ Passwords do not match (पासवर्ड मैच नहीं हुआ)!\n\nकृपया दोनों खानों में बिल्कुल एक जैसा नया पासवर्ड डालें।');
+        document.getElementById('fp-input-confirm-password')?.focus();
+        return;
+      }
+
+      let users = {};
+      try { users = JSON.parse(localStorage.getItem('ss_users_db')) || {}; } catch(e){}
+
+      const user = users[uid];
+      if (!user) {
+        alert('❌ यह User ID (मोबाइल नंबर) रजिस्टर्ड नहीं है!\n\nकृपया सही नंबर डालें या "Register" टैब पर जाकर नया अकाउंट बनाएं।');
+        document.getElementById('fp-input-userid')?.focus();
+        return;
+      }
+
+      const regName = (user.name || '').toLowerCase().trim();
+      const enteredName = name.toLowerCase().trim();
+      if (regName !== enteredName && !regName.includes(enteredName) && !enteredName.includes(regName)) {
+        alert('❌ सुरक्षा सत्यापन विफल (Security Verification Failed)!\n\nडाला गया नाम इस User ID के साथ मैच नहीं कर रहा है। सुरक्षा कारणों से पासवर्ड रीसेट नहीं किया जा सकता। कृपया सहायता के लिए एडमिन से WhatsApp पर संपर्क करें।');
+        document.getElementById('fp-input-name')?.focus();
+        return;
+      }
+
+      user.password = newPwd;
+      users[uid] = user;
+      localStorage.setItem('ss_users_db', JSON.stringify(users));
+      localStorage.setItem('ss_current_user_id', uid);
+      localStorage.setItem('ss_profile', JSON.stringify(user));
+
+      showToast('✓ पासवर्ड सफलतापूर्वक रीसेट हो गया! आपका नया पासवर्ड सेट है।', '#15803d');
+      closeForgotPasswordView();
+      displaySavedProfileKyc(user);
     }
 
     function toggleUserRole() {
