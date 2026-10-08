@@ -1017,6 +1017,22 @@
         }
       }
 
+      // Multi-Cloud Backup Broadcast
+      try {
+        const payload = JSON.stringify(r);
+        fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides/${r.id}.json`, {
+          method: 'PUT',
+          body: payload
+        }).catch(() => {});
+        if (typeof CLOUDFLARE_WORKER_URL !== 'undefined' && CLOUDFLARE_WORKER_URL) {
+          fetch(`${CLOUDFLARE_WORKER_URL}/api/rides`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          }).catch(() => {});
+        }
+      } catch(e){}
+
       // 4. Update table and stats immediately
       renderVehiclesTable();
       updateAdminStats();

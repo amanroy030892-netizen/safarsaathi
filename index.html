@@ -1021,7 +1021,7 @@
               Real-time verified drivers • Pay directly to driver via UPI • Zero commission
             </p>
           </div>
-          <button type="button" class="btn btn-secondary" onclick="renderLiveCarsHome()" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 8px;">
+          <button type="button" class="btn btn-secondary" onclick="refreshLiveCarsFeed()" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 800; border-radius: 8px; border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; background: rgba(15,23,42,0.8);">
             🔄 Refresh Live
           </button>
         </div>
@@ -2714,7 +2714,10 @@
       });
       rides = merged;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
+      renderLiveCarsHome();
       renderPassengerRides();
+      renderDriverPostedRides();
+      updateNavCounts();
     }
 
     function updateCloudStatus(isLive, errMsg) {
@@ -4672,9 +4675,11 @@
     function syncLatestData() {
       rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
       bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
-      feedbacks = JSON.parse(localStorage.getItem('ss_feedbacks')) || [];
+      renderLiveCarsHome();
+      renderPassengerRides();
       renderDriverPostedRides();
-      renderPassengerRides(rides);
+      renderPassengerTickets();
+      updateNavCounts();
       renderPassengerTickets();
       if (typeof loadEmbeddedAdminDashboard === 'function' && isAdminAuthenticated) {
         loadEmbeddedAdminDashboard();
@@ -5262,6 +5267,32 @@
         }
       });
       renderLiveCarsHome();
+    }
+
+        function refreshLiveCarsFeed() {
+      showToast('🔄 Checking cloud server for live cars...', '#0284c7');
+      pollPassengerCloudBackup();
+      if (typeof db !== 'undefined' && db) {
+        db.collection('ss_rides').get().then(snapshot => {
+          const cloudRides = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data && !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(data.id)) {
+              if (!data.id) data.id = doc.id;
+              cloudRides.push(data);
+            }
+          });
+          if (cloudRides.length > 0) {
+            mergeIncomingCloudRides(cloudRides);
+          }
+          renderLiveCarsHome();
+          showToast('✓ Live cars feed updated!', '#15803d');
+        }).catch(err => {
+          renderLiveCarsHome();
+        });
+      } else {
+        renderLiveCarsHome();
+      }
     }
 
     function renderLiveCarsHome() {
