@@ -2625,6 +2625,45 @@
     // ================= REAL-TIME CLOUD NETWORK CONNECTION STATUS =================
     let isCloudDatabaseLive = false;
 
+    function pollPassengerCloudBackup() {
+      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json')
+        .then(res => res.json())
+        .then(data => {
+          if (data && typeof data === 'object') {
+            const rtdbRides = Object.values(data);
+            if (rtdbRides.length > 0) mergeIncomingCloudRides(rtdbRides);
+          }
+        }).catch(() => {});
+      if (typeof CLOUDFLARE_WORKER_URL !== 'undefined' && CLOUDFLARE_WORKER_URL) {
+        fetch(`${CLOUDFLARE_WORKER_URL}/api/rides`)
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data) && data.length > 0) mergeIncomingCloudRides(data);
+          }).catch(() => {});
+      }
+    }
+
+    function mergeIncomingCloudRides(cloudRides) {
+      if (!cloudRides || !Array.isArray(cloudRides) || cloudRides.length === 0) return;
+      let currentLocal = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      const localMap = new Map(currentLocal.map(r => [r.id, r]));
+      const merged = cloudRides.map(cr => {
+        const localR = localMap.get(cr.id);
+        if (cr.status === 'FULL' || cr.seatsAvailable <= 0) return { ...cr, status: 'FULL' };
+        if (localR && localR.status === 'ACTIVE' && cr.status === 'PENDING_APPROVAL') {
+          return { ...cr, status: 'ACTIVE', verifiedByAdmin: true };
+        }
+        return cr;
+      });
+      const cloudIds = new Set(cloudRides.map(r => r.id));
+      currentLocal.forEach(lr => {
+        if (!cloudIds.has(lr.id)) merged.push(lr);
+      });
+      rides = merged;
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      renderPassengerRides();
+    }
+
     function updateCloudStatus(isLive, errMsg) {
       isCloudDatabaseLive = true;
       const dot = document.getElementById('cloud-network-dot');
@@ -2657,9 +2696,15 @@
           }
           console.log('Google Firebase Phone Auth ready for safarsaathi-1de86');
 
+          if (firebase.auth) {
+            firebase.auth().signInAnonymously().catch(() => {});
+          }
+
           if (firebase.firestore) {
             try {
               db = firebase.firestore();
+              setInterval(pollPassengerCloudBackup, 3000);
+              pollPassengerCloudBackup();
               console.log('Firebase Cloud Firestore live across all devices');
 
               // Test connection by listening to rides
@@ -6188,16 +6233,33 @@
       rides.unshift(newRide);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
+      // 1. Direct Cloud Firestore Real-time Sync
       if (typeof db !== 'undefined' && db) {
         try {
           const cleanDoc = JSON.parse(JSON.stringify(newRide));
           db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true })
-            .then(() => console.log('✓ Ride successfully synced to Google Cloud Firestore across all devices!'))
+            .then(() => console.log('✓ Ride successfully synced to Google Cloud Firestore across all devices in 1s!'))
             .catch(err => console.error('Firestore write ride error:', err));
         } catch(e) {
           console.error('Error syncing ride to firestore:', e);
         }
       }
+
+      // 2. Multi-Cloud Backup Broadcast (Firebase RTDB + Cloudflare Worker)
+      try {
+        const payload = JSON.stringify(newRide);
+        fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides/${newRide.id}.json`, {
+          method: 'PUT',
+          body: payload
+        }).catch(() => {});
+        if (typeof CLOUDFLARE_WORKER_URL !== 'undefined' && CLOUDFLARE_WORKER_URL) {
+          fetch(`${CLOUDFLARE_WORKER_URL}/api/rides`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          }).catch(() => {});
+        }
+      } catch(e){}
 
       // Secure Pure Notification WhatsApp Alert to Admin (+91 6901027507) - NO ACTIVATION LINK
       const waMsg = `*SAFARSAATHI NEW RIDE PENDING APPROVAL*%0A%0A` +

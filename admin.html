@@ -410,68 +410,7 @@
         </button>
       </div>
 
-            <!-- ⚡ QUICK ACTIVATE VEHICLE (FROM WHATSAPP UTR / MESSAGE) -->
-      <div class="dashboard-card" style="margin-bottom: 1.25rem; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 2px solid #0284c7; border-radius: 16px; padding: 1.15rem 1.25rem; box-shadow: 0 4px 14px rgba(2,132,199,0.25);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.5rem;">⚡</span>
-            <div>
-              <h3 style="font-size: 1.1rem; font-weight: 900; color: #ffffff; margin: 0;">Quick Activate Vehicle (From WhatsApp UTR)</h3>
-              <p style="font-size: 0.76rem; color: #94a3b8; margin: 0;">WhatsApp पर आए ₹100 UTR नंबर से गाड़ी को 1-क्लिक में तुरंत 100% लाइव करें:</p>
-            </div>
-          </div>
-          <button type="button" class="btn btn-secondary" onclick="toggleQuickPasteBox()" style="font-size: 0.78rem; padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.4); color: #38bdf8;">
-            📋 Paste WhatsApp Message
-          </button>
-        </div>
-
-        <!-- 1. Direct UTR Fast-Activation Bar -->
-        <div style="background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px; padding: 0.75rem; margin-bottom: 0.75rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-          <label style="font-size: 0.8rem; font-weight: 800; color: #fbbf24; white-space: nowrap;">
-            💰 12-Digit ₹100 UTR:*
-          </label>
-          <input type="text" id="qa-fast-utr-input" class="form-control" placeholder="Paste 12-digit UTR from WhatsApp notification" maxlength="12" style="flex: 1; min-width: 220px; font-family: monospace; font-size: 0.95rem; font-weight: 800; color: #fbbf24; border-color: #0284c7;">
-          <button type="button" class="btn btn-primary" onclick="activateByUtrOnly()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 8px; background: linear-gradient(135deg, #16a34a, #15803d); border-color: #16a34a; white-space: nowrap;">
-            ⚡ Verify UTR & Make Live ➔
-          </button>
-        </div>
-
-        <!-- 2. WhatsApp Text Auto-Parser Box (Toggleable) -->
-        <div id="qa-paste-box" style="display: none; margin-bottom: 0.85rem; background: rgba(2, 6, 23, 0.8); border: 1px dashed #38bdf8; border-radius: 10px; padding: 0.85rem;">
-          <label style="font-size: 0.76rem; color: #cbd5e1; font-weight: 700; display: block; margin-bottom: 4px;">
-            Paste Full WhatsApp Alert from Driver:
-          </label>
-          <textarea id="qa-whatsapp-raw-text" class="form-control" rows="3" placeholder="Paste WhatsApp message here (e.g. *SAFARSAATHI NEW RIDE... Ride ID: RIDE-1234... UTR: 987654321012...)" style="font-size: 0.78rem; font-family: monospace;"></textarea>
-          <button type="button" class="btn btn-primary" onclick="parseAndActivateFromWhatsAppText()" style="margin-top: 8px; padding: 0.5rem 1.1rem; font-size: 0.84rem; font-weight: 800; border-radius: 8px; background: linear-gradient(135deg, #16a34a, #15803d); border-color: #16a34a;">
-            ⚡ Auto-Parse & Make 100% Live ➔
-          </button>
-        </div>
-
-        <!-- 3. Manual 4-Field Entry Bar -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 8px; align-items: flex-end;">
-          <div class="form-group" style="margin: 0;">
-            <label style="font-size: 0.74rem; color: #cbd5e1;">Driver Name & Phone*</label>
-            <input type="text" id="qa-driver-name-phone" class="form-control" placeholder="e.g. Bikram Das, 9864012345" style="font-size: 0.8rem; padding: 0.45rem;">
-          </div>
-          <div class="form-group" style="margin: 0;">
-            <label style="font-size: 0.74rem; color: #cbd5e1;">Route (From ➔ To)*</label>
-            <input type="text" id="qa-route" class="form-control" placeholder="e.g. Guwahati ➔ Shillong" style="font-size: 0.8rem; padding: 0.45rem;">
-          </div>
-          <div class="form-group" style="margin: 0;">
-            <label style="font-size: 0.74rem; color: #cbd5e1;">Vehicle Model & Plate*</label>
-            <input type="text" id="qa-vehicle" class="form-control" placeholder="e.g. Swift Dzire, AS 01 BP 4921" style="font-size: 0.8rem; padding: 0.45rem;">
-          </div>
-          <div class="form-group" style="margin: 0;">
-            <label style="font-size: 0.74rem; color: #cbd5e1;">12-Digit ₹100 UTR*</label>
-            <input type="text" id="qa-utr" class="form-control" placeholder="12-digit UTR" maxlength="12" style="font-size: 0.8rem; padding: 0.45rem; font-family: monospace; font-weight: 800; color: #fbbf24;">
-          </div>
-          <button type="button" class="btn btn-primary" onclick="quickActivateManual()" style="padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 800; border-radius: 8px; white-space: nowrap; height: 36px; background: linear-gradient(135deg, #16a34a, #15803d); border-color: #16a34a;">
-            ⚡ Make Live
-          </button>
-        </div>
-      </div>
-
-      <!-- VIEW 1: VEHICLE LISTINGS -->
+            <!-- VIEW 1: VEHICLE LISTINGS -->
       <div id="view-vehicles" class="dashboard-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
@@ -652,322 +591,51 @@
     let adminFirestoreInitialized = false;
 
         // =========================================================================
-    // ⚡ 1-CLICK URL ACTIVATION & WHATSAPP ALERT PARSER
+    // ⚡ REAL-TIME MULTI-DEVICE CLOUD SERVER ENGINE (1-SECOND SYNC)
     // =========================================================================
-        function activateByUtrOnly() {
-      const utr = (document.getElementById('qa-fast-utr-input')?.value || '').trim();
-      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
-        alert('Please enter a valid 12-digit numeric UTR number from WhatsApp notification!');
-        document.getElementById('qa-fast-utr-input')?.focus();
-        return;
-      }
+    function mergeAdminRides(cloudRides) {
+      if (!cloudRides || !Array.isArray(cloudRides) || cloudRides.length === 0) return;
+      let currentLocal = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      const localMap = new Map(currentLocal.map(r => [r.id, r]));
 
-      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      const match = rides.find(r => r.platformFeeUtr === utr || r.utrNumber === utr);
-
-      if (match) {
-        match.status = 'ACTIVE';
-        match.verifiedByAdmin = true;
-        match.approvedAt = new Date().toISOString();
-        localStorage.setItem('ss_rides', JSON.stringify(rides));
-
-        if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-          try { adminDb = firebase.firestore(); } catch(e){}
+      const merged = cloudRides.map(cr => {
+        const localR = localMap.get(cr.id);
+        if (cr.status === 'FULL' || cr.seatsAvailable <= 0) return { ...cr, status: 'FULL' };
+        if (localR && localR.status === 'ACTIVE' && cr.status === 'PENDING_APPROVAL') {
+          return { ...cr, status: 'ACTIVE', verifiedByAdmin: true };
         }
-        if (adminDb) {
-          try {
-            adminDb.collection('ss_rides').doc(match.id).set(match, { merge: true });
-          } catch(e){}
-        }
-
-        renderVehiclesTable();
-        loadDashboardData();
-        alert(`✓ गाड़ी 100% लाइव हो गई!\\n\\nवाहन: ${match.vehicleModel} (${match.vehicleNumber})\\nड्राइवर: ${match.driverName} (${match.driverPhone})\\nरूट: ${match.origin} ➔ ${match.destination}\\n₹100 UTR: ${utr}\\n\\nयह गाड़ी अब पूरे असम में लाइव है।`);
-        document.getElementById('qa-fast-utr-input').value = '';
-      } else {
-        // Not in local list - prompt Admin to auto-activate or paste WhatsApp message
-        const confirmAdd = confirm(`UTR ${utr} प्राप्त हुआ!\\n\\nक्या आप ड्राइवर का WhatsApp मैसेज पेस्ट करके इसे तुरंत लाइव करना चाहते हैं?`);
-        if (confirmAdd) {
-          const pasteBox = document.getElementById('qa-paste-box');
-          if (pasteBox) pasteBox.style.display = 'block';
-          const txtArea = document.getElementById('qa-whatsapp-raw-text');
-          if (txtArea) txtArea.focus();
-        }
-      }
-    }
-
-    function toggleQuickPasteBox() {
-      const box = document.getElementById('qa-paste-box');
-      if (box) box.style.display = (box.style.display === 'none') ? 'block' : 'none';
-    }
-
-    function checkPendingActivationFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('activateRide') === '1' || params.get('id')) {
-        const rideId = params.get('id') || ('RIDE-' + Math.floor(1000 + Math.random() * 9000));
-        const name = params.get('driver') || params.get('name') || 'Driver';
-        const phone = params.get('phone') || '';
-        const from = params.get('from') || 'Guwahati';
-        const to = params.get('to') || 'Shillong';
-        const date = params.get('date') || '';
-        const time = params.get('time') || '08:30';
-        const model = params.get('model') || 'Car';
-        const plate = params.get('plate') || 'AS 01';
-        const seats = parseInt(params.get('seats')) || 3;
-        const fare = parseInt(params.get('fare')) || 300;
-        const utr = params.get('utr') || '';
-        const driverUpi = params.get('driverUpi') || (phone ? phone + '@upi' : '');
-
-        let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-        let existingIndex = rides.findIndex(r => r.id === rideId || (r.platformFeeUtr && r.platformFeeUtr === utr));
-
-        const activatedRide = {
-          id: rideId,
-          driverName: name,
-          driverPhone: phone,
-          driverUpi: driverUpi,
-          driverQr: 'mitali_qr_compact.svg',
-          farePerSeat: fare,
-          origin: from,
-          destination: to,
-          date: date,
-          time: time,
-          seatsAvailable: seats,
-          totalSeats: seats,
-          vehicleModel: model,
-          vehicleNumber: plate,
-          platformFeeUtr: utr,
-          utrNumber: utr,
-          status: 'ACTIVE',
-          verifiedByAdmin: true,
-          postedAt: new Date().toISOString(),
-          approvedAt: new Date().toISOString()
-        };
-
-        if (existingIndex !== -1) {
-          rides[existingIndex] = { ...rides[existingIndex], ...activatedRide };
-        } else {
-          rides.unshift(activatedRide);
-        }
-
-        localStorage.setItem('ss_rides', JSON.stringify(rides));
-
-        // Sync to Firestore
-        if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-          try { adminDb = firebase.firestore(); } catch(e){}
-        }
-        if (adminDb) {
-          try {
-            adminDb.collection('ss_rides').doc(rideId).set(activatedRide, { merge: true })
-              .then(() => console.log('✓ Ride synced to Firestore from WhatsApp link!'))
-              .catch(e => console.error('Firestore link sync err:', e));
-          } catch(e){}
-        }
-
-        renderVehiclesTable();
-        loadDashboardData();
-        alert(`✓ गाड़ी 100% एक्टिव और लाइव हो गई!\n\nवाहन: ${model} (${plate})\nड्राइवर: ${name} (${phone})\nरूट: ${from} ➔ ${to}\n₹100 UTR: ${utr}\n\nयह गाड़ी अब सफ़रसाथी नेटवर्क पर सभी पैसेंजर्स के लिए लाइव है।`);
-        
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    }
-
-    function parseAndActivateFromWhatsAppText() {
-      const raw = (document.getElementById('qa-whatsapp-raw-text')?.value || '').trim();
-      if (!raw) {
-        alert('Please paste the WhatsApp message text first!');
-        return;
-      }
-
-      // Line-by-line parser for WhatsApp alert
-      const lines = raw.split(/\r?\n/);
-      let rideId = '', name = '', phone = '', route = '', vehicleStr = '', seats = 3, fare = 300, utr = '';
-      
-      lines.forEach(line => {
-        const l = line.replace(/\*/g, '').trim();
-        const low = l.toLowerCase();
-        if (low.includes('ride id:')) {
-          rideId = l.split(':')[1]?.trim() || '';
-        } else if (low.includes('driver name:')) {
-          name = l.split(':')[1]?.trim() || '';
-        } else if (low.includes('driver whatsapp:') || low.includes('whatsapp:')) {
-          phone = l.split(':')[1]?.trim().replace(/\D/g, '') || '';
-        } else if (low.includes('route:')) {
-          route = l.split(':')[1]?.trim() || '';
-        } else if (low.includes('vehicle:')) {
-          vehicleStr = l.split(':')[1]?.trim() || '';
-        } else if (low.includes('seats:')) {
-          const m = l.match(/(\d+)\s*seats/i);
-          if (m) seats = parseInt(m[1]);
-          const mFare = l.match(/rs\.?\s*(\d+)/i);
-          if (mFare) fare = parseInt(mFare[1]);
-        } else if (low.includes('utr:')) {
-          const mUtr = l.match(/(\d{12})/);
-          if (mUtr) utr = mUtr[1];
-        }
+        return cr;
       });
 
-      if (!utr) {
-        const m = raw.match(/(\d{12})/);
-        if (m) utr = m[1];
-      }
+      const cloudIds = new Set(cloudRides.map(r => r.id));
+      currentLocal.forEach(lr => {
+        if (!cloudIds.has(lr.id)) merged.push(lr);
+      });
 
-      if (!rideId) rideId = 'RIDE-' + Math.floor(1000 + Math.random() * 9000);
-      if (!name) name = 'Driver';
-      if (!route) route = 'Guwahati ➔ Shillong';
-      if (!vehicleStr) vehicleStr = 'Swift Dzire (AS 01 BP 4921)';
-
-      let from = 'Guwahati', to = 'Shillong';
-      if (route.includes('➔')) {
-        const parts = route.split('➔');
-        from = parts[0].trim();
-        to = parts[1].trim();
-      } else if (route.includes('to')) {
-        const parts = route.split('to');
-        from = parts[0].trim();
-        to = parts[1].trim();
-      }
-
-      let model = 'Swift Dzire', plate = 'AS 01 BP 4921';
-      if (vehicleStr.includes('(')) {
-        model = vehicleStr.split('(')[0].trim();
-        plate = vehicleStr.split('(')[1].replace(')', '').trim();
-      } else {
-        model = vehicleStr;
-      }
-
-      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      const newRide = {
-        id: rideId,
-        driverName: name,
-        driverPhone: phone,
-        driverUpi: phone ? phone + '@upi' : '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: fare,
-        origin: from,
-        destination: to,
-        date: new Date().toISOString().split('T')[0],
-        time: '08:30',
-        seatsAvailable: seats,
-        totalSeats: seats,
-        vehicleModel: model,
-        vehicleNumber: plate,
-        platformFeeUtr: utr,
-        utrNumber: utr,
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
-      };
-
-      rides.unshift(newRide);
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
-
-      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { adminDb = firebase.firestore(); } catch(e){}
-      }
-      if (adminDb) {
-        try {
-          adminDb.collection('ss_rides').doc(rideId).set(newRide, { merge: true })
-            .then(() => console.log('✓ Parsed ride synced to Firestore!'))
-            .catch(e => console.error(e));
-        } catch(e){}
-      }
-
+      localStorage.setItem('ss_rides', JSON.stringify(merged));
       renderVehiclesTable();
       loadDashboardData();
-      alert(`✓ WhatsApp अलर्ट से गाड़ी तुरंत एक्टिव हो गई!\\n\\nवाहन: ${model} (${plate})\\nड्राइवर: ${name} (${phone})\\nरूट: ${from} ➔ ${to}\\n₹100 UTR: ${utr}\\n\\nयह गाड़ी अब सभी पैसेंजर्स के लिए 100% लाइव है।`);
-      document.getElementById('qa-whatsapp-raw-text').value = '';
-      toggleQuickPasteBox();
     }
 
-    function quickActivateManual() {
-      const namePhone = (document.getElementById('qa-driver-name-phone')?.value || '').trim();
-      const route = (document.getElementById('qa-route')?.value || '').trim();
-      const vehicle = (document.getElementById('qa-vehicle')?.value || '').trim();
-      const utr = (document.getElementById('qa-utr')?.value || '').trim();
+    function pollCloudServerBackup() {
+      // 1. Firebase Realtime DB REST
+      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json')
+        .then(res => res.json())
+        .then(data => {
+          if (data && typeof data === 'object') {
+            const rtdbRides = Object.values(data);
+            if (rtdbRides.length > 0) mergeAdminRides(rtdbRides);
+          }
+        }).catch(() => {});
 
-      if (!namePhone || !route || !vehicle) {
-        alert('Please fill Driver Name/Phone, Route, and Vehicle details!');
-        return;
-      }
-      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
-        alert('Please enter valid 12-digit numeric ₹100 UTR number!');
-        document.getElementById('qa-utr')?.focus();
-        return;
-      }
-
-      let name = namePhone, phone = '';
-      if (namePhone.includes(',')) {
-        name = namePhone.split(',')[0].trim();
-        phone = namePhone.split(',')[1].trim().replace(/\D/g, '');
-      }
-
-      let from = 'Guwahati', to = 'Shillong';
-      if (route.includes('➔')) {
-        from = route.split('➔')[0].trim();
-        to = route.split('➔')[1].trim();
-      } else if (route.includes('to')) {
-        from = route.split('to')[0].trim();
-        to = route.split('to')[1].trim();
-      }
-
-      let model = 'Car', plate = 'AS 01';
-      if (vehicle.includes(',')) {
-        model = vehicle.split(',')[0].trim();
-        plate = vehicle.split(',')[1].trim();
-      } else {
-        model = vehicle;
-      }
-
-      const rideId = 'RIDE-' + Math.floor(1000 + Math.random() * 9000);
-      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      const newRide = {
-        id: rideId,
-        driverName: name,
-        driverPhone: phone,
-        driverUpi: phone ? phone + '@upi' : '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: 300,
-        origin: from,
-        destination: to,
-        date: new Date().toISOString().split('T')[0],
-        time: '08:30',
-        seatsAvailable: 3,
-        totalSeats: 3,
-        vehicleModel: model,
-        vehicleNumber: plate,
-        platformFeeUtr: utr,
-        utrNumber: utr,
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
-      };
-
-      rides.unshift(newRide);
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
-
-      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { adminDb = firebase.firestore(); } catch(e){}
-      }
-      if (adminDb) {
-        try {
-          adminDb.collection('ss_rides').doc(rideId).set(newRide, { merge: true })
-            .then(() => console.log('✓ Manual quick ride synced to Firestore!'))
-            .catch(e => console.error(e));
-        } catch(e){}
-      }
-
-      renderVehiclesTable();
-      loadDashboardData();
-      alert(`✓ गाड़ी 100% लाइव हो गई!\n\nवाहन: ${model} (${plate})\nड्राइवर: ${name} (${phone})\nरूट: ${from} ➔ ${to}\nUTR: ${utr}`);
-
-      document.getElementById('qa-driver-name-phone').value = '';
-      document.getElementById('qa-route').value = '';
-      document.getElementById('qa-vehicle').value = '';
-      document.getElementById('qa-utr').value = '';
+      // 2. Cloudflare Worker REST
+      fetch(`${CLOUDFLARE_WORKER_URL}/api/rides`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            mergeAdminRides(data);
+          }
+        }).catch(() => {});
     }
 
     function checkAdminLogin() {
@@ -978,7 +646,7 @@
         document.getElementById('btn-logout').style.display = 'inline-flex';
         initAdminFirestore();
         loadDashboardData();
-        checkPendingActivationFromUrl();
+        
       } else {
         alert('Invalid Security PIN! Please enter the correct PIN.');
       }
@@ -998,9 +666,14 @@
           if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
           }
+          if (firebase.auth) {
+            firebase.auth().signInAnonymously().catch(() => {});
+          }
           if (firebase.firestore) {
             adminDb = firebase.firestore();
             adminFirestoreInitialized = true;
+            setInterval(pollCloudServerBackup, 3000);
+            pollCloudServerBackup();
             console.log('✓ Admin Cloud Firestore connected.');
 
             adminDb.collection('ss_rides').onSnapshot(snapshot => {
