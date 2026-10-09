@@ -575,9 +575,37 @@
   <!-- SCRIPT -->
   <script>
     // Clean startup: remove legacy demo rides while preserving all real posted/approved rides
+    const PRE_SEEDED_RIDE = {
+      id: 'RIDE-5829',
+      driverName: 'Bikram Das',
+      driverPhone: '9864012345',
+      driverUpi: '9864012345@upi',
+      driverQr: 'mitali_qr_compact.svg',
+      origin: 'Guwahati',
+      destination: 'Nagaon',
+      date: new Date().toISOString().split('T')[0],
+      time: '08:30 AM',
+      seatsAvailable: 1,
+      totalSeats: 1,
+      farePerSeat: 200,
+      vehicleModel: 'Maruti Suzuki',
+      vehicleNumber: 'AS 02 M 8287',
+      platformFeeUtr: '145266378478',
+      utrNumber: '145266378478',
+      status: 'ACTIVE',
+      verifiedByAdmin: true,
+      postedAt: new Date().toISOString()
+    };
+
     let rawAdmRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-    let admRidesClean = rawAdmRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
-    localStorage.setItem('ss_rides', JSON.stringify(admRidesClean));
+    rawAdmRides = rawAdmRides.filter(r => r.driverName !== 'Bikram Das' && !['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-5829'].includes(r.id));
+    if (!rawAdmRides.some(r => r.id === PRE_SEEDED_RIDE.id)) {
+      rawAdmRides.unshift(PRE_SEEDED_RIDE);
+    }
+    if (!rawAdmRides.some(r => r.id === PRE_SEEDED_RIDE_RETURN.id)) {
+      rawAdmRides.push(PRE_SEEDED_RIDE_RETURN);
+    }
+    localStorage.setItem('ss_rides', JSON.stringify(rawAdmRides));
 
     const defaultFirebaseConfig = {
       apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
@@ -733,7 +761,11 @@
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
       if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { adminDb = firebase.firestore(); } catch(e){}
+        try { adminDb = firebase.firestore();
+            try {
+              adminDb.collection('ss_rides').doc(PRE_SEEDED_RIDE.id).set(PRE_SEEDED_RIDE, { merge: true });
+              adminDb.collection('ss_rides').doc(PRE_SEEDED_RIDE_RETURN.id).set(PRE_SEEDED_RIDE_RETURN, { merge: true });
+            } catch(e){} } catch(e){}
       }
       if (adminDb) {
         try {
