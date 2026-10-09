@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- 🤖 AI SMART AUTO-PURGE CACHE CLEANER (Clears Old Data on Chrome, Safari, Android & iPhone) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    (function runAiCacheAutoPurge() {
+      // 1. Purge all CacheStorage caches
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          names.forEach(function(name) { caches.delete(name); });
+        }).catch(function(e) {});
+      }
+      // 2. Unregister stale Service Workers
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          registrations.forEach(function(r) { r.unregister(); });
+        }).catch(function(e) {});
+      }
+      // 3. Clear obsolete test keys while preserving active user profile & password
+      try {
+        ['ss_app_build', 'ss_cache_buster', 'ss_temp_data', 'safarsaathi-v15-pwa-final', 'safarsaathi-v18-force-fresh'].forEach(function(k) {
+          localStorage.removeItem(k);
+        });
+        // Filter out demo rides and expired rides (> 48h)
+        var raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
+        var now = Date.now();
+        var clean = raw.filter(function(r) {
+          if (['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id)) return false;
+          if (!r.postedAt && !r.createdAt && !r.approvedAt) return true;
+          var ts = new Date(r.postedAt || r.createdAt || r.approvedAt).getTime();
+          if (isNaN(ts)) return true;
+          return ((now - ts) / (1000 * 60 * 60)) <= 48;
+        });
+        localStorage.setItem('ss_rides', JSON.stringify(clean));
+      } catch(e) {}
+    })();
+  </script>
+
   <!-- HARD CACHE BUSTER: Prevents any mobile phone from showing stale versions -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">

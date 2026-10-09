@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- 🤖 AI SMART AUTO-PURGE CACHE CLEANER (Clears Old Data on Chrome, Safari, Android & iPhone) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    (function runAiCacheAutoPurge() {
+      // 1. Purge all CacheStorage caches
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          names.forEach(function(name) { caches.delete(name); });
+        }).catch(function(e) {});
+      }
+      // 2. Unregister stale Service Workers
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          registrations.forEach(function(r) { r.unregister(); });
+        }).catch(function(e) {});
+      }
+      // 3. Clear obsolete test keys while preserving active user profile & password
+      try {
+        ['ss_app_build', 'ss_cache_buster', 'ss_temp_data', 'safarsaathi-v15-pwa-final', 'safarsaathi-v18-force-fresh'].forEach(function(k) {
+          localStorage.removeItem(k);
+        });
+        // Filter out demo rides and expired rides (> 48h)
+        var raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
+        var now = Date.now();
+        var clean = raw.filter(function(r) {
+          if (['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id)) return false;
+          if (!r.postedAt && !r.createdAt && !r.approvedAt) return true;
+          var ts = new Date(r.postedAt || r.createdAt || r.approvedAt).getTime();
+          if (isNaN(ts)) return true;
+          return ((now - ts) / (1000 * 60 * 60)) <= 48;
+        });
+        localStorage.setItem('ss_rides', JSON.stringify(clean));
+      } catch(e) {}
+    })();
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SafarSaathi - Real-Time Peer-to-Peer Carpooling Assam</title>
@@ -390,7 +428,10 @@
         <span id="header-live-count-text">4 Live Cars</span>
       </span>
     </div>
-    <div class="header-right">
+    <div class="header-right" style="display: flex; gap: 6px; align-items: center;">
+      <button type="button" class="header-action-btn" onclick="triggerAiCacheClean()" title="AI Auto-Clean Cache & Sync" style="font-size: 0.72rem; padding: 4px 8px; width: auto; border-radius: 20px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">
+        🤖 AI Clean
+      </button>
       <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC">
         <span id="header-user-avatar">👤</span>
       </button>
@@ -1024,6 +1065,45 @@
     let db = null;
 
     // Helper: 48-Hour Retention Check
+        // Universal Client-side Image Compression (Reduces payload for faster mobile sync)
+    function compressImageFile(file, maxDimension, quality, callback) {
+      if (!file) return;
+      if (file.type === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = function(e) { callback(e.target.result); };
+        reader.readAsDataURL(file);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > h) {
+            if (w > maxDimension) {
+              h = Math.round((h * maxDimension) / w);
+              w = maxDimension;
+            }
+          } else {
+            if (h > maxDimension) {
+              w = Math.round((w * maxDimension) / h);
+              h = maxDimension;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', quality || 0.72);
+          callback(compressed);
+        };
+        img.onerror = function() { callback(e.target.result); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function isWithin48Hours(timestamp) {
       if (!timestamp) return true;
       const ts = new Date(timestamp).getTime();
