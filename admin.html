@@ -576,8 +576,8 @@
   <script>
     // Clean startup: remove legacy demo rides while preserving all real posted/approved rides
     const PRE_SEEDED_RIDE = {
-      id: 'RIDE-5829',
-      driverName: 'Bikram Das',
+      id: 'RIDE-DB-2010',
+      driverName: 'Dipankar Baidya',
       driverPhone: '9864012345',
       driverUpi: '9864012345@upi',
       driverQr: 'mitali_qr_compact.svg',
@@ -585,16 +585,17 @@
       destination: 'Nagaon',
       date: new Date().toISOString().split('T')[0],
       time: '08:30 AM',
-      seatsAvailable: 1,
-      totalSeats: 1,
-      farePerSeat: 200,
-      vehicleModel: 'Maruti Suzuki',
-      vehicleNumber: 'AS 02 M 8287',
+      seatsAvailable: 3,
+      totalSeats: 3,
+      farePerSeat: 250,
+      vehicleModel: 'Maruti Suzuki Dzire',
+      vehicleNumber: 'AS 01 BP 2010',
       platformFeeUtr: '145266378478',
       utrNumber: '145266378478',
       status: 'ACTIVE',
       verifiedByAdmin: true,
-      postedAt: new Date().toISOString()
+      postedAt: new Date().toISOString(),
+      approvedAt: new Date().toISOString()
     };
 
     let rawAdmRides = JSON.parse(localStorage.getItem('ss_rides')) || [];

@@ -297,43 +297,53 @@
         <span id="cloud-status-label">Cloud Live 🟢</span>
       </div>
 
-      <div style="font-size: 0.72rem; color: #38bdf8; font-weight: 800; background: rgba(2, 132, 199, 0.2); padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3);">
-        🛡️ Verified Assam
+      <!-- TOP CORNER MODE SWITCHER (DRIVER vs PASSENGER) -->
+      <div id="corner-mode-switcher" style="display: flex; background: rgba(15, 23, 42, 0.95); border: 1.5px solid #0284c7; border-radius: 9999px; padding: 2px; gap: 2px; box-shadow: 0 2px 8px rgba(2,132,199,0.3);">
+        <button type="button" id="mode-btn-passenger" class="mode-pill-btn active" onclick="switchAppMode('passenger')" style="padding: 4px 11px; font-size: 0.75rem; font-weight: 800; border-radius: 9999px; border: none; cursor: pointer; transition: all 0.2s; background: #0284c7; color: #ffffff;">
+          👤 Passenger
+        </button>
+        <button type="button" id="mode-btn-driver" class="mode-pill-btn" onclick="switchAppMode('driver')" style="padding: 4px 11px; font-size: 0.75rem; font-weight: 800; border-radius: 9999px; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: #94a3b8;">
+          🚗 Driver
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- 6-Tab Navigation Grid -->
+  <!-- DUAL-MODE ADAPTIVE NAVIGATION -->
   <nav class="nav-container">
-    <!-- Row 1: Live Cars (Home), Post Ride, Find Ride -->
-    <div class="tab-grid-row">
+    <!-- PASSENGER NAVIGATION (Shown in Passenger Mode) -->
+    <div id="nav-passenger-grid" class="tab-grid-row" style="display: grid; grid-template-columns: repeat(4, 1fr);">
       <button type="button" class="tab-btn active" id="tab-btn-live-cars" onclick="showSection('live-cars')">
         <span class="tab-btn-icon">🟢</span>
         <span>Live Cars (<span id="nav-live-count">1</span>)</span>
-      </button>
-      <button type="button" class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
-        <span class="tab-btn-icon">🚗</span>
-        <span>Post Ride</span>
       </button>
       <button type="button" class="tab-btn" id="tab-btn-passenger" onclick="showSection('passenger')">
         <span class="tab-btn-icon">🔍</span>
         <span>Find Ride</span>
       </button>
-    </div>
-
-    <!-- Row 2: Profile, Bookings, Fleet -->
-    <div class="tab-grid-row">
-      <button type="button" class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
-        <span class="tab-btn-icon">👤</span>
-        <span>Profile</span>
-      </button>
       <button type="button" class="tab-btn" id="tab-btn-bookings" onclick="showSection('bookings')">
         <span class="tab-btn-icon">🎟️</span>
         <span>My Bookings (<span id="nav-bookings-count">0</span>)</span>
       </button>
-      <button type="button" class="tab-btn" id="tab-btn-fleet" onclick="showSection('fleet')">
+      <button type="button" class="tab-btn" id="tab-btn-profile-pass" onclick="showSection('profile')">
+        <span class="tab-btn-icon">👤</span>
+        <span>Profile</span>
+      </button>
+    </div>
+
+    <!-- DRIVER NAVIGATION (Shown in Driver Mode) -->
+    <div id="nav-driver-grid" class="tab-grid-row" style="display: none; grid-template-columns: repeat(3, 1fr);">
+      <button type="button" class="tab-btn active" id="tab-btn-fleet" onclick="showSection('fleet')">
         <span class="tab-btn-icon">🚙</span>
-        <span>Driver Fleet (<span id="nav-fleet-count">1</span>)</span>
+        <span>My Fleet (<span id="nav-fleet-count">1</span>)</span>
+      </button>
+      <button type="button" class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
+        <span class="tab-btn-icon">➕</span>
+        <span>Post Vehicle</span>
+      </button>
+      <button type="button" class="tab-btn" id="tab-btn-profile-driver" onclick="showSection('profile')">
+        <span class="tab-btn-icon">👤</span>
+        <span>Driver Profile</span>
       </button>
     </div>
   </nav>
@@ -695,14 +705,26 @@
 
     <!-- ==================== 6. DRIVER FLEET (DRIVER CARS & SEAT REQUESTS) ==================== -->
     <section id="section-fleet" style="display: none;">
+      <!-- Prominent Add Vehicle Banner for Driver Home -->
+      <div class="app-card" style="margin-bottom: 0.85rem; background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(15, 23, 42, 0.95)); border: 2px solid #0284c7; padding: 1.1rem; border-radius: 16px; text-align: center;">
+        <h2 style="font-size: 1.2rem; font-weight: 900; color: #ffffff; margin: 0 0 0.35rem 0;">🚗 Driver Dashboard & Vehicle Fleet</h2>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0 auto 0.85rem; max-width: 420px;">
+          गाड़ी पोस्ट करें, ₹100 प्लेटफ़ॉर्म फ़ीस दें और 48 घंटे तक पैसेंजर्स से डायरेक्ट अपनी UPI पर किराया कमाएं:
+        </p>
+        <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.75rem 1.5rem; font-size: 0.95rem; font-weight: 900; border-radius: 12px; background: linear-gradient(135deg, #16a34a, #15803d); border: none; box-shadow: 0 4px 14px rgba(22,163,74,0.4); display: inline-flex; align-items: center; gap: 8px; cursor: pointer;">
+          <span>➕ Add Vehicle / Post Ride (₹100 Fee) ➔</span>
+        </button>
+      </div>
+
+      <!-- Driver's Live Active Vehicles -->
       <div class="app-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Driver Fleet & Posted Cars</h2>
-            <span style="font-size: 0.72rem; color: #94a3b8;">48h Active • Incoming Seat Requests</span>
+            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Your Live Posted Vehicles</h3>
+            <span style="font-size: 0.72rem; color: #38bdf8;">Retained 48h • Confirm Passenger Bookings Below</span>
           </div>
-          <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 8px;">
-            ➕ Post Another Car
+          <button type="button" class="btn btn-secondary" onclick="renderDriverFleet()" style="padding: 3px 8px; font-size: 0.72rem; border-radius: 6px;">
+            🔄 Refresh
           </button>
         </div>
         <div id="driver-fleet-list"></div>
@@ -819,8 +841,11 @@
     // =========================================================================
     // 1. DATA STATE & PRE-SEEDED REAL DRIVER RIDE (Guwahati ➔ Nagaon)
     // =========================================================================
+    // =========================================================================
+    // 🚗 ONLY 1 VERIFIED LIVE CAR: DIPANKAR BAIDYA (AS 01 BP 2010)
+    // =========================================================================
     const PRE_SEEDED_RIDE = {
-      id: 'RIDE-DB-8287',
+      id: 'RIDE-DB-2010',
       driverName: 'Dipankar Baidya',
       driverPhone: '9864012345',
       driverUpi: '9864012345@upi',
@@ -834,9 +859,9 @@
       time: '08:30 AM',
       seatsAvailable: 3,
       totalSeats: 3,
-      farePerSeat: 200,
+      farePerSeat: 250,
       vehicleModel: 'Maruti Suzuki Dzire',
-      vehicleNumber: 'AS 02 M 8287',
+      vehicleNumber: 'AS 01 BP 2010',
       platformFeeUtr: '145266378478',
       utrNumber: '145266378478',
       status: 'ACTIVE',
@@ -845,41 +870,20 @@
       approvedAt: new Date().toISOString()
     };
 
-    const PRE_SEEDED_RIDE_RETURN = {
-      id: 'RIDE-DB-8288',
-      driverName: 'Dipankar Baidya',
-      driverPhone: '9864012345',
-      driverUpi: '9864012345@upi',
-      driverPhoto: '',
-      driverQr: 'mitali_qr_compact.svg',
-      carPhoto: 'car-bg.jpg',
-      platePhoto: '',
-      origin: 'Nagaon',
-      destination: 'Guwahati',
-      date: new Date().toISOString().split('T')[0],
-      time: '04:30 PM',
-      seatsAvailable: 3,
-      totalSeats: 3,
-      farePerSeat: 200,
-      vehicleModel: 'Maruti Suzuki Dzire',
-      vehicleNumber: 'AS 02 M 8287',
-      platformFeeUtr: '145266378478',
-      utrNumber: '145266378478',
-      status: 'ACTIVE',
-      verifiedByAdmin: true,
-      postedAt: new Date().toISOString(),
-      approvedAt: new Date().toISOString()
-    };
-
-    let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-    // Purge old fake test rides (like Bikram Das)
-    rides = rides.filter(r => r.driverName !== 'Bikram Das' && !['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-5829'].includes(r.id));
-    if (!rides.some(r => r.id === PRE_SEEDED_RIDE.id)) {
+    let rawRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+    // Filter out all old dummy/unverified rides, strictly keep Dipankar Baidya AS 01 BP 2010
+    let rides = rawRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-DB-8287', 'RIDE-DB-8288'].includes(r.id));
+    if (!rides.some(r => r.id === PRE_SEEDED_RIDE.id || (r.vehicleNumber && r.vehicleNumber.includes('2010')))) {
       rides.unshift(PRE_SEEDED_RIDE);
     }
-    if (!rides.some(r => r.id === PRE_SEEDED_RIDE_RETURN.id)) {
-      rides.push(PRE_SEEDED_RIDE_RETURN);
-    }
+    // Ensure Dipankar Baidya vehicle is AS 01 BP 2010
+    rides.forEach(r => {
+      if (r.id === 'RIDE-DB-2010' || r.driverName === 'Dipankar Baidya') {
+        r.vehicleNumber = 'AS 01 BP 2010';
+        r.status = 'ACTIVE';
+        r.verifiedByAdmin = true;
+      }
+    });
     localStorage.setItem('ss_rides', JSON.stringify(rides));
 
     let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
@@ -919,6 +923,51 @@
     // =========================================================================
     // 2. UNIFIED SECTION CONTROLLER (6 ISOLATED TABS)
     // =========================================================================
+        // =========================================================================
+    // 🔄 DUAL-MODE CONTROLLER: PASSENGER vs DRIVER
+    // =========================================================================
+    let currentAppMode = 'passenger'; // default: passenger mode
+
+    function switchAppMode(mode) {
+      currentAppMode = mode;
+      localStorage.setItem('ss_active_mode', mode);
+
+      const btnPass = document.getElementById('mode-btn-passenger');
+      const btnDriver = document.getElementById('mode-btn-driver');
+      const navPassGrid = document.getElementById('nav-passenger-grid');
+      const navDriverGrid = document.getElementById('nav-driver-grid');
+
+      if (mode === 'driver') {
+        if (btnDriver) {
+          btnDriver.style.background = '#0284c7';
+          btnDriver.style.color = '#ffffff';
+        }
+        if (btnPass) {
+          btnPass.style.background = 'transparent';
+          btnPass.style.color = '#94a3b8';
+        }
+        if (navPassGrid) navPassGrid.style.display = 'none';
+        if (navDriverGrid) navDriverGrid.style.display = 'grid';
+
+        // Driver Home is Fleet
+        showSection('fleet');
+      } else {
+        if (btnPass) {
+          btnPass.style.background = '#0284c7';
+          btnPass.style.color = '#ffffff';
+        }
+        if (btnDriver) {
+          btnDriver.style.background = 'transparent';
+          btnDriver.style.color = '#94a3b8';
+        }
+        if (navPassGrid) navPassGrid.style.display = 'grid';
+        if (navDriverGrid) navDriverGrid.style.display = 'none';
+
+        // Passenger Home is Live Cars
+        showSection('live-cars');
+      }
+    }
+
     function showSection(tab) {
       const sections = {
         'live-cars': document.getElementById('section-live-cars'),
@@ -1694,7 +1743,6 @@
             // Auto-seed Dipankar Baidya to Firestore
           try {
             db.collection('ss_rides').doc(PRE_SEEDED_RIDE.id).set(PRE_SEEDED_RIDE, { merge: true });
-            db.collection('ss_rides').doc(PRE_SEEDED_RIDE_RETURN.id).set(PRE_SEEDED_RIDE_RETURN, { merge: true });
           } catch(e){}
 
           db.collection('ss_rides').onSnapshot(snapshot => {
