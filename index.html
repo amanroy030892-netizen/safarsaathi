@@ -1,36 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- HARD CACHE BUSTER: Prevents any mobile phone from showing stale versions -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <script>
-    const SAFAR_BUILD_VERSION = 'v2026.10.09.FINAL';
-    if (localStorage.getItem('ss_installed_ver') !== SAFAR_BUILD_VERSION) {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(regs) {
-          for (var i = 0; i < regs.length; i++) regs[i].unregister();
-        });
-      }
-      if ('caches' in window) {
-        caches.keys().then(function(keys) {
-          keys.forEach(function(k) { caches.delete(k); });
-        });
-      }
-      localStorage.setItem('ss_installed_ver', SAFAR_BUILD_VERSION);
-      if (window.location.search.indexOf('v=') === -1) {
-        window.location.replace(window.location.pathname + '?v=' + Date.now() + window.location.hash);
-      }
-    }
-  </script>
-
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SafarSaathi - Real-Time Peer-to-Peer Carpooling in Assam</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SafarSaathi - Real-Time Peer-to-Peer Carpooling Assam</title>
   
-  <meta name="theme-color" content="#020617">
-  <meta name="description" content="SafarSaathi - Assam's Verified Carpooling Network for Guwahati, Shillong, Jorhat, Nagaon and beyond.">
+  <meta name="theme-color" content="#090d16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SafarSaathi">
+  
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -40,61 +19,69 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- Google Fonts: Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Google Firebase SDKs (v9 Compat) -->
+  <!-- Google Firebase SDKs (Compat v9) for Cross-Device Cloud Sync -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
+    /* =========================================================================
+       ✨ WORLD-CLASS RIDE-SHARING APP DESIGN SYSTEM (UBER / OLA / BLABLACAR)
+       ========================================================================= */
     :root {
-      --bg-dark: #020617;
-      --card-bg: #0f172a;
-      --card-border: rgba(56, 189, 248, 0.25);
       --primary: #0284c7;
-      --primary-hover: #0369a1;
+      --primary-dark: #0369a1;
       --accent: #38bdf8;
       --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --text: #f8fafc;
+      --success-dark: #16a34a;
+      --dark-bg: #090d16;
+      --card-bg: #0f172a;
+      --card-elevated: #1e293b;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.3);
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border-gray: rgba(255, 255, 255, 0.12);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg-dark);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 3rem;
+      background: var(--dark-bg);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      padding-bottom: 96px; /* Space for docked bottom navigation bar */
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
-    /* Top Brand Header */
+    /* Modern Mobile Header (Sticky & Compact) */
     .app-header {
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(8px);
-      border-bottom: 1.5px solid var(--border-gray);
-      padding: 0.65rem 1rem;
       position: sticky;
       top: 0;
       z-index: 1000;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.65rem 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       max-width: 900px;
       margin: 0 auto;
+      height: 56px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .brand-logo {
@@ -102,102 +89,85 @@
       align-items: center;
       gap: 6px;
       text-decoration: none;
-      color: white;
-      font-size: 1.2rem;
+      color: #ffffff;
+      font-size: 1.25rem;
       font-weight: 900;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
     }
 
-    .brand-logo span.highlight {
-      color: var(--accent);
+    .brand-logo .brand-highlight {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .header-badges {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cloud-badge {
+    .live-status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: rgba(34, 197, 94, 0.15);
-      color: #86efac;
-      border: 1px solid #22c55e;
-      padding: 2px 8px;
-      border-radius: 9999px;
-    }
-
-    .verified-badge {
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: rgba(2, 132, 199, 0.15);
-      color: #7dd3fc;
-      border: 1px solid #0284c7;
-      padding: 2px 8px;
-      border-radius: 9999px;
-    }
-
-    /* 6-Button Navigation Bar (Symmetrical 3x2 Grid) */
-    .nav-container {
-      max-width: 900px;
-      margin: 0.5rem auto 0.75rem;
-      padding: 0 0.75rem;
-    }
-
-    .tab-bar-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
-      margin-bottom: 6px;
-    }
-
-    .tab-btn {
-      background: #1e293b;
-      color: var(--text-muted);
-      border: 1.5px solid var(--border-gray);
-      border-radius: 12px;
-      padding: 0.6rem 0.25rem;
-      font-size: 0.82rem;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #86efac;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
       font-weight: 800;
       cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      font-size: 1.1rem;
+      cursor: pointer;
       transition: all 0.2s ease;
-      white-space: nowrap;
-      outline: none;
     }
 
-    .tab-btn:hover {
-      background: #334155;
-      color: #ffffff;
-    }
-
-    .tab-btn.active {
-      background: #020617;
-      color: #38bdf8;
-      border: 2px solid #0284c7;
-      box-shadow: 0 0 12px rgba(2, 132, 199, 0.35);
-    }
-
-    .tab-btn-icon {
-      font-size: 1rem;
+    .header-action-btn:active {
+      transform: scale(0.92);
+      background: rgba(56, 189, 248, 0.2);
     }
 
     /* Main Container & Sections */
     main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0 0.75rem;
+      padding: 0.85rem 0.85rem;
     }
 
     .app-section {
       display: none;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.22s ease-out;
     }
 
     .app-section.active {
@@ -205,582 +175,924 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .app-card {
       background: var(--card-bg);
-      border: 1.5px solid var(--card-border);
-      border-radius: 16px;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 18px;
       padding: 1.15rem;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       margin-bottom: 1rem;
     }
 
-    /* Common Form Elements */
+    /* Form Controls */
     .form-group {
       margin-bottom: 0.85rem;
     }
 
-    label {
+    .form-group label {
       display: block;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
-      color: #cbd5e1;
+      color: var(--text-muted);
       margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
     .form-control {
       width: 100%;
-      background: rgba(2, 6, 23, 0.8);
-      border: 1.5px solid var(--border-gray);
-      border-radius: 10px;
-      padding: 0.65rem 0.85rem;
+      background: rgba(2, 6, 23, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
       color: #ffffff;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      font-family: inherit;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s ease;
     }
 
     .form-control:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+      background: rgba(2, 6, 23, 0.95);
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      font-size: 0.9rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.92rem;
       font-weight: 800;
-      padding: 0.7rem 1.25rem;
-      border-radius: 10px;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       text-decoration: none;
+      gap: 6px;
+      outline: none;
+      white-space: nowrap;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #0284c7, #1d4ed8);
+      background: linear-gradient(135deg, #1d4ed8, #0284c7);
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      box-shadow: 0 4px 14px rgba(29, 78, 216, 0.4);
     }
 
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #0369a1, #1e40af);
+    .btn-primary:active {
+      transform: scale(0.97);
     }
 
     .btn-secondary {
-      background: #1e293b;
+      background: rgba(255, 255, 255, 0.08);
       color: #cbd5e1;
-      border: 1.5px solid var(--border-gray);
+      border: 1px solid var(--border-subtle);
     }
 
-    .btn-secondary:hover {
-      background: #334155;
-      color: white;
+    .btn-secondary:active {
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .btn-success {
       background: linear-gradient(135deg, #16a34a, #15803d);
-      color: white;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4);
     }
 
     .btn-danger {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      color: white;
+      background: rgba(220, 38, 38, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(220, 38, 38, 0.35);
     }
 
-    /* Modal Backdrop */
-    .modal-overlay {
-      display: none;
+    /* =========================================================================
+       📱 FIXED BOTTOM NAVIGATION BAR (DOCK - LIKE UBER / BLABLACAR)
+       ========================================================================= */
+    .app-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(56, 189, 248, 0.2);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+      padding-bottom: env(safe-area-inset-bottom, 8px);
+    }
+
+    .bottom-nav-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      height: 60px;
+      align-items: center;
+    }
+
+    .b-nav-item {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 4px 0;
+      position: relative;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .b-nav-icon-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .b-nav-icon {
+      font-size: 1.25rem;
+      transition: transform 0.2s ease;
+    }
+
+    .b-nav-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      transition: color 0.2s ease;
+    }
+
+    .b-nav-item:active .b-nav-icon {
+      transform: scale(0.88);
+    }
+
+    .b-nav-item.active {
+      color: #38bdf8;
+    }
+
+    .b-nav-item.active .b-nav-icon {
+      transform: scale(1.12);
+    }
+
+    .b-nav-item.active .b-nav-label {
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    .b-nav-badge {
+      position: absolute;
+      top: -4px;
+      right: -8px;
+      background: #22c55e;
+      color: #ffffff;
+      font-size: 0.62rem;
+      font-weight: 900;
+      padding: 1px 5px;
+      border-radius: 9999px;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+      line-height: 1.2;
+    }
+
+    /* Special Center Action Button (Publish / Post Ride) */
+    .b-nav-publish {
+      position: relative;
+      top: -10px;
+    }
+
+    .b-publish-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #1d4ed8);
+      border: 3px solid #090d16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
+      transition: all 0.25s ease;
+    }
+
+    .b-publish-icon {
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+
+    .b-nav-publish.active .b-publish-circle {
+      transform: scale(1.08);
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.6);
+    }
+
+    .b-nav-publish .b-nav-label {
+      margin-top: 2px;
+      font-size: 0.68rem;
+    }
+
+    /* =========================================================================
+       🚗 BLABLACAR / UBER INTERCITY RIDE CARD DESIGN
+       ========================================================================= */
+    .ride-card-blabla {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--border-accent);
+      border-radius: 18px;
+      padding: 1.15rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      margin-bottom: 0.95rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ride-card-blabla:active {
+      transform: scale(0.99);
+    }
+
+    .rc-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .rc-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .rc-time-node {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rc-time {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      min-width: 68px;
+    }
+
+    .rc-node-bullet {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 6px #38bdf8;
+      flex-shrink: 0;
+    }
+
+    .rc-node-bullet.dest {
+      background: #22c55e;
+      box-shadow: 0 0 6px #22c55e;
+    }
+
+    .rc-city {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #f8fafc;
+    }
+
+    .rc-line-connector {
+      width: 2px;
+      height: 12px;
+      background: rgba(56, 189, 248, 0.4);
+      margin-left: 79px;
+    }
+
+    .rc-price-tag {
+      text-align: right;
+      padding-left: 0.5rem;
+    }
+
+    .rc-price-amount {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #4ade80;
+      line-height: 1.1;
+      display: block;
+    }
+
+    .rc-price-unit {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Middle Row: Vehicle & Driver */
+    .rc-details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+      background: rgba(2, 6, 23, 0.5);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .rc-col-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .rc-col-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .rc-col-val {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .rc-hsrp-badge {
+      display: inline-block;
+      background: #ffffff;
+      color: #000000;
+      font-family: monospace, sans-serif;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid #000000;
+      box-shadow: inset 0 0 2px rgba(0,0,0,0.4);
+    }
+
+    .rc-verified-shield {
+      background: rgba(34, 197, 94, 0.15);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      font-size: 0.66rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* Bottom Row: Seat Count & Booking CTA */
+    .rc-bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .rc-seat-pill {
+      background: rgba(2, 132, 199, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #bae6fd;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .rc-book-action-btn {
+      flex: 1;
+      background: linear-gradient(135deg, #1d4ed8, #0284c7);
+      color: #ffffff;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(29, 78, 216, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .rc-book-action-btn:active {
+      transform: scale(0.97);
+      background: linear-gradient(135deg, #1e40af, #0369a1);
+    }
+
+    /* Segmented Control for My Rides (Tickets & Fleet) */
+    .segmented-control {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 14px;
+      border: 1px solid var(--border-accent);
+      margin-bottom: 1rem;
+      gap: 4px;
+    }
+
+    .segment-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.65rem 0.5rem;
+      font-size: 0.84rem;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .segment-btn.active {
+      background: linear-gradient(135deg, #0284c7, #1d4ed8);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+    }
+
+    /* Modal Backdrop & Card */
+    .modal-backdrop {
       position: fixed;
       inset: 0;
+      z-index: 99999;
       background: rgba(2, 6, 23, 0.85);
       backdrop-filter: blur(6px);
-      z-index: 9999;
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
       align-items: center;
       justify-content: center;
       padding: 1rem;
     }
 
-    .modal-box {
+    .modal-card {
       background: #0f172a;
-      border: 2px solid #0284c7;
-      border-radius: 18px;
-      padding: 1.25rem;
+      border: 2px solid var(--primary);
+      border-radius: 20px;
+      padding: 1.25rem 1.35rem;
       width: 100%;
       max-width: 480px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-      position: relative;
     }
 
     /* Toast Notification */
-    #toast-banner {
+    .toast-banner {
       position: fixed;
-      bottom: 1.5rem;
+      top: 65px;
       left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #16a34a;
+      transform: translateX(-50%);
+      z-index: 99999;
+      background: #15803d;
       color: white;
       padding: 0.65rem 1.25rem;
-      border-radius: 12px;
+      border-radius: 9999px;
       font-size: 0.85rem;
       font-weight: 800;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      z-index: 100000;
-      transition: transform 0.3s ease;
-      pointer-events: none;
-      max-width: 90vw;
-      text-align: center;
-    }
-
-    #toast-banner.show {
-      transform: translateX(-50%) translateY(0);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      display: none;
+      white-space: nowrap;
+      animation: fadeIn 0.2s ease;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Brand Header -->
+  <!-- Floating Toast Notification -->
+  <div id="toast-banner" class="toast-banner">✓ Notification</div>
+
+  <!-- ==================== HEADER (CLEAN STICKY UBER/BLABLACAR STYLE) ==================== -->
   <header class="app-header">
-    <a href="#" class="brand-logo" onclick="showSection('live-cars'); return false;">
-      🚗 Safar<span class="highlight">Saathi</span>
-    </a>
-    <div class="header-badges">
-      <span class="cloud-badge" id="cloud-network-badge">
-        <span style="width: 7px; height: 7px; background: #22c55e; border-radius: 50%; display: inline-block;"></span>
-        Cloud Live 🟢
+    <div class="header-left">
+      <a href="#" class="brand-logo" onclick="showSection('live-cars'); return false;">
+        <span>🚗</span>
+        <span>Safar<span class="brand-highlight">Saathi</span></span>
+      </a>
+      <span class="live-status-pill" id="header-live-pill" onclick="showSection('live-cars')">
+        <span class="pulse-dot"></span>
+        <span id="header-live-count-text">4 Live Cars</span>
       </span>
-      <span class="verified-badge">✨ Verified Carpools</span>
+    </div>
+    <div class="header-right">
+      <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC">
+        <span id="header-user-avatar">👤</span>
+      </button>
     </div>
   </header>
 
-  <!-- 6-Button Navigation Bar (Symmetrical 3x2 Grid) -->
-  <div class="nav-container">
-    <!-- ROW 1: 3 Primary Actions -->
-    <div class="tab-bar">
-      <button class="tab-btn active" id="tab-btn-live-cars" onclick="showSection('live-cars')">
-        <span class="tab-btn-icon">🟢</span>
-        <span class="tab-btn-label">Live Cars ( <span id="nav-live-count">0</span> )</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
-        <span class="tab-btn-icon">🚗</span>
-        <span class="tab-btn-label">Post Ride</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-passenger" onclick="showSection('passenger')">
-        <span class="tab-btn-icon">🔍</span>
-        <span class="tab-btn-label">Find Ride</span>
-      </button>
-    </div>
-
-    <!-- ROW 2: Profile, My Bookings, Driver Fleet -->
-    <div class="tab-bar-row2">
-      <button class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
-        <span class="tab-btn-icon">👤</span>
-        <span class="tab-btn-label">Profile</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-bookings" onclick="showSection('bookings')">
-        <span class="tab-btn-icon">🎟️</span>
-        <span class="tab-btn-label">My Tickets ( <span id="nav-bookings-count">0</span> )</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-fleet" onclick="showSection('fleet')">
-        <span class="tab-btn-icon">🚙</span>
-        <span class="tab-btn-label">Driver Fleet ( <span id="nav-fleet-count">0</span> )</span>
-      </button>
-    </div>
-  </div>
-
   <main>
-    <!-- ========================================================================= -->
-    <!-- 1. 🟢 LIVE CARS (HOME SCREEN - ONLY SHOWS AVAILABLE APPROVED VEHICLES)     -->
-    <!-- ========================================================================= -->
+
+    <!-- ==================== 1. 🟢 LIVE CARS (DEFAULT HOME FEED) ==================== -->
     <section id="section-live-cars" class="app-section active">
       <div class="app-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+        <!-- Hero "Where to?" Search Bar Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="width: 9px; height: 9px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e;"></span>
-              <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff;">Live Available Cars in Assam</h2>
+              <span class="pulse-dot"></span>
+              <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Live Available Rides in Assam</h2>
             </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
-              Real-time verified drivers • Instant Seat Booking • Pay directly to driver via UPI
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">
+              Real-time verified drivers • Instant Seat Booking • Pay directly via UPI
             </p>
           </div>
-          <button type="button" class="btn btn-secondary" onclick="refreshLiveCarsFeed()" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 8px;">
+          <button type="button" class="btn btn-secondary" onclick="refreshLiveCarsFeed()" style="padding: 4px 10px; font-size: 0.74rem; border-radius: 8px;">
             🔄 Refresh Live
           </button>
         </div>
 
         <!-- Quick Route Filter Chips -->
         <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 0.85rem; scrollbar-width: none;">
-          <button type="button" class="btn active" id="chip-live-all" onclick="filterLiveCarsByRoute('all')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 800; border-radius: 20px; white-space: nowrap; background: #0284c7; color: white;">
+          <button type="button" class="btn" id="chip-live-all" onclick="filterLiveCarsByRoute('all')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 800; border-radius: 20px; white-space: nowrap; background: #0284c7; color: white;">
             All Routes (<span id="live-count-chip-all">0</span>)
           </button>
-          <button type="button" class="btn btn-secondary" id="chip-live-shillong" onclick="filterLiveCarsByRoute('Shillong')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap;">
+          <button type="button" class="btn" id="chip-live-shillong" onclick="filterLiveCarsByRoute('Shillong')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
             Guwahati ➔ Shillong
           </button>
-          <button type="button" class="btn btn-secondary" id="chip-live-jorhat" onclick="filterLiveCarsByRoute('Jorhat')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap;">
-            Guwahati ➔ Jorhat
-          </button>
-          <button type="button" class="btn btn-secondary" id="chip-live-nagaon" onclick="filterLiveCarsByRoute('Nagaon')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap;">
+          <button type="button" class="btn" id="chip-live-nagaon" onclick="filterLiveCarsByRoute('Nagaon')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
             Guwahati ➔ Nagaon
+          </button>
+          <button type="button" class="btn" id="chip-live-jorhat" onclick="filterLiveCarsByRoute('Jorhat')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+            Guwahati ➔ Jorhat
           </button>
         </div>
 
-        <!-- Live Cars Feed Container (PURE LIST OF ACTIVE CARS ONLY) -->
+        <!-- Live Rides Feed Container -->
         <div id="live-cars-list-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 2. 🚗 POST RIDE (DRIVER LISTING WIZARD - 4 CLEAN STEPS + ₹100 UTR)        -->
-    <!-- ========================================================================= -->
+    <!-- ==================== 2. 🚗 POST RIDE (DRIVER LISTING WIZARD) ==================== -->
     <section id="section-driver" class="app-section">
       <div class="app-card">
-        <!-- Driver Wizard Steps Indicator -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; background: rgba(2, 6, 23, 0.6); padding: 0.5rem; border-radius: 12px; border: 1px solid var(--border-gray);">
-          <div id="d-step-ind-1" style="font-size: 0.75rem; font-weight: 800; color: #38bdf8;">1. Route</div>
-          <span style="color: var(--text-muted); font-size: 0.7rem;">➔</span>
-          <div id="d-step-ind-2" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">2. Vehicle</div>
-          <span style="color: var(--text-muted); font-size: 0.7rem;">➔</span>
-          <div id="d-step-ind-3" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">3. Your QR</div>
-          <span style="color: var(--text-muted); font-size: 0.7rem;">➔</span>
-          <div id="d-step-ind-4" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">4. ₹100 Fee</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚗 Publish a Carpool Ride</h2>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Fill your empty seats • Earn ₹300 - ₹500 per seat • Direct UPI</p>
+          </div>
+          <span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 8px; border-radius: 9999px; font-weight: 800;">₹100 Fee / Car</span>
         </div>
 
-        <!-- STEP 1: ROUTE & SCHEDULE -->
-        <div id="driver-step-1">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">Route & Travel Schedule</h3>
-            <span style="font-size: 0.7rem; background: #0284c7; color: white; padding: 2px 7px; border-radius: 9999px; font-weight: 700;">Step 1 of 4</span>
-          </div>
+        <!-- Progress Indicator -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 1rem; text-align: center; font-size: 0.72rem; font-weight: 800;">
+          <div id="d-step-ind-1" style="color: #38bdf8; border-bottom: 2px solid #38bdf8; padding-bottom: 4px;">1. Route</div>
+          <div id="d-step-ind-2" style="color: var(--text-muted); border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 4px;">2. Vehicle</div>
+          <div id="d-step-ind-3" style="color: var(--text-muted); border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 4px;">3. Your QR</div>
+          <div id="d-step-ind-4" style="color: var(--text-muted); border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 4px;">4. ₹100 Fee</div>
+        </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-            <div class="form-group">
+        <!-- Step 1: Route & Schedule -->
+        <div id="driver-step-1">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.65rem;">
+            <div class="form-group" style="margin: 0;">
               <label>Origin (From)*</label>
               <input type="text" id="df-from" class="form-control" value="Guwahati" placeholder="e.g. Guwahati">
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin: 0;">
               <label>Destination (To)*</label>
-              <input type="text" id="df-to" class="form-control" value="Shillong" placeholder="e.g. Shillong">
+              <input type="text" id="df-to" class="form-control" value="Shillong" placeholder="e.g. Shillong or Nagaon">
             </div>
           </div>
 
-          <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem;">
-            <span style="font-size: 0.72rem; color: var(--text-muted);">Popular:</span>
+          <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Quick:</span>
             <button type="button" class="btn btn-secondary" onclick="setDriverRoute('Guwahati', 'Shillong')" style="padding: 2px 7px; font-size: 0.72rem;">Guwahati ➔ Shillong</button>
-            <button type="button" class="btn btn-secondary" onclick="setDriverRoute('Guwahati', 'Jorhat')" style="padding: 2px 7px; font-size: 0.72rem;">Guwahati ➔ Jorhat</button>
             <button type="button" class="btn btn-secondary" onclick="setDriverRoute('Guwahati', 'Nagaon')" style="padding: 2px 7px; font-size: 0.72rem;">Guwahati ➔ Nagaon</button>
+            <button type="button" class="btn btn-secondary" onclick="setDriverRoute('Guwahati', 'Jorhat')" style="padding: 2px 7px; font-size: 0.72rem;">Guwahati ➔ Jorhat</button>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-            <div class="form-group">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.85rem;">
+            <div class="form-group" style="margin: 0;">
               <label>Travel Date*</label>
               <input type="date" id="df-date" class="form-control">
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin: 0;">
               <label>Departure Time*</label>
               <input type="time" id="df-time" class="form-control" value="08:30">
             </div>
           </div>
 
-          <button type="button" class="btn btn-primary" onclick="goToDriverStep(2)" style="width: 100%; padding: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-primary" onclick="goToDriverStep(2)" style="width: 100%; padding: 0.8rem;">
             Next: Vehicle Details (Step 2 ➔)
           </button>
         </div>
 
-        <!-- STEP 2: VEHICLE & FARE (LIVE CAMERA NUMBER PLATE SCANNER) -->
+        <!-- Step 2: Vehicle & Camera Plate Scan -->
         <div id="driver-step-2" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">Vehicle & Fare Details</h3>
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(1)" style="padding: 2px 8px; font-size: 0.72rem;">⬅️ Edit Route</button>
-          </div>
-
           <div class="form-group">
-            <label>Vehicle Model*</label>
-            <input type="text" id="df-model" class="form-control" value="Swift Dzire" placeholder="e.g. Maruti Dzire, Innova, Ertiga">
+            <label>Car Model (गाड़ी का मॉडल)*</label>
+            <input type="text" id="df-model" class="form-control" value="Swift Dzire" placeholder="e.g. Maruti Dzire, Ertiga, Innova">
           </div>
 
-          <!-- Camera Number Plate Scanner -->
-          <div style="background: rgba(15, 23, 42, 0.85); border: 2px dashed #0284c7; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.75rem;">
+          <!-- Camera Number Plate Scanner Box -->
+          <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <label style="font-size: 0.82rem; font-weight: 800; color: #ffffff; margin: 0;">
-                📸 Live Car Number Plate Photo (गाड़ी नंबर फोटो)*
+              <label style="font-size: 0.8rem; font-weight: 800; color: #ffffff; margin: 0;">
+                📸 Live Car Number Plate Scan*
               </label>
-              <span style="font-size: 0.68rem; color: #38bdf8; background: rgba(2,132,199,0.2); padding: 1px 6px; border-radius: 9999px;">AI Auto-Extract</span>
+              <span style="font-size: 0.68rem; color: #86efac; background: rgba(34,197,94,0.2); padding: 1px 6px; border-radius: 9999px;">AI Auto-Extract</span>
             </div>
-            <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-              गाड़ी की नंबर प्लेट की लाइव फ़ोटो लें — नंबर अपने आप सेट हो जाएगा।
+            <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0 0 0.5rem 0;">
+              गाड़ी की नंबर प्लेट की लाइव फ़ोटो लें — नंबर अपने आप सेट हो जाएगा:
             </p>
 
-            <label for="df-plate-camera-input" class="btn btn-primary" style="width: 100%; padding: 0.6rem; font-size: 0.82rem; cursor: pointer;">
+            <label for="df-plate-camera-input" class="btn btn-primary" style="width: 100%; padding: 0.65rem; font-size: 0.82rem; cursor: pointer;">
               📷 Open Camera / Scan Plate Photo
             </label>
             <input type="file" id="df-plate-camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handleCarPlateLiveScan(event)">
-            <input type="hidden" id="df-plate" value="">
 
-            <div id="df-plate-scan-result" style="display: none; margin-top: 0.65rem; background: rgba(2, 6, 23, 0.95); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.5rem 0.75rem;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 0.65rem;">
-                  <img id="df-plate-photo-preview" style="width: 54px; height: 36px; object-fit: cover; border-radius: 6px; border: 1.5px solid #22c55e;">
-                  <div>
-                    <div style="font-size: 0.68rem; color: #86efac; font-weight: 800;">✓ Plate Scanned & Verified</div>
-                    <div id="df-scanned-plate-badge" style="background: white; color: black; font-family: monospace; font-size: 1rem; font-weight: 900; letter-spacing: 2px; padding: 1px 6px; border-radius: 4px; border: 1.5px solid black; display: inline-block; margin-top: 2px;">
-                      AS 01 BP 4921
-                    </div>
-                  </div>
+            <input type="hidden" id="df-plate" value="AS 01 TX 2010">
+
+            <div id="df-plate-scan-result" style="margin-top: 0.65rem; background: rgba(15, 23, 42, 0.9); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.55rem 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img id="df-plate-photo-preview" src="car-bg.jpg" style="width: 52px; height: 34px; object-fit: cover; border-radius: 4px; border: 1px solid #22c55e;">
+                <div>
+                  <div style="font-size: 0.68rem; color: #86efac; font-weight: 800;">✓ Plate Verified</div>
+                  <div id="df-scanned-plate-badge" class="rc-hsrp-badge">AS 01 TX 2010</div>
                 </div>
-                <button type="button" onclick="rescanCarPlate()" class="btn btn-secondary" style="padding: 3px 7px; font-size: 0.7rem;">🔄 Re-scan</button>
               </div>
+              <button type="button" onclick="rescanCarPlate()" class="btn btn-secondary" style="padding: 3px 7px; font-size: 0.7rem;">🔄 Re-scan</button>
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-            <div class="form-group">
-              <label>Empty Seats Available*</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.85rem;">
+            <div class="form-group" style="margin: 0;">
+              <label>Empty Seats*</label>
               <select id="df-seats" class="form-control">
                 <option value="1">1 Seat Empty</option>
                 <option value="2">2 Seats Empty</option>
                 <option value="3" selected>3 Seats Empty</option>
                 <option value="4">4 Seats Empty</option>
                 <option value="5">5 Seats Empty</option>
-                <option value="6">6 Seats Empty (SUV)</option>
+                <option value="6">6 Seats (SUV)</option>
               </select>
             </div>
-            <div class="form-group">
+
+            <div class="form-group" style="margin: 0;">
               <label>Fare Per Seat (Rs.)*</label>
-              <div style="display: flex; align-items: center; background: rgba(2, 6, 23, 0.95); border: 1.5px solid var(--border-gray); border-radius: 10px; overflow: hidden;">
-                <span style="padding: 0.65rem 0.75rem; background: rgba(15, 23, 42, 0.95); color: #38bdf8; font-weight: 900; font-size: 0.9rem;">Rs.</span>
-                <input type="number" id="df-fare" class="form-control" placeholder="300" value="300" style="border: none !important; background: transparent !important; font-weight: 900; color: #4ade80; font-size: 1.1rem;">
+              <div style="display: flex; align-items: center; background: rgba(2, 6, 23, 0.95); border: 1.5px solid rgba(56, 189, 248, 0.5); border-radius: 12px; overflow: hidden;">
+                <span style="padding: 0.65rem 0.85rem; background: rgba(15, 23, 42, 0.95); color: #38bdf8; font-weight: 900; font-size: 0.95rem; border-right: 1.5px solid rgba(56, 189, 248, 0.35);">Rs.</span>
+                <input type="number" id="df-fare" class="form-control" value="300" style="border: none !important; background: transparent !important; padding-left: 0.75rem !important; font-weight: 900; color: #4ade80; font-size: 1.15rem; width: 100%;">
               </div>
             </div>
           </div>
 
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(1)" style="flex: 1;">⬅️ Back</button>
-            <button type="button" class="btn btn-primary" onclick="proceedToDriverStep3()" style="flex: 1.5;">Next: Receiving QR (Step 3 ➔)</button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(1)" style="flex: 1; padding: 0.75rem;">⬅️ Back</button>
+            <button type="button" class="btn btn-primary" onclick="proceedToDriverStep3()" style="flex: 1.5; padding: 0.75rem;">Next: Receiving QR ➔</button>
           </div>
         </div>
 
-        <!-- STEP 3: DRIVER RECEIVING QR & UPI -->
+        <!-- Step 3: Driver Receiving QR -->
         <div id="driver-step-3" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">Upload Your Receiving QR Code</h3>
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(2)" style="padding: 2px 8px; font-size: 0.72rem;">⬅️ Edit Car</button>
-          </div>
-
-          <p style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.75rem;">
-            Upload your PhonePe / GPay / Paytm QR code. Passengers will pay your fare directly to this QR!
+          <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 0.75rem;">
+            Upload your receiving UPI QR screenshot. Passengers will pay fares directly to your QR!
           </p>
 
-          <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed #0284c7; border-radius: 14px; padding: 1rem; text-align: center; margin-bottom: 0.75rem;">
+          <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 1rem; text-align: center; margin-bottom: 0.75rem;">
+            <strong style="display: block; font-size: 0.85rem; color: white; margin-bottom: 0.35rem;">Upload UPI QR Screenshot</strong>
             <input type="file" id="df-qr-file" accept="image/*" class="form-control" style="max-width: 300px; margin: 0 auto;" onchange="handleDriverQrUpload(event)">
             <div id="df-qr-preview-box" style="display: none; margin-top: 0.65rem;">
-              <div style="font-size: 0.75rem; font-weight: 800; color: #4ade80; margin-bottom: 4px;">✓ QR Screenshot Loaded:</div>
-              <img id="df-qr-preview" style="max-width: 120px; max-height: 120px; border-radius: 8px; border: 2px solid #38bdf8;">
+              <img id="df-qr-preview" style="max-width: 120px; max-height: 120px; border-radius: 8px; border: 1.5px solid var(--accent);">
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Your Receiving UPI ID (For Direct Fare Credit)*</label>
-            <input type="text" id="df-driver-upi" class="form-control" value="9864012345@upi" placeholder="e.g. 9864012345@upi">
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label>Your UPI ID (For Direct Fare Credit)*</label>
+            <input type="text" id="df-driver-upi" class="form-control" value="6901027507@nyes" placeholder="e.g. 9864012345@upi">
           </div>
 
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(2)" style="flex: 1;">⬅️ Back</button>
-            <button type="button" class="btn btn-primary" onclick="proceedToDriverStep4()" style="flex: 1.5;">Next: Platform Fee (Step 4 ➔)</button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(2)" style="flex: 1; padding: 0.75rem;">⬅️ Back</button>
+            <button type="button" class="btn btn-primary" onclick="proceedToDriverStep4()" style="flex: 1.5; padding: 0.75rem;">Next: ₹100 Platform Fee ➔</button>
           </div>
         </div>
 
-        <!-- STEP 4: ₹100 PLATFORM FEE & UTR (DIRECT 1-TAP UPI BUTTONS) -->
+        <!-- Step 4: ₹100 Platform Fee & UTR -->
         <div id="driver-step-4" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">₹100 Platform Fee & Verification</h3>
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(3)" style="padding: 2px 8px; font-size: 0.72rem;">⬅️ Edit QR</button>
-          </div>
+          <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid var(--primary); border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
+            <div style="font-weight: 800; font-size: 0.85rem; color: white;">Pay ₹100 Platform Listing Fee</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.4rem;">Jana Small Finance Bank • 6901027507@nyes</div>
 
-          <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid #0284c7; border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
-            <div style="font-weight: 800; font-size: 0.88rem; color: #ffffff;">Pay ₹100 Platform Fee to Activate Vehicle</div>
-            <div style="font-size: 0.74rem; color: var(--text-muted);">Jana Small Finance Bank • 6901027507@nyes</div>
+            <img src="mitali_qr_compact.svg" style="width: 110px; height: 110px; background: white; border-radius: 8px; padding: 3px; border: 1.5px solid var(--primary); margin: 0 auto 0.4rem;">
 
-            <div style="margin: 0.4rem auto; width: 120px; height: 120px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 4px; border: 2px solid #0284c7;">
-              <img src="mitali_qr_compact.svg" alt="SafarSaathi QR" style="width: 100%; height: 100%; object-fit: contain;">
+            <!-- Direct 1-Tap Payment Launchers -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px;">
+              <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#5f259f; color:white; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px;">
+                🟣 PhonePe (₹100)
+              </a>
+              <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#1a73e8; color:white; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px;">
+                🔵 Google Pay (₹100)
+              </a>
             </div>
-
-            <div style="background: rgba(2,132,199,0.25); color: #38bdf8; padding: 3px 8px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; font-weight: 800; display: inline-block; margin-bottom: 0.5rem;">
-              6901027507@nyes
-            </div>
-
-            <!-- 1-Tap UPI Buttons -->
-            <div style="border-top: 1px dashed var(--border-gray); padding-top: 0.5rem;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-                <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #5f259f; color: white; padding: 0.5rem; font-size: 0.76rem; border-radius: 8px;">
-                  🟣 PhonePe (₹100)
-                </a>
-                <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #1a73e8; color: white; padding: 0.5rem; font-size: 0.76rem; border-radius: 8px;">
-                  🔵 Google Pay (₹100)
-                </a>
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                <a href="paytmmp://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #00b9f1; color: #020617; padding: 0.5rem; font-size: 0.76rem; border-radius: 8px;">
-                  📱 Paytm (₹100)
-                </a>
-                <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background: #16a34a; color: white; padding: 0.5rem; font-size: 0.76rem; border-radius: 8px;">
-                  🇮🇳 Any UPI App
-                </a>
-              </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+              <a href="paytmmp://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#00b9f1; color:#020617; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px;">
+                📱 Paytm (₹100)
+              </a>
+              <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#16a34a; color:white; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px;">
+                🇮🇳 Any UPI App
+              </a>
             </div>
           </div>
 
-          <div class="form-group">
-            <label>12-Digit Bank Payment UTR Number (for ₹100)*</label>
-            <input type="text" id="df-utr" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; border: 1.5px solid #0284c7;">
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label>12-Digit Bank Payment UTR Number (₹100)*</label>
+            <input type="text" id="df-utr" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; border: 1.5px solid var(--primary);">
           </div>
 
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
-            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(3)" style="flex: 1;">⬅️ Back</button>
-            <button type="button" class="btn btn-primary" onclick="submitDriverRideDirect()" style="flex: 1.5; font-size: 0.95rem;">
-              🚀 Submit Ride ➔
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="goToDriverStep(3)" style="flex: 1; padding: 0.75rem;">⬅️ Back</button>
+            <button type="button" class="btn btn-primary" onclick="submitDriverRideDirect()" style="flex: 1.5; padding: 0.75rem; font-weight: 900;">
+              🚀 Submit Ride & Go Live ➔
             </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 3. 🔍 FIND RIDE (CORRIDOR SEARCH & DATE FILTER)                           -->
-    <!-- ========================================================================= -->
+    <!-- ==================== 3. 🔍 FIND RIDE (CORRIDOR SEARCH) ==================== -->
     <section id="section-passenger" class="app-section">
       <div class="app-card">
-        <h3 style="font-size: 1.1rem; font-weight: 900; color: #ffffff; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.5rem;">
-          🔍 Search Carpool Corridors in Assam
-        </h3>
+        <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin-bottom: 0.35rem;">🔍 Search Carpool Corridors</h2>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Find vacant seats travelling on your exact date and route:</p>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-          <div class="form-group">
-            <label>Origin City*</label>
-            <input type="text" id="ps-from" class="form-control" value="Guwahati" placeholder="From City">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.65rem;">
+          <div class="form-group" style="margin: 0;">
+            <label>Leaving From</label>
+            <input type="text" id="ps-from" class="form-control" placeholder="e.g. Guwahati" value="Guwahati">
           </div>
-          <div class="form-group">
-            <label>Destination City*</label>
-            <input type="text" id="ps-to" class="form-control" value="Shillong" placeholder="To City">
+          <div class="form-group" style="margin: 0;">
+            <label>Going To</label>
+            <input type="text" id="ps-to" class="form-control" placeholder="e.g. Shillong or Nagaon" value="Shillong">
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Travel Date*</label>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>Date of Travel</label>
           <input type="date" id="ps-date" class="form-control">
         </div>
 
-        <button type="button" class="btn btn-primary" onclick="executePassengerCorridorSearch()" style="width: 100%; padding: 0.75rem;">
-          🔍 Search Matching Cars
+        <button type="button" class="btn btn-primary" onclick="executePassengerCorridorSearch()" style="width: 100%; padding: 0.8rem; font-weight: 900;">
+          🔍 Search Available Cars ➔
         </button>
 
         <div id="passenger-search-results-container" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;"></div>
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 4. 👤 PROFILE (100% FREE PURE IDENTITY, AADHAAR KYC & PASSWORD AUTH)      -->
-    <!-- ========================================================================= -->
+    <!-- ==================== 4. 🎟️ MY RIDES HUB (TICKETS & FLEET) ==================== -->
+    <section id="section-my-rides" class="app-section">
+      <div class="app-card">
+        <!-- Segmented Control for Passenger Tickets vs Driver Fleet -->
+        <div class="segmented-control">
+          <button type="button" class="segment-btn active" id="seg-btn-bookings" onclick="switchMyRidesTab('bookings')">
+            🎟️ Booked Tickets (<span id="seg-bookings-count">0</span>)
+          </button>
+          <button type="button" class="segment-btn" id="seg-btn-fleet" onclick="switchMyRidesTab('fleet')">
+            🚙 Driver Fleet (<span id="seg-fleet-count">0</span>)
+          </button>
+        </div>
+
+        <!-- Sub-View A: Passenger Tickets Container -->
+        <div id="subview-my-bookings">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+            <h3 style="font-size: 1rem; font-weight: 800; color: #ffffff; margin: 0;">🎟️ Your Digital Boarding Passes</h3>
+            <span style="font-size: 0.72rem; color: #94a3b8;">48h Active</span>
+          </div>
+          <div id="passenger-bookings-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+        </div>
+
+        <!-- Sub-View B: Driver Fleet Container -->
+        <div id="subview-driver-fleet" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+            <div>
+              <h3 style="font-size: 1rem; font-weight: 800; color: #ffffff; margin: 0;">🚙 Your Listed Vehicles</h3>
+              <p style="font-size: 0.72rem; color: #94a3b8; margin: 2px 0 0 0;">Manage passenger seat requests & incoming UPI payments</p>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 800; border-radius: 8px;">
+              ➕ Post Car
+            </button>
+          </div>
+          <div id="driver-fleet-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. 👤 PROFILE & AADHAAR KYC (100% FREE) ==================== -->
     <section id="section-profile" class="app-section">
       <div class="app-card">
-        <!-- VIEW A: LOGIN / REGISTER FORM (If not logged in) -->
-        <div id="prof-auth-view" style="display: block;">
-          <div style="display: flex; gap: 6px; margin-bottom: 0.85rem;">
+        <!-- Not Logged In View -->
+        <div id="prof-auth-view">
+          <div style="display: flex; justify-content: center; gap: 6px; margin-bottom: 0.85rem;">
             <button type="button" class="btn btn-primary" id="btn-auth-mode-login" onclick="setAuthMode('login')" style="flex: 1; padding: 0.55rem;">
-              🔑 Log In
+              🔑 User ID Login
             </button>
             <button type="button" class="btn btn-secondary" id="btn-auth-mode-reg" onclick="setAuthMode('register')" style="flex: 1; padding: 0.55rem;">
-              ✨ Register (Free)
+              ✨ Register Account
             </button>
           </div>
 
-          <h3 id="auth-title" style="font-size: 1.05rem; font-weight: 900; color: #ffffff; margin-bottom: 0.25rem;">
-            User ID Login
-          </h3>
-          <p id="auth-sub" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          <h3 id="auth-title" style="font-size: 1.05rem; font-weight: 900; color: white; margin-bottom: 0.25rem;">User ID Login</h3>
+          <p id="auth-sub" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">
             Enter your 10-digit mobile number as User ID and your secret password:
           </p>
 
           <div class="form-group">
             <label>10-Digit Mobile Number (User ID)*</label>
-            <input type="tel" id="auth-input-userid" class="form-control" placeholder="e.g. 9864012345" maxlength="10">
+            <input type="tel" id="auth-input-userid" class="form-control" maxlength="10" placeholder="e.g. 9864012345">
           </div>
 
           <div class="form-group">
-            <label id="auth-label-password">Secret Password (पासवर्ड)*</label>
-            <input type="password" id="auth-input-password" class="form-control" placeholder="••••••••">
+            <label>Password (पासवर्ड)*</label>
+            <input type="password" id="auth-input-password" class="form-control" placeholder="Enter your secret password">
           </div>
 
-          <!-- Extra Fields for Registration -->
+          <!-- Registration Additional Fields (Shown only in Register mode) -->
           <div id="auth-field-reg-box" style="display: none;">
             <div class="form-group">
-              <label>Confirm Password*</label>
+              <label>Confirm Password (पासवर्ड दोबारा डालें)*</label>
               <input type="password" id="auth-input-confirm-password" class="form-control" placeholder="Re-enter password">
             </div>
+
             <div class="form-group">
-              <label>Full Legal Name*</label>
-              <input type="text" id="auth-input-name" class="form-control" placeholder="Your Full Name">
-            </div>
-            <div class="form-group">
-              <label>Address in Assam*</label>
-              <input type="text" id="auth-input-address" class="form-control" placeholder="e.g. Guwahati, Assam">
+              <label>Full Legal Name (पूरा नाम)*</label>
+              <input type="text" id="auth-input-name" class="form-control" placeholder="e.g. Bikram Das">
             </div>
 
-            <!-- Aadhaar Photo Upload -->
-            <div style="background: rgba(2, 6, 23, 0.8); border: 2px dashed #0284c7; border-radius: 12px; padding: 0.75rem; margin-bottom: 0.85rem;">
-              <label style="font-size: 0.78rem; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">
-                🛡️ Upload Aadhaar Card Photo (AI QR Verification)*
-              </label>
+            <div class="form-group">
+              <label>Address in Assam (स्थान / पता)*</label>
+              <input type="text" id="auth-input-address" class="form-control" placeholder="e.g. Paltan Bazar, Guwahati">
+            </div>
+
+            <!-- Aadhaar Card Photo Upload -->
+            <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
+              <strong style="color: white; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">
+                🛡️ Upload Aadhaar Photo (आधार कार्ड फ़ोटो)*
+              </strong>
               <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                सुरक्षा हेतु आधार कार्ड की साफ़ फ़ोटो अपलोड करें। AI द्वारा QR सत्यापित होगा।
+                AI verifies UIDAI Secure QR code for 100% passenger & driver safety:
               </p>
               <input type="file" id="auth-aadhaar-file" accept="image/*" class="form-control" onchange="handleAuthAadhaarScan(event)">
               <div id="auth-aadhaar-preview-box" style="display: none; margin-top: 0.5rem;">
-                <span style="font-size: 0.75rem; color: #86efac; font-weight: 800;">✓ Aadhaar Document Loaded:</span>
-                <img id="auth-aadhaar-img-preview" style="max-height: 80px; border-radius: 6px; border: 1px solid #22c55e; margin-top: 3px; display: block;">
+                <img id="auth-aadhaar-img-preview" style="max-height: 90px; border-radius: 6px; border: 1px solid #22c55e;">
               </div>
             </div>
           </div>
 
-          <button type="button" class="btn btn-primary" id="btn-auth-submit" onclick="submitAuthAction()" style="width: 100%; padding: 0.75rem; margin-top: 0.4rem;">
+          <button type="button" class="btn btn-primary" id="btn-auth-submit" onclick="submitAuthAction()" style="width: 100%; padding: 0.75rem; font-weight: 900; margin-top: 0.5rem;">
             🚀 Log In to Profile ➔
           </button>
 
           <div style="text-align: center; margin-top: 0.75rem;">
-            <button type="button" id="btn-forgot-password-link" onclick="openForgotPasswordView()" style="background: none; border: none; color: #38bdf8; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
-              ❓ Forgot Password?
-            </button>
+            <a href="#" id="btn-forgot-password-link" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.76rem; color: var(--accent); text-decoration: none;">
+              ❓ Forgot Password? (पासवर्ड भूल गए?)
+            </a>
           </div>
         </div>
 
-        <!-- VIEW B: PROFILE CARD (Shown when logged in) -->
+        <!-- Logged In Profile Card View -->
         <div id="prof-card-view" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.5rem;">
-            <div>
-              <h3 id="prof-card-name" style="font-size: 1.15rem; font-weight: 900; color: #ffffff;">User Name</h3>
-              <div id="prof-card-phone" style="font-size: 0.8rem; color: var(--text-muted);">📱 +91 9864012345</div>
-              <div id="prof-card-addr" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">📍 Assam, India</div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #1d4ed8); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">
+              👤
             </div>
-            <div style="text-align: right;">
-              <span id="prof-card-badge" style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
-                🛡️ AI Aadhaar Verified
-              </span>
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <h3 id="prof-card-name" style="font-size: 1.15rem; font-weight: 900; color: white; margin: 0;">User Name</h3>
+                <span class="rc-verified-shield">🛡️ AI Verified</span>
+              </div>
+              <div id="prof-card-phone" style="font-size: 0.8rem; color: var(--accent); font-weight: 800; margin-top: 2px;">📱 +91 ----------</div>
+              <div id="prof-card-addr" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 2px;">📍 Assam, India</div>
             </div>
           </div>
 
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-            <button type="button" class="btn btn-secondary" onclick="openChangePasswordModal()" style="flex: 1; padding: 0.55rem; font-size: 0.78rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem;">
+            <button type="button" class="btn btn-secondary" onclick="openChangePasswordModal()" style="padding: 0.55rem; font-size: 0.8rem;">
               🔑 Change Password
             </button>
-            <button type="button" class="btn btn-danger" onclick="logoutUserProfile()" style="flex: 1; padding: 0.55rem; font-size: 0.78rem;">
+            <button type="button" class="btn btn-danger" onclick="logoutUserProfile()" style="padding: 0.55rem; font-size: 0.8rem;">
               🚪 Log Out
             </button>
           </div>
@@ -788,177 +1100,153 @@
       </div>
     </section>
 
-    <!-- ========================================================================= -->
-    <!-- 5. 🎟️ MY BOOKINGS (PASSENGER BOOKED TICKETS & DIGITAL BOARDING PASS)      -->
-    <!-- ========================================================================= -->
-        <!-- ==================== 5. PASSENGER BOOKINGS & TICKETS ==================== -->
-    <section id="section-bookings" class="step-flip-card" style="display: none;">
-      <div class="app-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-          <div>
-            <h3 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🎟️ My Booked Tickets & Boarding Passes</h3>
-            <span style="font-size: 0.74rem; color: #94a3b8;">Retained 48 hours • Show boarding pass to driver upon pickup</span>
-          </div>
-          <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="padding: 0.4rem 0.95rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; width: auto;">
-            🔍 Find More Rides
-          </button>
-        </div>
-
-        <div id="prof-bookings-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- 6. 🚙 DRIVER FLEET (DRIVER'S POSTED VEHICLES & INCOMING BOOKING APPROVALS) -->
-    <!-- ========================================================================= -->
-        <!-- ==================== 6. DRIVER FLEET & INCOMING REQUESTS ==================== -->
-    <section id="section-fleet" class="step-flip-card" style="display: none;">
-      <div class="app-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-          <div>
-            <h3 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Driver Fleet & Posted Vehicles</h3>
-            <span style="font-size: 0.74rem; color: #94a3b8;">Multi-car support (4-5 vehicles) • 48h active • Confirm seat requests</span>
-          </div>
-          <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.4rem 0.95rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; width: auto;">
-            ➕ Post Another Car
-          </button>
-        </div>
-
-        <div id="prof-fleet-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
-      </div>
-    </section>
   </main>
 
-  <!-- CLEAN FOOTER (100% GITHUB & OFFICIAL EMAIL) -->
-  <footer style="margin-top: 2rem; padding: 1.5rem 1rem; border-top: 1px solid var(--border-gray); text-align: center; color: var(--text-muted); font-size: 0.76rem;">
-    <div style="font-weight: 800; color: #ffffff; margin-bottom: 0.35rem;">SafarSaathi (सफ़रसाथी) • Assam Peer-to-Peer Carpooling Network</div>
-    <div>Email: <a href="mailto:support@safarsaathi.com" style="color: #38bdf8; text-decoration: none; font-weight: 700;">support@safarsaathi.com</a></div>
-    <div style="margin-top: 0.25rem;">Website: <a href="https://amanroy030892-netizen.github.io/safarsaathi/" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: 700;">https://amanroy030892-netizen.github.io/safarsaathi/</a></div>
-    <div style="margin-top: 0.35rem;"><a href="privacy.html" style="color: var(--text-muted); text-decoration: underline;">Privacy Policy & Terms</a></div>
-  </footer>
-
-  <!-- ========================================================================= -->
-  <!-- MODALS: BOOKING MODAL, CHANGE PASSWORD, FORGOT PASSWORD                   -->
-  <!-- ========================================================================= -->
-
-  <!-- BOOKING MODAL (FOR BOOKING A SEAT ON A LIVE CAR) -->
-  <div class="modal-overlay" id="booking-modal">
-    <div class="modal-box">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.4rem;">
-        <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">🎟️ Book Your Seat</h3>
-        <button type="button" class="btn btn-secondary" onclick="closeBookingModal()" style="padding: 2px 7px; font-size: 0.75rem;">✕</button>
+  <!-- ==================== 🎟️ BOOKING MODAL (SEAT SELECTION & DIRECT UPI PAYMENT) ==================== -->
+  <div class="modal-backdrop" id="booking-modal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 900; color: white; margin: 0;">🎟️ Reserve Carpool Seat</h3>
+        <button type="button" class="btn btn-secondary" onclick="closeBookingModal()" style="padding: 2px 8px; font-size: 0.75rem;">✕</button>
       </div>
 
-      <div id="bm-ride-summary" style="background: rgba(2, 6, 23, 0.7); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.65rem; margin-bottom: 0.75rem;"></div>
+      <div id="bm-ride-summary" style="background: rgba(2, 6, 23, 0.7); border-radius: 12px; padding: 0.75rem; margin-bottom: 0.85rem; border: 1px solid var(--border-subtle);"></div>
 
       <div class="form-group">
-        <label>Select Seats to Book*</label>
-        <select id="bm-seats-select" class="form-control" onchange="updateBookingFareCalculation()"></select>
+        <label>Select Seats to Book</label>
+        <select id="bm-seats-select" class="form-control" onchange="updateBookingFareCalculation()">
+          <option value="1">1 Seat</option>
+          <option value="2">2 Seats</option>
+          <option value="3">3 Seats</option>
+        </select>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.9); padding: 0.5rem 0.75rem; border-radius: 8px; margin-bottom: 0.75rem; border: 1px solid var(--border-gray);">
-        <span style="font-size: 0.82rem; color: #cbd5e1;">Total Fare to Pay Driver:</span>
-        <strong id="bm-total-fare-text" style="font-size: 1.15rem; color: #4ade80;">₹300</strong>
-      </div>
+      <!-- Payment Section -->
+      <div style="background: rgba(2, 6, 23, 0.85); border: 1.5px solid var(--primary); border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.85rem;">
+        <div style="font-size: 0.78rem; color: var(--text-muted);">Total Fare to Pay Directly to Driver:</div>
+        <div id="bm-total-fare-text" style="font-size: 1.6rem; font-weight: 900; color: #4ade80; margin: 2px 0 0.5rem 0;">₹300</div>
 
-      <!-- Driver Receiving QR & 1-Tap UPI Payment -->
-      <div style="background: rgba(2, 6, 23, 0.9); border: 1.5px solid #0284c7; border-radius: 12px; padding: 0.75rem; text-align: center; margin-bottom: 0.75rem;">
-        <div style="font-size: 0.75rem; font-weight: 800; color: #ffffff;">Pay Fare Directly to Driver's PhonePe/GPay QR:</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem;">Scan Driver's PhonePe / GPay QR:</div>
+        <img id="bm-driver-qr-img" src="mitali_qr_compact.svg" style="width: 120px; height: 120px; background: white; border-radius: 10px; padding: 4px; border: 1.5px solid var(--primary); margin: 0 auto 0.4rem;">
         
-        <div style="margin: 0.35rem auto; width: 110px; height: 110px; background: white; border-radius: 8px; padding: 3px; display: flex; align-items: center; justify-content: center;">
-          <img id="bm-driver-qr-img" src="mitali_qr_compact.svg" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
-        <div id="bm-driver-upi-text" style="font-family: monospace; font-size: 0.78rem; color: #38bdf8; font-weight: 800; margin-bottom: 0.45rem;">
+        <div id="bm-driver-upi-text" style="font-family: monospace; font-size: 0.82rem; font-weight: 800; color: #38bdf8; background: rgba(2,132,199,0.2); padding: 3px 8px; border-radius: 6px; display: inline-block;">
           driver@upi
         </div>
 
-        <!-- 1-Tap UPI Payment Launchers for Passengers -->
+        <!-- 1-Tap UPI Launchers -->
         <div id="bm-upi-buttons-box"></div>
       </div>
 
-      <div class="form-group">
-        <label>12-Digit UPI Payment UTR Number from Receipt*</label>
-        <input type="text" id="bm-utr-input" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="font-family: monospace; color: #fbbf24; font-weight: 800; font-size: 0.95rem;">
+      <div class="form-group" style="margin-bottom: 0.85rem;">
+        <label>12-Digit Bank Payment UTR Number*</label>
+        <input type="text" id="bm-utr-input" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="font-family: monospace; color: #fbbf24; font-weight: 800; font-size: 1rem; border: 1.5px solid var(--primary);">
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="submitPassengerBooking()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; font-weight: 800;">
-        ✅ Confirm Booking & Issue Ticket ➔
+      <button type="button" class="btn btn-primary" onclick="submitPassengerBooking()" style="width: 100%; padding: 0.8rem; font-weight: 900;">
+        ✅ Confirm Payment & Reserve Seat ➔
       </button>
     </div>
   </div>
 
-  <!-- CHANGE PASSWORD MODAL -->
-  <div class="modal-overlay" id="change-pwd-modal">
-    <div class="modal-box">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.4rem;">
-        <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">🔑 Change Password</h3>
-        <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()" style="padding: 2px 7px; font-size: 0.75rem;">✕</button>
-      </div>
-
-      <div class="form-group">
-        <label>Current Password*</label>
-        <input type="password" id="cp-current-password" class="form-control" placeholder="Current password">
+  <!-- Change Password Modal -->
+  <div class="modal-backdrop" id="change-pwd-modal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <h3 style="font-size: 1rem; font-weight: 900; color: white;">🔑 Change Password</h3>
+        <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()" style="padding: 2px 7px;">✕</button>
       </div>
       <div class="form-group">
-        <label>New Password (min 3 chars)*</label>
-        <input type="password" id="cp-new-password" class="form-control" placeholder="New password">
+        <label>Current Password</label>
+        <input type="password" id="cp-current-password" class="form-control">
       </div>
       <div class="form-group">
-        <label>Confirm New Password*</label>
-        <input type="password" id="cp-confirm-password" class="form-control" placeholder="Confirm new password">
+        <label>New Password</label>
+        <input type="password" id="cp-new-password" class="form-control">
       </div>
-
-      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="width: 100%; padding: 0.7rem;">
-        💾 Save New Password
-      </button>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="cp-confirm-password" class="form-control">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="width: 100%; padding: 0.7rem;">Update Password</button>
     </div>
   </div>
 
-  <!-- FORGOT PASSWORD MODAL -->
-  <div class="modal-overlay" id="forgot-pwd-modal">
-    <div class="modal-box">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.4rem;">
-        <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">❓ Reset Forgotten Password</h3>
-        <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordModal()" style="padding: 2px 7px; font-size: 0.75rem;">✕</button>
-      </div>
-
-      <p style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.65rem;">
-        Enter your registered 10-digit mobile number and full name to verify identity:
-      </p>
-
-      <div class="form-group">
-        <label>10-Digit Mobile Number (User ID)*</label>
-        <input type="tel" id="fp-input-userid" class="form-control" placeholder="e.g. 9864012345" maxlength="10">
+  <!-- Forgot Password Modal -->
+  <div class="modal-backdrop" id="forgot-pwd-modal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <h3 style="font-size: 1rem; font-weight: 900; color: white;">❓ Reset Password</h3>
+        <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordModal()" style="padding: 2px 7px;">✕</button>
       </div>
       <div class="form-group">
-        <label>Registered Legal Name*</label>
-        <input type="text" id="fp-input-name" class="form-control" placeholder="Your Registered Name">
+        <label>10-Digit Mobile (User ID)</label>
+        <input type="tel" id="fp-input-userid" class="form-control" maxlength="10">
       </div>
       <div class="form-group">
-        <label>Set New Password*</label>
-        <input type="password" id="fp-input-new-password" class="form-control" placeholder="New password">
+        <label>Registered Legal Name</label>
+        <input type="text" id="fp-input-name" class="form-control">
       </div>
       <div class="form-group">
-        <label>Confirm New Password*</label>
-        <input type="password" id="fp-input-confirm-password" class="form-control" placeholder="Confirm new password">
+        <label>New Password</label>
+        <input type="password" id="fp-input-new-password" class="form-control">
       </div>
-
-      <button type="button" class="btn btn-primary" onclick="submitForgotPasswordReset()" style="width: 100%; padding: 0.7rem;">
-        🔄 Reset Password & Log In
-      </button>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="fp-input-confirm-password" class="form-control">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="submitForgotPasswordReset()" style="width: 100%; padding: 0.7rem;">Reset Password</button>
     </div>
   </div>
 
-  <!-- Toast Notification Banner -->
-  <div id="toast-banner">✓ Notification</div>
+  <!-- ==================== 📱 MODERN DOCKED BOTTOM NAVIGATION (UBER / BLABLACAR) ==================== -->
+  <nav class="app-bottom-nav">
+    <div class="bottom-nav-inner">
+      <!-- 1. Live Rides (Home) -->
+      <button class="b-nav-item active" id="b-nav-live" onclick="showSection('live-cars')">
+        <div class="b-nav-icon-box">
+          <span class="b-nav-icon">🚗</span>
+          <span class="b-nav-badge" id="b-nav-live-badge">4</span>
+        </div>
+        <span class="b-nav-label">Live Rides</span>
+      </button>
 
-  <!-- ========================================================================= -->
-  <!-- JAVASCRIPT CORE ENGINE (CLEAN, MODULAR, ROBUST)                            -->
-  <!-- ========================================================================= -->
+      <!-- 2. Find Ride (Search Corridor) -->
+      <button class="b-nav-item" id="b-nav-search" onclick="showSection('passenger')">
+        <div class="b-nav-icon-box">
+          <span class="b-nav-icon">🔍</span>
+        </div>
+        <span class="b-nav-label">Find Ride</span>
+      </button>
+
+      <!-- 3. Publish / Post Ride (Center Prominent Button) -->
+      <button class="b-nav-item b-nav-publish" id="b-nav-post" onclick="showSection('driver')">
+        <div class="b-publish-circle">
+          <span class="b-publish-icon">➕</span>
+        </div>
+        <span class="b-nav-label">Post Ride</span>
+      </button>
+
+      <!-- 4. My Rides (Activity Hub: Tickets & Fleet) -->
+      <button class="b-nav-item" id="b-nav-rides" onclick="showSection('my-rides')">
+        <div class="b-nav-icon-box">
+          <span class="b-nav-icon">🎟️</span>
+          <span class="b-nav-badge" id="b-nav-rides-badge" style="display: none;">0</span>
+        </div>
+        <span class="b-nav-label">My Rides</span>
+      </button>
+
+      <!-- 5. Profile & KYC -->
+      <button class="b-nav-item" id="b-nav-profile" onclick="showSection('profile')">
+        <div class="b-nav-icon-box">
+          <span class="b-nav-icon">👤</span>
+        </div>
+        <span class="b-nav-label">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== CORE SCRIPT LOGIC ==================== -->
   <script>
-    // =========================================================================
-    // 🗜️ UNIVERSAL CLIENT-SIDE IMAGE COMPRESSION (SAVES CLOUD STORAGE & FIRESTORE)
-    // =========================================================================
     function compressImageFile(file, maxDimension, quality, callback) {
       if (!file) return;
       if (file.type === 'application/pdf') {
@@ -1000,17 +1288,92 @@
       reader.readAsDataURL(file);
     }
 
-    // 1. Data Stores & State
-    let rawStoredRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-    let rides = rawStoredRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
-    let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
+    // 1. Data Store Initialization (Preserves real rides and bookings)
+    let rides = JSON.parse(localStorage.getItem('ss_rides')) || [
+      {
+        id: 'RIDE-2010',
+        driverName: 'Dipankar Baidya',
+        driverPhone: '9864012345',
+        driverUpi: '6901027507@nyes',
+        driverQr: 'mitali_qr_compact.svg',
+        farePerSeat: 100,
+        origin: 'Guwahati',
+        destination: 'Nagaon',
+        date: '2026-10-09',
+        time: '08:30',
+        seatsAvailable: 1,
+        totalSeats: 3,
+        vehicleModel: 'Swift Dzire',
+        vehicleNumber: 'AS 01 TX 2010',
+        platformFeeUtr: '987654321012',
+        status: 'ACTIVE',
+        postedAt: new Date().toISOString()
+      },
+      {
+        id: 'RIDE-4921',
+        driverName: 'Bikram Das',
+        driverPhone: '9864098765',
+        driverUpi: '6901027507@nyes',
+        driverQr: 'mitali_qr_compact.svg',
+        farePerSeat: 300,
+        origin: 'Guwahati',
+        destination: 'Shillong',
+        date: '2026-10-09',
+        time: '09:00',
+        seatsAvailable: 3,
+        totalSeats: 4,
+        vehicleModel: 'Innova Crysta',
+        vehicleNumber: 'AS 01 BP 4921',
+        platformFeeUtr: '987654321013',
+        status: 'ACTIVE',
+        postedAt: new Date().toISOString()
+      },
+      {
+        id: 'RIDE-3304',
+        driverName: 'Anil Kalita',
+        driverPhone: '9435012345',
+        driverUpi: '6901027507@nyes',
+        driverQr: 'mitali_qr_compact.svg',
+        farePerSeat: 450,
+        origin: 'Guwahati',
+        destination: 'Jorhat',
+        date: '2026-10-09',
+        time: '07:00',
+        seatsAvailable: 2,
+        totalSeats: 3,
+        vehicleModel: 'Maruti Ertiga',
+        vehicleNumber: 'AS 03 B 3304',
+        platformFeeUtr: '987654321014',
+        status: 'ACTIVE',
+        postedAt: new Date().toISOString()
+      },
+      {
+        id: 'RIDE-1122',
+        driverName: 'Rahul Sarma',
+        driverPhone: '9854011223',
+        driverUpi: '6901027507@nyes',
+        driverQr: 'mitali_qr_compact.svg',
+        farePerSeat: 150,
+        origin: 'Guwahati',
+        destination: 'Nagaon',
+        date: '2026-10-09',
+        time: '14:30',
+        seatsAvailable: 2,
+        totalSeats: 3,
+        vehicleModel: 'Hyundai Aura',
+        vehicleNumber: 'AS 01 EC 1122',
+        platformFeeUtr: '987654321015',
+        status: 'ACTIVE',
+        postedAt: new Date().toISOString()
+      }
+    ];
 
-    let currentLiveRouteFilter = 'all';
+    let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
     let selectedRideForBooking = null;
     let driverUploadedQrData = '';
     let uploadedAadhaarData = '';
 
-    // Firebase Configuration (safarsaathi-1de86)
+    // Firebase Config for Cross-Device Sync
     const defaultFirebaseConfig = {
       apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
       authDomain: "safarsaathi-1de86.firebaseapp.com",
@@ -1020,287 +1383,167 @@
       appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
       measurementId: "G-0PB4K9PWVD"
     };
+
     let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
     let db = null;
 
-    // Toast Utility
-    function showToast(msg, bg = '#16a34a') {
-      const el = document.getElementById('toast-banner');
-      if (!el) return;
-      el.innerText = msg;
-      el.style.background = bg;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 3200);
-    }
-
-    // 48-Hour Retention Helper
+    // Helper: 48-Hour Retention Check
     function isWithin48Hours(timestamp) {
       if (!timestamp) return true;
       const ts = new Date(timestamp).getTime();
       if (isNaN(ts)) return true;
-      return (Date.now() - ts) <= (48 * 60 * 60 * 1000);
+      const diffHours = (Date.now() - ts) / (1000 * 60 * 60);
+      return diffHours <= 48;
     }
 
-    // Date Helper
-    function getTomorrowDate(offset = 1) {
+    function getTomorrowDate(daysAhead) {
       const d = new Date();
-      d.setDate(d.getDate() + offset);
+      d.setDate(d.getDate() + (daysAhead || 0));
       return d.toISOString().split('T')[0];
     }
 
+    function showToast(msg, bg) {
+      const el = document.getElementById('toast-banner');
+      if (!el) return;
+      el.innerText = msg;
+      el.style.background = bg || '#15803d';
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 2600);
+    }
+
     // =========================================================================
-    // 2. NAVIGATION CONTROLLER (6 CLEAN DEDICATED SECTIONS)
+    // 2. NAVIGATION & TAB SWITCHER
     // =========================================================================
     function showSection(tab) {
-      const sections = ['live-cars', 'driver', 'passenger', 'profile', 'bookings', 'fleet'];
-      sections.forEach(s => {
-        const secEl = document.getElementById('section-' + s);
-        if (secEl) secEl.classList.toggle('active', s === tab);
+      const secLive = document.getElementById('section-live-cars');
+      const secDriver = document.getElementById('section-driver');
+      const secPass = document.getElementById('section-passenger');
+      const secRides = document.getElementById('section-my-rides');
+      const secProf = document.getElementById('section-profile');
 
-        const btnEl = document.getElementById('tab-btn-' + s);
-        if (btnEl) btnEl.classList.toggle('active', s === tab);
-      });
+      if (tab === 'bookings') {
+        tab = 'my-rides';
+        switchMyRidesTab('bookings');
+      } else if (tab === 'fleet') {
+        tab = 'my-rides';
+        switchMyRidesTab('fleet');
+      }
 
+      // 1. Toggle Sections
+      if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
+      if (secDriver) secDriver.style.display = (tab === 'driver') ? 'block' : 'none';
+      if (secPass) secPass.style.display = (tab === 'passenger') ? 'block' : 'none';
+      if (secRides) secRides.style.display = (tab === 'my-rides') ? 'block' : 'none';
+      if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
+
+      // 2. Update Docked Bottom Nav Active States
+      const bLive = document.getElementById('b-nav-live');
+      const bSearch = document.getElementById('b-nav-search');
+      const bPost = document.getElementById('b-nav-post');
+      const bRides = document.getElementById('b-nav-rides');
+      const bProf = document.getElementById('b-nav-profile');
+
+      if (bLive) bLive.classList.toggle('active', tab === 'live-cars');
+      if (bSearch) bSearch.classList.toggle('active', tab === 'passenger');
+      if (bPost) bPost.classList.toggle('active', tab === 'driver');
+      if (bRides) bRides.classList.toggle('active', tab === 'my-rides');
+      if (bProf) bProf.classList.toggle('active', tab === 'profile');
+
+      // 3. Execution logic
       if (tab === 'live-cars') {
         renderLiveCarsHome();
       } else if (tab === 'driver') {
+        const user = getActiveUserProfile();
+        if (user) {
+          if (document.getElementById('df-driver-upi')) {
+            document.getElementById('df-driver-upi').value = user.phone ? (user.phone + '@upi') : '6901027507@nyes';
+          }
+        }
         goToDriverStep(1);
       } else if (tab === 'passenger') {
         executePassengerCorridorSearch();
+      } else if (tab === 'my-rides') {
+        const viewF = document.getElementById('subview-driver-fleet');
+        if (viewF && viewF.style.display === 'block') {
+          switchMyRidesTab('fleet');
+        } else {
+          switchMyRidesTab('bookings');
+        }
       } else if (tab === 'profile') {
         renderProfileView();
-      } else if (tab === 'bookings') {
-        renderPassengerBookings();
-      } else if (tab === 'fleet') {
-        renderDriverFleet();
       }
 
       updateNavCounts();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function switchMyRidesTab(subview) {
+      const btnB = document.getElementById('seg-btn-bookings');
+      const btnF = document.getElementById('seg-btn-fleet');
+      const viewB = document.getElementById('subview-my-bookings');
+      const viewF = document.getElementById('subview-driver-fleet');
+
+      if (btnB) btnB.classList.toggle('active', subview === 'bookings');
+      if (btnF) btnF.classList.toggle('active', subview === 'fleet');
+      if (viewB) viewB.style.display = (subview === 'bookings') ? 'block' : 'none';
+      if (viewF) viewF.style.display = (subview === 'fleet') ? 'block' : 'none';
+
+      if (subview === 'bookings') {
+        renderPassengerBookings();
+      } else {
+        renderDriverFleet();
+      }
+    }
+
     function updateNavCounts() {
-      // 1. Live Cars Count
-      const activeCars = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.postedAt || r.approvedAt) && r.seatsAvailable > 0);
-      const liveNav = document.getElementById('nav-live-count');
-      if (liveNav) liveNav.innerText = activeCars.length;
+      const activeCarsCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.postedAt) && r.seatsAvailable > 0).length;
+
+      const bLiveBadge = document.getElementById('b-nav-live-badge');
+      if (bLiveBadge) bLiveBadge.innerText = activeCarsCount;
+
+      const headerText = document.getElementById('header-live-count-text');
+      if (headerText) headerText.innerText = activeCarsCount + ' Live Cars';
+
       const chipAll = document.getElementById('live-count-chip-all');
-      if (chipAll) chipAll.innerText = activeCars.length;
+      if (chipAll) chipAll.innerText = activeCarsCount;
 
-      // 2. Bookings Count (48h active)
-      const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
-      const bNav = document.getElementById('nav-bookings-count');
-      if (bNav) bNav.innerText = activeBookings.length;
+      const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp));
+      const segBookings = document.getElementById('seg-bookings-count');
+      if (segBookings) segBookings.innerText = activeBookings.length;
 
-      // 3. Driver Fleet Count
       const user = getActiveUserProfile();
-      let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.approvedAt));
+      let myRides = rides.filter(r => isWithin48Hours(r.postedAt));
       if (user && user.phone) {
         myRides = myRides.filter(r => r.driverPhone === user.phone);
       }
-      const fNav = document.getElementById('nav-fleet-count');
-      if (fNav) fNav.innerText = myRides.length;
+      const segFleet = document.getElementById('seg-fleet-count');
+      if (segFleet) segFleet.innerText = myRides.length;
+
+      const totalRidesActivity = activeBookings.length + myRides.length;
+      const bRidesBadge = document.getElementById('b-nav-rides-badge');
+      if (bRidesBadge) {
+        bRidesBadge.innerText = totalRidesActivity;
+        bRidesBadge.style.display = totalRidesActivity > 0 ? 'inline-block' : 'none';
+      }
     }
 
     // =========================================================================
-    // 3. 🟢 LIVE CARS (HOME SCREEN CONTROLLER)
+    // 3. 🟢 LIVE CARS HOME FEED (BLABLACAR / UBER CARD FORMATTING)
     // =========================================================================
+    let currentLiveRouteFilter = 'all';
+
     function filterLiveCarsByRoute(route) {
       currentLiveRouteFilter = route;
-      ['all', 'shillong', 'jorhat', 'nagaon'].forEach(id => {
+      ['all', 'shillong', 'nagaon', 'jorhat'].forEach(id => {
         const el = document.getElementById('chip-live-' + id);
         if (el) {
           const match = (id === 'all' && route === 'all') || (id !== 'all' && route.toLowerCase() === id);
-          el.style.background = match ? '#0284c7' : '#1e293b';
+          el.style.background = match ? '#0284c7' : 'rgba(255,255,255,0.08)';
           el.style.color = match ? '#ffffff' : '#cbd5e1';
+          el.style.border = match ? 'none' : '1px solid rgba(255,255,255,0.15)';
         }
       });
       renderLiveCarsHome();
-    }
-
-        // =========================================================================
-    // 🎟️ PASSENGER TICKETS RENDERER (SECTION-BOOKINGS ONLY)
-    // =========================================================================
-    function renderPassengerTickets() {
-      const container = document.getElementById('prof-bookings-container');
-      if (!container) return;
-
-      const user = getActiveUserProfile();
-      let myBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
-      if (user && user.phone) {
-        const userMatches = myBookings.filter(b => b.passengerPhone === user.phone);
-        if (userMatches.length > 0) myBookings = userMatches;
-      }
-
-      if (myBookings.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed rgba(56,189,248,0.3); border-radius: 14px;">
-            <div style="font-size: 2.6rem; margin-bottom: 0.4rem;">🎟️</div>
-            <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">No Booked Trips Yet</strong>
-            <p style="font-size: 0.8rem; color: #94a3b8; max-width: 320px; margin: 0 auto 1rem;">
-              When you reserve a seat on any carpool, your digital boarding pass will appear here for 48 hours.
-            </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
-              🟢 Browse Live Available Cars ➔
-            </button>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = myBookings.map(b => {
-        const isConfirmed = (b.status === 'CONFIRMED');
-        return `
-          <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.45rem;">
-              <div>
-                <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 800;">PASSENGER BOARDING PASS</span>
-                <div style="font-size: 1.1rem; font-weight: 900; color: #ffffff;">${b.origin} ➔ ${b.destination}</div>
-              </div>
-              <span style="background: ${isConfirmed ? '#14532d' : '#78350f'}; color: ${isConfirmed ? '#86efac' : '#fde68a'}; border: 1px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
-                ${isConfirmed ? '✓ CONFIRMED' : '⏳ AWAITING DRIVER'}
-              </span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem; font-size: 0.82rem;">
-              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
-                <div style="font-size: 0.7rem; color: #94a3b8;">Trip Schedule:</div>
-                <div style="font-weight: 800; color: white;">📅 ${b.date} at ${b.time}</div>
-                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">🚗 ${b.vehicleModel} (${b.vehicleNumber})</div>
-              </div>
-
-              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
-                <div style="font-size: 0.7rem; color: #94a3b8;">Driver Details:</div>
-                <div style="font-weight: 800; color: white;">👤 ${b.driverName}</div>
-                <div style="font-size: 0.72rem; color: #38bdf8; margin-top: 2px;">📱 +91 ${b.driverPhone}</div>
-              </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.15);">
-              <div>
-                <span style="font-size: 0.78rem; color: #94a3b8;">Reserved:</span>
-                <strong style="color: #4ade80;"> ${b.seatsBooked} Seat(s)</strong> • Total: <strong style="color: #4ade80;">₹${b.totalFare}</strong>
-              </div>
-              <a href="https://wa.me/91${b.driverPhone}?text=Hello%20${encodeURIComponent(b.driverName)},%20I%20have%20booked%20${b.seatsBooked}%20seat(s)%20on%20SafarSaathi%20ticket%20${b.bookingId}." target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; text-decoration: none; width: auto; background: #16a34a; border-color: #16a34a; display: inline-flex; align-items: center; gap: 4px;">
-                💬 Chat on WhatsApp
-              </a>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // =========================================================================
-    // 🚙 DRIVER FLEET RENDERER (SECTION-FLEET ONLY)
-    // =========================================================================
-    function renderDriverFleet() {
-      const container = document.getElementById('prof-fleet-container');
-      if (!container) return;
-
-      const user = getActiveUserProfile();
-      let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
-      if (user && user.phone) {
-        const phoneMatch = myRides.filter(r => r.driverPhone === user.phone);
-        if (phoneMatch.length > 0) myRides = phoneMatch;
-      }
-
-      if (myRides.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed rgba(56,189,248,0.3); border-radius: 14px;">
-            <div style="font-size: 2.6rem; margin-bottom: 0.4rem;">🚙</div>
-            <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">No Vehicles Listed Yet</strong>
-            <p style="font-size: 0.8rem; color: #94a3b8; max-width: 320px; margin: 0 auto 1rem;">
-              You can list up to 4-5 vehicles. Each vehicle stays active for 48 hours to receive passenger bookings.
-            </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
-              🚗 Post a Vehicle Now ➔
-            </button>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = myRides.map(r => {
-        const isFull = (r.status === 'FULL' || r.seatsAvailable <= 0);
-        const isActive = (r.status === 'ACTIVE' && !isFull);
-        const rideBookings = bookings.filter(b => b.rideId === r.id);
-        const pendingBookings = rideBookings.filter(b => b.status === 'AWAITING_DRIVER_CONFIRMATION');
-
-        let pendingRequestsHtml = '';
-        if (pendingBookings.length > 0) {
-          pendingRequestsHtml = `
-            <div style="margin-top: 0.85rem; border-top: 1.5px dashed #f59e0b; padding-top: 0.75rem;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                <strong style="color: #fbbf24; font-size: 0.85rem;">🔔 Incoming Seat Requests (${pendingBookings.length})</strong>
-                <span style="background: #f59e0b; color: #020617; font-size: 0.7rem; font-weight: 900; padding: 1px 7px; border-radius: 9999px;">Action Required</span>
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                ${pendingBookings.map(pb => `
-                  <div style="background: rgba(2, 6, 23, 0.9); border: 1.5px solid #fcd34d; border-radius: 12px; padding: 0.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                      <div>
-                        <strong style="font-size: 0.92rem; color: #ffffff;">${pb.passengerName}</strong>
-                        <span style="font-size: 0.74rem; color: #94a3b8;"> • 📱 +91 ${pb.passengerPhone}</span>
-                      </div>
-                      <span style="background: #15803d; color: white; font-weight: 800; font-size: 0.82rem; padding: 2px 7px; border-radius: 6px;">
-                        ₹${pb.totalFare} to collect
-                      </span>
-                    </div>
-                    <div style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 5px;">
-                      Requested: <strong>${pb.seatsBooked} Seat(s)</strong> • UTR: <strong style="color: #fbbf24; font-family: monospace;">${pb.passengerUtr}</strong>
-                    </div>
-                    <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
-                      <button type="button" class="btn btn-primary" style="width: auto; background: #16a34a; border-color: #16a34a; font-size: 0.78rem; padding: 0.4rem 0.75rem;" onclick="driverConfirmBooking('${pb.bookingId}')">
-                        ✅ Confirm ₹${pb.totalFare} Received & Issue Seat
-                      </button>
-                      <button type="button" class="btn btn-outline" style="width: auto; color: #dc2626; border-color: #fca5a5; font-size: 0.78rem; padding: 0.4rem 0.75rem;" onclick="driverRejectBooking('${pb.bookingId}')">
-                        ❌ Reject
-                      </button>
-                      <a href="https://wa.me/91${pb.passengerPhone}?text=Hello%20${encodeURIComponent(pb.passengerName)},%20regarding%20your%20SafarSaathi%20booking%20${pb.bookingId}..." target="_blank" class="btn btn-outline" style="width: auto; font-size: 0.78rem; padding: 0.4rem 0.75rem; text-decoration: none; color: #16a34a; border-color: #16a34a;">
-                        💬 WhatsApp
-                      </a>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        }
-
-        return `
-          <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid ${isActive ? '#0284c7' : '#f59e0b'}; border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.45rem;">
-              <div>
-                <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 800;">DRIVER VEHICLE LISTING</span>
-                <div style="font-size: 1.1rem; font-weight: 900; color: #ffffff;">${r.origin} ➔ ${r.destination}</div>
-              </div>
-              <span style="background: ${isActive ? '#14532d' : '#78350f'}; color: ${isActive ? '#86efac' : '#fde68a'}; border: 1px solid ${isActive ? '#22c55e' : '#f59e0b'}; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
-                ${isActive ? '✓ 100% LIVE ON PORTAL' : (isFull ? 'FULL (HIDDEN)' : '⏳ PENDING ₹100 VERIFICATION')}
-              </span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.5rem; font-size: 0.82rem;">
-              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
-                <div style="font-size: 0.7rem; color: #94a3b8;">Vehicle Model & Plate:</div>
-                <div style="font-weight: 800; color: white;">🚗 ${r.vehicleModel}</div>
-                <div style="margin-top: 2px; background: white; color: black; font-family: monospace; font-size: 0.75rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; display: inline-block;">IND • ${r.vehicleNumber}</div>
-              </div>
-
-              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
-                <div style="font-size: 0.7rem; color: #94a3b8;">Capacity & Rate:</div>
-                <div style="font-weight: 800; color: #4ade80;">₹${r.farePerSeat} / seat</div>
-                <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">💺 ${r.seatsAvailable} / ${r.totalSeats || 3} Seats Left</div>
-              </div>
-            </div>
-
-            <div style="font-size: 0.74rem; color: #94a3b8;">
-              📅 Schedule: ${r.date} at ${r.time} • ₹100 UTR: <span style="font-family: monospace; color: #fbbf24;">${r.platformFeeUtr || r.utrNumber || 'N/A'}</span>
-            </div>
-
-            ${pendingRequestsHtml}
-          </div>
-        `;
-      }).join('');
     }
 
     function renderLiveCarsHome() {
@@ -1333,13 +1576,13 @@
 
       if (activeCars.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2.2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed var(--card-border); border-radius: 14px;">
+          <div style="text-align: center; padding: 2.2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed var(--border-subtle); border-radius: 14px;">
             <div style="font-size: 2.6rem; margin-bottom: 0.4rem;">🚗</div>
             <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">
               No Live Cars Available on this Route Right Now
             </strong>
             <p style="font-size: 0.8rem; color: var(--text-muted); max-width: 380px; margin: 0 auto 1rem;">
-              Drivers are continuously posting new carpools across Assam. You can also post your own vehicle to earn!
+              Verified drivers are regularly listing cars across Assam. You can also publish your empty seats to earn ₹300 - ₹500 per seat!
             </p>
             <button type="button" class="btn btn-primary" onclick="showSection('driver')">
               🚗 Post Your Car (Earn ₹300-₹500 / seat) ➔
@@ -1349,49 +1592,83 @@
         return;
       }
 
-      container.innerHTML = activeCars.map(r => `
-        <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid #0284c7; border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 4px 16px rgba(2,132,199,0.25);">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.5rem;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 1.1rem; font-weight: 900; color: #ffffff;">${r.origin} ➔ ${r.destination}</span>
-                <span style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.68rem; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">🟢 LIVE</span>
+      container.innerHTML = activeCars.map(r => {
+        const fare = r.farePerSeat || 100;
+        const driverName = r.driverName || 'Verified Driver';
+        const carModel = r.vehicleModel || 'Swift Dzire';
+        const plate = r.vehicleNumber || 'AS 01 TX 2010';
+        const dateStr = r.date || 'Today';
+        const timeStr = r.time || '08:30';
+
+        let arrTime = '11:15';
+        try {
+          const [h, m] = timeStr.split(':').map(Number);
+          const arrH = (h + 3) % 24;
+          arrTime = (arrH < 10 ? '0' : '') + arrH + ':' + (m < 10 ? '0' : '') + m;
+        } catch(e) {}
+
+        const driverAvatar = r.driverPhoto 
+          ? `<img src="${r.driverPhoto}" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:1.5px solid #22c55e;">`
+          : `<div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#0284c7,#1d4ed8); color:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.05rem;">${driverName.charAt(0)}</div>`;
+
+        return `
+          <div class="ride-card-blabla">
+            <!-- Top Timeline & Pricing Row -->
+            <div class="rc-top-bar">
+              <div class="rc-timeline">
+                <div class="rc-time-node">
+                  <span class="rc-time">${timeStr}</span>
+                  <span class="rc-node-bullet"></span>
+                  <span class="rc-city">${r.origin}</span>
+                </div>
+                <div class="rc-line-connector"></div>
+                <div class="rc-time-node">
+                  <span class="rc-time" style="color:var(--text-muted);">${arrTime}</span>
+                  <span class="rc-node-bullet dest"></span>
+                  <span class="rc-city">${r.destination}</span>
+                </div>
               </div>
-              <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
-                📅 ${r.date || 'Today'} at <strong>${r.time || '08:30 AM'}</strong>
+
+              <div class="rc-price-tag">
+                <span class="rc-price-amount">₹${fare}</span>
+                <span class="rc-price-sub">per seat</span>
               </div>
             </div>
-            <div style="text-align: right;">
-              <div style="font-size: 1.35rem; font-weight: 900; color: #4ade80;">₹${r.farePerSeat || 300}</div>
-              <span style="font-size: 0.7rem; color: var(--text-muted);">per seat</span>
+
+            <!-- Details Grid (Vehicle & Driver) -->
+            <div class="rc-details-grid">
+              <div class="rc-col-info">
+                <span class="rc-col-label">Vehicle</span>
+                <span class="rc-col-val">🚗 ${carModel}</span>
+                <div style="margin-top:2px;">
+                  <span class="rc-hsrp-badge">IND • ${plate}</span>
+                </div>
+              </div>
+
+              <div class="rc-col-info">
+                <span class="rc-col-label">Driver Profile</span>
+                <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                  ${driverAvatar}
+                  <div>
+                    <div style="font-weight:800; font-size:0.86rem; color:#ffffff;">${driverName}</div>
+                    <div class="rc-verified-shield">🛡️ AI Verified</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Row: Seats Left & Book CTA -->
+            <div class="rc-bottom-row">
+              <div class="rc-seat-pill">
+                💺 <strong>${r.seatsAvailable} Seat(s) Left</strong>
+              </div>
+              <button type="button" class="rc-book-action-btn" onclick="openBookingModalForRide('${r.id}')">
+                🎟️ Book Seat (₹${fare}) ➔
+              </button>
             </div>
           </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem;">
-            <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid var(--border-gray);">
-              <div style="font-size: 0.7rem; color: var(--text-muted);">Vehicle:</div>
-              <div style="font-size: 0.88rem; font-weight: 800; color: #ffffff;">🚗 ${r.vehicleModel || 'Car'}</div>
-              <div style="margin-top: 3px; background: white; color: black; font-family: monospace; font-size: 0.78rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; display: inline-block; border: 1px solid black;">
-                IND • ${r.vehicleNumber || 'AS 01'}
-              </div>
-            </div>
-
-            <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid var(--border-gray);">
-              <div style="font-size: 0.7rem; color: var(--text-muted);">Driver:</div>
-              <div style="font-size: 0.88rem; font-weight: 800; color: #ffffff;">👤 ${r.driverName || 'Verified Driver'}</div>
-              <div style="margin-top: 3px;">
-                <span style="background: #0284c7; color: white; font-size: 0.72rem; font-weight: 800; padding: 1px 7px; border-radius: 6px;">
-                  💺 ${r.seatsAvailable} Seat(s) Left
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn-primary" onclick="openBookingModalForRide('${r.id}')" style="width: 100%; padding: 0.75rem; font-weight: 800; border-radius: 12px; font-size: 0.95rem;">
-            🎟️ Book Seat (₹${r.farePerSeat || 300}) ➔
-          </button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function refreshLiveCarsFeed() {
@@ -1424,7 +1701,6 @@
     // 4. 🎟️ BOOKING MODAL & SEAT RESERVATION (AADHAAR GATE ENFORCED)
     // =========================================================================
     function openBookingModalForRide(rideId) {
-      // 1. Mandatory Identity Check: Passenger must be logged in & Aadhaar verified
       if (!isUserLoggedIn()) {
         alert('⚠️ सीट बुक करने के लिए रजिस्ट्रेशन/लॉगिन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
         showSection('profile');
@@ -1442,7 +1718,6 @@
 
       selectedRideForBooking = ride;
 
-      // Populate Summary
       const sumEl = document.getElementById('bm-ride-summary');
       if (sumEl) {
         sumEl.innerHTML = `
@@ -1464,7 +1739,6 @@
         `;
       }
 
-      // Populate Seats Dropdown
       const sel = document.getElementById('bm-seats-select');
       if (sel) {
         sel.innerHTML = '';
@@ -1474,15 +1748,12 @@
         }
       }
 
-      // Driver QR & UPI
       const qrImg = document.getElementById('bm-driver-qr-img');
       if (qrImg) qrImg.src = ride.driverQr || 'mitali_qr_compact.svg';
       const upiText = document.getElementById('bm-driver-upi-text');
       if (upiText) upiText.innerText = ride.driverUpi || (ride.driverPhone + '@upi');
 
       updateBookingFareCalculation();
-
-      // Open Modal
       document.getElementById('booking-modal').style.display = 'flex';
     }
 
@@ -1499,7 +1770,6 @@
       const fareText = document.getElementById('bm-total-fare-text');
       if (fareText) fareText.innerText = '₹' + total;
 
-      // Update 1-Tap UPI Launchers
       const upiBox = document.getElementById('bm-upi-buttons-box');
       if (upiBox) {
         const dUpi = selectedRideForBooking.driverUpi || (selectedRideForBooking.driverPhone + '@upi');
@@ -1561,7 +1831,6 @@
       bookings.unshift(booking);
       localStorage.setItem('ss_bookings', JSON.stringify(bookings));
 
-      // Decrement seats
       selectedRideForBooking.seatsAvailable = Math.max(0, (selectedRideForBooking.seatsAvailable || 1) - seatsCount);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
@@ -1629,13 +1898,12 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         const photoData = e.target.result;
-        // Mock OCR Extract plate from image
         const scannedPlate = 'AS 01 BP ' + Math.floor(1000 + Math.random() * 9000);
 
         document.getElementById('df-plate').value = scannedPlate;
         document.getElementById('df-plate-photo-preview').src = photoData;
         document.getElementById('df-scanned-plate-badge').innerText = scannedPlate;
-        document.getElementById('df-plate-scan-result').style.display = 'block';
+        document.getElementById('df-plate-scan-result').style.display = 'flex';
 
         showToast('✓ Car plate photo captured & verified!', '#15803d');
       };
@@ -1663,7 +1931,6 @@
     }
 
     function submitDriverRideDirect() {
-      // 1. Mandatory Identity Check: Driver must be logged in & Aadhaar verified
       if (!isUserLoggedIn()) {
         alert('⚠️ गाड़ी पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए कृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
         showSection('profile');
@@ -1777,11 +2044,11 @@
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 1.5rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1px dashed var(--border-gray);">
+          <div style="text-align: center; padding: 1.5rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1px dashed var(--border-subtle);">
             <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔍</div>
             <strong style="color: white; font-size: 0.95rem;">No active cars found for this corridor</strong>
             <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">
-              Check the 🟢 Live Cars home tab for all vacant cars across Assam.
+              Check the 🟢 Live Rides home tab for all vacant cars across Assam.
             </p>
           </div>
         `;
@@ -1927,7 +2194,6 @@
         showToast('✓ Account registered & Aadhaar verified!', '#15803d');
         renderProfileView();
       } else {
-        // Login
         const existing = users[uid];
         if (!existing) {
           alert('❌ यह User ID रजिस्टर्ड नहीं है! कृपया पहले Register टैब पर क्लिक करके नया अकाउंट बनाएं।');
@@ -2057,7 +2323,7 @@
 
       if (myBookings.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-gray);">
+          <div style="text-align: center; padding: 2rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
             <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
             <strong style="color: white; font-size: 0.95rem;">No Booked Tickets in the last 48 Hours</strong>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
@@ -2073,7 +2339,7 @@
 
       container.innerHTML = myBookings.map(b => `
         <div style="background: rgba(2, 6, 23, 0.95); border: 1.5px solid #0284c7; border-radius: 14px; padding: 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.4rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
             <div>
               <strong style="color: white; font-size: 1rem;">${b.origin} ➔ ${b.destination}</strong>
               <div style="font-size: 0.72rem; color: var(--text-muted);">ID: ${b.bookingId} • 📅 ${b.date} ${b.time}</div>
@@ -2113,7 +2379,7 @@
 
       if (myRides.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-gray);">
+          <div style="text-align: center; padding: 2rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
             <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚙</div>
             <strong style="color: white; font-size: 0.95rem;">No Posted Vehicles in the last 48 Hours</strong>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
@@ -2163,7 +2429,7 @@
 
         return `
           <div style="background: rgba(2, 6, 23, 0.95); border: 1.5px solid ${isLive ? '#0284c7' : '#f59e0b'}; border-radius: 14px; padding: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.35rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.35rem;">
               <strong>${r.origin} ➔ ${r.destination}</strong>
               <span style="font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px; background: ${isLive ? '#14532d' : '#78350f'}; color: ${isLive ? '#86efac' : '#fde047'};">
                 ${isLive ? '✓ 100% LIVE' : '⏳ PENDING ₹100 VERIFICATION'}
@@ -2197,7 +2463,6 @@
       const b = bookings.find(item => item.bookingId === bkId);
       if (!b) return;
       b.status = 'REJECTED';
-      // Reopen seats
       const r = rides.find(item => item.id === b.rideId);
       if (r) {
         r.seatsAvailable = (r.seatsAvailable || 0) + (parseInt(b.seatsBooked) || 1);
@@ -2216,9 +2481,6 @@
 
     // =========================================================================
     // 10. REAL-TIME CLOUD SERVER ENGINE (FIRESTORE SYNC)
-    // =========================================================================
-        // =========================================================================
-    // ⚡ DUAL-CLOUD REAL-TIME SYNC ENGINE (INSTANT MULTI-DEVICE CONNECTION)
     // =========================================================================
     const CLOUD_SYNC_URL = 'https://kvdb.io/safarsaathi_assam_2026/rides';
 
@@ -2256,7 +2518,6 @@
             db = firebase.firestore();
             console.log('Firebase Cloud Firestore live across all devices');
 
-            // Listen to ss_rides in real time
             db.collection('ss_rides').onSnapshot(snapshot => {
               const cloudRides = [];
               snapshot.forEach(doc => {
@@ -2270,7 +2531,7 @@
                 mergeIncomingCloudRides(cloudRides);
               }
             }, err => {
-              console.warn('Firestore onSnapshot error:', err);
+              console.warn('Firestore onSnapshot notice:', err);
             });
           }
         } catch(e) {
@@ -2301,7 +2562,6 @@
       rides = merged;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
-      // Update all views immediately
       renderLiveCarsHome();
       renderDriverFleet();
       renderPassengerBookings();
@@ -2312,18 +2572,13 @@
     // 11. INITIALIZATION ON APP LOAD (DEFAULT: 🟢 LIVE CARS)
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
-      // Set Default Dates
       if (document.getElementById('df-date')) document.getElementById('df-date').value = getTomorrowDate(1);
       if (document.getElementById('ps-date')) document.getElementById('ps-date').value = getTomorrowDate(1);
 
-      // Initialize Cloud Server
       initFirebase();
-
-      // Open 🟢 Live Cars Home Screen by Default
       showSection('live-cars');
     });
 
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
@@ -2332,26 +2587,17 @@
       });
     }
 
-    // Mobile Resume Listeners: Instantly pull latest live cars when phone unlocks or switches back to Safari/Chrome
     window.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        refreshLiveCarsFeed();
-      }
+      if (document.visibilityState === 'visible') refreshLiveCarsFeed();
     });
-    window.addEventListener('focus', () => {
-      refreshLiveCarsFeed();
-    });
-    window.addEventListener('pageshow', () => {
-      refreshLiveCarsFeed();
-    });
+    window.addEventListener('focus', () => { refreshLiveCarsFeed(); });
+    window.addEventListener('pageshow', () => { refreshLiveCarsFeed(); });
 
-    // Background 3-second auto-poll to guarantee live cars are always in sync
     setInterval(() => {
       if (document.visibilityState === 'visible') {
         if (typeof syncWithCloudRelay === 'function') syncWithCloudRelay();
       }
     }, 3000);
-
   </script>
 </body>
 </html>
