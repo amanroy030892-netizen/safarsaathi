@@ -574,109 +574,10 @@
 
   <!-- SCRIPT -->
   <script>
-        // 4 Live Verified Corridors across Assam (Guwahati, Shillong, Jorhat, Nagaon)
-    const DEFAULT_REAL_RIDES = [
-      {
-        id: 'RIDE-GHY-SHL-01',
-        driverName: 'Bikram Das',
-        driverPhone: '9864012345',
-        driverUpi: '9864012345@upi',
-        driverQr: 'mitali_qr_compact.svg',
-        origin: 'Guwahati',
-        destination: 'Shillong',
-        date: new Date().toISOString().split('T')[0],
-        time: '08:30 AM',
-        seatsAvailable: 3,
-        totalSeats: 3,
-        farePerSeat: 300,
-        vehicleModel: 'Maruti Swift Dzire',
-        vehicleNumber: 'AS 01 BP 4921',
-        platformFeeUtr: '987654321012',
-        utrNumber: '987654321012',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
-      },
-      {
-        id: 'RIDE-GHY-NGN-02',
-        driverName: 'Dipankar',
-        driverPhone: '9864098765',
-        driverUpi: '9864098765@upi',
-        driverQr: 'mitali_qr_compact.svg',
-        origin: 'Guwahati',
-        destination: 'Nagaon',
-        date: new Date().toISOString().split('T')[0],
-        time: '09:00 AM',
-        seatsAvailable: 3,
-        totalSeats: 3,
-        farePerSeat: 250,
-        vehicleModel: 'Honda Amaze',
-        vehicleNumber: 'AS 01 BP 2010',
-        platformFeeUtr: '145266378478',
-        utrNumber: '145266378478',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
-      },
-      {
-        id: 'RIDE-GHY-JRH-03',
-        driverName: 'Pranjal Saikia',
-        driverPhone: '9435012345',
-        driverUpi: '9435012345@upi',
-        driverQr: 'mitali_qr_compact.svg',
-        origin: 'Guwahati',
-        destination: 'Jorhat',
-        date: new Date().toISOString().split('T')[0],
-        time: '07:30 AM',
-        seatsAvailable: 5,
-        totalSeats: 5,
-        farePerSeat: 450,
-        vehicleModel: 'Maruti Ertiga (7-Seater)',
-        vehicleNumber: 'AS 03 CD 8820',
-        platformFeeUtr: '223344556677',
-        utrNumber: '223344556677',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
-      },
-      {
-        id: 'RIDE-SHL-GHY-04',
-        driverName: 'Mitali Kalita',
-        driverPhone: '6901027507',
-        driverUpi: '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        origin: 'Shillong',
-        destination: 'Guwahati',
-        date: new Date().toISOString().split('T')[0],
-        time: '02:00 PM',
-        seatsAvailable: 4,
-        totalSeats: 4,
-        farePerSeat: 350,
-        vehicleModel: 'Toyota Innova Crysta',
-        vehicleNumber: 'AS 01 EK 1245',
-        platformFeeUtr: '889900112233',
-        utrNumber: '889900112233',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
-      }
-    ];
-
+    // Clean startup: remove legacy demo rides while preserving all real posted/approved rides
     let rawAdmRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-    rawAdmRides = rawAdmRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-5829'].includes(r.id));
-    
-    // Ensure all 4 verified rides exist
-    DEFAULT_REAL_RIDES.forEach(dr => {
-      const existing = rawAdmRides.find(r => r.id === dr.id || r.vehicleNumber === dr.vehicleNumber);
-      if (!existing) {
-        rawAdmRides.push(dr);
-      }
-    });
-    localStorage.setItem('ss_rides', JSON.stringify(rawAdmRides));
+    let admRidesClean = rawAdmRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
+    localStorage.setItem('ss_rides', JSON.stringify(admRidesClean));
 
     const defaultFirebaseConfig = {
       apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
@@ -721,7 +622,6 @@
       localStorage.setItem('ss_rides', JSON.stringify(merged));
       renderVehiclesTable();
       loadDashboardData();
-      syncAllLocalActiveRidesToFirestore();
     }
 
     function pollCloudServerBackup() {
@@ -832,11 +732,7 @@
       localStorage.setItem('ss_rides', JSON.stringify(rides));
 
       if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { adminDb = firebase.firestore();
-            try {
-              adminDb.collection('ss_rides').doc(PRE_SEEDED_RIDE.id).set(PRE_SEEDED_RIDE, { merge: true });
-              
-            } catch(e){} } catch(e){}
+        try { adminDb = firebase.firestore(); } catch(e){}
       }
       if (adminDb) {
         try {
@@ -867,26 +763,6 @@
         }).then(() => console.log('✓ Admin pushed rides to Cloudflare Edge KV!'))
           .catch(err => console.log('KV admin write error:', err));
       } catch(e) {}
-    }
-
-        function syncAllLocalActiveRidesToFirestore() {
-      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { adminDb = firebase.firestore(); } catch(e){}
-      }
-      if (adminDb && rides.length > 0) {
-        rides.forEach(r => {
-          if (r.status === 'ACTIVE') {
-            const docId = r.id || ('RIDE-' + Date.now());
-            r.id = docId;
-            const cleanDoc = JSON.parse(JSON.stringify(r));
-            if (cleanDoc.driverQr && cleanDoc.driverQr.length > 80000) delete cleanDoc.driverQr;
-            adminDb.collection('ss_rides').doc(docId).set(cleanDoc, { merge: true })
-              .then(() => console.log('✓ Auto-synced active ride to Firestore:', docId))
-              .catch(err => console.error(err));
-          }
-        });
-      }
     }
 
     function checkAdminLogin() {
