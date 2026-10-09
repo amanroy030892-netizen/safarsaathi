@@ -856,7 +856,57 @@
         transform: translateY(0) scale(1);
       }
     }
-</style>
+
+    /* Master Mode Switcher */
+    .mode-pill {
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .mode-pill.active {
+      background: linear-gradient(135deg, #1d4ed8, #0284c7);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(29, 78, 216, 0.4);
+    }
+    .mode-pill:not(.active) {
+      background: transparent;
+      color: #94a3b8;
+    }
+
+    /* Dedicated Single-Row Navigation Bars */
+    .tab-bar-passenger {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 14px;
+      gap: 4px;
+      border: 1.5px solid rgba(56, 189, 248, 0.25);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .tab-bar-driver {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 14px;
+      gap: 4px;
+      border: 1.5px solid rgba(34, 197, 94, 0.35);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+  </style>
 
   <!-- Leaflet.js for Live GPS Interactive Route Map (OpenStreetMap) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -960,8 +1010,14 @@
           <span id="cloud-network-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block;"></span>
           <span id="cloud-network-label">Cloud Live 🟢</span>
         </div>
-        <div class="verified-badge">
-          ✨ Verified Carpools
+        <!-- 🔄 MASTER APP MODE SWITCHER (PASSENGER vs DRIVER) -->
+        <div class="mode-switch-wrapper" style="display: flex; align-items: center; background: #020617; border: 1.5px solid #0284c7; border-radius: 9999px; padding: 2px; box-shadow: 0 2px 8px rgba(2,132,199,0.3);">
+          <button type="button" id="btn-mode-passenger" class="mode-pill active" onclick="switchGlobalAppMode('passenger')">
+            👤 Passenger
+          </button>
+          <button type="button" id="btn-mode-driver" class="mode-pill" onclick="switchGlobalAppMode('driver')">
+            🚗 Driver Mode
+          </button>
         </div>
       </div>
     </div>
@@ -970,37 +1026,42 @@
   <!-- NAVIGATION TABS (100% MOBILE RESPONSIVE - PERFECT 3-COLUMN FIT) -->
   <!-- TOP NAVIGATION TABS (5 BUTTONS IN 2 ROWS - EXACT MATCH TO USER SCREENSHOT) -->
   <div class="nav-tabs-wrapper">
-        <!-- ROW 1: Live Cars (Home), Post Ride, Find Ride -->
-    <div class="tab-bar">
-      <button class="tab-btn active" id="tab-btn-live-cars" onclick="showSection('live-cars')">
+    <!-- 👤 PASSENGER DEDICATED NAVIGATION BAR (4 TABS) -->
+    <div id="nav-passenger-bar" class="tab-bar-passenger">
+      <button class="tab-btn active" id="pnav-live" onclick="showPassengerSection('live')">
         <span class="tab-btn-icon">🟢</span>
-        <span class="tab-btn-label">Live Cars ( <span id="nav-live-count">0</span> )</span>
+        <span class="tab-btn-label">Live Cars ( <span id="pnav-live-count">0</span> )</span>
       </button>
-      <button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
-        <span class="tab-btn-icon">🚗</span>
-        <span class="tab-btn-label">Post Ride</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-passenger" onclick="showSection('passenger')">
+      <button class="tab-btn" id="pnav-find" onclick="showPassengerSection('find')">
         <span class="tab-btn-icon">🔍</span>
         <span class="tab-btn-label">Find Ride</span>
       </button>
-    </div>
-
-    <!-- ROW 2: Profile, My Bookings, Driver Fleet -->
-    <div class="tab-bar-row2">
-      <button class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
+      <button class="tab-btn" id="pnav-bookings" onclick="showPassengerSection('bookings')">
+        <span class="tab-btn-icon">🎟️</span>
+        <span class="tab-btn-label">My Tickets ( <span id="pnav-bookings-count">0</span> )</span>
+      </button>
+      <button class="tab-btn" id="pnav-profile" onclick="showPassengerSection('profile')">
         <span class="tab-btn-icon">👤</span>
         <span class="tab-btn-label">Profile</span>
       </button>
-      <button class="tab-btn" id="tab-btn-bookings" onclick="showSection('bookings')">
-        <span class="tab-btn-icon">🎟️</span>
-        <span class="tab-btn-label">Bookings ( <span id="nav-bookings-count">0</span> )</span>
+    </div>
+
+    <!-- 🚗 DRIVER DEDICATED NAVIGATION BAR (3 TABS) -->
+    <div id="nav-driver-bar" class="tab-bar-driver" style="display: none;">
+      <button class="tab-btn active" id="dnav-post" onclick="showDriverSection('post')">
+        <span class="tab-btn-icon">🚗</span>
+        <span class="tab-btn-label">Post Ride</span>
       </button>
-      <button class="tab-btn" id="tab-btn-fleet" onclick="showSection('fleet')">
+      <button class="tab-btn" id="dnav-fleet" onclick="showDriverSection('fleet')">
         <span class="tab-btn-icon">🚙</span>
-        <span class="tab-btn-label">Fleet ( <span id="nav-fleet-count">0</span> )</span>
+        <span class="tab-btn-label">My Fleet ( <span id="dnav-fleet-count">0</span> )</span>
       </button>
-    </div></div>
+      <button class="tab-btn" id="dnav-profile" onclick="showDriverSection('profile')">
+        <span class="tab-btn-icon">👤</span>
+        <span class="tab-btn-label">Driver Profile</span>
+      </button>
+    </div>
+  </div>
   </div>
 
   <main>
@@ -1769,9 +1830,7 @@
             <div id="prof-role-badge-pill" style="background: rgba(22, 163, 74, 0.2); border: 1.5px solid #22c55e; color: #86efac; padding: 4px 12px; border-radius: 9999px; font-weight: 800; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 5px;">
               🚗 Verified Driver Badge
             </div>
-            <button type="button" class="btn btn-secondary" onclick="toggleUserRole()" style="padding: 0.3rem 0.65rem; font-size: 0.72rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.25);">
-              🔄 Switch Role
-            </button>
+            
           </div>
 
           <!-- Middle Row: Avatar Photo, Name, Phone, Address -->
@@ -4735,27 +4794,12 @@
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('df-date').value = getTomorrowDate(1);
       document.getElementById('ps-date').value = getTomorrowDate(1);
-      document.getElementById('my-tickets-count').innerText = bookings.length;
       initFirebase();
       if (typeof initProfileKycOnLoad === "function") initProfileKycOnLoad();
-      renderDriverPostedRides();
-      renderPassengerRides(rides);
-      if (window.location.hash === '#admin') {
-        showAdminFromFooter();
-      }
 
-      // 1-Tap WhatsApp Activation via URL Query Parameter
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const approveRideId = urlParams.get('approveRide');
-        const passedPin = urlParams.get('pin');
-        if (approveRideId && passedPin === '1234') {
-          setTimeout(() => {
-            embeddedAdminApproveRide(approveRideId);
-            showEmbeddedAdminToast(`🎉 1-TAP ACTIVATION: Vehicle ${approveRideId} verified and now 100% LIVE!`, '#15803d');
-          }, 500);
-        }
-      } catch(e) {}
+      // Launch directly into Passenger Mode with Live Cars on Default!
+      switchGlobalAppMode('passenger');
+      showPassengerSection('live');
     });
   
     function syncLatestData() {
@@ -5561,52 +5605,108 @@
     // =========================================================================
     // 🌐 6 DEDICATED SECTIONS ENGINE (ZERO OVERLAPPING / CLEAN ISOLATION)
     // =========================================================================
-    function showSection(tab) {
-      // Mandatory Aadhaar Verification Gate for Posting a Ride
-      if (tab === 'driver') {
+    // =========================================================================
+    // 🔄 GLOBAL MODE SWITCHER: PASSENGER vs DRIVER
+    // =========================================================================
+    let currentAppMode = 'passenger'; // default: passenger
+
+    function switchGlobalAppMode(mode) {
+      currentAppMode = mode;
+      const btnPass = document.getElementById('btn-mode-passenger');
+      const btnDriv = document.getElementById('btn-mode-driver');
+      const navPass = document.getElementById('nav-passenger-bar');
+      const navDriv = document.getElementById('nav-driver-bar');
+
+      if (btnPass) btnPass.classList.toggle('active', mode === 'passenger');
+      if (btnDriv) btnDriv.classList.toggle('active', mode === 'driver');
+
+      if (mode === 'passenger') {
+        if (navPass) navPass.style.display = 'grid';
+        if (navDriv) navDriv.style.display = 'none';
+        showPassengerSection('live');
+        showToast('👤 Switched to Passenger Mode', '#0284c7');
+      } else {
+        if (navPass) navPass.style.display = 'none';
+        if (navDriv) navDriv.style.display = 'grid';
+        showDriverSection('post');
+        showToast('🚗 Switched to Driver Mode', '#16a34a');
+      }
+    }
+
+    function hideAllSections() {
+      ['section-live-cars', 'section-passenger', 'section-driver', 'section-bookings', 'section-fleet', 'section-profile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    }
+
+    // 👤 PASSENGER SECTION ROUTER
+    function showPassengerSection(tab) {
+      hideAllSections();
+      const secLive = document.getElementById('section-live-cars');
+      const secFind = document.getElementById('section-passenger');
+      const secBookings = document.getElementById('section-bookings');
+      const secProf = document.getElementById('section-profile');
+
+      const btnLive = document.getElementById('pnav-live');
+      const btnFind = document.getElementById('pnav-find');
+      const btnBookings = document.getElementById('pnav-bookings');
+      const btnProf = document.getElementById('pnav-profile');
+
+      if (btnLive) btnLive.classList.toggle('active', tab === 'live');
+      if (btnFind) btnFind.classList.toggle('active', tab === 'find');
+      if (btnBookings) btnBookings.classList.toggle('active', tab === 'bookings');
+      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
+
+      if (tab === 'live') {
+        if (secLive) secLive.style.display = 'block';
+        renderLiveCarsHome();
+      } else if (tab === 'find') {
+        if (secFind) secFind.style.display = 'block';
+        goToPassengerPage(1);
+        renderPassengerRides(rides);
+      } else if (tab === 'bookings') {
+        if (secBookings) secBookings.style.display = 'block';
+        renderPassengerTickets();
+      } else if (tab === 'profile') {
+        if (secProf) secProf.style.display = 'block';
+        renderProfileSection();
+      }
+      updateNavCounts();
+      if (typeof window !== 'undefined' && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // 🚗 DRIVER SECTION ROUTER
+    function showDriverSection(tab) {
+      // Mandatory Aadhaar Gate for Driver Posting
+      if (tab === 'post') {
         if (!isUserProfileVerified()) {
-          alert(`⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए हर एक ड्राइवर का आधार AI वेरीफाइड होना अनिवार्य है।\n\nकृपया पहले अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।`);
-          tab = 'profile';
+          alert();
+          showDriverSection('profile');
           setTimeout(() => {
             if (typeof startProfileWizard === 'function') startProfileWizard();
           }, 150);
+          return;
         }
       }
 
-      const secLive = document.getElementById('section-live-cars');
+      hideAllSections();
       const secDriver = document.getElementById('section-driver');
-      const secPass = document.getElementById('section-passenger');
-      const secProf = document.getElementById('section-profile');
-      const secBookings = document.getElementById('section-bookings');
       const secFleet = document.getElementById('section-fleet');
+      const secProf = document.getElementById('section-profile');
 
-      // Strictly isolate 6 sections: ONLY the active tab is 'block', all other 5 are 'none'
-      if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
-      if (secDriver) secDriver.style.display = (tab === 'driver') ? 'block' : 'none';
-      if (secPass) secPass.style.display = (tab === 'passenger') ? 'block' : 'none';
-      if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
-      if (secBookings) secBookings.style.display = (tab === 'bookings' || tab === 'tickets') ? 'block' : 'none';
-      if (secFleet) secFleet.style.display = (tab === 'fleet') ? 'block' : 'none';
+      const btnPost = document.getElementById('dnav-post');
+      const btnFleet = document.getElementById('dnav-fleet');
+      const btnProf = document.getElementById('dnav-profile');
 
-      // 6 Navigation Button States
-      const btnLive = document.getElementById('tab-btn-live-cars');
-      const btnDriver = document.getElementById('tab-btn-driver');
-      const btnPass = document.getElementById('tab-btn-passenger');
-      const btnProf = document.getElementById('tab-btn-profile');
-      const btnBookings = document.getElementById('tab-btn-bookings');
-      const btnFleet = document.getElementById('tab-btn-fleet');
-
-      if (btnLive) btnLive.classList.toggle('active', tab === 'live-cars');
-      if (btnDriver) btnDriver.classList.toggle('active', tab === 'driver');
-      if (btnPass) btnPass.classList.toggle('active', tab === 'passenger');
-      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
-      if (btnBookings) btnBookings.classList.toggle('active', tab === 'bookings' || tab === 'tickets');
+      if (btnPost) btnPost.classList.toggle('active', tab === 'post');
       if (btnFleet) btnFleet.classList.toggle('active', tab === 'fleet');
+      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
 
-      // Dedicated Tab Renderers
-      if (tab === 'live-cars') {
-        renderLiveCarsHome();
-      } else if (tab === 'driver') {
+      if (tab === 'post') {
+        if (secDriver) secDriver.style.display = 'block';
         const user = getActiveUserProfile();
         if (user) {
           if (document.getElementById('df-name') && !document.getElementById('df-name').value) {
@@ -5620,21 +5720,42 @@
           }
         }
         goToDriverStep(1);
-      } else if (tab === 'passenger') {
-        goToPassengerPage(1);
-        renderPassengerRides(rides);
-      } else if (tab === 'profile') {
-        renderProfileSection();
-      } else if (tab === 'bookings' || tab === 'tickets') {
-        renderProfileBookings();
       } else if (tab === 'fleet') {
+        if (secFleet) secFleet.style.display = 'block';
         renderDriverFleet();
+      } else if (tab === 'profile') {
+        if (secProf) secProf.style.display = 'block';
+        renderProfileSection();
       }
-
       updateNavCounts();
-
       if (typeof window !== 'undefined' && window.scrollTo) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // Universal showSection backwards-compatibility router
+    function showSection(tab) {
+      if (tab === 'live-cars' || tab === 'live') {
+        switchGlobalAppMode('passenger');
+        showPassengerSection('live');
+      } else if (tab === 'passenger' || tab === 'find') {
+        switchGlobalAppMode('passenger');
+        showPassengerSection('find');
+      } else if (tab === 'bookings' || tab === 'tickets') {
+        switchGlobalAppMode('passenger');
+        showPassengerSection('bookings');
+      } else if (tab === 'driver' || tab === 'post') {
+        switchGlobalAppMode('driver');
+        showDriverSection('post');
+      } else if (tab === 'fleet') {
+        switchGlobalAppMode('driver');
+        showDriverSection('fleet');
+      } else if (tab === 'profile') {
+        if (currentAppMode === 'driver') {
+          showDriverSection('profile');
+        } else {
+          showPassengerSection('profile');
+        }
       }
     }
 
@@ -6585,42 +6706,25 @@
     }
 
     function updateNavCounts() {
-      // 1. Live Cars count: Global available cars (Public for all)
+      // 1. Live Cars count
       const activeCarsCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.postedAt || r.createdAt) && r.seatsAvailable > 0).length;
-      const liveNavEl = document.getElementById('nav-live-count');
-      if (liveNavEl) liveNavEl.innerText = activeCarsCount;
+      const pnavLive = document.getElementById('pnav-live-count');
+      if (pnavLive) pnavLive.innerText = activeCarsCount;
 
+      // 2. Bookings count (active 48h)
+      const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
+      const pnavBookings = document.getElementById('pnav-bookings-count');
+      if (pnavBookings) pnavBookings.innerText = activeBookings.length;
+
+      // 3. Driver Fleet count (all cars posted within 48h)
       const user = getActiveUserProfile();
-      const userPhoneClean = user ? (user.phone || '').replace(/\D/g, '') : '';
-      const userUidClean = user ? (user.userId || '').replace(/\D/g, '') : '';
-
-      // 2. Bookings count: ONLY for the currently logged-in passenger!
-      let myBookingsCount = 0;
-      if (user && userPhoneClean) {
-        myBookingsCount = bookings.filter(b => {
-          if (!isWithin48Hours(b.timestamp || b.bookingTimestamp)) return false;
-          const bPhone = (b.passengerPhone || '').replace(/\D/g, '');
-          const bId = (b.passengerId || '').replace(/\D/g, '');
-          return (bPhone && (bPhone === userPhoneClean || bPhone === userUidClean)) ||
-                 (bId && (bId === userUidClean || bId === userPhoneClean));
-        }).length;
+      let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
+      if (user && user.phone) {
+        const phoneMatch = myRides.filter(r => r.driverPhone === user.phone);
+        if (phoneMatch.length > 0) myRides = phoneMatch;
       }
-      const bNavEl = document.getElementById('nav-bookings-count');
-      if (bNavEl) bNavEl.innerText = myBookingsCount;
-
-      // 3. Fleet count: ONLY for the currently logged-in driver who posted the car!
-      let myFleetCount = 0;
-      if (user && userPhoneClean) {
-        myFleetCount = rides.filter(r => {
-          if (!isWithin48Hours(r.postedAt || r.createdAt)) return false;
-          const rPhone = (r.driverPhone || '').replace(/\D/g, '');
-          const rId = (r.driverId || '').replace(/\D/g, '');
-          return (rPhone && (rPhone === userPhoneClean || rPhone === userUidClean)) ||
-                 (rId && (rId === userUidClean || rId === userPhoneClean));
-        }).length;
-      }
-      const fNavEl = document.getElementById('nav-fleet-count');
-      if (fNavEl) fNavEl.innerText = myFleetCount;
+      const dnavFleet = document.getElementById('dnav-fleet-count');
+      if (dnavFleet) dnavFleet.innerText = myRides.length;
     }
 
     function renderProfileSection() {
@@ -7123,14 +7227,24 @@
 
     function selectCarAndGoToBooking(rideId) {
       if (!isUserLoggedIn()) {
-        alert('⚠️ सीट बुक करने के लिए रजिस्ट्रेशन/लॉगिन जरूरी है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
-        showSection('profile');
+        alert(`⚠️ सीट बुक करने के लिए रजिस्ट्रेशन/लॉगिन जरूरी है (Login Required)!
+
+सफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।
+
+कृपया अपनी User ID और पासवर्ड से लॉगिन करें या 'Register' पर टैप करें।`);
+        switchGlobalAppMode('passenger');
+        showPassengerSection('profile');
         setAuthMode('login');
         return;
       }
       if (!isUserProfileVerified()) {
-        alert('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nसफ़रसाथी पर सीट बुक करने से पहले पैसेंजर की सुरक्षा हेतु AI आधार वेरिफिकेशन अनिवार्य है।\n\nकृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।');
-        showSection('profile');
+        alert(`⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!
+
+सफ़रसाथी पर सीट बुक करने से पहले पैसेंजर सुरक्षा हेतु AI आधार वेरिफिकेशन अनिवार्य है।
+
+कृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।`);
+        switchGlobalAppMode('passenger');
+        showPassengerSection('profile');
         startProfileWizard();
         return;
       }

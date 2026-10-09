@@ -622,6 +622,7 @@
       localStorage.setItem('ss_rides', JSON.stringify(merged));
       renderVehiclesTable();
       loadDashboardData();
+      syncAllLocalActiveRidesToFirestore();
     }
 
     function pollCloudServerBackup() {
@@ -763,6 +764,26 @@
         }).then(() => console.log('✓ Admin pushed rides to Cloudflare Edge KV!'))
           .catch(err => console.log('KV admin write error:', err));
       } catch(e) {}
+    }
+
+        function syncAllLocalActiveRidesToFirestore() {
+      let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { adminDb = firebase.firestore(); } catch(e){}
+      }
+      if (adminDb && rides.length > 0) {
+        rides.forEach(r => {
+          if (r.status === 'ACTIVE') {
+            const docId = r.id || ('RIDE-' + Date.now());
+            r.id = docId;
+            const cleanDoc = JSON.parse(JSON.stringify(r));
+            if (cleanDoc.driverQr && cleanDoc.driverQr.length > 80000) delete cleanDoc.driverQr;
+            adminDb.collection('ss_rides').doc(docId).set(cleanDoc, { merge: true })
+              .then(() => console.log('✓ Auto-synced active ride to Firestore:', docId))
+              .catch(err => console.error(err));
+          }
+        });
+      }
     }
 
     function checkAdminLogin() {
