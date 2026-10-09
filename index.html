@@ -68,799 +68,68 @@
       z-index: 100;
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
     }
-    .header-inner {
+        .header-inner {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0.85rem 1rem;
+      padding: 0.55rem 0.65rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 6px;
+      box-sizing: border-box;
+      width: 100%;
     }
     .app-brand {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 900;
-      font-size: 1.35rem;
-      color: #ffffff;
+      gap: 5px;
       text-decoration: none;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .app-brand-car {
+      font-size: 1.55rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .app-brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 0.95;
+    }
+    .brand-safar {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #38bdf8;
       letter-spacing: -0.5px;
     }
-    .app-brand span.highlight {
-      color: #60a5fa;
-    }
-    .verified-badge {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: #93c5fd;
-      background: rgba(30, 58, 138, 0.6);
-      padding: 5px 12px;
-      border-radius: 9999px;
-      border: 1px solid rgba(96, 165, 250, 0.4);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* In-App Live Notification Banner */
-    #driver-live-alert-bar {
-      display: none;
-      background: #1e293b;
-      border-bottom: 2px solid #3b82f6;
-      color: #ffffff;
-      padding: 0.75rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 800;
-      text-align: center;
-    }
-
-    /* Navigation Tabs */
-    .nav-tabs-wrapper {
-      background: #ffffff;
-      border-bottom: 1px solid var(--border-gray);
-      padding: 0.6rem 0.75rem 0.75rem;
-    }
-    .nav-tabs-wrapper {
-      background: #ffffff;
-      border-bottom: 1px solid var(--border-gray);
-      padding: 0.5rem 0.65rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    
-    .tab-bar-row2 {
-      max-width: 900px;
-      margin: 5px auto 0;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      background: #0f172a;
-      padding: 3px;
-      border-radius: 12px;
-      gap: 5px;
-      border: 1.5px solid rgba(56, 189, 248, 0.25);
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .tab-bar {
-      max-width: 900px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      background: #f1f5f9;
-      padding: 4px;
-      border-radius: 14px;
-      gap: 4px;
-      border: 1.5px solid var(--border-gray);
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .tab-btn {
-      width: 100%;
-      padding: 0.65rem 0.25rem;
-      border: none;
-      border-radius: 10px;
-      background: transparent;
-      color: var(--text-muted);
-      font-weight: 800;
-      font-size: 0.88rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      transition: all 0.25s ease;
-      white-space: nowrap;
-      box-sizing: border-box;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .tab-btn.active {
-      background: var(--bg-dark);
-      color: #ffffff;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.22);
-      transform: translateY(-1px);
-    }
-    .tab-btn-icon {
-      font-size: 1rem;
-      flex-shrink: 0;
-    }
-    .tab-btn-label {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    /* RESPONSIVE MOBILE FIX: Guarantees all 3 tabs stay 100% inside screen on all phones */
-    @media (max-width: 640px) {
-      .nav-tabs-wrapper {
-        padding: 0.4rem 0.4rem;
-      }
-      .tab-bar {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 3px !important;
-        padding: 3px !important;
-      }
-      .tab-btn {
-        font-size: 0.76rem !important;
-        padding: 0.6rem 0.15rem !important;
-        gap: 0.2rem !important;
-      }
-      .desktop-only {
-        display: none !important;
-      }
-      .tab-btn-icon {
-        font-size: 0.92rem !important;
-      }
-    }
-
-    @media (max-width: 360px) {
-      .tab-btn {
-        font-size: 0.70rem !important;
-        padding: 0.55rem 0.1rem !important;
-      }
-    }
-    .tab-btn.active.driver-tab {
-      background: var(--primary-blue);
-      color: #ffffff;
-    }
-
-    /* Main Container */
-    main {
-      flex: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.25rem 1rem 2.5rem;
-      width: 100%;
-    }
-
-    /* Cute Illustrated Hero Banners */
-    .hero-banner {
-      color: #ffffff;
-      padding: 1.5rem 1.75rem;
-      border-radius: 20px;
-      margin-bottom: 1.5rem;
-      box-shadow: var(--shadow-md);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-    .hero-driver {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
-      border: 1.5px solid #1e40af;
-    }
-    .hero-passenger {
-      background: linear-gradient(135deg, #020617 0%, #0f172a 60%, #1d4ed8 100%);
-      border: 1.5px solid #3b82f6;
-    }
-    .hero-content {
-      flex: 1;
-    }
-    .hero-banner h1 {
-      font-size: 1.45rem;
+    .brand-saathi {
+      font-size: 1.1rem;
       font-weight: 900;
-      margin-bottom: 0.35rem;
-      letter-spacing: -0.3px;
-    }
-    .hero-banner p {
-      font-size: 0.88rem;
-      opacity: 0.92;
-      line-height: 1.45;
-    }
-    .hero-art {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* Cute Rounded Cards */
-    .app-card {
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
-      margin-bottom: 1.5rem;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 900;
-      color: var(--text-dark);
-      margin-bottom: 0.25rem;
-    }
-    .card-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 1.25rem;
-    }
-
-    /* Forms */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      font-size: 0.82rem;
-      font-weight: 800;
-      color: var(--text-dark);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .form-control {
-      padding: 0.8rem 1rem;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      outline: none;
-      background: #ffffff;
-      color: var(--text-dark);
-      width: 100%;
-      transition: all 0.2s;
-    }
-    .form-control:focus {
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-    }
-
-    /* Cute Seat Selector Chips */
-    .seat-grid-picker {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.35rem;
-    }
-    .seat-chip {
-      padding: 0.7rem 1.15rem;
-      background: #f8fafc;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--text-dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      transition: all 0.2s ease;
-    }
-    .seat-chip:hover {
-      background: #e2e8f0;
-      border-color: #94a3b8;
-      transform: translateY(-2px);
-    }
-    .seat-chip.selected {
-      background: #1e3a8a;
-      border-color: #1d4ed8;
       color: #ffffff;
-      box-shadow: 0 4px 10px rgba(29, 78, 216, 0.3);
-      transform: translateY(-2px);
-    }
-
-    /* Star Rating Selector */
-    .star-rating-box {
-      display: flex;
-      gap: 0.4rem;
-      font-size: 2rem;
-      cursor: pointer;
-      color: #cbd5e1;
-      user-select: none;
-      margin: 0.5rem 0;
-    }
-    .star-rating-box .star.active {
-      color: #f59e0b;
-      transform: scale(1.1);
-      transition: transform 0.15s;
-    }
-
-    /* Feedback Tags */
-    .feedback-tags-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin: 0.5rem 0 1rem;
-    }
-    .feedback-tag {
-      padding: 0.45rem 0.9rem;
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-radius: 9999px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      cursor: pointer;
-      color: #334155;
-      transition: all 0.15s;
-    }
-    .feedback-tag.selected {
-      background: #dbeafe;
-      border-color: #2563eb;
-      color: #1e40af;
-      transform: scale(1.04);
-    }
-
-    /* Payment Card */
-    .payment-step-card {
-      background: #f0f7ff;
-      border: 2px dashed #2563eb;
-      border-radius: 18px;
-      padding: 1.5rem;
-      text-align: center;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
-    .qr-badge-amount {
-      font-size: 2.1rem;
-      font-weight: 900;
-      color: #1e3a8a;
-      margin: 4px 0;
       letter-spacing: -0.5px;
     }
-
-    /* UPI App Buttons */
-    .btn-upi-app {
+    .header-right-tools {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      padding: 0.8rem 0.5rem;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 0.9rem;
-      color: var(--text-dark);
-      text-decoration: none;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s;
+      gap: 6px;
+      flex-shrink: 0;
     }
-    .btn-upi-app:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-    .phonepe-btn { border-color: #a855f7; color: #581c87; }
-    .gpay-btn { border-color: #60a5fa; color: #1e40af; }
-    .paytm-btn { border-color: #38bdf8; color: #0369a1; }
-    .other-btn { border-color: #0f172a; color: #0f172a; }
-
-    /* Buttons */
-    .btn {
-      padding: 0.85rem 1.35rem;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      transition: all 0.2s;
-      width: 100%;
-      text-decoration: none;
-      letter-spacing: 0.2px;
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-    .btn-primary {
-      background: var(--primary-blue);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.28);
-    }
-    .btn-primary:hover {
-      background: var(--primary-blue-hover);
-    }
-    .btn-dark {
-      background: var(--bg-dark);
-      color: #ffffff;
-    }
-    .btn-dark:hover {
-      background: #1e293b;
-    }
-    .btn-secondary {
-      background: #e2e8f0;
-      color: var(--text-dark);
-    }
-    .btn-secondary:hover {
-      background: #cbd5e1;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid #cbd5e1;
-      color: var(--text-dark);
-    }
-    .btn-outline:hover {
-      background: #f1f5f9;
-      border-color: #94a3b8;
-    }
-
-    /* HSRP Number Plate */
-    .plate-wrapper {
-      display: inline-flex;
-      align-items: center;
-      background: #ffffff;
-      border: 2px solid #0f172a;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
-      font-family: 'Courier New', Courier, monospace;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      overflow: hidden;
-      line-height: 1;
-    }
-    .plate-ind {
-      background: #1e3a8a;
-      color: #fbbf24;
-      font-size: 0.6rem;
-      padding: 6px 7px;
-      font-weight: 900;
-      border-right: 1px solid #0f172a;
-      text-align: center;
-      line-height: 1.1;
-    }
-    .plate-num {
-      padding: 6px 12px;
-      font-size: 1.05rem;
-      color: #0f172a;
-      text-transform: uppercase;
-    }
-
-    /* Ride Cards */
-    .ride-card {
-      background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid var(--border-gray);
-      box-shadow: var(--shadow-md);
-      padding: 1.35rem;
+    .mode-switch-wrapper {
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-      transition: all 0.25s ease;
-      position: relative;
-    }
-    .ride-card:hover {
-      border-color: #93c5fd;
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-3px);
-    }
-    .route-display {
-      background: #f8fafc;
-      padding: 0.95rem;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-
-    /* Modals */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 1rem;
-    }
-    .modal-backdrop.open {
-      display: flex;
-    }
-    .modal-card {
-      background: #ffffff;
-      border-radius: 24px;
-      max-width: 520px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 1.6rem;
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.3);
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-gray);
-      padding-bottom: 0.85rem;
-      margin-bottom: 1.25rem;
-    }
-    .modal-header h3 {
-      font-size: 1.25rem;
-      font-weight: 900;
-      color: var(--text-dark);
-    }
-    .btn-close {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-muted);
-      line-height: 1;
-    }
-
-    /* Alert Banner */
-    .alert-banner {
-      padding: 1.25rem;
-      border-radius: 16px;
-      margin-bottom: 1.5rem;
-      display: none;
-    }
-    .alert-success {
-      background: #eff6ff;
-      border: 1.5px solid #3b82f6;
-      color: #1e3a8a;
-    }
-
-    footer {
-      background: var(--bg-dark);
-      border-top: 1px solid #1e293b;
-      padding: 1.75rem 1rem;
-      text-align: center;
-      font-size: 0.82rem;
-      color: var(--text-light);
-      margin-top: auto;
-    }
-    footer a {
-      color: #60a5fa;
-      text-decoration: none;
-    }
-  
-    /* Embedded Secret Admin Portal Styles */
-    .admin-badge { padding: 3px 8px; border-radius: 9999px; font-size: 0.72rem; font-weight: 800; display: inline-block; }
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
-    .stat-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 0.85rem; text-align: center; }
-    .stat-card .val { font-size: 1.4rem; font-weight: 900; color: #1e3a8a; }
-    .stat-card .lbl { font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-top: 2px; }
-    .admin-tabs { display: flex; gap: 0.4rem; border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 4px; }
-    .admin-tab-btn { padding: 0.5rem 0.85rem; border: none; background: transparent; font-weight: 700; font-size: 0.85rem; color: #64748b; cursor: pointer; border-radius: 8px 8px 0 0; white-space: nowrap; }
-    .admin-tab-btn.active { color: #1d4ed8; border-bottom: 3px solid #1d4ed8; background: #eff6ff; }
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-    .admin-table th { background: #f8fafc; padding: 0.65rem 0.5rem; text-align: left; font-weight: 800; color: #334155; border-bottom: 2px solid #e2e8f0; }
-    .admin-table td { padding: 0.65rem 0.5rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    .admin-table tr:hover { background: #f8fafc; }
-
-  
-    /* =========================================================================
-       PURE LUXURY DARK GRADIENT (NO BACKGROUND PHOTO) & FLIP THEME
-       ========================================================================= */
-    * {
-      -webkit-font-smoothing: antialiased !important;
-      -moz-osx-font-smoothing: grayscale !important;
-      text-rendering: optimizeLegibility !important;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: linear-gradient(135deg, #091e3a 0%, #0f172a 45%, #020617 100%) !important;
-      background-image: none !important;
-      background-color: #0f172a !important;
-      color: #ffffff !important;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-    }
-
-    #app-shell {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    header {
-      background: #091e3a !important;
-      border-bottom: 2px solid #1e3a8a !important;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    /* Nav Tabs Bar: Solid Background, Zero Gap */
-    .nav-tabs-wrapper {
-      background: #091e3a !important;
-      border-bottom: 2px solid rgba(56, 189, 248, 0.25) !important;
-      padding: 0.45rem 0.65rem !important;
-      position: sticky;
-      top: 56px;
-      z-index: 95;
-    }
-
-    .tab-bar {
-      max-width: 540px !important;
-      margin: 0 auto !important;
-      display: grid !important;
-      grid-template-columns: repeat(3, 1fr) !important;
-      background: #020617 !important;
-      padding: 5px !important;
-      border-radius: 16px !important;
-      gap: 8px !important;
-      border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
-    }
-
-    /* BUTTONS ARE SOLID VIBRANT BLUE BY DEFAULT */
-    .tab-btn {
-      width: 100% !important;
-      padding: 0.65rem 0.3rem !important;
-      border-radius: 12px !important;
-      font-weight: 900 !important;
-      font-size: 0.86rem !important;
-      cursor: pointer !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      gap: 0.35rem !important;
-      transition: all 0.22s ease !important;
-      background: #1d4ed8 !important; /* VIBRANT SOLID BLUE */
-      color: #ffffff !important; /* PURE CRISP WHITE */
-      border: 1.5px solid #3b82f6 !important;
-      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35) !important;
-    }
-
-    .tab-btn:hover {
-      background: #2563eb !important;
-      color: #ffffff !important;
-    }
-
-    /* WHEN SELECTED, IT TURNS SOLID DEEP BLACK */
-    .tab-btn.active {
-      background: #020617 !important; /* PURE SOLID BLACK */
-      color: #ffffff !important;
-      border: 2px solid #38bdf8 !important;
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.65), inset 0 0 10px rgba(56, 189, 248, 0.2) !important;
-    }
-
-    /* Main Container: Compact, Starts Immediately Below Tabs (NO EMPTY GAP) */
-    main {
-      flex: 1;
-      width: 100%;
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 0.65rem 0.85rem 2rem !important;
-    }
-
-    /* Dark High-Contrast Cards */
-    .app-card {
-      background: rgba(15, 23, 42, 0.95) !important;
-      border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
-      border-radius: 20px !important;
-      padding: 1.25rem 1.4rem !important;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55) !important;
-      margin-bottom: 1rem !important;
-      color: #ffffff !important;
-    }
-
-    .ride-card {
-      background: rgba(15, 23, 42, 0.98) !important;
-      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
-      border-radius: 18px !important;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4) !important;
-      padding: 1.15rem !important;
-      color: #ffffff !important;
-      margin-bottom: 0.85rem !important;
-    }
-
-    .form-control {
-      background: rgba(2, 6, 23, 0.95) !important;
-      color: #ffffff !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-      border: 1.5px solid rgba(56, 189, 248, 0.5) !important;
-      border-radius: 12px !important;
-      padding: 0.65rem 0.9rem !important;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
-      width: 100% !important;
-    }
-
-    .form-control::placeholder {
-      color: #94a3b8 !important;
-    }
-
-    .form-control:focus {
-      border-color: #38bdf8 !important;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35) !important;
-      outline: none !important;
-    }
-
-    label {
-      color: #f1f5f9 !important;
-      font-weight: 700 !important;
-      font-size: 0.82rem !important;
-      margin-bottom: 3px !important;
-      display: block;
-    }
-
-    .step-progress-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      max-width: 540px;
-      margin: 0 auto 0.75rem !important;
-      padding: 0.35rem 0.75rem !important;
-      background: rgba(15, 23, 42, 0.95) !important;
+      background: #020617;
+      border: 1.5px solid #0284c7;
       border-radius: 9999px;
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      padding: 2px;
+      box-shadow: 0 2px 8px rgba(2,132,199,0.3);
+      flex-shrink: 0;
     }
-
-    .step-badge {
-      font-size: 0.74rem !important;
-      font-weight: 800 !important;
-      color: #94a3b8;
-      padding: 3px 9px !important;
-      border-radius: 9999px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .step-badge.active {
-      background: #0284c7 !important;
-      color: #ffffff !important;
-      box-shadow: 0 0 10px rgba(2, 132, 199, 0.6) !important;
-    }
-
-    .step-badge.completed {
-      color: #22c55e !important;
-    }
-
-    .step-flip-card {
-      animation: flipStepCard 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-      transform-origin: center top !important;
-    }
-    @keyframes flipStepCard {
-      0% {
-        opacity: 0;
-        transform: translateY(14px) scale(0.97);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    /* Master Mode Switcher */
     .mode-pill {
-      padding: 4px 10px;
-      font-size: 0.76rem;
+      padding: 4px 8px;
+      font-size: 0.74rem;
       font-weight: 800;
       border-radius: 9999px;
       border: none;
@@ -885,9 +154,9 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       background: #0f172a;
-      padding: 4px;
+      padding: 3px;
       border-radius: 14px;
-      gap: 4px;
+      gap: 3px;
       border: 1.5px solid rgba(56, 189, 248, 0.25);
       width: 100%;
       box-sizing: border-box;
@@ -898,11 +167,29 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       background: #0f172a;
-      padding: 4px;
+      padding: 3px;
       border-radius: 14px;
-      gap: 4px;
+      gap: 3px;
       border: 1.5px solid rgba(34, 197, 94, 0.35);
       width: 100%;
+      box-sizing: border-box;
+    }
+    .tab-btn {
+      width: 100%;
+      padding: 0.55rem 0.15rem;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      transition: all 0.25s ease;
+      white-space: nowrap;
       box-sizing: border-box;
     }
 
@@ -1002,21 +289,30 @@
   <!-- Header -->
   <header>
     <div class="header-inner">
-      <a href="#" class="app-brand" onclick="showSection('driver'); return false;">
-        🚗 <span><span class="highlight">Safar</span>Saathi</span>
+      <!-- 🚗 2-Tier Stacked Brand Logo (Safar on Top, Saathi on Bottom) -->
+      <a href="#" class="app-brand" onclick="showPassengerSection('live'); return false;">
+        <span class="app-brand-car">🚗</span>
+        <div class="app-brand-text">
+          <span class="brand-safar">Safar</span>
+          <span class="brand-saathi">Saathi</span>
+        </div>
       </a>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div id="cloud-network-status-badge" onclick="showCloudNetworkInfo()" style="font-size: 0.72rem; font-weight: 800; padding: 3px 9px; border-radius: 9999px; background: rgba(34, 197, 94, 0.2); color: #86efac; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1px solid rgba(34, 197, 94, 0.4);">
-          <span id="cloud-network-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block;"></span>
+
+      <!-- Right Header Tools: Cloud Live Badge + Mode Switcher -->
+      <div class="header-right-tools">
+        <!-- 🟢 Cloud Live Badge (Clear & Readable) -->
+        <div id="cloud-network-status-badge" onclick="showCloudNetworkInfo()" style="font-size: 0.8rem; font-weight: 800; padding: 4px 9px; border-radius: 9999px; background: rgba(34, 197, 94, 0.2); color: #86efac; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border: 1px solid rgba(34, 197, 94, 0.4); white-space: nowrap; flex-shrink: 0;">
+          <span id="cloud-network-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; box-shadow: 0 0 6px #22c55e;"></span>
           <span id="cloud-network-label">Cloud Live 🟢</span>
         </div>
+
         <!-- 🔄 MASTER APP MODE SWITCHER (PASSENGER vs DRIVER) -->
-        <div class="mode-switch-wrapper" style="display: flex; align-items: center; background: #020617; border: 1.5px solid #0284c7; border-radius: 9999px; padding: 2px; box-shadow: 0 2px 8px rgba(2,132,199,0.3);">
+        <div class="mode-switch-wrapper">
           <button type="button" id="btn-mode-passenger" class="mode-pill active" onclick="switchGlobalAppMode('passenger')">
             👤 Passenger
           </button>
           <button type="button" id="btn-mode-driver" class="mode-pill" onclick="switchGlobalAppMode('driver')">
-            🚗 Driver Mode
+            🚗 Driver
           </button>
         </div>
       </div>
@@ -1030,7 +326,7 @@
     <div id="nav-passenger-bar" class="tab-bar-passenger">
       <button class="tab-btn active" id="pnav-live" onclick="showPassengerSection('live')">
         <span class="tab-btn-icon">🟢</span>
-        <span class="tab-btn-label">Live Cars ( <span id="pnav-live-count">0</span> )</span>
+        <span class="tab-btn-label">Live (<span id="pnav-live-count">0</span>)</span>
       </button>
       <button class="tab-btn" id="pnav-find" onclick="showPassengerSection('find')">
         <span class="tab-btn-icon">🔍</span>
@@ -1038,7 +334,7 @@
       </button>
       <button class="tab-btn" id="pnav-bookings" onclick="showPassengerSection('bookings')">
         <span class="tab-btn-icon">🎟️</span>
-        <span class="tab-btn-label">My Tickets ( <span id="pnav-bookings-count">0</span> )</span>
+        <span class="tab-btn-label">Tickets (<span id="pnav-bookings-count">0</span>)</span>
       </button>
       <button class="tab-btn" id="pnav-profile" onclick="showPassengerSection('profile')">
         <span class="tab-btn-icon">👤</span>
@@ -1054,11 +350,11 @@
       </button>
       <button class="tab-btn" id="dnav-fleet" onclick="showDriverSection('fleet')">
         <span class="tab-btn-icon">🚙</span>
-        <span class="tab-btn-label">My Fleet ( <span id="dnav-fleet-count">0</span> )</span>
+        <span class="tab-btn-label">My Fleet (<span id="dnav-fleet-count">0</span>)</span>
       </button>
       <button class="tab-btn" id="dnav-profile" onclick="showDriverSection('profile')">
         <span class="tab-btn-icon">👤</span>
-        <span class="tab-btn-label">Driver Profile</span>
+        <span class="tab-btn-label">Profile</span>
       </button>
     </div>
   </div>
