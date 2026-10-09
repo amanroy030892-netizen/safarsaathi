@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- HARD CACHE BUSTER: Prevents any mobile phone from showing stale versions -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    const SAFAR_BUILD_VERSION = 'v2026.10.09.FINAL';
+    if (localStorage.getItem('ss_installed_ver') !== SAFAR_BUILD_VERSION) {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var i = 0; i < regs.length; i++) regs[i].unregister();
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(k) { caches.delete(k); });
+        });
+      }
+      localStorage.setItem('ss_installed_ver', SAFAR_BUILD_VERSION);
+      if (window.location.search.indexOf('v=') === -1) {
+        window.location.replace(window.location.pathname + '?v=' + Date.now() + window.location.hash);
+      }
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SafarSaathi - Real-Time Peer-to-Peer Carpooling in Assam</title>
@@ -339,11 +363,11 @@
 
   <!-- 6-Button Navigation Bar (Symmetrical 3x2 Grid) -->
   <div class="nav-container">
-    <!-- ROW 1: Live Cars (Home), Post Ride, Find Ride -->
-    <div class="tab-bar-row">
+    <!-- ROW 1: 3 Primary Actions -->
+    <div class="tab-bar">
       <button class="tab-btn active" id="tab-btn-live-cars" onclick="showSection('live-cars')">
         <span class="tab-btn-icon">🟢</span>
-        <span class="tab-btn-label">Live Cars (<span id="nav-live-count">0</span>)</span>
+        <span class="tab-btn-label">Live Cars ( <span id="nav-live-count">0</span> )</span>
       </button>
       <button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
         <span class="tab-btn-icon">🚗</span>
@@ -356,18 +380,18 @@
     </div>
 
     <!-- ROW 2: Profile, My Bookings, Driver Fleet -->
-    <div class="tab-bar-row">
+    <div class="tab-bar-row2">
       <button class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
         <span class="tab-btn-icon">👤</span>
         <span class="tab-btn-label">Profile</span>
       </button>
       <button class="tab-btn" id="tab-btn-bookings" onclick="showSection('bookings')">
         <span class="tab-btn-icon">🎟️</span>
-        <span class="tab-btn-label">Bookings (<span id="nav-bookings-count">0</span>)</span>
+        <span class="tab-btn-label">My Tickets ( <span id="nav-bookings-count">0</span> )</span>
       </button>
       <button class="tab-btn" id="tab-btn-fleet" onclick="showSection('fleet')">
         <span class="tab-btn-icon">🚙</span>
-        <span class="tab-btn-label">Fleet (<span id="nav-fleet-count">0</span>)</span>
+        <span class="tab-btn-label">Driver Fleet ( <span id="nav-fleet-count">0</span> )</span>
       </button>
     </div>
   </div>
@@ -767,43 +791,51 @@
     <!-- ========================================================================= -->
     <!-- 5. 🎟️ MY BOOKINGS (PASSENGER BOOKED TICKETS & DIGITAL BOARDING PASS)      -->
     <!-- ========================================================================= -->
-    <section id="section-bookings" class="app-section">
+        <!-- ==================== 5. PASSENGER BOOKINGS & TICKETS ==================== -->
+    <section id="section-bookings" class="step-flip-card" style="display: none;">
       <div class="app-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
-            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">🎟️ Your Booked Passenger Tickets</h3>
-            <span style="font-size: 0.72rem; color: var(--text-muted);">Digital Boarding Passes • 48-Hour Retention</span>
+            <h3 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🎟️ My Booked Tickets & Boarding Passes</h3>
+            <span style="font-size: 0.74rem; color: #94a3b8;">Retained 48 hours • Show boarding pass to driver upon pickup</span>
           </div>
-          <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="padding: 3px 9px; font-size: 0.75rem;">
-            ➕ Book Another Seat
+          <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="padding: 0.4rem 0.95rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; width: auto;">
+            🔍 Find More Rides
           </button>
         </div>
 
-        <!-- Bookings Container -->
-        <div id="passenger-bookings-list-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
+        <div id="prof-bookings-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
       </div>
     </section>
 
     <!-- ========================================================================= -->
     <!-- 6. 🚙 DRIVER FLEET (DRIVER'S POSTED VEHICLES & INCOMING BOOKING APPROVALS) -->
     <!-- ========================================================================= -->
-    <section id="section-fleet" class="app-section">
+        <!-- ==================== 6. DRIVER FLEET & INCOMING REQUESTS ==================== -->
+    <section id="section-fleet" class="step-flip-card" style="display: none;">
       <div class="app-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
-            <h3 style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">🚙 Driver Fleet & Incoming Requests</h3>
-            <span style="font-size: 0.72rem; color: var(--text-muted);">Multi-car management • 48-Hour Retention</span>
+            <h3 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Driver Fleet & Posted Vehicles</h3>
+            <span style="font-size: 0.74rem; color: #94a3b8;">Multi-car support (4-5 vehicles) • 48h active • Confirm seat requests</span>
           </div>
-          <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 3px 9px; font-size: 0.75rem;">
+          <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.4rem 0.95rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; width: auto;">
             ➕ Post Another Car
           </button>
         </div>
 
-        <!-- Driver Fleet List Container -->
-        <div id="driver-fleet-list-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
+        <div id="prof-fleet-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
       </div>
     </section>
   </main>
+
+  <!-- CLEAN FOOTER (100% GITHUB & OFFICIAL EMAIL) -->
+  <footer style="margin-top: 2rem; padding: 1.5rem 1rem; border-top: 1px solid var(--border-gray); text-align: center; color: var(--text-muted); font-size: 0.76rem;">
+    <div style="font-weight: 800; color: #ffffff; margin-bottom: 0.35rem;">SafarSaathi (सफ़रसाथी) • Assam Peer-to-Peer Carpooling Network</div>
+    <div>Email: <a href="mailto:support@safarsaathi.com" style="color: #38bdf8; text-decoration: none; font-weight: 700;">support@safarsaathi.com</a></div>
+    <div style="margin-top: 0.25rem;">Website: <a href="https://amanroy030892-netizen.github.io/safarsaathi/" target="_blank" style="color: #38bdf8; text-decoration: none; font-weight: 700;">https://amanroy030892-netizen.github.io/safarsaathi/</a></div>
+    <div style="margin-top: 0.35rem;"><a href="privacy.html" style="color: var(--text-muted); text-decoration: underline;">Privacy Policy & Terms</a></div>
+  </footer>
 
   <!-- ========================================================================= -->
   <!-- MODALS: BOOKING MODAL, CHANGE PASSWORD, FORGOT PASSWORD                   -->
@@ -924,6 +956,50 @@
   <!-- JAVASCRIPT CORE ENGINE (CLEAN, MODULAR, ROBUST)                            -->
   <!-- ========================================================================= -->
   <script>
+    // =========================================================================
+    // 🗜️ UNIVERSAL CLIENT-SIDE IMAGE COMPRESSION (SAVES CLOUD STORAGE & FIRESTORE)
+    // =========================================================================
+    function compressImageFile(file, maxDimension, quality, callback) {
+      if (!file) return;
+      if (file.type === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = function(e) { callback(e.target.result); };
+        reader.readAsDataURL(file);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDimension) {
+              h = Math.round((h * maxDimension) / w);
+              w = maxDimension;
+            }
+          } else {
+            if (h > maxDimension) {
+              w = Math.round((w * maxDimension) / h);
+              h = maxDimension;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL('image/jpeg', quality || 0.72);
+          callback(compressed);
+        };
+        img.onerror = function() {
+          callback(e.target.result);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     // 1. Data Stores & State
     let rawStoredRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
     let rides = rawStoredRides.filter(r => !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id));
@@ -1042,6 +1118,191 @@
       renderLiveCarsHome();
     }
 
+        // =========================================================================
+    // 🎟️ PASSENGER TICKETS RENDERER (SECTION-BOOKINGS ONLY)
+    // =========================================================================
+    function renderPassengerTickets() {
+      const container = document.getElementById('prof-bookings-container');
+      if (!container) return;
+
+      const user = getActiveUserProfile();
+      let myBookings = bookings.filter(b => isWithin48Hours(b.timestamp || b.bookingTimestamp));
+      if (user && user.phone) {
+        const userMatches = myBookings.filter(b => b.passengerPhone === user.phone);
+        if (userMatches.length > 0) myBookings = userMatches;
+      }
+
+      if (myBookings.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed rgba(56,189,248,0.3); border-radius: 14px;">
+            <div style="font-size: 2.6rem; margin-bottom: 0.4rem;">🎟️</div>
+            <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">No Booked Trips Yet</strong>
+            <p style="font-size: 0.8rem; color: #94a3b8; max-width: 320px; margin: 0 auto 1rem;">
+              When you reserve a seat on any carpool, your digital boarding pass will appear here for 48 hours.
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
+              🟢 Browse Live Available Cars ➔
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = myBookings.map(b => {
+        const isConfirmed = (b.status === 'CONFIRMED');
+        return `
+          <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.45rem;">
+              <div>
+                <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 800;">PASSENGER BOARDING PASS</span>
+                <div style="font-size: 1.1rem; font-weight: 900; color: #ffffff;">${b.origin} ➔ ${b.destination}</div>
+              </div>
+              <span style="background: ${isConfirmed ? '#14532d' : '#78350f'}; color: ${isConfirmed ? '#86efac' : '#fde68a'}; border: 1px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
+                ${isConfirmed ? '✓ CONFIRMED' : '⏳ AWAITING DRIVER'}
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem; font-size: 0.82rem;">
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Trip Schedule:</div>
+                <div style="font-weight: 800; color: white;">📅 ${b.date} at ${b.time}</div>
+                <div style="font-size: 0.72rem; color: #cbd5e1; margin-top: 2px;">🚗 ${b.vehicleModel} (${b.vehicleNumber})</div>
+              </div>
+
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Driver Details:</div>
+                <div style="font-weight: 800; color: white;">👤 ${b.driverName}</div>
+                <div style="font-size: 0.72rem; color: #38bdf8; margin-top: 2px;">📱 +91 ${b.driverPhone}</div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.15);">
+              <div>
+                <span style="font-size: 0.78rem; color: #94a3b8;">Reserved:</span>
+                <strong style="color: #4ade80;"> ${b.seatsBooked} Seat(s)</strong> • Total: <strong style="color: #4ade80;">₹${b.totalFare}</strong>
+              </div>
+              <a href="https://wa.me/91${b.driverPhone}?text=Hello%20${encodeURIComponent(b.driverName)},%20I%20have%20booked%20${b.seatsBooked}%20seat(s)%20on%20SafarSaathi%20ticket%20${b.bookingId}." target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.78rem; font-weight: 800; border-radius: 8px; text-decoration: none; width: auto; background: #16a34a; border-color: #16a34a; display: inline-flex; align-items: center; gap: 4px;">
+                💬 Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 🚙 DRIVER FLEET RENDERER (SECTION-FLEET ONLY)
+    // =========================================================================
+    function renderDriverFleet() {
+      const container = document.getElementById('prof-fleet-container');
+      if (!container) return;
+
+      const user = getActiveUserProfile();
+      let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
+      if (user && user.phone) {
+        const phoneMatch = myRides.filter(r => r.driverPhone === user.phone);
+        if (phoneMatch.length > 0) myRides = phoneMatch;
+      }
+
+      if (myRides.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed rgba(56,189,248,0.3); border-radius: 14px;">
+            <div style="font-size: 2.6rem; margin-bottom: 0.4rem;">🚙</div>
+            <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">No Vehicles Listed Yet</strong>
+            <p style="font-size: 0.8rem; color: #94a3b8; max-width: 320px; margin: 0 auto 1rem;">
+              You can list up to 4-5 vehicles. Each vehicle stays active for 48 hours to receive passenger bookings.
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; font-weight: 800; border-radius: 10px; width: auto;">
+              🚗 Post a Vehicle Now ➔
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = myRides.map(r => {
+        const isFull = (r.status === 'FULL' || r.seatsAvailable <= 0);
+        const isActive = (r.status === 'ACTIVE' && !isFull);
+        const rideBookings = bookings.filter(b => b.rideId === r.id);
+        const pendingBookings = rideBookings.filter(b => b.status === 'AWAITING_DRIVER_CONFIRMATION');
+
+        let pendingRequestsHtml = '';
+        if (pendingBookings.length > 0) {
+          pendingRequestsHtml = `
+            <div style="margin-top: 0.85rem; border-top: 1.5px dashed #f59e0b; padding-top: 0.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <strong style="color: #fbbf24; font-size: 0.85rem;">🔔 Incoming Seat Requests (${pendingBookings.length})</strong>
+                <span style="background: #f59e0b; color: #020617; font-size: 0.7rem; font-weight: 900; padding: 1px 7px; border-radius: 9999px;">Action Required</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                ${pendingBookings.map(pb => `
+                  <div style="background: rgba(2, 6, 23, 0.9); border: 1.5px solid #fcd34d; border-radius: 12px; padding: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                      <div>
+                        <strong style="font-size: 0.92rem; color: #ffffff;">${pb.passengerName}</strong>
+                        <span style="font-size: 0.74rem; color: #94a3b8;"> • 📱 +91 ${pb.passengerPhone}</span>
+                      </div>
+                      <span style="background: #15803d; color: white; font-weight: 800; font-size: 0.82rem; padding: 2px 7px; border-radius: 6px;">
+                        ₹${pb.totalFare} to collect
+                      </span>
+                    </div>
+                    <div style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 5px;">
+                      Requested: <strong>${pb.seatsBooked} Seat(s)</strong> • UTR: <strong style="color: #fbbf24; font-family: monospace;">${pb.passengerUtr}</strong>
+                    </div>
+                    <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+                      <button type="button" class="btn btn-primary" style="width: auto; background: #16a34a; border-color: #16a34a; font-size: 0.78rem; padding: 0.4rem 0.75rem;" onclick="driverConfirmBooking('${pb.bookingId}')">
+                        ✅ Confirm ₹${pb.totalFare} Received & Issue Seat
+                      </button>
+                      <button type="button" class="btn btn-outline" style="width: auto; color: #dc2626; border-color: #fca5a5; font-size: 0.78rem; padding: 0.4rem 0.75rem;" onclick="driverRejectBooking('${pb.bookingId}')">
+                        ❌ Reject
+                      </button>
+                      <a href="https://wa.me/91${pb.passengerPhone}?text=Hello%20${encodeURIComponent(pb.passengerName)},%20regarding%20your%20SafarSaathi%20booking%20${pb.bookingId}..." target="_blank" class="btn btn-outline" style="width: auto; font-size: 0.78rem; padding: 0.4rem 0.75rem; text-decoration: none; color: #16a34a; border-color: #16a34a;">
+                        💬 WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)); border: 1.5px solid ${isActive ? '#0284c7' : '#f59e0b'}; border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 4px 16px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.45rem;">
+              <div>
+                <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 800;">DRIVER VEHICLE LISTING</span>
+                <div style="font-size: 1.1rem; font-weight: 900; color: #ffffff;">${r.origin} ➔ ${r.destination}</div>
+              </div>
+              <span style="background: ${isActive ? '#14532d' : '#78350f'}; color: ${isActive ? '#86efac' : '#fde68a'}; border: 1px solid ${isActive ? '#22c55e' : '#f59e0b'}; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
+                ${isActive ? '✓ 100% LIVE ON PORTAL' : (isFull ? 'FULL (HIDDEN)' : '⏳ PENDING ₹100 VERIFICATION')}
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.5rem; font-size: 0.82rem;">
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Vehicle Model & Plate:</div>
+                <div style="font-weight: 800; color: white;">🚗 ${r.vehicleModel}</div>
+                <div style="margin-top: 2px; background: white; color: black; font-family: monospace; font-size: 0.75rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; display: inline-block;">IND • ${r.vehicleNumber}</div>
+              </div>
+
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 0.7rem; color: #94a3b8;">Capacity & Rate:</div>
+                <div style="font-weight: 800; color: #4ade80;">₹${r.farePerSeat} / seat</div>
+                <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">💺 ${r.seatsAvailable} / ${r.totalSeats || 3} Seats Left</div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.74rem; color: #94a3b8;">
+              📅 Schedule: ${r.date} at ${r.time} • ₹100 UTR: <span style="font-family: monospace; color: #fbbf24;">${r.platformFeeUtr || r.utrNumber || 'N/A'}</span>
+            </div>
+
+            ${pendingRequestsHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
     function renderLiveCarsHome() {
       const container = document.getElementById('live-cars-list-container');
       if (!container) return;
@@ -1134,8 +1395,9 @@
     }
 
     function refreshLiveCarsFeed() {
-      showToast('🔄 Syncing with live cloud server...', '#0284c7');
-      if (db) {
+      showToast('🔄 Checking cloud server for live cars...', '#0284c7');
+      syncWithCloudRelay();
+      if (typeof db !== 'undefined' && db) {
         db.collection('ss_rides').get().then(snapshot => {
           const cloudRides = [];
           snapshot.forEach(doc => {
@@ -1150,7 +1412,9 @@
           }
           renderLiveCarsHome();
           showToast('✓ Live cars feed updated!', '#15803d');
-        }).catch(() => renderLiveCarsHome());
+        }).catch(err => {
+          renderLiveCarsHome();
+        });
       } else {
         renderLiveCarsHome();
       }
@@ -1453,11 +1717,23 @@
 
       rides.unshift(newRide);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
+      broadcastRidesToCloud(rides);
 
+      if (!db && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { db = firebase.firestore(); } catch(e){}
+      }
       if (db) {
         try {
-          db.collection('ss_rides').doc(newRide.id).set(newRide, { merge: true });
-        } catch(e){}
+          const cleanDoc = { ...newRide };
+          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) {
+            cleanDoc.driverQr = 'mitali_qr_compact.svg';
+          }
+          db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true })
+            .then(() => console.log('✓ Successfully wrote ride to Firestore!'))
+            .catch(err => console.error('Firestore write error:', err));
+        } catch(e){
+          console.error(e);
+        }
       }
 
       // WhatsApp Notification to Admin (STRICTLY NO LINKS)
@@ -1941,6 +2217,32 @@
     // =========================================================================
     // 10. REAL-TIME CLOUD SERVER ENGINE (FIRESTORE SYNC)
     // =========================================================================
+        // =========================================================================
+    // ⚡ DUAL-CLOUD REAL-TIME SYNC ENGINE (INSTANT MULTI-DEVICE CONNECTION)
+    // =========================================================================
+    const CLOUD_SYNC_URL = 'https://kvdb.io/safarsaathi_assam_2026/rides';
+
+    function syncWithCloudRelay() {
+      fetch(CLOUD_SYNC_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            mergeIncomingCloudRides(data);
+          }
+        }).catch(() => {});
+    }
+
+    function broadcastRidesToCloud(updatedRides) {
+      localStorage.setItem('ss_rides', JSON.stringify(updatedRides));
+      try {
+        fetch(CLOUD_SYNC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedRides)
+        }).catch(() => {});
+      } catch(e){}
+    }
+
     function initFirebase() {
       if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
         try {
@@ -2029,6 +2331,27 @@
         }).catch(() => {});
       });
     }
+
+    // Mobile Resume Listeners: Instantly pull latest live cars when phone unlocks or switches back to Safari/Chrome
+    window.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        refreshLiveCarsFeed();
+      }
+    });
+    window.addEventListener('focus', () => {
+      refreshLiveCarsFeed();
+    });
+    window.addEventListener('pageshow', () => {
+      refreshLiveCarsFeed();
+    });
+
+    // Background 3-second auto-poll to guarantee live cars are always in sync
+    setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        if (typeof syncWithCloudRelay === 'function') syncWithCloudRelay();
+      }
+    }, 3000);
+
   </script>
 </body>
 </html>

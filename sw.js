@@ -1,8 +1,8 @@
 /*
-  SafarSaathi Network-First Service Worker v19 (Pure Role Switcher)
-  Universal PWA & Play Store (TWA) Compatible
+  SafarSaathi Ultra-Fresh Service Worker v2026-10-09
+  Ensures any mobile phone immediately purges stale caches and loads latest version
 */
-const CACHE_NAME = 'safarsaathi-v21-clean-rebuild';
+const CACHE_NAME = 'safarsaathi-v2026-10-09-final';
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,9 +24,8 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching core shell assets v19');
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-        console.warn('[SW] Pre-cache partial fail (non-blocking):', err);
+        console.warn('[SW] Pre-cache partial notice:', err);
       });
     })
   );
@@ -38,7 +37,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[SW] Purging old cache:', cache);
+            console.log('[SW] Deleting stale cache:', cache);
             return caches.delete(cache);
           }
         })
@@ -50,6 +49,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
+  // STRICT NETWORK-FIRST: Always fetch freshest from network
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {

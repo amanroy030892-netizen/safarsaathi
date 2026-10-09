@@ -4,6 +4,28 @@
   Access-Control-Allow-Methods: GET, OPTIONS
   Access-Control-Allow-Headers: *
 
+# ZERO-CACHE FOR HTML PAGES - FORCES ALL MOBILES TO LOAD NEW VERSION DIRECTLY
+/index.html
+  Content-Type: text/html; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/admin.html
+  Content-Type: text/html; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/
+  Content-Type: text/html; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
 # ONLY sw.js has no-store so service worker updates instantly
 /sw.js
   Content-Type: application/javascript; charset=utf-8

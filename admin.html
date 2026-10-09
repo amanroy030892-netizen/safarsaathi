@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- HARD CACHE BUSTER: Prevents any mobile phone from showing stale versions -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    const SAFAR_BUILD_VERSION = 'v2026.10.09.FINAL';
+    if (localStorage.getItem('ss_installed_ver') !== SAFAR_BUILD_VERSION) {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var i = 0; i < regs.length; i++) regs[i].unregister();
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(k) { caches.delete(k); });
+        });
+      }
+      localStorage.setItem('ss_installed_ver', SAFAR_BUILD_VERSION);
+      if (window.location.search.indexOf('v=') === -1) {
+        window.location.replace(window.location.pathname + '?v=' + Date.now() + window.location.hash);
+      }
+    }
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SafarSaathi - Admin Portal</title>
@@ -27,6 +51,7 @@
       --accent: #38bdf8;
       --success: #22c55e;
       --danger: #ef4444;
+      --warning: #f59e0b;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --border-gray: rgba(255, 255, 255, 0.12);
@@ -67,15 +92,18 @@
       outline: none;
     }
 
+    .form-group { margin-bottom: 0.75rem; }
+    .form-group label { display: block; font-size: 0.76rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      font-size: 0.85rem;
+      gap: 5px;
+      font-size: 0.82rem;
       font-weight: 800;
-      padding: 0.65rem 1rem;
-      border-radius: 10px;
+      padding: 0.6rem 0.95rem;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
       text-decoration: none;
@@ -83,6 +111,7 @@
 
     .btn-primary { background: linear-gradient(135deg, #0284c7, #1d4ed8); color: white; }
     .btn-success { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
+    .btn-warning { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
     .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; }
     .btn-secondary { background: #1e293b; color: #cbd5e1; border: 1.5px solid var(--border-gray); }
 
@@ -118,8 +147,13 @@
     <div style="font-size: 1.15rem; font-weight: 900; color: white;">
       🔒 SafarSaathi <span style="color: #38bdf8;">Admin Portal</span>
     </div>
-    <div style="font-size: 0.75rem; color: #86efac; background: rgba(34,197,94,0.15); padding: 2px 8px; border-radius: 9999px; border: 1px solid #22c55e;">
-      PIN Protected (1432)
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span id="adm-cloud-indicator" style="font-size: 0.72rem; color: #86efac; background: rgba(34,197,94,0.15); padding: 2px 8px; border-radius: 9999px; border: 1px solid #22c55e;">
+        🟢 Cloud Sync Active
+      </span>
+      <span style="font-size: 0.72rem; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 9999px;">
+        PIN: 1432
+      </span>
     </div>
   </header>
 
@@ -129,7 +163,7 @@
       <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔐</div>
       <h2 style="font-size: 1.15rem; font-weight: 900; margin-bottom: 0.25rem;">Enter Admin PIN</h2>
       <p style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Enter your 4-digit secret admin PIN to manage vehicle approvals:
+        Enter your 4-digit secret admin PIN to manage vehicle approvals & live fleet:
       </p>
 
       <input type="password" id="admin-pin-input" class="form-control" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 6px; margin-bottom: 1rem;">
@@ -147,7 +181,7 @@
           <strong id="adm-stat-total" style="font-size: 1.4rem; color: white;">0</strong>
         </div>
         <div class="card" style="padding: 0.85rem; text-align: center; margin: 0;">
-          <div style="font-size: 0.72rem; color: #86efac;">Active (Live)</div>
+          <div style="font-size: 0.72rem; color: #86efac;">Active (Live on App)</div>
           <strong id="adm-stat-active" style="font-size: 1.4rem; color: #4ade80;">0</strong>
         </div>
         <div class="card" style="padding: 0.85rem; text-align: center; margin: 0;">
@@ -160,15 +194,15 @@
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
-            <h3 style="font-size: 1.1rem; font-weight: 900; color: white;">Driver Vehicle Listings & UTR Verification</h3>
-            <span style="font-size: 0.74rem; color: var(--text-muted);">Verify ₹100 deposit in Jana SFB before approving</span>
+            <h3 style="font-size: 1.1rem; font-weight: 900; color: white;">Live Fleet & Vehicle Management</h3>
+            <span style="font-size: 0.74rem; color: var(--text-muted);">Make cars live, remove from live, or delete permanently:</span>
           </div>
           <div style="display: flex; gap: 6px;">
             <button type="button" class="btn btn-success" onclick="openManualActivateModal()">
               ➕ Activate Paid Ride
             </button>
-            <button type="button" class="btn btn-secondary" onclick="renderAdminVehicles()">
-              🔄 Refresh
+            <button type="button" class="btn btn-secondary" onclick="syncAdminWithCloud()">
+              🔄 Refresh Cloud
             </button>
           </div>
         </div>
@@ -183,7 +217,7 @@
                 <th>Seats & Fare</th>
                 <th>₹100 UTR</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th>Live Control Actions</th>
               </tr>
             </thead>
             <tbody id="adm-vehicles-tbody"></tbody>
@@ -197,7 +231,7 @@
   <div class="modal-overlay" id="manual-activate-modal">
     <div class="modal-box">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid var(--border-gray); padding-bottom: 0.4rem;">
-        <h3 style="font-size: 1.05rem; font-weight: 900; color: white;">⚡ Activate Paid Vehicle</h3>
+        <h3 style="font-size: 1.05rem; font-weight: 900; color: white;">⚡ Activate Paid Vehicle Directly</h3>
         <button type="button" class="btn btn-secondary" onclick="closeManualActivateModal()" style="padding: 2px 7px;">✕</button>
       </div>
 
@@ -237,18 +271,30 @@
     let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
     let adminDb = null;
     let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+    const CLOUD_SYNC_URL = 'https://kvdb.io/safarsaathi_assam_2026/rides';
 
     function verifyAdminPin() {
       const pin = (document.getElementById('admin-pin-input')?.value || '').trim();
       if (pin === '1432') {
-        document.getElementById('admin-login-card').style.display = 'none';
-        document.getElementById('admin-dashboard').style.display = 'block';
-        initAdminFirebase();
-        renderAdminVehicles();
+        sessionStorage.setItem('ss_admin_authed', 'true');
+        showAdminDashboardView();
       } else {
         alert('❌ Incorrect PIN! Please enter PIN 1432.');
         document.getElementById('admin-pin-input').value = '';
       }
+    }
+
+    function showAdminDashboardView() {
+      document.getElementById('admin-login-card').style.display = 'none';
+      document.getElementById('admin-dashboard').style.display = 'block';
+      initAdminFirebase();
+      syncAdminWithCloud();
+      renderAdminVehicles();
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem('ss_admin_authed');
+      location.reload();
     }
 
     function initAdminFirebase() {
@@ -268,14 +314,69 @@
                 }
               });
               if (cloudRides.length > 0) {
-                rides = cloudRides;
-                localStorage.setItem('ss_rides', JSON.stringify(rides));
-                renderAdminVehicles();
+                mergeAdminCloudRides(cloudRides);
               }
+            }, err => {
+              console.warn('Firestore notice:', err);
             });
           }
         } catch(e){}
       }
+    }
+
+    function mergeAdminCloudRides(cloudRides) {
+      if (!cloudRides || !Array.isArray(cloudRides)) return;
+      rides = cloudRides;
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      renderAdminVehicles();
+    }
+
+    function syncAdminWithCloud() {
+      // 1. Pull from KVDB Cloud Relay
+      fetch(CLOUD_SYNC_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            mergeAdminCloudRides(data);
+          }
+        }).catch(() => {});
+
+      // 2. Pull from Firestore
+      if (adminDb) {
+        adminDb.collection('ss_rides').get().then(snapshot => {
+          const cr = [];
+          snapshot.forEach(doc => {
+            const d = doc.data();
+            if (d && !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(d.id)) {
+              if (!d.id) d.id = doc.id;
+              cr.push(d);
+            }
+          });
+          if (cr.length > 0) mergeAdminCloudRides(cr);
+        }).catch(() => {});
+      }
+    }
+
+    // Push full rides state to all clouds
+    function broadcastRidesToCloud(updatedRides) {
+      localStorage.setItem('ss_rides', JSON.stringify(updatedRides));
+      
+      // A. Push to KVDB Cloud Relay
+      try {
+        fetch(CLOUD_SYNC_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedRides)
+        }).catch(() => {});
+      } catch(e){}
+
+      // B. Push to Firebase Realtime Database
+      try {
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json', {
+          method: 'PUT',
+          body: JSON.stringify(updatedRides)
+        }).catch(() => {});
+      } catch(e){}
     }
 
     function renderAdminVehicles() {
@@ -291,12 +392,24 @@
       document.getElementById('adm-stat-pending').innerText = pendingCount;
 
       if (rides.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No vehicles found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No vehicles found. Click "+ Activate Paid Ride" above to add one.</td></tr>';
         return;
       }
 
       tbody.innerHTML = rides.map(r => {
-        const isLive = (r.status || '').toUpperCase() === 'ACTIVE';
+        const statusUpper = (r.status || '').toUpperCase();
+        const isLive = statusUpper === 'ACTIVE';
+        const isOffline = statusUpper === 'OFFLINE' || statusUpper === 'REMOVED';
+
+        let statusBadge = '';
+        if (isLive) {
+          statusBadge = '<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #14532d; color: #86efac;">✓ LIVE</span>';
+        } else if (isOffline) {
+          statusBadge = '<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #374151; color: #9ca3af;">⏸️ OFFLINE (HIDDEN)</span>';
+        } else {
+          statusBadge = '<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #78350f; color: #fde047;">⏳ PENDING</span>';
+        }
+
         return `
           <tr>
             <td>
@@ -322,25 +435,29 @@
                 ${r.platformFeeUtr || r.utrNumber || 'N/A'}
               </span>
             </td>
+            <td>${statusBadge}</td>
             <td>
-              <span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: ${isLive ? '#14532d' : '#78350f'}; color: ${isLive ? '#86efac' : '#fde047'};">
-                ${isLive ? '✓ LIVE' : '⏳ PENDING'}
-              </span>
-            </td>
-            <td>
-              ${!isLive ? `
-                <button type="button" class="btn btn-success" onclick="approveRide('${r.id}')" style="padding: 4px 8px; font-size: 0.74rem;">
-                  ✅ Verify ₹100 & Go Live
+              <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
+                ${!isLive ? `
+                  <button type="button" class="btn btn-success" onclick="approveRide('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Verify ₹100 and Make Live">
+                    ✅ Make Live
+                  </button>
+                ` : `
+                  <button type="button" class="btn btn-warning" onclick="removeFromLive('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Hide from live public feed">
+                    🚫 Remove from Live
+                  </button>
+                `}
+                <button type="button" class="btn btn-danger" onclick="deleteRidePermanently('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Delete vehicle completely">
+                  🗑️ Delete
                 </button>
-              ` : `
-                <span style="color: #86efac; font-size: 0.75rem; font-weight: 800;">✓ Active</span>
-              `}
+              </div>
             </td>
           </tr>
         `;
       }).join('');
     }
 
+    // 1. MAKE VEHICLE LIVE
     function approveRide(rideId) {
       const r = rides.find(item => item.id === rideId);
       if (!r) return;
@@ -348,7 +465,41 @@
       r.verifiedByAdmin = true;
       r.approvedAt = new Date().toISOString();
 
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      broadcastRidesToCloud(rides);
+
+      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { adminDb = firebase.firestore(); } catch(e){}
+      }
+      if (adminDb) {
+        try {
+          const cleanDoc = { ...r };
+          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) {
+            cleanDoc.driverQr = 'mitali_qr_compact.svg';
+          }
+          adminDb.collection('ss_rides').doc(rideId).set(cleanDoc, { merge: true })
+            .then(() => console.log('✓ Successfully saved approved ride to Firestore:', rideId))
+            .catch(err => console.error('Firestore approve error:', err));
+        } catch(e){
+          console.error(e);
+        }
+      }
+
+      renderAdminVehicles();
+      alert(`✓ Vehicle ${r.vehicleNumber} is now 100% LIVE on the Customer app!`);
+    }
+
+    // 2. REMOVE VEHICLE FROM LIVE (HIDE FROM CUSTOMERS)
+    function removeFromLive(rideId) {
+      const r = rides.find(item => item.id === rideId);
+      if (!r) return;
+      if (!confirm(`Are you sure you want to remove vehicle ${r.vehicleModel} (${r.vehicleNumber}) from Live? Passengers will no longer see it.`)) return;
+
+      r.status = 'OFFLINE';
+      r.removedByAdmin = true;
+      r.removedAt = new Date().toISOString();
+
+      broadcastRidesToCloud(rides);
+
       if (adminDb) {
         try {
           adminDb.collection('ss_rides').doc(rideId).set(r, { merge: true });
@@ -356,7 +507,26 @@
       }
 
       renderAdminVehicles();
-      alert(`✓ Vehicle ${r.vehicleNumber} is now 100% LIVE across Assam!`);
+      alert(`✓ Vehicle ${r.vehicleNumber} has been REMOVED from Live feed!`);
+    }
+
+    // 3. DELETE VEHICLE PERMANENTLY
+    function deleteRidePermanently(rideId) {
+      const r = rides.find(item => item.id === rideId);
+      const plate = r ? r.vehicleNumber : rideId;
+      if (!confirm(`PERMANENT DELETE: Are you sure you want to permanently delete vehicle ${plate}? This cannot be undone.`)) return;
+
+      rides = rides.filter(item => item.id !== rideId);
+      broadcastRidesToCloud(rides);
+
+      if (adminDb) {
+        try {
+          adminDb.collection('ss_rides').doc(rideId).delete();
+        } catch(e){}
+      }
+
+      renderAdminVehicles();
+      alert(`✓ Vehicle ${plate} deleted permanently.`);
     }
 
     function openManualActivateModal() {
@@ -425,7 +595,7 @@
       };
 
       rides.unshift(newRide);
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      broadcastRidesToCloud(rides);
 
       if (adminDb) {
         try {
@@ -437,6 +607,20 @@
       renderAdminVehicles();
       alert(`✓ Vehicle ${model} (${plate}) is now 100% LIVE across Assam!`);
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('ss_admin_authed') === 'true') {
+        showAdminDashboardView();
+      }
+    });
+
+    window.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && sessionStorage.getItem('ss_admin_authed') === 'true') {
+        syncAdminWithCloud();
+        renderAdminVehicles();
+      }
+    });
+
   </script>
 </body>
 </html>
