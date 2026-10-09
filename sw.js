@@ -1,8 +1,8 @@
 /*
-  SafarSaathi Ultra-Fast Real-Time Service Worker v20
-  Zero Stale Cache • Network-First for Instant Real-Time Sync
+  SafarSaathi Network-First Service Worker v19 (Pure Role Switcher)
+  Universal PWA & Play Store (TWA) Compatible
 */
-const CACHE_NAME = 'safarsaathi-v20-realtime-engine';
+const CACHE_NAME = 'safarsaathi-v21-clean-rebuild';
 
 const PRECACHE_ASSETS = [
   './',
@@ -24,9 +24,9 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW v20] Pre-caching core assets');
+      console.log('[SW] Pre-caching core shell assets v19');
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-        console.warn('[SW v20] Pre-cache partial fail (non-blocking):', err);
+        console.warn('[SW] Pre-cache partial fail (non-blocking):', err);
       });
     })
   );
@@ -37,8 +37,10 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
-          console.log('[SW v20] Purging old cache:', cache);
-          return caches.delete(cache);
+          if (cache !== CACHE_NAME) {
+            console.log('[SW] Purging old cache:', cache);
+            return caches.delete(cache);
+          }
         })
       );
     }).then(() => self.clients.claim())
@@ -48,7 +50,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
-  // Strict Network-First Strategy: Never serve stale HTML/JS
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
