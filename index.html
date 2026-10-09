@@ -296,53 +296,63 @@
         </div>
       </a>
 
-      <!-- HEADER RIGHT: CLOUD BADGE + TOP PROFILE BUTTON -->
+      <!-- HEADER RIGHT: CLOUD BADGE + DRIVER / PASSENGER MODE SWITCHER (NO DUPLICATE PROFILE) -->
       <div style="display: flex; align-items: center; gap: 8px;">
         <div class="cloud-badge" id="cloud-status-btn" onclick="refreshLiveCarsFeed()" title="Tap to refresh cloud connection" style="cursor: pointer;">
           <span class="cloud-dot"></span>
           <span id="cloud-status-label">Cloud Live 🟢</span>
         </div>
 
-        <!-- PROFILE IN HEADER (MATCHED & INSIDE PAGE BOUNDARY) -->
-        <button type="button" id="header-profile-btn" class="header-profile-btn" onclick="showSection('profile')" style="display: flex; align-items: center; gap: 5px; background: rgba(15, 23, 42, 0.95); border: 1.5px solid #0284c7; border-radius: 9999px; padding: 4px 11px; color: #ffffff; cursor: pointer; box-shadow: 0 2px 8px rgba(2,132,199,0.3); font-weight: 800; font-size: 0.78rem; transition: all 0.2s;">
-          <span id="header-avatar-icon" style="font-size: 0.95rem;">👤</span>
-          <span id="header-profile-name">Profile</span>
-        </button>
+        <!-- ⇄ DRIVER / PASSENGER MODE SWITCHER -->
+        <div id="header-role-switch" style="display: flex; background: rgba(2, 6, 23, 0.95); border: 1.5px solid #0284c7; border-radius: 9999px; padding: 2px; box-shadow: 0 2px 8px rgba(2,132,199,0.3); align-items: center;">
+          <button type="button" id="switch-btn-passenger" onclick="setAppRoleMode('passenger')" style="padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; background: #0284c7; color: #ffffff;">
+            👤 Passenger
+          </button>
+          <button type="button" id="switch-btn-driver" onclick="setAppRoleMode('driver')" style="padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: #94a3b8;">
+            🚗 Driver
+          </button>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- DUAL-MODE ADAPTIVE NAVIGATION -->
+  <!-- DUAL-MODE ADAPTIVE NAVIGATION: PASSENGER SECTION & DRIVER SECTION -->
   <nav class="nav-container" style="max-width: 900px; margin: 6px auto; padding: 0 4px;">
-    <!-- ROW 1: 3 Primary Actions -->
-    <div class="tab-bar" style="display: grid; grid-template-columns: repeat(3, 1fr); background: #f1f5f9; padding: 4px; border-radius: 14px; gap: 4px; border: 1.5px solid var(--border-gray);">
+    <!-- 👤 PASSENGER SECTION (ROW 1) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; padding: 0 4px;">
+      <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;">👤 Passenger Section</span>
+    </div>
+    <div class="tab-bar" style="display: grid; grid-template-columns: repeat(3, 1fr); background: #0f172a; padding: 4px; border-radius: 14px; gap: 4px; border: 1.5px solid rgba(56, 189, 248, 0.35);">
       <button class="tab-btn active" id="tab-btn-live-cars" onclick="showSection('live-cars')">
         <span class="tab-btn-icon">🟢</span>
         <span class="tab-btn-label">Live Cars (<span id="nav-live-count">1</span>)</span>
-      </button>
-      <button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
-        <span class="tab-btn-icon">🚗</span>
-        <span class="tab-btn-label">Post Ride</span>
       </button>
       <button class="tab-btn" id="tab-btn-passenger" onclick="showSection('passenger')">
         <span class="tab-btn-icon">🔍</span>
         <span class="tab-btn-label">Find Ride</span>
       </button>
-    </div>
-
-    <!-- ROW 2: 3 Account & Management Actions -->
-    <div class="tab-bar-row2" style="display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 5px; background: #0f172a; padding: 3px; border-radius: 12px; gap: 4px; border: 1.5px solid rgba(56, 189, 248, 0.25);">
-      <button class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
-        <span class="tab-btn-icon">👤</span>
-        <span class="tab-btn-label">Profile</span>
-      </button>
       <button class="tab-btn" id="tab-btn-bookings" onclick="showSection('bookings')">
         <span class="tab-btn-icon">🎟️</span>
         <span class="tab-btn-label">Bookings (<span id="nav-bookings-count">0</span>)</span>
       </button>
+    </div>
+
+    <!-- 🚗 DRIVER SECTION (ROW 2) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0 2px 0; padding: 0 4px;">
+      <span style="font-size: 0.72rem; color: #4ade80; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;">🚗 Driver Section</span>
+    </div>
+    <div class="tab-bar-row2" style="display: grid; grid-template-columns: repeat(3, 1fr); background: #0f172a; padding: 4px; border-radius: 14px; gap: 4px; border: 1.5px solid rgba(34, 197, 94, 0.35);">
+      <button class="tab-btn" id="tab-btn-driver" onclick="showSection('driver')">
+        <span class="tab-btn-icon">🚗</span>
+        <span class="tab-btn-label">Post Ride</span>
+      </button>
       <button class="tab-btn" id="tab-btn-fleet" onclick="showSection('fleet')">
         <span class="tab-btn-icon">🚙</span>
         <span class="tab-btn-label">Fleet (<span id="nav-fleet-count">1</span>)</span>
+      </button>
+      <button class="tab-btn" id="tab-btn-profile" onclick="showSection('profile')">
+        <span class="tab-btn-icon">👤</span>
+        <span class="tab-btn-label">Profile / KYC</span>
       </button>
     </div>
   </nav>
@@ -1009,6 +1019,52 @@
       }
     }
 
+        // =========================================================================
+    // ⇄ APP ROLE SWITCHER (PASSENGER VS DRIVER MODE)
+    // =========================================================================
+    let currentAppRoleMode = 'passenger';
+
+    function setAppRoleMode(role) {
+      currentAppRoleMode = role;
+      const btnPass = document.getElementById('switch-btn-passenger');
+      const btnDriver = document.getElementById('switch-btn-driver');
+
+      if (role === 'passenger') {
+        if (btnPass) {
+          btnPass.style.background = '#0284c7';
+          btnPass.style.color = '#ffffff';
+        }
+        if (btnDriver) {
+          btnDriver.style.background = 'transparent';
+          btnDriver.style.color = '#94a3b8';
+        }
+        showSection('live-cars');
+        showToast('👤 Passenger Mode Active (Live Cars & Bookings)', '#0284c7');
+      } else {
+        if (btnDriver) {
+          btnDriver.style.background = '#16a34a';
+          btnDriver.style.color = '#ffffff';
+        }
+        if (btnPass) {
+          btnPass.style.background = 'transparent';
+          btnPass.style.color = '#94a3b8';
+        }
+        // If driver has posted rides, show fleet, else show post ride
+        let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.createdAt));
+        const user = getActiveUserProfile();
+        if (user && user.phone) {
+          const match = myRides.filter(r => r.driverPhone === user.phone);
+          if (match.length > 0) myRides = match;
+        }
+        if (myRides.length > 0) {
+          showSection('fleet');
+        } else {
+          showSection('driver');
+        }
+        showToast('🚗 Driver Mode Active (Post Ride & Fleet)', '#16a34a');
+      }
+    }
+
     function showSection(tab) {
       const sections = {
         'live-cars': document.getElementById('section-live-cars'),
@@ -1034,6 +1090,19 @@
 
       for (const [k, btn] of Object.entries(buttons)) {
         if (btn) btn.classList.toggle('active', k === tab);
+      }
+
+      // Sync Role Switcher in Header
+      const btnPass = document.getElementById('switch-btn-passenger');
+      const btnDriver = document.getElementById('switch-btn-driver');
+      if (tab === 'live-cars' || tab === 'passenger' || tab === 'bookings') {
+        currentAppRoleMode = 'passenger';
+        if (btnPass) { btnPass.style.background = '#0284c7'; btnPass.style.color = '#ffffff'; }
+        if (btnDriver) { btnDriver.style.background = 'transparent'; btnDriver.style.color = '#94a3b8'; }
+      } else if (tab === 'driver' || tab === 'fleet') {
+        currentAppRoleMode = 'driver';
+        if (btnDriver) { btnDriver.style.background = '#16a34a'; btnDriver.style.color = '#ffffff'; }
+        if (btnPass) { btnPass.style.background = 'transparent'; btnPass.style.color = '#94a3b8'; }
       }
 
       if (tab === 'live-cars') {
