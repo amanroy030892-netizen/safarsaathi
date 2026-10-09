@@ -25,75 +25,69 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
-    /* =========================================================================
-       ✨ WORLD-CLASS RIDE-SHARING APP DESIGN SYSTEM (UBER / OLA / BLABLACAR)
-       ========================================================================= */
     :root {
       --primary: #0284c7;
       --primary-dark: #0369a1;
       --accent: #38bdf8;
       --success: #22c55e;
-      --success-dark: #16a34a;
       --dark-bg: #090d16;
       --card-bg: #0f172a;
       --card-elevated: #1e293b;
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(56, 189, 248, 0.3);
+      --border-accent: rgba(56, 189, 248, 0.35);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: var(--dark-bg);
       color: var(--text-main);
       font-family: var(--font-family);
-      padding-bottom: 96px; /* Space for docked bottom navigation bar */
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
+      padding-bottom: 2rem;
     }
 
-    /* Modern Mobile Header (Sticky & Compact) */
+    /* Modern Sticky Mobile Header */
     .app-header {
       position: sticky;
       top: 0;
       z-index: 1000;
-      background: rgba(15, 23, 42, 0.94);
+      background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0.65rem 1rem;
+      padding: 0.6rem 0.85rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       max-width: 900px;
       margin: 0 auto;
-      height: 56px;
+      height: 54px;
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       text-decoration: none;
       color: #ffffff;
       font-size: 1.25rem;
       font-weight: 900;
       letter-spacing: -0.5px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .brand-logo .brand-highlight {
@@ -105,16 +99,17 @@
     .live-status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: rgba(34, 197, 94, 0.15);
       border: 1px solid rgba(34, 197, 94, 0.4);
       color: #86efac;
-      padding: 3px 9px;
+      padding: 3px 8px;
       border-radius: 9999px;
       font-size: 0.72rem;
       font-weight: 800;
       cursor: pointer;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .pulse-dot {
@@ -136,11 +131,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     .header-action-btn {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-subtle);
@@ -148,26 +144,66 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .header-action-btn:active {
-      transform: scale(0.92);
-      background: rgba(56, 189, 248, 0.2);
+    /* 6-Button Navigation Grid (Strict 3x2 Matrix - Never Stacks Vertically!) */
+    .nav-grid-wrapper {
+      max-width: 900px;
+      margin: 0.65rem auto 0.75rem auto;
+      padding: 0 0.75rem;
+    }
+
+    .nav-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 6px;
+      margin-bottom: 6px;
+      width: 100%;
+    }
+
+    .nav-btn {
+      background: #0f172a;
+      border: 1.5px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 0.65rem 0.2rem;
+      color: #94a3b8;
+      font-weight: 800;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      width: 100%;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn.active {
+      background: #020617;
+      border-color: #38bdf8;
+      color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
+
+    .nav-btn:active {
+      transform: scale(0.96);
     }
 
     /* Main Container & Sections */
     main {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0.85rem 0.85rem;
+      padding: 0 0.75rem;
     }
 
     .app-section {
       display: none;
-      animation: fadeIn 0.22s ease-out;
+      animation: fadeIn 0.2s ease-out;
     }
 
     .app-section.active {
@@ -175,7 +211,7 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -244,403 +280,63 @@
       box-shadow: 0 4px 14px rgba(29, 78, 216, 0.4);
     }
 
-    .btn-primary:active {
-      transform: scale(0.97);
-    }
-
     .btn-secondary {
       background: rgba(255, 255, 255, 0.08);
       color: #cbd5e1;
       border: 1px solid var(--border-subtle);
     }
 
-    .btn-secondary:active {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4);
-    }
-
     .btn-danger {
-      background: rgba(220, 38, 38, 0.15);
+      background: rgba(220, 38, 38, 0.2);
       color: #f87171;
-      border: 1px solid rgba(220, 38, 38, 0.35);
+      border: 1px solid rgba(220, 38, 38, 0.4);
     }
 
-    /* =========================================================================
-       📱 FIXED BOTTOM NAVIGATION BAR (DOCK - LIKE UBER / BLABLACAR)
-       ========================================================================= */
-    .app-bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999;
-      background: rgba(15, 23, 42, 0.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(56, 189, 248, 0.2);
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
-      padding-bottom: env(safe-area-inset-bottom, 8px);
-    }
-
-    .bottom-nav-inner {
-      max-width: 600px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      height: 60px;
-      align-items: center;
-    }
-
-    .b-nav-item {
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      padding: 4px 0;
-      position: relative;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .b-nav-icon-box {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .b-nav-icon {
-      font-size: 1.25rem;
-      transition: transform 0.2s ease;
-    }
-
-    .b-nav-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: -0.2px;
-      transition: color 0.2s ease;
-    }
-
-    .b-nav-item:active .b-nav-icon {
-      transform: scale(0.88);
-    }
-
-    .b-nav-item.active {
-      color: #38bdf8;
-    }
-
-    .b-nav-item.active .b-nav-icon {
-      transform: scale(1.12);
-    }
-
-    .b-nav-item.active .b-nav-label {
-      color: #38bdf8;
-      font-weight: 800;
-    }
-
-    .b-nav-badge {
-      position: absolute;
-      top: -4px;
-      right: -8px;
-      background: #22c55e;
-      color: #ffffff;
-      font-size: 0.62rem;
-      font-weight: 900;
-      padding: 1px 5px;
-      border-radius: 9999px;
-      box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
-      line-height: 1.2;
-    }
-
-    /* Special Center Action Button (Publish / Post Ride) */
-    .b-nav-publish {
-      position: relative;
-      top: -10px;
-    }
-
-    .b-publish-circle {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #0284c7, #1d4ed8);
-      border: 3px solid #090d16;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
-      transition: all 0.25s ease;
-    }
-
-    .b-publish-icon {
-      font-size: 1.25rem;
-      color: #ffffff;
-    }
-
-    .b-nav-publish.active .b-publish-circle {
-      transform: scale(1.08);
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.6);
-    }
-
-    .b-nav-publish .b-nav-label {
-      margin-top: 2px;
-      font-size: 0.68rem;
-    }
-
-    /* =========================================================================
-       🚗 BLABLACAR / UBER INTERCITY RIDE CARD DESIGN
-       ========================================================================= */
-    .ride-card-blabla {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
-      border: 1px solid var(--border-accent);
-      border-radius: 18px;
-      padding: 1.15rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-      margin-bottom: 0.95rem;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ride-card-blabla:active {
-      transform: scale(0.99);
-    }
-
-    .rc-top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+    /* Live Car Card */
+    .live-car-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95));
+      border: 1.5px solid #0284c7;
+      border-radius: 16px;
+      padding: 1rem 1.15rem;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25);
       margin-bottom: 0.85rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 0.75rem;
-    }
-
-    .rc-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex: 1;
-    }
-
-    .rc-time-node {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .rc-time {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #ffffff;
-      min-width: 68px;
-    }
-
-    .rc-node-bullet {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #38bdf8;
-      box-shadow: 0 0 6px #38bdf8;
-      flex-shrink: 0;
-    }
-
-    .rc-node-bullet.dest {
-      background: #22c55e;
-      box-shadow: 0 0 6px #22c55e;
-    }
-
-    .rc-city {
-      font-size: 1.05rem;
-      font-weight: 900;
-      color: #f8fafc;
-    }
-
-    .rc-line-connector {
-      width: 2px;
-      height: 12px;
-      background: rgba(56, 189, 248, 0.4);
-      margin-left: 79px;
-    }
-
-    .rc-price-tag {
-      text-align: right;
-      padding-left: 0.5rem;
-    }
-
-    .rc-price-amount {
-      font-size: 1.45rem;
-      font-weight: 900;
-      color: #4ade80;
-      line-height: 1.1;
-      display: block;
-    }
-
-    .rc-price-unit {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    /* Middle Row: Vehicle & Driver */
-    .rc-details-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.65rem;
-      background: rgba(2, 6, 23, 0.5);
-      border-radius: 12px;
-      padding: 0.65rem 0.85rem;
-      margin-bottom: 0.85rem;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .rc-col-info {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .rc-col-label {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    .rc-col-val {
-      font-size: 0.88rem;
-      font-weight: 800;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 5px;
     }
 
     .rc-hsrp-badge {
-      display: inline-block;
       background: #ffffff;
       color: #000000;
       font-family: monospace, sans-serif;
-      font-size: 0.76rem;
+      font-size: 0.82rem;
       font-weight: 900;
       letter-spacing: 1.5px;
-      padding: 1px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
       border: 1px solid #000000;
-      box-shadow: inset 0 0 2px rgba(0,0,0,0.4);
+      display: inline-block;
+      margin-top: 2px;
     }
 
     .rc-verified-shield {
-      background: rgba(34, 197, 94, 0.15);
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid #22c55e;
       color: #86efac;
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      font-size: 0.66rem;
+      font-size: 0.7rem;
       font-weight: 800;
-      padding: 1px 6px;
+      padding: 2px 7px;
       border-radius: 9999px;
       display: inline-flex;
       align-items: center;
       gap: 3px;
     }
 
-    /* Bottom Row: Seat Count & Booking CTA */
-    .rc-bottom-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .rc-seat-pill {
-      background: rgba(2, 132, 199, 0.2);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: #bae6fd;
-      font-size: 0.76rem;
-      font-weight: 800;
-      padding: 0.65rem 0.85rem;
-      border-radius: 10px;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .rc-book-action-btn {
-      flex: 1;
-      background: linear-gradient(135deg, #1d4ed8, #0284c7);
-      color: #ffffff;
-      border: none;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 900;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 0 4px 14px rgba(29, 78, 216, 0.4);
-      transition: all 0.2s ease;
-    }
-
-    .rc-book-action-btn:active {
-      transform: scale(0.97);
-      background: linear-gradient(135deg, #1e40af, #0369a1);
-    }
-
-    /* Segmented Control for My Rides (Tickets & Fleet) */
-    .segmented-control {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: #0f172a;
-      padding: 4px;
-      border-radius: 14px;
-      border: 1px solid var(--border-accent);
-      margin-bottom: 1rem;
-      gap: 4px;
-    }
-
-    .segment-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.65rem 0.5rem;
-      font-size: 0.84rem;
-      font-weight: 800;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .segment-btn.active {
-      background: linear-gradient(135deg, #0284c7, #1d4ed8);
-      color: #ffffff;
-      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
-    }
-
-    /* Modal Backdrop & Card */
+    /* Modal Backdrop */
     .modal-backdrop {
+      display: none;
       position: fixed;
       inset: 0;
-      z-index: 99999;
+      z-index: 9999;
       background: rgba(2, 6, 23, 0.85);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      display: none;
+      backdrop-filter: blur(8px);
       align-items: center;
       justify-content: center;
       padding: 1rem;
@@ -648,23 +344,22 @@
 
     .modal-card {
       background: #0f172a;
-      border: 2px solid var(--primary);
-      border-radius: 20px;
-      padding: 1.25rem 1.35rem;
+      border: 1.5px solid #0284c7;
+      border-radius: 18px;
+      padding: 1.25rem;
       width: 100%;
-      max-width: 480px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      max-width: 440px;
       max-height: 90vh;
       overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
     }
 
-    /* Toast Notification */
     .toast-banner {
       position: fixed;
-      top: 65px;
+      top: 64px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 99999;
+      z-index: 10000;
       background: #15803d;
       color: white;
       padding: 0.65rem 1.25rem;
@@ -683,7 +378,7 @@
   <!-- Floating Toast Notification -->
   <div id="toast-banner" class="toast-banner">✓ Notification</div>
 
-  <!-- ==================== HEADER (CLEAN STICKY UBER/BLABLACAR STYLE) ==================== -->
+  <!-- Header -->
   <header class="app-header">
     <div class="header-left">
       <a href="#" class="brand-logo" onclick="showSection('live-cars'); return false;">
@@ -702,12 +397,46 @@
     </div>
   </header>
 
+  <!-- 6-Button Navigation Matrix (Strict 3x2 Grid - Never Stacks Vertically!) -->
+  <nav class="nav-grid-wrapper">
+    <!-- Row 1: 3 Live Action Buttons -->
+    <div class="nav-row">
+      <button class="nav-btn active" id="btn-nav-live" onclick="showSection('live-cars')">
+        <span>🟢</span>
+        <span>Live Cars (<span id="nav-live-count">4</span>)</span>
+      </button>
+      <button class="nav-btn" id="btn-nav-driver" onclick="showSection('driver')">
+        <span>🚗</span>
+        <span>Post Ride</span>
+      </button>
+      <button class="nav-btn" id="btn-nav-search" onclick="showSection('passenger')">
+        <span>🔍</span>
+        <span>Find Ride</span>
+      </button>
+    </div>
+
+    <!-- Row 2: 3 Account & Hub Buttons -->
+    <div class="nav-row">
+      <button class="nav-btn" id="btn-nav-profile" onclick="showSection('profile')">
+        <span>👤</span>
+        <span>Profile</span>
+      </button>
+      <button class="nav-btn" id="btn-nav-bookings" onclick="showSection('my-tickets')">
+        <span>🎟️</span>
+        <span>My Tickets (<span id="nav-tickets-count">0</span>)</span>
+      </button>
+      <button class="nav-btn" id="btn-nav-fleet" onclick="showSection('driver-fleet')">
+        <span>🚙</span>
+        <span>Driver Fleet (<span id="nav-fleet-count">4</span>)</span>
+      </button>
+    </div>
+  </nav>
+
   <main>
 
-    <!-- ==================== 1. 🟢 LIVE CARS (DEFAULT HOME FEED) ==================== -->
+    <!-- ==================== 1. 🟢 LIVE CARS (HOME PAGE) ==================== -->
     <section id="section-live-cars" class="app-section active">
       <div class="app-card">
-        <!-- Hero "Where to?" Search Bar Header -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
@@ -726,7 +455,7 @@
         <!-- Quick Route Filter Chips -->
         <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 0.85rem; scrollbar-width: none;">
           <button type="button" class="btn" id="chip-live-all" onclick="filterLiveCarsByRoute('all')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 800; border-radius: 20px; white-space: nowrap; background: #0284c7; color: white;">
-            All Routes (<span id="live-count-chip-all">0</span>)
+            All Routes (<span id="live-count-chip-all">4</span>)
           </button>
           <button type="button" class="btn" id="chip-live-shillong" onclick="filterLiveCarsByRoute('Shillong')" style="padding: 4px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
             Guwahati ➔ Shillong
@@ -739,7 +468,7 @@
           </button>
         </div>
 
-        <!-- Live Rides Feed Container -->
+        <!-- Live Rides Feed Container (ONLY LIVE CARS - NOTHING ELSE!) -->
         <div id="live-cars-list-container" style="display: flex; flex-direction: column; gap: 0.85rem;"></div>
       </div>
     </section>
@@ -806,7 +535,6 @@
             <input type="text" id="df-model" class="form-control" value="Swift Dzire" placeholder="e.g. Maruti Dzire, Ertiga, Innova">
           </div>
 
-          <!-- Camera Number Plate Scanner Box -->
           <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
               <label style="font-size: 0.8rem; font-weight: 800; color: #ffffff; margin: 0;">
@@ -962,45 +690,7 @@
       </div>
     </section>
 
-    <!-- ==================== 4. 🎟️ MY RIDES HUB (TICKETS & FLEET) ==================== -->
-    <section id="section-my-rides" class="app-section">
-      <div class="app-card">
-        <!-- Segmented Control for Passenger Tickets vs Driver Fleet -->
-        <div class="segmented-control">
-          <button type="button" class="segment-btn active" id="seg-btn-bookings" onclick="switchMyRidesTab('bookings')">
-            🎟️ Booked Tickets (<span id="seg-bookings-count">0</span>)
-          </button>
-          <button type="button" class="segment-btn" id="seg-btn-fleet" onclick="switchMyRidesTab('fleet')">
-            🚙 Driver Fleet (<span id="seg-fleet-count">0</span>)
-          </button>
-        </div>
-
-        <!-- Sub-View A: Passenger Tickets Container -->
-        <div id="subview-my-bookings">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-            <h3 style="font-size: 1rem; font-weight: 800; color: #ffffff; margin: 0;">🎟️ Your Digital Boarding Passes</h3>
-            <span style="font-size: 0.72rem; color: #94a3b8;">48h Active</span>
-          </div>
-          <div id="passenger-bookings-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
-        </div>
-
-        <!-- Sub-View B: Driver Fleet Container -->
-        <div id="subview-driver-fleet" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-            <div>
-              <h3 style="font-size: 1rem; font-weight: 800; color: #ffffff; margin: 0;">🚙 Your Listed Vehicles</h3>
-              <p style="font-size: 0.72rem; color: #94a3b8; margin: 2px 0 0 0;">Manage passenger seat requests & incoming UPI payments</p>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 800; border-radius: 8px;">
-              ➕ Post Car
-            </button>
-          </div>
-          <div id="driver-fleet-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== 5. 👤 PROFILE & AADHAAR KYC (100% FREE) ==================== -->
+    <!-- ==================== 4. 👤 PROFILE & AADHAAR KYC (100% FREE) ==================== -->
     <section id="section-profile" class="app-section">
       <div class="app-card">
         <!-- Not Logged In View -->
@@ -1097,6 +787,40 @@
             </button>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. 🎟️ MY TICKETS (PASSENGER BOOKING TICKETS ONLY) ==================== -->
+    <section id="section-my-tickets" class="app-section">
+      <div class="app-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🎟️ Your Digital Boarding Passes</h2>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Passenger booked tickets • Retained 48 hours</p>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="showSection('live-cars')" style="padding: 4px 10px; font-size: 0.74rem; border-radius: 8px;">
+            ➕ Book Another Seat
+          </button>
+        </div>
+
+        <div id="passenger-bookings-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 6. 🚙 DRIVER FLEET (DRIVER LISTED CARS & SEAT REQUESTS ONLY) ==================== -->
+    <section id="section-driver-fleet" class="app-section">
+      <div class="app-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Driver Fleet & Requests</h2>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Manage your posted vehicles and confirm incoming passenger seats</p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 800; border-radius: 8px;">
+            ➕ Post Another Car
+          </button>
+        </div>
+
+        <div id="driver-fleet-list-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
       </div>
     </section>
 
@@ -1198,96 +922,8 @@
     </div>
   </div>
 
-  <!-- ==================== 📱 MODERN DOCKED BOTTOM NAVIGATION (UBER / BLABLACAR) ==================== -->
-  <nav class="app-bottom-nav">
-    <div class="bottom-nav-inner">
-      <!-- 1. Live Rides (Home) -->
-      <button class="b-nav-item active" id="b-nav-live" onclick="showSection('live-cars')">
-        <div class="b-nav-icon-box">
-          <span class="b-nav-icon">🚗</span>
-          <span class="b-nav-badge" id="b-nav-live-badge">4</span>
-        </div>
-        <span class="b-nav-label">Live Rides</span>
-      </button>
-
-      <!-- 2. Find Ride (Search Corridor) -->
-      <button class="b-nav-item" id="b-nav-search" onclick="showSection('passenger')">
-        <div class="b-nav-icon-box">
-          <span class="b-nav-icon">🔍</span>
-        </div>
-        <span class="b-nav-label">Find Ride</span>
-      </button>
-
-      <!-- 3. Publish / Post Ride (Center Prominent Button) -->
-      <button class="b-nav-item b-nav-publish" id="b-nav-post" onclick="showSection('driver')">
-        <div class="b-publish-circle">
-          <span class="b-publish-icon">➕</span>
-        </div>
-        <span class="b-nav-label">Post Ride</span>
-      </button>
-
-      <!-- 4. My Rides (Activity Hub: Tickets & Fleet) -->
-      <button class="b-nav-item" id="b-nav-rides" onclick="showSection('my-rides')">
-        <div class="b-nav-icon-box">
-          <span class="b-nav-icon">🎟️</span>
-          <span class="b-nav-badge" id="b-nav-rides-badge" style="display: none;">0</span>
-        </div>
-        <span class="b-nav-label">My Rides</span>
-      </button>
-
-      <!-- 5. Profile & KYC -->
-      <button class="b-nav-item" id="b-nav-profile" onclick="showSection('profile')">
-        <div class="b-nav-icon-box">
-          <span class="b-nav-icon">👤</span>
-        </div>
-        <span class="b-nav-label">Profile</span>
-      </button>
-    </div>
-  </nav>
-
   <!-- ==================== CORE SCRIPT LOGIC ==================== -->
   <script>
-    function compressImageFile(file, maxDimension, quality, callback) {
-      if (!file) return;
-      if (file.type === 'application/pdf') {
-        const reader = new FileReader();
-        reader.onload = function(e) { callback(e.target.result); };
-        reader.readAsDataURL(file);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          let w = img.width;
-          let h = img.height;
-          if (w > h) {
-            if (w > maxDimension) {
-              h = Math.round((h * maxDimension) / w);
-              w = maxDimension;
-            }
-          } else {
-            if (h > maxDimension) {
-              w = Math.round((w * maxDimension) / h);
-              h = maxDimension;
-            }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL('image/jpeg', quality || 0.72);
-          callback(compressed);
-        };
-        img.onerror = function() {
-          callback(e.target.result);
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
     // 1. Data Store Initialization (Preserves real rides and bookings)
     let rides = JSON.parse(localStorage.getItem('ss_rides')) || [
       {
@@ -1412,63 +1048,50 @@
     }
 
     // =========================================================================
-    // 2. NAVIGATION & TAB SWITCHER
+    // 2. NAVIGATION & TAB SWITCHER (6 SEPARATE CLEAN SECTIONS)
     // =========================================================================
     function showSection(tab) {
       const secLive = document.getElementById('section-live-cars');
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
-      const secRides = document.getElementById('section-my-rides');
       const secProf = document.getElementById('section-profile');
+      const secTickets = document.getElementById('section-my-tickets');
+      const secFleet = document.getElementById('section-driver-fleet');
 
-      if (tab === 'bookings') {
-        tab = 'my-rides';
-        switchMyRidesTab('bookings');
-      } else if (tab === 'fleet') {
-        tab = 'my-rides';
-        switchMyRidesTab('fleet');
-      }
-
-      // 1. Toggle Sections
+      // 1. Toggle Sections (Only active section is displayed!)
       if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
       if (secDriver) secDriver.style.display = (tab === 'driver') ? 'block' : 'none';
       if (secPass) secPass.style.display = (tab === 'passenger') ? 'block' : 'none';
-      if (secRides) secRides.style.display = (tab === 'my-rides') ? 'block' : 'none';
       if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
+      if (secTickets) secTickets.style.display = (tab === 'my-tickets' || tab === 'bookings') ? 'block' : 'none';
+      if (secFleet) secFleet.style.display = (tab === 'driver-fleet' || tab === 'fleet') ? 'block' : 'none';
 
-      // 2. Update Docked Bottom Nav Active States
-      const bLive = document.getElementById('b-nav-live');
-      const bSearch = document.getElementById('b-nav-search');
-      const bPost = document.getElementById('b-nav-post');
-      const bRides = document.getElementById('b-nav-rides');
-      const bProf = document.getElementById('b-nav-profile');
+      // 2. Update 6 Nav Button Active States
+      const btnLive = document.getElementById('btn-nav-live');
+      const btnDriver = document.getElementById('btn-nav-driver');
+      const btnSearch = document.getElementById('btn-nav-search');
+      const btnProf = document.getElementById('btn-nav-profile');
+      const btnBookings = document.getElementById('btn-nav-bookings');
+      const btnFleet = document.getElementById('btn-nav-fleet');
 
-      if (bLive) bLive.classList.toggle('active', tab === 'live-cars');
-      if (bSearch) bSearch.classList.toggle('active', tab === 'passenger');
-      if (bPost) bPost.classList.toggle('active', tab === 'driver');
-      if (bRides) bRides.classList.toggle('active', tab === 'my-rides');
-      if (bProf) bProf.classList.toggle('active', tab === 'profile');
+      if (btnLive) btnLive.classList.toggle('active', tab === 'live-cars');
+      if (btnDriver) btnDriver.classList.toggle('active', tab === 'driver');
+      if (btnSearch) btnSearch.classList.toggle('active', tab === 'passenger');
+      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
+      if (btnBookings) btnBookings.classList.toggle('active', tab === 'my-tickets' || tab === 'bookings');
+      if (btnFleet) btnFleet.classList.toggle('active', tab === 'driver-fleet' || tab === 'fleet');
 
       // 3. Execution logic
       if (tab === 'live-cars') {
         renderLiveCarsHome();
       } else if (tab === 'driver') {
-        const user = getActiveUserProfile();
-        if (user) {
-          if (document.getElementById('df-driver-upi')) {
-            document.getElementById('df-driver-upi').value = user.phone ? (user.phone + '@upi') : '6901027507@nyes';
-          }
-        }
         goToDriverStep(1);
       } else if (tab === 'passenger') {
         executePassengerCorridorSearch();
-      } else if (tab === 'my-rides') {
-        const viewF = document.getElementById('subview-driver-fleet');
-        if (viewF && viewF.style.display === 'block') {
-          switchMyRidesTab('fleet');
-        } else {
-          switchMyRidesTab('bookings');
-        }
+      } else if (tab === 'my-tickets' || tab === 'bookings') {
+        renderPassengerBookings();
+      } else if (tab === 'driver-fleet' || tab === 'fleet') {
+        renderDriverFleet();
       } else if (tab === 'profile') {
         renderProfileView();
       }
@@ -1477,29 +1100,11 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function switchMyRidesTab(subview) {
-      const btnB = document.getElementById('seg-btn-bookings');
-      const btnF = document.getElementById('seg-btn-fleet');
-      const viewB = document.getElementById('subview-my-bookings');
-      const viewF = document.getElementById('subview-driver-fleet');
-
-      if (btnB) btnB.classList.toggle('active', subview === 'bookings');
-      if (btnF) btnF.classList.toggle('active', subview === 'fleet');
-      if (viewB) viewB.style.display = (subview === 'bookings') ? 'block' : 'none';
-      if (viewF) viewF.style.display = (subview === 'fleet') ? 'block' : 'none';
-
-      if (subview === 'bookings') {
-        renderPassengerBookings();
-      } else {
-        renderDriverFleet();
-      }
-    }
-
     function updateNavCounts() {
       const activeCarsCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.postedAt) && r.seatsAvailable > 0).length;
 
-      const bLiveBadge = document.getElementById('b-nav-live-badge');
-      if (bLiveBadge) bLiveBadge.innerText = activeCarsCount;
+      const navLiveEl = document.getElementById('nav-live-count');
+      if (navLiveEl) navLiveEl.innerText = activeCarsCount;
 
       const headerText = document.getElementById('header-live-count-text');
       if (headerText) headerText.innerText = activeCarsCount + ' Live Cars';
@@ -1508,27 +1113,20 @@
       if (chipAll) chipAll.innerText = activeCarsCount;
 
       const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp));
-      const segBookings = document.getElementById('seg-bookings-count');
-      if (segBookings) segBookings.innerText = activeBookings.length;
+      const navTicketsEl = document.getElementById('nav-tickets-count');
+      if (navTicketsEl) navTicketsEl.innerText = activeBookings.length;
 
       const user = getActiveUserProfile();
       let myRides = rides.filter(r => isWithin48Hours(r.postedAt));
       if (user && user.phone) {
         myRides = myRides.filter(r => r.driverPhone === user.phone);
       }
-      const segFleet = document.getElementById('seg-fleet-count');
-      if (segFleet) segFleet.innerText = myRides.length;
-
-      const totalRidesActivity = activeBookings.length + myRides.length;
-      const bRidesBadge = document.getElementById('b-nav-rides-badge');
-      if (bRidesBadge) {
-        bRidesBadge.innerText = totalRidesActivity;
-        bRidesBadge.style.display = totalRidesActivity > 0 ? 'inline-block' : 'none';
-      }
+      const navFleetEl = document.getElementById('nav-fleet-count');
+      if (navFleetEl) navFleetEl.innerText = myRides.length;
     }
 
     // =========================================================================
-    // 3. 🟢 LIVE CARS HOME FEED (BLABLACAR / UBER CARD FORMATTING)
+    // 3. 🟢 LIVE CARS HOME FEED (OPEN BROWSING FOR EVERYONE)
     // =========================================================================
     let currentLiveRouteFilter = 'all';
 
@@ -1593,93 +1191,59 @@
       }
 
       container.innerHTML = activeCars.map(r => {
-        const fare = r.farePerSeat || 100;
-        const driverName = r.driverName || 'Verified Driver';
-        const carModel = r.vehicleModel || 'Swift Dzire';
-        const plate = r.vehicleNumber || 'AS 01 TX 2010';
-        const dateStr = r.date || 'Today';
-        const timeStr = r.time || '08:30';
-
-        let arrTime = '11:15';
-        try {
-          const [h, m] = timeStr.split(':').map(Number);
-          const arrH = (h + 3) % 24;
-          arrTime = (arrH < 10 ? '0' : '') + arrH + ':' + (m < 10 ? '0' : '') + m;
-        } catch(e) {}
-
-        const driverAvatar = r.driverPhoto 
-          ? `<img src="${r.driverPhoto}" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:1.5px solid #22c55e;">`
-          : `<div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#0284c7,#1d4ed8); color:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.05rem;">${driverName.charAt(0)}</div>`;
-
+        const fare = r.farePerSeat || 300;
         return `
-          <div class="ride-card-blabla">
-            <!-- Top Timeline & Pricing Row -->
-            <div class="rc-top-bar">
-              <div class="rc-timeline">
-                <div class="rc-time-node">
-                  <span class="rc-time">${timeStr}</span>
-                  <span class="rc-node-bullet"></span>
-                  <span class="rc-city">${r.origin}</span>
+          <div class="live-car-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <strong style="font-size: 1.08rem; color: white;">${r.origin} ➔ ${r.destination}</strong>
+                  <span style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.65rem; font-weight: 800; padding: 1px 6px; border-radius: 9999px;">🟢 LIVE</span>
                 </div>
-                <div class="rc-line-connector"></div>
-                <div class="rc-time-node">
-                  <span class="rc-time" style="color:var(--text-muted);">${arrTime}</span>
-                  <span class="rc-node-bullet dest"></span>
-                  <span class="rc-city">${r.destination}</span>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                  📅 ${r.date || 'Today'} at <strong>${r.time || '08:30'}</strong>
                 </div>
               </div>
-
-              <div class="rc-price-tag">
-                <span class="rc-price-amount">₹${fare}</span>
-                <span class="rc-price-sub">per seat</span>
+              <div style="text-align: right;">
+                <div style="font-size: 1.35rem; font-weight: 900; color: #4ade80;">₹${fare}</div>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">per seat</span>
               </div>
             </div>
 
-            <!-- Details Grid (Vehicle & Driver) -->
-            <div class="rc-details-grid">
-              <div class="rc-col-info">
-                <span class="rc-col-label">Vehicle</span>
-                <span class="rc-col-val">🚗 ${carModel}</span>
-                <div style="margin-top:2px;">
-                  <span class="rc-hsrp-badge">IND • ${plate}</span>
-                </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.75rem;">
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="font-size: 0.68rem; color: var(--text-muted);">Vehicle:</div>
+                <div style="font-size: 0.84rem; font-weight: 800; color: white;">🚗 ${r.vehicleModel}</div>
+                <div class="rc-hsrp-badge">IND • ${r.vehicleNumber}</div>
               </div>
 
-              <div class="rc-col-info">
-                <span class="rc-col-label">Driver Profile</span>
-                <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
-                  ${driverAvatar}
-                  <div>
-                    <div style="font-weight:800; font-size:0.86rem; color:#ffffff;">${driverName}</div>
-                    <div class="rc-verified-shield">🛡️ AI Verified</div>
-                  </div>
+              <div style="background: rgba(2, 6, 23, 0.6); padding: 0.5rem 0.65rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="font-size: 0.68rem; color: var(--text-muted);">Driver:</div>
+                <div style="font-size: 0.84rem; font-weight: 800; color: white;">👤 ${r.driverName}</div>
+                <div style="margin-top: 3px;">
+                  <span style="background: rgba(2, 132, 199, 0.25); color: #38bdf8; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">
+                    💺 ${r.seatsAvailable} Seat(s) Left
+                  </span>
                 </div>
               </div>
             </div>
 
-            <!-- Bottom Row: Seats Left & Book CTA -->
-            <div class="rc-bottom-row">
-              <div class="rc-seat-pill">
-                💺 <strong>${r.seatsAvailable} Seat(s) Left</strong>
-              </div>
-              <button type="button" class="rc-book-action-btn" onclick="openBookingModalForRide('${r.id}')">
-                🎟️ Book Seat (₹${fare}) ➔
-              </button>
-            </div>
+            <button type="button" class="btn btn-primary" onclick="openBookingModalForRide('${r.id}')" style="width: 100%; padding: 0.75rem; font-weight: 900;">
+              🎟️ Book Seat (₹${fare}) ➔
+            </button>
           </div>
         `;
       }).join('');
     }
 
     function refreshLiveCarsFeed() {
-      showToast('🔄 Checking cloud server for live cars...', '#0284c7');
-      syncWithCloudRelay();
+      showToast('🔄 Refreshing live cars from cloud...', '#0284c7');
       if (typeof db !== 'undefined' && db) {
         db.collection('ss_rides').get().then(snapshot => {
           const cloudRides = [];
           snapshot.forEach(doc => {
             const data = doc.data();
-            if (data && !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(data.id)) {
+            if (data) {
               if (!data.id) data.id = doc.id;
               cloudRides.push(data);
             }
@@ -1688,7 +1252,7 @@
             mergeIncomingCloudRides(cloudRides);
           }
           renderLiveCarsHome();
-          showToast('✓ Live cars feed updated!', '#15803d');
+          showToast('✓ Live cars updated!', '#15803d');
         }).catch(err => {
           renderLiveCarsHome();
         });
@@ -1698,11 +1262,11 @@
     }
 
     // =========================================================================
-    // 4. 🎟️ BOOKING MODAL & SEAT RESERVATION (AADHAAR GATE ENFORCED)
+    // 4. 🎟️ BOOKING MODAL (AADHAAR GATE CHECKED BEFORE SEAT RESERVATION)
     // =========================================================================
     function openBookingModalForRide(rideId) {
       if (!isUserLoggedIn()) {
-        alert('⚠️ सीट बुक करने के लिए रजिस्ट्रेशन/लॉगिन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
+        alert('⚠️ सीट बुक करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
         showSection('profile');
         setAuthMode('login');
         return;
@@ -1842,12 +1406,12 @@
       }
 
       closeBookingModal();
-      showToast('🎉 Booking Submitted! Ticket issued under My Bookings.', '#15803d');
-      showSection('bookings');
+      showToast('🎉 Booking Submitted! Ticket issued under My Tickets.', '#15803d');
+      showSection('my-tickets');
     }
 
     // =========================================================================
-    // 5. 🚗 POST RIDE (DRIVER LISTING WIZARD CONTROLLER)
+    // 5. 🚗 POST RIDE (AADHAAR GATE CHECKED BEFORE DRIVER LISTING)
     // =========================================================================
     function setDriverRoute(from, to) {
       document.getElementById('df-from').value = from;
@@ -1984,26 +1548,20 @@
 
       rides.unshift(newRide);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
-      broadcastRidesToCloud(rides);
 
-      if (!db && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { db = firebase.firestore(); } catch(e){}
-      }
       if (db) {
         try {
           const cleanDoc = { ...newRide };
-          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) {
+          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 200000) {
             cleanDoc.driverQr = 'mitali_qr_compact.svg';
           }
           db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true })
             .then(() => console.log('✓ Successfully wrote ride to Firestore!'))
             .catch(err => console.error('Firestore write error:', err));
-        } catch(e){
-          console.error(e);
-        }
+        } catch(e){}
       }
 
-      // WhatsApp Notification to Admin (STRICTLY NO LINKS)
+      // WhatsApp Notification to Admin (NO LINKS)
       const waMsg = `*SAFARSAATHI NEW RIDE PENDING APPROVAL*%0A%0A` +
         `🚗 *Ride ID:* ${newRide.id}%0A` +
         `👤 *Driver Name:* ${user.name}%0A` +
@@ -2020,7 +1578,7 @@
       window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
 
       showToast('🎉 Ride submitted! Status pending ₹100 admin verification.', '#15803d');
-      showSection('fleet');
+      showSection('driver-fleet');
     }
 
     // =========================================================================
@@ -2048,7 +1606,7 @@
             <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔍</div>
             <strong style="color: white; font-size: 0.95rem;">No active cars found for this corridor</strong>
             <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">
-              Check the 🟢 Live Rides home tab for all vacant cars across Assam.
+              Check the 🟢 Live Cars home tab for all vacant cars across Assam.
             </p>
           </div>
         `;
@@ -2307,7 +1865,7 @@
     }
 
     // =========================================================================
-    // 8. 🎟️ MY BOOKINGS (PASSENGER TICKETS & BOARDING PASS)
+    // 8. 🎟️ MY TICKETS (PASSENGER TICKETS & BOARDING PASS ONLY)
     // =========================================================================
     function renderPassengerBookings() {
       const container = document.getElementById('passenger-bookings-list-container');
@@ -2337,40 +1895,46 @@
         return;
       }
 
-      container.innerHTML = myBookings.map(b => `
-        <div style="background: rgba(2, 6, 23, 0.95); border: 1.5px solid #0284c7; border-radius: 14px; padding: 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
-            <div>
-              <strong style="color: white; font-size: 1rem;">${b.origin} ➔ ${b.destination}</strong>
-              <div style="font-size: 0.72rem; color: var(--text-muted);">ID: ${b.bookingId} • 📅 ${b.date} ${b.time}</div>
+      container.innerHTML = myBookings.map(b => {
+        const isConfirmed = b.status === 'CONFIRMED';
+        return `
+          <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; border-radius: 14px; padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
+              <div>
+                <strong style="color: white; font-size: 1rem;">${b.origin} ➔ ${b.destination}</strong>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                  📅 ${b.date} at ${b.time} • 🚗 ${b.vehicleModel} (${b.vehicleNumber})
+                </div>
+              </div>
+              <span style="background: ${isConfirmed ? '#15803d' : '#b45309'}; color: white; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">
+                ${isConfirmed ? '✓ CONFIRMED' : '⏳ AWAITING DRIVER'}
+              </span>
             </div>
-            <span style="background: #14532d; color: #86efac; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px;">
-              ${b.status === 'CONFIRMED' ? '✓ CONFIRMED' : '⏳ AWAITING DRIVER'}
-            </span>
-          </div>
 
-          <div style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 0.65rem;">
-            🚗 Vehicle: <strong>${b.vehicleModel} (${b.vehicleNumber})</strong><br>
-            👤 Driver: <strong>${b.driverName}</strong> (📱 +91 ${b.driverPhone})<br>
-            💺 Seats Booked: <strong>${b.seatsBooked}</strong> • Total Paid: <strong style="color: #4ade80;">₹${b.totalFare}</strong> (UTR: ${b.passengerUtr})
-          </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 0.6rem;">
+              Booked: <strong>${b.seatsBooked} Seat(s)</strong> • Total Fare: <strong style="color: #4ade80;">₹${b.totalFare}</strong><br>
+              Driver: <strong>${b.driverName}</strong> (📱 +91 ${b.driverPhone})
+            </div>
 
-          <a href="https://wa.me/91${b.driverPhone}?text=Hello%20${encodeURIComponent(b.driverName)},%20regarding%20my%20SafarSaathi%20booking%20${b.bookingId}..." target="_blank" class="btn btn-secondary" style="width: 100%; padding: 0.55rem; font-size: 0.82rem; text-decoration: none;">
-            💬 Chat with Driver on WhatsApp
-          </a>
-        </div>
-      `).join('');
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="https://wa.me/91${b.driverPhone}?text=Hello%20${encodeURIComponent(b.driverName)},%20I%20have%20booked%20${b.seatsBooked}%20seat(s)%20on%20SafarSaathi%20with%20UTR%20${b.passengerUtr}" target="_blank" class="btn btn-secondary" style="flex: 1; padding: 0.5rem; font-size: 0.78rem; text-decoration: none; color: #86efac; border-color: #22c55e;">
+                💬 Chat Driver on WhatsApp
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     // =========================================================================
-    // 9. 🚙 DRIVER FLEET (POSTED CARS & BOOKING CONFIRMATIONS)
+    // 9. 🚙 DRIVER FLEET (DRIVER LISTED CARS & SEAT REQUESTS ONLY)
     // =========================================================================
     function renderDriverFleet() {
       const container = document.getElementById('driver-fleet-list-container');
       if (!container) return;
 
       const user = getActiveUserProfile();
-      let myRides = rides.filter(r => isWithin48Hours(r.postedAt || r.approvedAt));
+      let myRides = rides.filter(r => isWithin48Hours(r.postedAt));
       if (user && user.phone) {
         myRides = myRides.filter(r => r.driverPhone === user.phone);
       }
@@ -2381,12 +1945,12 @@
         container.innerHTML = `
           <div style="text-align: center; padding: 2rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
             <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚙</div>
-            <strong style="color: white; font-size: 0.95rem;">No Posted Vehicles in the last 48 Hours</strong>
+            <strong style="color: white; font-size: 0.95rem;">No Listed Vehicles in the last 48 Hours</strong>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
-              Post your car above to start picking up passengers and earning!
+              List your empty seats to start earning ₹300 - ₹500 per seat!
             </p>
             <button type="button" class="btn btn-primary" onclick="showSection('driver')">
-              🚗 Post a Vehicle (Car #1, Car #2...) ➔
+              🚗 List Your Vehicle Now ➔
             </button>
           </div>
         `;
@@ -2397,27 +1961,32 @@
         const isLive = (r.status || '').toUpperCase() === 'ACTIVE';
         const pendingBookings = bookings.filter(b => b.rideId === r.id && b.status === 'AWAITING_DRIVER_CONFIRMATION');
 
-        let incomingHtml = '';
+        let reqHtml = '';
         if (pendingBookings.length > 0) {
-          incomingHtml = `
-            <div style="margin-top: 0.65rem; border-top: 1.5px dashed #f59e0b; padding-top: 0.65rem;">
-              <strong style="color: #fbbf24; font-size: 0.82rem; display: block; margin-bottom: 0.4rem;">
-                🔔 Incoming Booking Requests (${pendingBookings.length})
+          reqHtml = `
+            <div style="margin-top: 0.75rem; border-top: 1px dashed #f59e0b; padding-top: 0.65rem;">
+              <strong style="color: #f59e0b; font-size: 0.82rem; display: block; margin-bottom: 0.4rem;">
+                🔔 Incoming Passenger Seat Requests (${pendingBookings.length}):
               </strong>
               ${pendingBookings.map(pb => `
-                <div style="background: rgba(2, 6, 23, 0.8); border: 1px solid #f59e0b; border-radius: 8px; padding: 0.6rem; margin-bottom: 0.45rem;">
-                  <div style="display: flex; justify-content: space-between; font-size: 0.82rem;">
-                    <strong>👤 ${pb.passengerName}</strong>
-                    <span style="color: #4ade80; font-weight: 800;">₹${pb.totalFare}</span>
+                <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 0.65rem; margin-bottom: 0.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                      <strong style="color: white; font-size: 0.85rem;">${pb.passengerName}</strong>
+                      <span style="font-size: 0.72rem; color: #94a3b8;"> (📱 +91 ${pb.passengerPhone})</span>
+                    </div>
+                    <span style="background: #15803d; color: white; font-weight: 800; font-size: 0.78rem; padding: 1px 6px; border-radius: 4px;">
+                      ₹${pb.totalFare} to collect
+                    </span>
                   </div>
-                  <div style="font-size: 0.74rem; color: var(--text-muted); margin: 2px 0 6px;">
-                    💺 ${pb.seatsBooked} Seat(s) • UTR: <strong style="color: #fbbf24;">${pb.passengerUtr}</strong>
+                  <div style="font-size: 0.75rem; color: #cbd5e1; margin: 3px 0 6px 0;">
+                    Requested: <strong>${pb.seatsBooked} Seat(s)</strong> • UTR: <span style="font-family: monospace; color: #fbbf24;">${pb.passengerUtr}</span>
                   </div>
-                  <div style="display: flex; gap: 0.4rem;">
-                    <button type="button" class="btn btn-success" onclick="driverConfirmBooking('${pb.bookingId}')" style="flex: 1; padding: 0.4rem; font-size: 0.75rem;">
-                      ✅ Confirm ₹${pb.totalFare} & Issue Seat
+                  <div style="display: flex; gap: 4px;">
+                    <button type="button" class="btn btn-primary" onclick="confirmPassengerBooking('${pb.bookingId}')" style="flex: 1; padding: 0.45rem; font-size: 0.75rem;">
+                      ✅ Confirm ₹${pb.totalFare} Received
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="driverRejectBooking('${pb.bookingId}')" style="flex: 0.8; padding: 0.4rem; font-size: 0.75rem;">
+                    <button type="button" class="btn btn-danger" onclick="rejectPassengerBooking('${pb.bookingId}')" style="flex: 0.7; padding: 0.45rem; font-size: 0.75rem;">
                       ❌ Reject
                     </button>
                   </div>
@@ -2428,120 +1997,58 @@
         }
 
         return `
-          <div style="background: rgba(2, 6, 23, 0.95); border: 1.5px solid ${isLive ? '#0284c7' : '#f59e0b'}; border-radius: 14px; padding: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.35rem;">
-              <strong>${r.origin} ➔ ${r.destination}</strong>
-              <span style="font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px; background: ${isLive ? '#14532d' : '#78350f'}; color: ${isLive ? '#86efac' : '#fde047'};">
-                ${isLive ? '✓ 100% LIVE' : '⏳ PENDING ₹100 VERIFICATION'}
+          <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid ${isLive ? '#0284c7' : '#f59e0b'}; border-radius: 14px; padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.45rem;">
+              <div>
+                <strong style="color: white; font-size: 1rem;">${r.origin} ➔ ${r.destination}</strong>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                  🚗 ${r.vehicleModel} (${r.vehicleNumber}) • 💺 ${r.seatsAvailable} Seats Left • Rate: ₹${r.farePerSeat}/seat
+                </div>
+              </div>
+              <span style="background: ${isLive ? '#14532d' : '#78350f'}; color: ${isLive ? '#86efac' : '#fde68a'}; border: 1px solid ${isLive ? '#22c55e' : '#f59e0b'}; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">
+                ${isLive ? '✓ 100% LIVE ON PORTAL' : '⏳ PENDING ₹100 VERIFICATION'}
               </span>
             </div>
 
-            <div style="font-size: 0.8rem; color: #cbd5e1;">
-              🚗 ${r.vehicleModel} (${r.vehicleNumber}) • 💺 ${r.seatsAvailable} Seats Left • ₹${r.farePerSeat}/seat<br>
-              📅 ${r.date} ${r.time} • Listing UTR: <span style="font-family: monospace; color: #fbbf24;">${r.platformFeeUtr || r.utrNumber || 'N/A'}</span>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+              📅 ${r.date} at ${r.time} • Listing UTR: <span style="font-family: monospace;">${r.platformFeeUtr || r.utrNumber || 'N/A'}</span>
             </div>
 
-            ${incomingHtml}
+            ${reqHtml}
           </div>
         `;
       }).join('');
     }
 
-    function driverConfirmBooking(bkId) {
-      const b = bookings.find(item => item.bookingId === bkId);
+    function confirmPassengerBooking(bookingId) {
+      const b = bookings.find(item => item.bookingId === bookingId);
       if (!b) return;
       b.status = 'CONFIRMED';
       localStorage.setItem('ss_bookings', JSON.stringify(bookings));
       if (db) {
-        try { db.collection('ss_bookings').doc(bkId).update({ status: 'CONFIRMED' }); } catch(e){}
+        try { db.collection('ss_bookings').doc(bookingId).update({ status: 'CONFIRMED' }); } catch(e){}
       }
-      showToast('✓ Seat Confirmed! Passenger notified.', '#15803d');
       renderDriverFleet();
+      showToast('✓ Seat Confirmed! Passenger notified.', '#15803d');
     }
 
-    function driverRejectBooking(bkId) {
-      const b = bookings.find(item => item.bookingId === bkId);
+    function rejectPassengerBooking(bookingId) {
+      const b = bookings.find(item => item.bookingId === bookingId);
       if (!b) return;
       b.status = 'REJECTED';
-      const r = rides.find(item => item.id === b.rideId);
-      if (r) {
-        r.seatsAvailable = (r.seatsAvailable || 0) + (parseInt(b.seatsBooked) || 1);
-        localStorage.setItem('ss_rides', JSON.stringify(rides));
-      }
       localStorage.setItem('ss_bookings', JSON.stringify(bookings));
       if (db) {
-        try {
-          db.collection('ss_bookings').doc(bkId).update({ status: 'REJECTED' });
-          if (r) db.collection('ss_rides').doc(r.id).update({ seatsAvailable: r.seatsAvailable });
-        } catch(e){}
+        try { db.collection('ss_bookings').doc(bookingId).update({ status: 'REJECTED' }); } catch(e){}
       }
-      showToast('Booking rejected.', '#dc2626');
       renderDriverFleet();
+      showToast('Booking request rejected.', '#dc2626');
     }
 
     // =========================================================================
-    // 10. REAL-TIME CLOUD SERVER ENGINE (FIRESTORE SYNC)
+    // 10. CLOUD SYNC & INITIALIZATION
     // =========================================================================
-    const CLOUD_SYNC_URL = 'https://kvdb.io/safarsaathi_assam_2026/rides';
-
-    function syncWithCloudRelay() {
-      fetch(CLOUD_SYNC_URL)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data) && data.length > 0) {
-            mergeIncomingCloudRides(data);
-          }
-        }).catch(() => {});
-    }
-
-    function broadcastRidesToCloud(updatedRides) {
-      localStorage.setItem('ss_rides', JSON.stringify(updatedRides));
-      try {
-        fetch(CLOUD_SYNC_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedRides)
-        }).catch(() => {});
-      } catch(e){}
-    }
-
-    function initFirebase() {
-      if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
-        try {
-          if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-          }
-          if (firebase.auth) {
-            firebase.auth().signInAnonymously().catch(() => {});
-          }
-          if (firebase.firestore) {
-            db = firebase.firestore();
-            console.log('Firebase Cloud Firestore live across all devices');
-
-            db.collection('ss_rides').onSnapshot(snapshot => {
-              const cloudRides = [];
-              snapshot.forEach(doc => {
-                const data = doc.data();
-                if (data && !['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(data.id)) {
-                  if (!data.id) data.id = doc.id;
-                  cloudRides.push(data);
-                }
-              });
-              if (cloudRides.length > 0) {
-                mergeIncomingCloudRides(cloudRides);
-              }
-            }, err => {
-              console.warn('Firestore onSnapshot notice:', err);
-            });
-          }
-        } catch(e) {
-          console.error('Firebase init error:', e);
-        }
-      }
-    }
-
     function mergeIncomingCloudRides(cloudRides) {
-      if (!cloudRides || !Array.isArray(cloudRides)) return;
+      if (!cloudRides || !Array.isArray(cloudRides) || cloudRides.length === 0) return;
       let currentLocal = JSON.parse(localStorage.getItem('ss_rides')) || [];
       const localMap = new Map(currentLocal.map(r => [r.id, r]));
 
@@ -2561,43 +2068,53 @@
 
       rides = merged;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
-
       renderLiveCarsHome();
       renderDriverFleet();
-      renderPassengerBookings();
       updateNavCounts();
     }
 
-    // =========================================================================
-    // 11. INITIALIZATION ON APP LOAD (DEFAULT: 🟢 LIVE CARS)
-    // =========================================================================
-    window.addEventListener('DOMContentLoaded', () => {
-      if (document.getElementById('df-date')) document.getElementById('df-date').value = getTomorrowDate(1);
-      if (document.getElementById('ps-date')) document.getElementById('ps-date').value = getTomorrowDate(1);
-
-      initFirebase();
-      showSection('live-cars');
-    });
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-          reg.update();
-        }).catch(() => {});
-      });
+    function initFirebase() {
+      if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          if (firebase.auth) {
+            firebase.auth().signInAnonymously().catch(() => {});
+          }
+          if (firebase.firestore) {
+            db = firebase.firestore();
+            db.collection('ss_rides').onSnapshot(snapshot => {
+              const cloudRides = [];
+              snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data) {
+                  if (!data.id) data.id = doc.id;
+                  cloudRides.push(data);
+                }
+              });
+              if (cloudRides.length > 0) {
+                mergeIncomingCloudRides(cloudRides);
+              }
+            });
+          }
+        } catch(e){}
+      }
     }
 
-    window.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') refreshLiveCarsFeed();
+    // App Startup
+    window.addEventListener('DOMContentLoaded', () => {
+      initFirebase();
+      showSection('live-cars');
+      renderLiveCarsHome();
     });
-    window.addEventListener('focus', () => { refreshLiveCarsFeed(); });
-    window.addEventListener('pageshow', () => { refreshLiveCarsFeed(); });
 
-    setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        if (typeof syncWithCloudRelay === 'function') syncWithCloudRelay();
-      }
-    }, 3000);
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.update();
+      }).catch(() => {});
+    }
   </script>
 </body>
 </html>
