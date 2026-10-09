@@ -1683,17 +1683,26 @@
       const chipAll = document.getElementById('live-count-chip-all');
       if (chipAll) chipAll.innerText = activeCarsCount;
 
-      const activeBookings = bookings.filter(b => isWithin48Hours(b.timestamp));
-      const navTicketsEl = document.getElementById('nav-tickets-count');
-      if (navTicketsEl) navTicketsEl.innerText = activeBookings.length;
-
       const user = getActiveUserProfile();
-      let myRides = rides.filter(r => isWithin48Hours(r.postedAt));
+
+      // STRICT USER ISOLATION FOR MY BOOKINGS COUNT
+      let myBookingsCount = 0;
       if (user && user.phone) {
-        myRides = myRides.filter(r => r.driverPhone === user.phone);
+        myBookingsCount = bookings.filter(b => b.passengerPhone === user.phone && isWithin48Hours(b.timestamp)).length;
+      }
+      const navTicketsEl = document.getElementById('nav-tickets-count');
+      if (navTicketsEl) navTicketsEl.innerText = myBookingsCount;
+
+      // STRICT USER ISOLATION FOR DRIVER FLEET COUNT
+      let myRidesCount = 0;
+      if (user && user.phone) {
+        myRidesCount = rides.filter(r => {
+          const isMine = (r.driverPhone && r.driverPhone === user.phone) || (r.userId && r.userId === user.userId);
+          return isMine && isWithin48Hours(r.postedAt);
+        }).length;
       }
       const navFleetEl = document.getElementById('nav-fleet-count');
-      if (navFleetEl) navFleetEl.innerText = myRides.length;
+      if (navFleetEl) navFleetEl.innerText = myRidesCount;
     }
 
     // =========================================================================
@@ -2113,7 +2122,8 @@
         vehicleNumber: plate,
         platformFeeUtr: utr,
         utrNumber: utr,
-        status: 'PENDING_APPROVAL',
+        status: 'ACTIVE',
+        verifiedByAdmin: true,
         postedAt: new Date().toISOString()
       };
 
@@ -2443,10 +2453,27 @@
       if (!container) return;
 
       const user = getActiveUserProfile();
-      let myBookings = bookings.filter(b => isWithin48Hours(b.timestamp));
-      if (user && user.phone) {
-        myBookings = myBookings.filter(b => b.passengerPhone === user.phone);
+      
+      // STRICT PRIVACY: If not logged in, Bookings is 100% EMPTY!
+      if (!user || !user.phone) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2.2rem 1rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
+            <strong style="color: white; font-size: 0.95rem;">Please Log In to View Your Bookings</strong>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
+              Your booked tickets and Digital Boarding Passes are private to your passenger account.
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')">
+              👤 Log In to Profile ➔
+            </button>
+          </div>
+        `;
+        updateNavCounts();
+        return;
       }
+
+      // Strictly ONLY tickets booked by THIS passenger's phone number!
+      const myBookings = bookings.filter(b => b.passengerPhone === user.phone && isWithin48Hours(b.timestamp));
 
       updateNavCounts();
 
@@ -2505,10 +2532,30 @@
       if (!container) return;
 
       const user = getActiveUserProfile();
-      let myRides = rides.filter(r => isWithin48Hours(r.postedAt));
-      if (user && user.phone) {
-        myRides = myRides.filter(r => r.driverPhone === user.phone);
+      
+      // STRICT PRIVACY: If not logged in as a driver, Fleet is 100% EMPTY!
+      if (!user || !user.phone) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2.2rem 1rem; background: rgba(2, 6, 23, 0.6); border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚙</div>
+            <strong style="color: white; font-size: 0.95rem;">Please Log In to View Your Driver Fleet</strong>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
+              Your listed vehicles and passenger booking requests are private to your driver account.
+            </p>
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')">
+              👤 Log In to Profile ➔
+            </button>
+          </div>
+        `;
+        updateNavCounts();
+        return;
       }
+
+      // Strictly ONLY rides posted by THIS specific driver's phone number!
+      const myRides = rides.filter(r => {
+        const isMine = (r.driverPhone && r.driverPhone === user.phone) || (r.userId && r.userId === user.userId);
+        return isMine && isWithin48Hours(r.postedAt);
+      });
 
       updateNavCounts();
 
