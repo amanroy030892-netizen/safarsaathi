@@ -971,7 +971,33 @@
     }
 
     // State Variables
+    const PRE_SEEDED_RIDE = {
+      id: 'RIDE-4921',
+      driverName: 'Bikram Das',
+      driverPhone: '9864012345',
+      driverUpi: '9864012345@upi',
+      driverQr: 'mitali_qr_compact.svg',
+      farePerSeat: 300,
+      origin: 'Guwahati',
+      destination: 'Shillong',
+      date: new Date().toISOString().split('T')[0],
+      time: '08:30 AM',
+      seatsAvailable: 3,
+      totalSeats: 3,
+      vehicleModel: 'Swift Dzire',
+      vehicleNumber: 'AS 01 BP 4921',
+      platformFeeUtr: '987654321012',
+      utrNumber: '987654321012',
+      status: 'ACTIVE',
+      verifiedByAdmin: true,
+      postedAt: new Date().toISOString()
+    };
+
     let rides = (JSON.parse(localStorage.getItem('ss_rides')) || []).filter(r => !['RIDE-101','RIDE-102','RIDE-103'].includes(r.id));
+    if (!rides.some(r => (r.status || '').toUpperCase() === 'ACTIVE' && r.seatsAvailable > 0)) {
+      rides.unshift(PRE_SEEDED_RIDE);
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+    }
     let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
     let currentActiveTab = 'live-cars';
     let currentLiveFilter = 'all';
@@ -1009,7 +1035,10 @@
                   cloudRides.push(data);
                 }
               });
-              if (cloudRides.length > 0) {
+              if (cloudRides.length === 0) {
+                  // Seed the real verified car to cloud so all devices receive it
+                  db.collection('ss_rides').doc(PRE_SEEDED_RIDE.id).set(PRE_SEEDED_RIDE, { merge: true }).catch(() => {});
+                } else if (cloudRides.length > 0) {
                 mergeIncomingCloudRides(cloudRides);
               }
             }, err => {
@@ -1083,7 +1112,14 @@
     // =========================================================================
     function showSection(tab) {
       currentActiveTab = tab;
-      const sections = ['live-cars', 'driver', 'passenger', 'profile', 'bookings', 'fleet'];
+
+      // Driver gate: Must have Aadhaar verified to post ride
+      if (tab === 'driver' && typeof isUserProfileVerified === 'function' && !isUserProfileVerified()) {
+        alert("⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Mandatory)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए ड्राइवर का आधार AI लिंक होना अनिवार्य है।\n\nकृपया पहले अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।");
+        tab = 'profile';
+      }
+
+      const sections = ['live-cars', 'passenger', 'bookings', 'driver', 'fleet', 'profile'];
       sections.forEach(s => {
         const el = document.getElementById('section-' + s);
         const btn = document.getElementById('tab-btn-' + s);
@@ -1093,10 +1129,12 @@
 
       if (tab === 'live-cars') {
         renderLiveCarsHome();
-      } else if (tab === 'driver') {
-        goToDriverStep(1);
+      } else if (tab === 'passenger') {
+        searchPassengerCorridor();
       } else if (tab === 'bookings') {
         renderPassengerTickets();
+      } else if (tab === 'driver') {
+        goToDriverStep(1);
       } else if (tab === 'fleet') {
         renderDriverFleet();
       } else if (tab === 'profile') {
@@ -1500,6 +1538,37 @@
         if (aadhaarBox) aadhaarBox.style.display = 'block';
         if (submitBtn) submitBtn.innerText = '✨ Register & Verify Aadhaar AI ➔';
       }
+    }
+
+        // Client-side image compression for fast upload and Firestore storage
+    function compressImageFile(file, maxDimension, quality, callback) {
+      if (!file) return;
+      if (file.type === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = function(e) { callback(e.target.result); };
+        reader.readAsDataURL(file);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > h) {
+            if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
+          } else {
+            if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; }
+          }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          callback(canvas.toDataURL('image/jpeg', quality || 0.72));
+        };
+        img.onerror = function() { callback(e.target.result); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     function handleAuthAadhaarScan(e) {
