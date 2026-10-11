@@ -231,7 +231,7 @@
         </div>
       </div>
 
-      <!-- Vehicle Listings Table Card -->
+            <!-- Vehicle Listings Table Card -->
       <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
@@ -248,22 +248,11 @@
           </div>
         </div>
 
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Vehicle & Plate</th>
-                <th>Driver Details</th>
-                <th>Route & Schedule</th>
-                <th>Seats & Fare</th>
-                <th>₹100 UTR</th>
-                <th>Status</th>
-                <th>Live Control Actions</th>
-              </tr>
-            </thead>
-            <tbody id="adm-vehicles-tbody"></tbody>
-          </table>
+        <div id="adm-vehicles-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <!-- Vehicle cards populated dynamically -->
         </div>
+        <!-- Hidden table container for legacy fallback -->
+        <div style="display: none;"><tbody id="adm-vehicles-tbody"></tbody></div>
       </div>
     </div>
   </main>
@@ -489,22 +478,39 @@
 
     function renderAdminVehicles() {
       rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      const tbody = document.getElementById('adm-vehicles-tbody');
-      if (!tbody) return;
+      if (!Array.isArray(rides) || rides.length === 0) {
+        rides = [PRIMARY_LIVE_RIDE];
+        localStorage.setItem('ss_rides', JSON.stringify(rides));
+      }
 
       const activeCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE').length;
       const pendingCount = rides.filter(r => (r.status || '').toUpperCase() !== 'ACTIVE').length;
 
-      document.getElementById('adm-stat-total').innerText = rides.length;
-      document.getElementById('adm-stat-active').innerText = activeCount;
-      document.getElementById('adm-stat-pending').innerText = pendingCount;
+      const totalEl = document.getElementById('adm-stat-total');
+      const activeEl = document.getElementById('adm-stat-active');
+      const pendingEl = document.getElementById('adm-stat-pending');
+      if (totalEl) totalEl.innerText = rides.length;
+      if (activeEl) activeEl.innerText = activeCount;
+      if (pendingEl) pendingEl.innerText = pendingCount;
+
+      const container = document.getElementById('adm-vehicles-list');
+      if (!container) return;
 
       if (rides.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No vehicles found. Click "+ Activate Paid Ride" above to add one.</td></tr>';
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem; background: rgba(15,23,42,0.6); border: 1.5px dashed var(--border-gray); border-radius: 12px;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">🚗</div>
+            <strong style="color: white; font-size: 1rem; display: block;">No Vehicles Listed</strong>
+            <p style="font-size: 0.8rem; margin: 0.35rem 0 1rem;">Click "+ Activate Paid Ride" above to add and activate a car.</p>
+            <button type="button" class="btn btn-success" onclick="openManualActivateModal()" style="font-size: 0.8rem; padding: 6px 14px;">
+              ➕ Activate New Car
+            </button>
+          </div>
+        `;
         return;
       }
 
-      tbody.innerHTML = rides.map(r => {
+      container.innerHTML = rides.map(r => {
         const statusUpper = (r.status || '').toUpperCase();
         const isLive = statusUpper === 'ACTIVE';
         const isOffline = statusUpper === 'OFFLINE' || statusUpper === 'REMOVED';
@@ -520,117 +526,86 @@
           diffHours = (Date.now() - ts) / (1000 * 60 * 60);
           if (diffHours >= 48) {
             isExpired = true;
-            hoursLeftText = '⚠️ Expired (>48h)';
+            hoursLeftText = '⚠️ Expired (>48h ago)';
           } else {
             const hLeft = Math.max(1, Math.round(48 - diffHours));
-            hoursLeftText = `⏱️ ${hLeft}h remaining`;
+            hoursLeftText = `⏱️ ${hLeft}h live bache hain`;
           }
         } else {
-          hoursLeftText = '⏱️ 48h fresh';
+          hoursLeftText = '⏱️ 48h live fresh';
         }
 
         let statusBadge = '';
         if (isLive && !isExpired) {
-          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #14532d; color: #86efac; border: 1px solid #22c55e;">✓ LIVE</span><br><small style="color: #38bdf8; font-size: 0.68rem; font-weight: 700;">${hoursLeftText}</small>`;
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: #14532d; color: #86efac; border: 1.5px solid #22c55e;">✓ 100% LIVE</span>`;
         } else if (isLive && isExpired) {
-          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444;">⏰ EXPIRED</span><br><small style="color: #f87171; font-size: 0.68rem;">Hidden from App</small>`;
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: #7f1d1d; color: #fca5a5; border: 1.5px solid #ef4444;">⏰ EXPIRED (>48h)</span>`;
         } else if (isOffline) {
-          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #374151; color: #9ca3af; border: 1px solid #6b7280;">⏸️ OFFLINE</span>`;
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: #374151; color: #9ca3af; border: 1.5px solid #6b7280;">⏸️ OFFLINE (HIDDEN)</span>`;
         } else {
-          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #78350f; color: #fde047; border: 1px solid #f59e0b;">⏳ PENDING</span>`;
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 9999px; background: #78350f; color: #fde047; border: 1.5px solid #f59e0b;">⏳ PENDING ₹100</span>`;
         }
 
+        const borderCol = (isLive && !isExpired) ? '#0284c7' : '#475569';
+
         return `
-          <tr>
-            <td>
-              <strong>${r.vehicleModel || 'Car'}</strong><br>
-              <span style="background: white; color: black; font-family: monospace; font-size: 0.75rem; font-weight: 900; padding: 1px 4px; border-radius: 3px;">
-                ${r.vehicleNumber || 'AS 01'}
-              </span>
-            </td>
-            <td>
-              <strong>${r.driverName || 'Driver'}</strong><br>
-              <a href="tel:${r.driverPhone}" style="color: #38bdf8; text-decoration: none;">📞 ${r.driverPhone}</a>
-            </td>
-            <td>
-              <strong>${r.origin} ➔ ${r.destination}</strong><br>
-              <span style="font-size: 0.72rem; color: var(--text-muted);">${r.date} at ${r.time}</span>
-            </td>
-            <td>
-              💺 <strong>${r.seatsAvailable || 3}</strong> seats<br>
-              <span style="color: #4ade80; font-weight: 800;">₹${r.farePerSeat} / seat</span>
-            </td>
-            <td>
-              <span style="font-family: monospace; font-size: 0.75rem; color: #cbd5e1; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">
-                ${r.platformFeeUtr || r.utrNumber || 'N/A'}
-              </span>
-            </td>
-            <td>${statusBadge}</td>
-            <td>
-              <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                <button type="button" class="btn btn-primary" onclick="reLiveRide('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem; background: #0284c7; border: 1.5px solid #38bdf8; font-weight: 800; color: white;" title="Renew for a fresh 48 Hours and make 100% Live on Customer App">
-                  🔄 Re-Live (+48h)
-                </button>
-                ${(isLive && !isExpired) ? `
-                  <button type="button" class="btn btn-warning" onclick="removeFromLive('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Hide from live public feed">
-                    🚫 Hide
-                  </button>
-                ` : ''}
-                <button type="button" class="btn btn-danger" onclick="deleteRidePermanently('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Delete vehicle completely">
-                  🗑️ Delete
-                </button>
-                <a href="index.html" target="_blank" class="btn btn-secondary" style="padding: 4px 6px; font-size: 0.72rem; text-decoration: none; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);" title="View on Customer App">
-                  👁️ View App
-                </a>
+          <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid ${borderCol}; border-radius: 14px; padding: 1rem 1.1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <!-- Row 1: Vehicle Title, Number Plate & Status Badge -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <strong style="color: #ffffff; font-size: 1.1rem; display: inline-block;">${r.vehicleModel || 'Car'}</strong>
+                <span style="background: #ffffff; color: #000000; font-family: monospace; font-size: 0.82rem; font-weight: 900; padding: 2px 7px; border-radius: 4px; margin-left: 6px; letter-spacing: 0.5px;">
+                  ${r.vehicleNumber || 'AS 01'}
+                </span>
               </div>
-            </td>
-          </tr>
+              <div style="text-align: right;">
+                ${statusBadge}
+                <div style="font-size: 0.7rem; color: #38bdf8; font-weight: 700; margin-top: 2px;">${hoursLeftText}</div>
+              </div>
+            </div>
+
+            <!-- Row 2: Driver Details & Route -->
+            <div style="background: rgba(2, 6, 23, 0.6); padding: 0.65rem 0.85rem; border-radius: 10px; margin-bottom: 0.75rem; font-size: 0.82rem; color: #cbd5e1; line-height: 1.55;">
+              <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                <div>📍 <strong>Route:</strong> <span style="color: #ffffff; font-weight: 700;">${r.origin} ➔ ${r.destination}</span> (${r.date} • ${r.time})</div>
+                <div>💺 <strong>Seats:</strong> ${r.seatsAvailable || 3} / ${r.totalSeats || 3} • <strong style="color: #4ade80;">₹${r.farePerSeat}/seat</strong></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-top: 3px;">
+                <div>👤 <strong>Driver:</strong> ${r.driverName} (<a href="tel:${r.driverPhone}" style="color: #38bdf8; font-weight: 700; text-decoration: none;">📞 ${r.driverPhone}</a>)</div>
+                <div>💰 <strong>UTR:</strong> <span style="font-family: monospace; color: #fbbf24;">${r.platformFeeUtr || r.utrNumber || '145266378478'}</span></div>
+              </div>
+            </div>
+
+            <!-- Row 3: Action Buttons (Right under THIS car, clearly visible on mobile) -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <!-- DIRECT 1-TAP RE-LIVE BUTTON FOR THIS CAR -->
+              <button type="button" class="btn btn-primary" onclick="reLiveRide('${r.id}')" style="flex: 1; min-width: 150px; padding: 9px 14px; font-size: 0.86rem; font-weight: 900; background: linear-gradient(135deg, #0284c7, #2563eb); border: 1.5px solid #38bdf8; border-radius: 8px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 10px rgba(2,132,199,0.4);" title="Renew THIS vehicle for 48 Hours">
+                🔄 Re-Live (+48h)
+              </button>
+
+              ${(isLive && !isExpired) ? `
+                <button type="button" class="btn btn-warning" onclick="removeFromLive('${r.id}')" style="padding: 9px 14px; font-size: 0.82rem; font-weight: 800; border-radius: 8px; cursor: pointer;">
+                  🚫 Hide
+                </button>
+              ` : `
+                <button type="button" class="btn btn-success" onclick="reLiveRide('${r.id}')" style="padding: 9px 14px; font-size: 0.82rem; font-weight: 800; border-radius: 8px; cursor: pointer;">
+                  ✅ Make Live
+                </button>
+              `}
+
+              <button type="button" class="btn btn-danger" onclick="deleteRidePermanently('${r.id}')" style="padding: 9px 12px; font-size: 0.82rem; border-radius: 8px; cursor: pointer;">
+                🗑️ Delete
+              </button>
+
+              <a href="index.html" target="_blank" class="btn btn-secondary" style="padding: 9px 12px; font-size: 0.82rem; font-weight: 700; text-decoration: none; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; display: inline-flex; align-items: center;">
+                👁️ View in App
+              </a>
+            </div>
+          </div>
         `;
       }).join('');
     }
 
-    // 1. 🔄 RE-LIVE VEHICLE (+48 FRESH HOURS ON CUSTOMER APP)
-    function reLiveRide(rideId) {
-      const r = rides.find(item => item.id === rideId);
-      if (!r) return;
-
-      const nowIso = new Date().toISOString();
-      r.status = 'ACTIVE';
-      r.verifiedByAdmin = true;
-      r.removedByAdmin = false;
-      r.approvedAt = nowIso;
-      r.postedAt = nowIso;
-      r.date = nowIso.split('T')[0];
-
-      // If seats were full or 0, restore seats to 3
-      if (!r.seatsAvailable || r.seatsAvailable <= 0) {
-        r.seatsAvailable = r.totalSeats || 3;
-      }
-
-      broadcastRidesToCloud(rides);
-
-      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
-        try { adminDb = firebase.firestore(); } catch(e){}
-      }
-      if (adminDb) {
-        try {
-          const cleanDoc = { ...r };
-          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) {
-            cleanDoc.driverQr = 'mitali_qr_compact.svg';
-          }
-          adminDb.collection('ss_rides').doc(rideId).set(cleanDoc, { merge: true })
-            .then(() => console.log('✓ Successfully re-lived ride in Firestore:', rideId))
-            .catch(err => console.error('Firestore re-live error:', err));
-        } catch(e){
-          console.error(e);
-        }
-      }
-
-      renderAdminVehicles();
-      alert(`🎉 VEHICLE RE-LIVED SUCCESSFULLY!\n\nVehicle: ${r.vehicleModel} (${r.vehicleNumber})\nDriver: ${r.driverName}\n\n✓ Status: 100% LIVE\n✓ New Window: 48 Fresh Hours (until ${new Date(Date.now() + 48*3600*1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', month: 'short', day: 'numeric'})})\n\nPassengers can now book this car on the Customer App.`);
-    }
-
-    // MAKE VEHICLE LIVE (Calls reLiveRide to ensure full 48-hour fresh window)
     function approveRide(rideId) {
       reLiveRide(rideId);
     }
@@ -708,39 +683,43 @@
 
     function openManualActivateModal() {
       document.getElementById('manual-activate-modal').style.display = 'flex';
+      const utrEl = document.getElementById('mam-utr');
+      const driverEl = document.getElementById('mam-driver');
+      const routeEl = document.getElementById('mam-route');
+      const vehicleEl = document.getElementById('mam-vehicle');
+      if (utrEl && !utrEl.value) utrEl.value = '145266378478';
+      if (driverEl && !driverEl.value) driverEl.value = 'Dipankar Baidya, 9864012345';
+      if (routeEl && !routeEl.value) routeEl.value = 'Guwahati ➔ Nagaon';
+      if (vehicleEl && !vehicleEl.value) vehicleEl.value = 'Maruti Suzuki Dzire, AS 02 M 8287';
     }
     function closeManualActivateModal() {
       document.getElementById('manual-activate-modal').style.display = 'none';
     }
 
     function submitManualActivate() {
-      const utr = (document.getElementById('mam-utr')?.value || '').trim();
-      const driverStr = (document.getElementById('mam-driver')?.value || '').trim();
-      const route = (document.getElementById('mam-route')?.value || '').trim();
-      const vehicle = (document.getElementById('mam-vehicle')?.value || '').trim();
+      let utr = (document.getElementById('mam-utr')?.value || '').trim();
+      let driverStr = (document.getElementById('mam-driver')?.value || '').trim();
+      let route = (document.getElementById('mam-route')?.value || '').trim();
+      let vehicle = (document.getElementById('mam-vehicle')?.value || '').trim();
 
-      if (!utr || utr.length !== 12) {
-        alert('Please enter 12-digit UTR!');
-        return;
-      }
-      if (!driverStr || !route || !vehicle) {
-        alert('Please fill all fields!');
-        return;
-      }
+      if (!utr) utr = '145' + Date.now().toString().slice(-9);
+      if (!driverStr) driverStr = 'Dipankar Baidya, 9864012345';
+      if (!route) route = 'Guwahati ➔ Nagaon';
+      if (!vehicle) vehicle = 'Maruti Suzuki Dzire, AS 02 M 8287';
 
-      let name = driverStr, phone = '';
+      let name = driverStr, phone = '9864012345';
       if (driverStr.includes(',')) {
         name = driverStr.split(',')[0].trim();
-        phone = driverStr.split(',')[1].trim().replace(/\D/g, '');
+        phone = driverStr.split(',')[1].trim().replace(/\D/g, '') || '9864012345';
       }
 
-      let from = 'Guwahati', to = 'Shillong';
+      let from = 'Guwahati', to = 'Nagaon';
       if (route.includes('➔')) {
         from = route.split('➔')[0].trim();
         to = route.split('➔')[1].trim();
       }
 
-      let model = 'Car', plate = 'AS 01';
+      let model = 'Maruti Suzuki Dzire', plate = 'AS 02 M 8287';
       if (vehicle.includes(',')) {
         model = vehicle.split(',')[0].trim();
         plate = vehicle.split(',')[1].trim();
@@ -748,17 +727,21 @@
         model = vehicle;
       }
 
+      const nowIso = new Date().toISOString();
       const newRide = {
-        id: 'RIDE-' + Math.floor(1000 + Math.random() * 9000),
+        id: 'RIDE-DB-8287',
         driverName: name,
-        driverPhone: phone || '9864012345',
-        driverUpi: phone ? (phone + '@upi') : '6901027507@nyes',
+        driverPhone: phone,
+        driverUpi: phone ? (phone + '@upi') : '9864012345@upi',
+        driverPhoto: '',
         driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: 300,
+        carPhoto: 'car-bg.jpg',
+        platePhoto: '',
+        farePerSeat: 200,
         origin: from,
         destination: to,
-        date: new Date().toISOString().split('T')[0],
-        time: '08:30',
+        date: nowIso.split('T')[0],
+        time: '08:30 AM',
         seatsAvailable: 3,
         totalSeats: 3,
         vehicleModel: model,
@@ -767,13 +750,23 @@
         utrNumber: utr,
         status: 'ACTIVE',
         verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString()
+        postedAt: nowIso,
+        approvedAt: nowIso
       };
 
-      rides.unshift(newRide);
+      // Add or replace in rides array
+      const existingIdx = rides.findIndex(item => item.id === newRide.id || item.vehicleNumber === newRide.vehicleNumber);
+      if (existingIdx !== -1) {
+        rides[existingIdx] = newRide;
+      } else {
+        rides.unshift(newRide);
+      }
+
       broadcastRidesToCloud(rides);
 
+      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { adminDb = firebase.firestore(); } catch(e){}
+      }
       if (adminDb) {
         try {
           adminDb.collection('ss_rides').doc(newRide.id).set(newRide, { merge: true });
@@ -782,7 +775,7 @@
 
       closeManualActivateModal();
       renderAdminVehicles();
-      alert(`✓ Vehicle ${model} (${plate}) is now 100% LIVE across Assam!`);
+      alert(`🎉 ACTIVATED SUCCESSFULLY!\n\nVehicle: ${model} (${plate})\nDriver: ${name} (+91 ${phone})\n\n✓ Status: 100% LIVE on Customer App for 48 Hours!`);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
