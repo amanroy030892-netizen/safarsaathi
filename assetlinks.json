@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.safarsaathi.app",
+    "sha256_cert_fingerprints": [
+      "14:6D:E9:44:C5:9F:5C:7E:86:40:1F:7D:5C:8B:2A:6E:9C:5F:8A:4D:2E:7C:9B:1A:3D:5F:7E:9A:1B:3C"
+    ]
+  }
+}]

@@ -1,0 +1,13 @@
+{
+  "name": "safarsaathi-carpool",
+  "version": "1.0.0",
+  "description": "SafarSaathi Carpooling & Ride Sharing App (Android, iOS & Web)",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "build:apk": "npx cap sync android && npx cap open android"
+  },
+  "keywords": ["carpooling", "ridesharing", "android", "ios", "pwa", "india"],
+  "author": "SafarSaathi Team",
+  "license": "MIT"
+}
