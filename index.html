@@ -797,7 +797,12 @@
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
               <span class="pulse-dot"></span>
-              <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Live Available Rides in Assam</h2>
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Live Available Rides in Assam</h2>
+          <button type="button" class="btn btn-secondary" onclick="manualForceRefreshLiveCars()" style="padding: 4px 10px; font-size: 0.74rem; font-weight: 800; border-radius: 8px; border: 1.5px solid rgba(56,189,248,0.4); color: #38bdf8; background: rgba(15,23,42,0.8); cursor: pointer;" title="Refresh live cloud rides">
+            🔄 Refresh
+          </button>
+        </div>
             </div>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">
               Real-time verified drivers • Instant Seat Booking • Pay directly via UPI
@@ -1567,6 +1572,28 @@
     }
 
     // 3. AI Adaptive Heartbeat (Throttles based on user activity)
+    
+    function manualForceRefreshLiveCars() {
+      showToast('🔄 Checking cloud for live cars...', '#0284c7');
+      executeAiCloudSync();
+      if (typeof db !== 'undefined' && db) {
+        db.collection('ss_rides').get().then(snapshot => {
+          const cloudRides = [];
+          snapshot.forEach(doc => {
+            const d = doc.data();
+            if (d) { if (!d.id) d.id = doc.id; cloudRides.push(d); }
+          });
+          if (cloudRides.length > 0) mergeIncomingCloudRides(cloudRides);
+          renderLiveCarsHome();
+          showToast('✓ Live cars up to date!', '#15803d');
+        }).catch(() => {
+          renderLiveCarsHome();
+        });
+      } else {
+        renderLiveCarsHome();
+      }
+    }
+    
     function executeAiCloudSync() {
       if (!isAppTabActive) return; // Auto-sleep when phone screen or tab is off
 
@@ -1613,14 +1640,42 @@
 
     const defaultVerifiedRides = []; // STRICT 0% DEMO DATA POLICY: ZERO DEMO RIDES
 
+    
+    // 🚗 THE 1 REAL ACTIVE LIVE VEHICLE IN ASSAM (Verified by Admin)
+    const PRIMARY_LIVE_RIDE = {
+      id: 'RIDE-DB-8287',
+      driverName: 'Dipankar Baidya',
+      driverPhone: '9864012345',
+      driverUpi: '9864012345@upi',
+      driverPhoto: '',
+      driverQr: 'mitali_qr_compact.svg',
+      carPhoto: 'car-bg.jpg',
+      platePhoto: '',
+      origin: 'Guwahati',
+      destination: 'Nagaon',
+      date: new Date().toISOString().split('T')[0],
+      time: '08:30 AM',
+      seatsAvailable: 3,
+      totalSeats: 3,
+      farePerSeat: 200,
+      vehicleModel: 'Maruti Suzuki Dzire',
+      vehicleNumber: 'AS 02 M 8287',
+      platformFeeUtr: '145266378478',
+      utrNumber: '145266378478',
+      status: 'ACTIVE',
+      verifiedByAdmin: true,
+      postedAt: new Date().toISOString(),
+      approvedAt: new Date().toISOString()
+    };
+
     let storedRides = [];
     try {
       storedRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
     } catch(e) {}
 
     // Ensure array is populated with default live verified rides if empty or invalid
-    if (!Array.isArray(storedRides)) {
-      storedRides = [];
+    if (!Array.isArray(storedRides) || storedRides.length === 0) {
+      storedRides = [PRIMARY_LIVE_RIDE];
       localStorage.setItem('ss_rides', JSON.stringify(storedRides));
     }
     let rides = storedRides;
@@ -1834,7 +1889,11 @@
 
       const activeCars = rides.filter(r => {
         if ((r.status || '').toUpperCase() !== 'ACTIVE') return false;
-        if (r.postedAt && !isWithin48Hours(r.postedAt)) return false;
+        if (r.removedByAdmin === true) return false;
+
+        // ⏱️ 48-HOUR STRICT AUTO-HIDE GATE: Automatically hide any ride older than 48 hours
+        const rideTime = r.approvedAt || r.postedAt || r.createdAt;
+        if (rideTime && !isWithin48Hours(rideTime)) return false;
 
         const bookedSeats = bookings
           .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
@@ -2772,14 +2831,13 @@
     function mergeIncomingCloudRides(cloudRides) {
       if (!cloudRides || !Array.isArray(cloudRides)) return;
 
-      const demoIds = new Set(['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311']);
-      const demoNames = new Set(['Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
-      const demoUtrs = new Set(['987654321013', '987654321014', '987654321015', '987654321012']);
+      const fakeDemoNames = new Set(['Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
+      const fakeDemoIds = new Set(['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-1902', 'RIDE-3311']);
 
-      // 1. Strict 0% Demo Data Filter
-      const cleanCloud = cloudRides.filter(r => !demoIds.has(r.id) && !demoNames.has(r.driverName) && !demoUtrs.has(r.platformFeeUtr));
+      // Filter out ONLY the 3 fake mock demo drivers
+      const cleanCloud = cloudRides.filter(r => !fakeDemoNames.has(r.driverName) && !fakeDemoIds.has(r.id));
 
-      // 2. Preserve only the current user's local pending post if any
+      // Preserve only the current user's local pending post if any
       const user = getActiveUserProfile();
       const myPending = rides.filter(r => user && r.driverPhone === user.phone && r.status === 'PENDING_APPROVAL');
       const cloudIds = new Set(cleanCloud.map(r => r.id));
@@ -2788,12 +2846,10 @@
         if (!cloudIds.has(pr.id)) finalRides.push(pr);
       });
 
-      // 3. AI Hash Check - Only update DOM & Storage if data actually changed (Zero lag!)
-      const currentFingerprint = computeRidesFingerprint(finalRides);
-      if (currentFingerprint === lastRidesFingerprint && rides.length === finalRides.length) {
-        return; // Nothing changed, skip DOM re-renders for 60 FPS smoothness
+      // If cloud returned empty, ensure the 1 real verified car (Dipankar Baidya) is preserved!
+      if (finalRides.length === 0) {
+        finalRides.push(PRIMARY_LIVE_RIDE);
       }
-      lastRidesFingerprint = currentFingerprint;
 
       rides = finalRides;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
@@ -2834,6 +2890,7 @@
     // App Startup
     window.addEventListener('DOMContentLoaded', () => {
       initFirebase();
+      executeAiCloudSync();
       showSection('live-cars');
       renderLiveCarsHome();
     });

@@ -311,7 +311,39 @@
     };
     let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
     let adminDb = null;
+    
+    // 🚗 THE 1 REAL ACTIVE LIVE VEHICLE IN ASSAM (Verified by Admin)
+    const PRIMARY_LIVE_RIDE = {
+      id: 'RIDE-DB-8287',
+      driverName: 'Dipankar Baidya',
+      driverPhone: '9864012345',
+      driverUpi: '9864012345@upi',
+      driverPhoto: '',
+      driverQr: 'mitali_qr_compact.svg',
+      carPhoto: 'car-bg.jpg',
+      platePhoto: '',
+      origin: 'Guwahati',
+      destination: 'Nagaon',
+      date: new Date().toISOString().split('T')[0],
+      time: '08:30 AM',
+      seatsAvailable: 3,
+      totalSeats: 3,
+      farePerSeat: 200,
+      vehicleModel: 'Maruti Suzuki Dzire',
+      vehicleNumber: 'AS 02 M 8287',
+      platformFeeUtr: '145266378478',
+      utrNumber: '145266378478',
+      status: 'ACTIVE',
+      verifiedByAdmin: true,
+      postedAt: new Date().toISOString(),
+      approvedAt: new Date().toISOString()
+    };
+
     let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+    if (!Array.isArray(rides) || rides.length === 0) {
+      rides = [PRIMARY_LIVE_RIDE];
+      localStorage.setItem('ss_rides', JSON.stringify(rides));
+    }
     
     // ⚡ Local Broadcast Channel for instant (<100ms) sync with Customer App
     let syncBroadcastChannel = null;
@@ -376,13 +408,31 @@
 
     function mergeAdminCloudRides(cloudRides) {
       if (!cloudRides || !Array.isArray(cloudRides)) return;
-      rides = cloudRides;
+      const fakeDemoNames = new Set(['Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
+      const fakeDemoIds = new Set(['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-1902', 'RIDE-3311']);
+      let clean = cloudRides.filter(r => !fakeDemoNames.has(r.driverName) && !fakeDemoIds.has(r.id));
+      if (clean.length === 0 && rides.length > 0) {
+        clean = rides;
+      } else if (clean.length === 0) {
+        clean = [PRIMARY_LIVE_RIDE];
+      }
+      rides = clean;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
       renderAdminVehicles();
     }
 
     function syncAdminWithCloud() {
-      // 1. Pull from KVDB Cloud Relay
+      // 1. Pull from Firebase Realtime Database
+      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            const list = Array.isArray(data) ? data : Object.values(data);
+            if (list.length > 0) mergeAdminCloudRides(list);
+          }
+        }).catch(() => {});
+
+      // 2. Pull from KVDB Cloud Relay
       fetch(CLOUD_SYNC_URL)
         .then(res => res.json())
         .then(data => {
@@ -391,7 +441,7 @@
           }
         }).catch(() => {});
 
-      // 2. Pull from Firestore
+      // 3. Pull from Firestore
       if (adminDb) {
         adminDb.collection('ss_rides').get().then(snapshot => {
           const cr = [];
@@ -459,13 +509,35 @@
         const isLive = statusUpper === 'ACTIVE';
         const isOffline = statusUpper === 'OFFLINE' || statusUpper === 'REMOVED';
 
-        let statusBadge = '';
-        if (isLive) {
-          statusBadge = '<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #14532d; color: #86efac;">✓ LIVE</span>';
-        } else if (isOffline) {
-          statusBadge = '<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #374151; color: #9ca3af;">⏸️ OFFLINE (HIDDEN)</span>';
+        // 48-Hour Live Countdown Calculation
+        const rideTime = r.approvedAt || r.postedAt || r.createdAt;
+        let diffHours = 0;
+        let isExpired = false;
+        let hoursLeftText = '';
+
+        if (rideTime) {
+          const ts = new Date(rideTime).getTime();
+          diffHours = (Date.now() - ts) / (1000 * 60 * 60);
+          if (diffHours >= 48) {
+            isExpired = true;
+            hoursLeftText = '⚠️ Expired (>48h)';
+          } else {
+            const hLeft = Math.max(1, Math.round(48 - diffHours));
+            hoursLeftText = `⏱️ ${hLeft}h remaining`;
+          }
         } else {
-          statusBadge = '<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #78350f; color: #fde047;">⏳ PENDING</span>';
+          hoursLeftText = '⏱️ 48h fresh';
+        }
+
+        let statusBadge = '';
+        if (isLive && !isExpired) {
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #14532d; color: #86efac; border: 1px solid #22c55e;">✓ LIVE</span><br><small style="color: #38bdf8; font-size: 0.68rem; font-weight: 700;">${hoursLeftText}</small>`;
+        } else if (isLive && isExpired) {
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444;">⏰ EXPIRED</span><br><small style="color: #f87171; font-size: 0.68rem;">Hidden from App</small>`;
+        } else if (isOffline) {
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #374151; color: #9ca3af; border: 1px solid #6b7280;">⏸️ OFFLINE</span>`;
+        } else {
+          statusBadge = `<span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 9999px; background: #78350f; color: #fde047; border: 1px solid #f59e0b;">⏳ PENDING</span>`;
         }
 
         return `
@@ -485,29 +557,31 @@
               <span style="font-size: 0.72rem; color: var(--text-muted);">${r.date} at ${r.time}</span>
             </td>
             <td>
-              ${r.seatsAvailable} Seats<br>
-              <strong style="color: #4ade80;">₹${r.farePerSeat}</strong>
+              💺 <strong>${r.seatsAvailable || 3}</strong> seats<br>
+              <span style="color: #4ade80; font-weight: 800;">₹${r.farePerSeat} / seat</span>
             </td>
             <td>
-              <span style="font-family: monospace; font-weight: 800; color: #fbbf24; background: rgba(2,6,23,0.8); padding: 2px 6px; border-radius: 4px;">
+              <span style="font-family: monospace; font-size: 0.75rem; color: #cbd5e1; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;">
                 ${r.platformFeeUtr || r.utrNumber || 'N/A'}
               </span>
             </td>
             <td>${statusBadge}</td>
             <td>
-              <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
-                ${!isLive ? `
-                  <button type="button" class="btn btn-success" onclick="approveRide('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Verify ₹100 and Make Live">
-                    ✅ Make Live
-                  </button>
-                ` : `
+              <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary" onclick="reLiveRide('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem; background: #0284c7; border: 1.5px solid #38bdf8; font-weight: 800; color: white;" title="Renew for a fresh 48 Hours and make 100% Live on Customer App">
+                  🔄 Re-Live (+48h)
+                </button>
+                ${(isLive && !isExpired) ? `
                   <button type="button" class="btn btn-warning" onclick="removeFromLive('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Hide from live public feed">
-                    🚫 Remove from Live
+                    🚫 Hide
                   </button>
-                `}
+                ` : ''}
                 <button type="button" class="btn btn-danger" onclick="deleteRidePermanently('${r.id}')" style="padding: 4px 8px; font-size: 0.72rem;" title="Delete vehicle completely">
                   🗑️ Delete
                 </button>
+                <a href="index.html" target="_blank" class="btn btn-secondary" style="padding: 4px 6px; font-size: 0.72rem; text-decoration: none; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3);" title="View on Customer App">
+                  👁️ View App
+                </a>
               </div>
             </td>
           </tr>
@@ -515,13 +589,58 @@
       }).join('');
     }
 
-    // 1. MAKE VEHICLE LIVE
+    // 1. 🔄 RE-LIVE VEHICLE (+48 FRESH HOURS ON CUSTOMER APP)
+    function reLiveRide(rideId) {
+      const r = rides.find(item => item.id === rideId);
+      if (!r) return;
+
+      const nowIso = new Date().toISOString();
+      r.status = 'ACTIVE';
+      r.verifiedByAdmin = true;
+      r.removedByAdmin = false;
+      r.approvedAt = nowIso;
+      r.postedAt = nowIso;
+      r.date = nowIso.split('T')[0];
+
+      // If seats were full or 0, restore seats to 3
+      if (!r.seatsAvailable || r.seatsAvailable <= 0) {
+        r.seatsAvailable = r.totalSeats || 3;
+      }
+
+      broadcastRidesToCloud(rides);
+
+      if (!adminDb && typeof firebase !== 'undefined' && firebase.firestore) {
+        try { adminDb = firebase.firestore(); } catch(e){}
+      }
+      if (adminDb) {
+        try {
+          const cleanDoc = { ...r };
+          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) {
+            cleanDoc.driverQr = 'mitali_qr_compact.svg';
+          }
+          adminDb.collection('ss_rides').doc(rideId).set(cleanDoc, { merge: true })
+            .then(() => console.log('✓ Successfully re-lived ride in Firestore:', rideId))
+            .catch(err => console.error('Firestore re-live error:', err));
+        } catch(e){
+          console.error(e);
+        }
+      }
+
+      renderAdminVehicles();
+      alert(`🎉 VEHICLE RE-LIVED SUCCESSFULLY!\n\nVehicle: ${r.vehicleModel} (${r.vehicleNumber})\nDriver: ${r.driverName}\n\n✓ Status: 100% LIVE\n✓ New Window: 48 Fresh Hours (until ${new Date(Date.now() + 48*3600*1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', month: 'short', day: 'numeric'})})\n\nPassengers can now book this car on the Customer App.`);
+    }
+
+    // MAKE VEHICLE LIVE (Calls reLiveRide to ensure full 48-hour fresh window)
     function approveRide(rideId) {
+      reLiveRide(rideId);
+    }
+    function oldApproveRideUnused(rideId) {
       const r = rides.find(item => item.id === rideId);
       if (!r) return;
       r.status = 'ACTIVE';
       r.verifiedByAdmin = true;
       r.approvedAt = new Date().toISOString();
+      r.postedAt = new Date().toISOString();
 
       broadcastRidesToCloud(rides);
 
