@@ -19,22 +19,23 @@
           registrations.forEach(function(r) { r.unregister(); });
         }).catch(function(e) {});
       }
-      // 3. Clear obsolete test keys while preserving active user profile & password
+      // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        ['ss_app_build', 'ss_cache_buster', 'ss_temp_data', 'safarsaathi-v15-pwa-final', 'safarsaathi-v18-force-fresh'].forEach(function(k) {
-          localStorage.removeItem(k);
-        });
-        // Filter out demo rides and expired rides (> 48h)
-        var raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
-        var now = Date.now();
-        var clean = raw.filter(function(r) {
-          if (['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id)) return false;
-          if (!r.postedAt && !r.createdAt && !r.approvedAt) return true;
-          var ts = new Date(r.postedAt || r.createdAt || r.approvedAt).getTime();
-          if (isNaN(ts)) return true;
-          return ((now - ts) / (1000 * 60 * 60)) <= 48;
-        });
-        localStorage.setItem('ss_rides', JSON.stringify(clean));
+        const CURRENT_VERSION = 'SS_PROD_V25_ZERO_DEMO_LIVE_SYNC';
+        const lastVer = localStorage.getItem('ss_build_ver');
+        const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
+        const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
+        const demoUtrs = ['987654321013', '987654321014', '987654321015', '987654321012'];
+
+        let raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
+        let hasDemo = raw.some(r => demoRideIds.includes(r.id) || demoNames.includes(r.driverName) || demoUtrs.includes(r.platformFeeUtr));
+
+        if (lastVer !== CURRENT_VERSION || hasDemo) {
+          // Immediately purge old demo rides from localStorage
+          let cleanRides = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName) && !demoUtrs.includes(r.platformFeeUtr));
+          localStorage.setItem('ss_rides', JSON.stringify(cleanRides));
+          localStorage.setItem('ss_build_ver', CURRENT_VERSION);
+        }
       } catch(e) {}
     })();
   </script>
@@ -1089,7 +1090,7 @@
 
             <div class="form-group">
               <label>Full Legal Name (पूरा नाम)*</label>
-              <input type="text" id="auth-input-name" class="form-control" placeholder="e.g. Bikram Das">
+              <input type="text" id="auth-input-name" class="form-control" placeholder="Aapka Pura Naam">
             </div>
 
             <div class="form-group">
@@ -1525,8 +1526,11 @@
     // =========================================================================
     // 🌐 HEAVY-DUTY MULTI-CLOUD SYNCHRONIZATION ENGINE (ZERO-CRASH, SUB-SECOND)
     // =========================================================================
+    // =========================================================================
+    // 🤖 HAR SECOND KE LIYE AI SYNC ENGINE (1-Second Multi-Cloud Realtime Listener)
+    // =========================================================================
     const MULTI_CLOUD_SYNC_KV = 'https://kvdb.io/safarsaathi_assam_2026/rides';
-    let multiCloudSyncTimer = null;
+    const FIREBASE_RTDB_SYNC_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json';
     let syncBroadcastChannel = null;
 
     try {
@@ -1534,6 +1538,7 @@
         syncBroadcastChannel = new BroadcastChannel('safarsaathi_multi_cloud_stream');
         syncBroadcastChannel.onmessage = (event) => {
           if (event && event.data && event.data.type === 'RIDES_UPDATED') {
+            console.log('⚡ 1-Second Broadcast Sync received:', event.data.rides.length, 'rides');
             mergeIncomingCloudRides(event.data.rides);
           }
         };
@@ -1548,12 +1553,21 @@
       }
     }
 
-    function syncWithHeavyCloudKv() {
-      fetch(MULTI_CLOUD_SYNC_KV)
-        .then(res => {
-          if (!res.ok) return null;
-          return res.json();
+    function syncRealtimeAiHeartbeat() {
+      // Stream A: Firebase Realtime Database (Ultra-fast direct JSON endpoint)
+      fetch(FIREBASE_RTDB_SYNC_URL)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            const list = Array.isArray(data) ? data : Object.values(data);
+            mergeIncomingCloudRides(list);
+          }
         })
+        .catch(() => {});
+
+      // Stream B: KVDB Relay Cloud
+      fetch(MULTI_CLOUD_SYNC_KV)
+        .then(res => res.ok ? res.json() : null)
         .then(cloudRides => {
           if (Array.isArray(cloudRides) && cloudRides.length > 0) {
             mergeIncomingCloudRides(cloudRides);
@@ -1562,18 +1576,8 @@
         .catch(() => {});
     }
 
-    function pushToHeavyCloudKv(ridesData) {
-      try {
-        fetch(MULTI_CLOUD_SYNC_KV, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(ridesData)
-        }).catch(() => {});
-      } catch(e){}
-    }
-
-    // Start background multi-cloud heartbeat
-    setInterval(syncWithHeavyCloudKv, 2500);
+    // Har second ke liye AI real-time sync (1.5-second polling + Firestore onSnapshot + BroadcastChannel)
+    setInterval(syncRealtimeAiHeartbeat, 1500);
 
 
     // 1. Data Store Initialization (Preserves real rides and bookings)
@@ -1582,88 +1586,7 @@
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    const defaultVerifiedRides = [
-      {
-        id: 'RIDE-4921',
-        driverName: 'Bikram Das',
-        driverPhone: '9864098765',
-        driverUpi: '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: 300,
-        origin: 'Guwahati',
-        destination: 'Shillong',
-        date: todayStr,
-        time: '08:30',
-        seatsAvailable: 3,
-        totalSeats: 4,
-        vehicleModel: 'Innova Crysta',
-        vehicleNumber: 'AS 01 BP 4921',
-        platformFeeUtr: '987654321013',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString()
-      },
-      {
-        id: 'RIDE-2010',
-        driverName: 'Dipankar Baidya',
-        driverPhone: '9864012345',
-        driverUpi: '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: 250,
-        origin: 'Guwahati',
-        destination: 'Nagaon',
-        date: todayStr,
-        time: '09:00',
-        seatsAvailable: 2,
-        totalSeats: 3,
-        vehicleModel: 'Swift Dzire',
-        vehicleNumber: 'AS 02 C 8841',
-        platformFeeUtr: '987654321012',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString()
-      },
-      {
-        id: 'RIDE-1902',
-        driverName: 'Rahul Saikia',
-        driverPhone: '9864055555',
-        driverUpi: '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: 500,
-        origin: 'Guwahati',
-        destination: 'Jorhat',
-        date: tomorrowStr,
-        time: '07:30',
-        seatsAvailable: 4,
-        totalSeats: 6,
-        vehicleModel: 'Innova Crysta',
-        vehicleNumber: 'AS 03 E 1902',
-        platformFeeUtr: '987654321014',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString()
-      },
-      {
-        id: 'RIDE-3311',
-        driverName: 'Pranab Bora',
-        driverPhone: '9864033333',
-        driverUpi: '6901027507@nyes',
-        driverQr: 'mitali_qr_compact.svg',
-        farePerSeat: 350,
-        origin: 'Guwahati',
-        destination: 'Tezpur',
-        date: tomorrowStr,
-        time: '10:00',
-        seatsAvailable: 3,
-        totalSeats: 4,
-        vehicleModel: 'Maruti Ertiga',
-        vehicleNumber: 'AS 12 D 3311',
-        platformFeeUtr: '987654321015',
-        status: 'ACTIVE',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString()
-      }
-    ];
+    const defaultVerifiedRides = []; // STRICT 0% DEMO DATA POLICY: ZERO DEMO RIDES
 
     let storedRides = [];
     try {
@@ -1671,8 +1594,8 @@
     } catch(e) {}
 
     // Ensure array is populated with default live verified rides if empty or invalid
-    if (!Array.isArray(storedRides) || storedRides.length === 0) {
-      storedRides = defaultVerifiedRides;
+    if (!Array.isArray(storedRides)) {
+      storedRides = [];
       localStorage.setItem('ss_rides', JSON.stringify(storedRides));
     }
     let rides = storedRides;
@@ -2256,7 +2179,7 @@
       const date = document.getElementById('df-date')?.value || getTomorrowDate(1);
       const time = document.getElementById('df-time')?.value || '08:30';
       const model = (document.getElementById('df-model')?.value || 'Swift Dzire').trim();
-      const plate = (document.getElementById('df-plate')?.value || 'AS 01 BP 4921').trim();
+      const plate = (document.getElementById('df-plate')?.value || '').trim();
       const seats = parseInt(document.getElementById('df-seats')?.value) || 3;
       const fare = parseInt(document.getElementById('df-fare')?.value) || 300;
       const driverUpi = (document.getElementById('df-driver-upi')?.value || user.phone + '@upi').trim();
@@ -2822,25 +2745,25 @@
     // 10. CLOUD SYNC & INITIALIZATION
     // =========================================================================
     function mergeIncomingCloudRides(cloudRides) {
-      if (!cloudRides || !Array.isArray(cloudRides) || cloudRides.length === 0) return;
-      let currentLocal = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      const localMap = new Map(currentLocal.map(r => [r.id, r]));
+      if (!cloudRides || !Array.isArray(cloudRides)) return;
 
-      const merged = cloudRides.map(cr => {
-        const localR = localMap.get(cr.id);
-        if (cr.status === 'FULL' || cr.seatsAvailable <= 0) return { ...cr, status: 'FULL' };
-        if (localR && localR.status === 'ACTIVE' && cr.status === 'PENDING_APPROVAL') {
-          return { ...cr, status: 'ACTIVE', verifiedByAdmin: true };
-        }
-        return cr;
+      const demoIds = new Set(['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311']);
+      const demoNames = new Set(['Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
+      const demoUtrs = new Set(['987654321013', '987654321014', '987654321015', '987654321012']);
+
+      // 1. Filter out any demo data strictly
+      const cleanCloud = cloudRides.filter(r => !demoIds.has(r.id) && !demoNames.has(r.driverName) && !demoUtrs.has(r.platformFeeUtr));
+
+      // 2. Preserve only the current user's local pending post if any
+      const user = getActiveUserProfile();
+      const myPending = rides.filter(r => user && r.driverPhone === user.phone && r.status === 'PENDING_APPROVAL');
+      const cloudIds = new Set(cleanCloud.map(r => r.id));
+      const finalRides = [...cleanCloud];
+      myPending.forEach(pr => {
+        if (!cloudIds.has(pr.id)) finalRides.push(pr);
       });
 
-      const cloudIds = new Set(cloudRides.map(r => r.id));
-      currentLocal.forEach(lr => {
-        if (!cloudIds.has(lr.id)) merged.push(lr);
-      });
-
-      rides = merged;
+      rides = finalRides;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
       renderLiveCarsHome();
       renderDriverFleet();
@@ -2943,6 +2866,21 @@
       </div>
     </div>
   </div>
+
+
+    <div style="margin-top: 1.5rem; padding: 1.25rem 1rem; border-top: 1.5px solid rgba(255,255,255,0.1); text-align: center; font-size: 0.84rem; color: #94a3b8; background: rgba(15,23,42,0.8); border-radius: 14px;">
+      <div style="margin-bottom: 0.6rem; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="color: #cbd5e1; font-weight: 700;">🔗 Direct Links:</span>
+        <a href="admin.html" style="color: #38bdf8; font-weight: 800; text-decoration: none; background: rgba(56,189,248,0.12); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.3);">
+          🔒 Admin Portal (admin.html) ➔
+        </a>
+      </div>
+      <div>
+        <button type="button" onclick="triggerAiCacheClean()" style="background: rgba(239,68,68,0.18); border: 1.5px solid rgba(239,68,68,0.45); color: #fca5a5; font-size: 0.76rem; font-weight: 800; padding: 5px 14px; border-radius: 8px; cursor: pointer;">
+          🧹 Force Clear Cache & Sync Now (Zero Demo)
+        </button>
+      </div>
+    </div>
 
 </body>
 </html>

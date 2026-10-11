@@ -19,23 +19,14 @@
           registrations.forEach(function(r) { r.unregister(); });
         }).catch(function(e) {});
       }
-      // 3. Clear obsolete test keys while preserving active user profile & password
+      // 3. Purge demo rides from admin local state
       try {
-        ['ss_app_build', 'ss_cache_buster', 'ss_temp_data', 'safarsaathi-v15-pwa-final', 'safarsaathi-v18-force-fresh'].forEach(function(k) {
-          localStorage.removeItem(k);
-        });
-        // Filter out demo rides and expired rides (> 48h)
-        var raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
-        var now = Date.now();
-        var clean = raw.filter(function(r) {
-          if (['RIDE-101', 'RIDE-102', 'RIDE-103'].includes(r.id)) return false;
-          if (!r.postedAt && !r.createdAt && !r.approvedAt) return true;
-          var ts = new Date(r.postedAt || r.createdAt || r.approvedAt).getTime();
-          if (isNaN(ts)) return true;
-          return ((now - ts) / (1000 * 60 * 60)) <= 48;
-        });
+        const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
+        const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
+        let raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
+        let clean = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName));
         localStorage.setItem('ss_rides', JSON.stringify(clean));
-      } catch(e) {}
+      } catch(e){}
     })();
   </script>
 
@@ -198,6 +189,9 @@
       <span id="adm-cloud-indicator" style="font-size: 0.72rem; color: #86efac; background: rgba(34,197,94,0.15); padding: 2px 8px; border-radius: 9999px; border: 1px solid #22c55e;">
         🟢 Cloud Sync Active
       </span>
+      <a href="index.html" class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 10px; color: #38bdf8; text-decoration: none; border: 1.5px solid rgba(56,189,248,0.4); border-radius: 6px; font-weight: 800;">
+        🚗 Open Customer App (index.html) ➔
+      </a>
       <span style="font-size: 0.72rem; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 9999px;">
         PIN: 1432
       </span>
@@ -288,7 +282,7 @@
       </div>
       <div class="form-group">
         <label>Driver Name & WhatsApp Phone*</label>
-        <input type="text" id="mam-driver" class="form-control" placeholder="e.g. Bikram Das, 9864012345">
+        <input type="text" id="mam-driver" class="form-control" placeholder="Driver Name, Phone Number">
       </div>
       <div class="form-group">
         <label>Route (From ➔ To)*</label>
@@ -296,7 +290,7 @@
       </div>
       <div class="form-group">
         <label>Vehicle Model & Plate*</label>
-        <input type="text" id="mam-vehicle" class="form-control" placeholder="e.g. Swift Dzire, AS 01 BP 4921">
+        <input type="text" id="mam-vehicle" class="form-control" placeholder="Vehicle Model, Plate Number">
       </div>
 
       <button type="button" class="btn btn-success" onclick="submitManualActivate()" style="width: 100%; padding: 0.7rem; font-weight: 800;">
@@ -318,6 +312,15 @@
     let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
     let adminDb = null;
     let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+    
+    // ⚡ Local Broadcast Channel for instant (<100ms) sync with Customer App
+    let syncBroadcastChannel = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        syncBroadcastChannel = new BroadcastChannel('safarsaathi_multi_cloud_stream');
+      }
+    } catch(e){}
+    
     const CLOUD_SYNC_URL = 'https://kvdb.io/safarsaathi_assam_2026/rides';
 
     function verifyAdminPin() {
@@ -407,8 +410,15 @@
     // Push full rides state to all clouds
     function broadcastRidesToCloud(updatedRides) {
       localStorage.setItem('ss_rides', JSON.stringify(updatedRides));
-      
-      // A. Push to KVDB Cloud Relay
+
+      // A. Realtime Broadcast Channel (Instant sync across tabs)
+      if (syncBroadcastChannel) {
+        try {
+          syncBroadcastChannel.postMessage({ type: 'RIDES_UPDATED', rides: updatedRides, timestamp: Date.now() });
+        } catch(e){}
+      }
+
+      // B. Push to KVDB Cloud Relay
       try {
         fetch(CLOUD_SYNC_URL, {
           method: 'POST',
@@ -417,10 +427,11 @@
         }).catch(() => {});
       } catch(e){}
 
-      // B. Push to Firebase Realtime Database
+      // C. Push to Firebase Realtime Database
       try {
         fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_rides.json', {
           method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedRides)
         }).catch(() => {});
       } catch(e){}
