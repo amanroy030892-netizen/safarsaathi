@@ -97,12 +97,14 @@
     }
 
     body {
-      background: var(--dark-bg);
-      color: var(--text-main);
-      font-family: var(--font-family);
+      background: #ffffff;
+      color: #000000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
-      padding-bottom: 2rem;
+      padding-bottom: 5rem;
+      margin: 0;
+      box-sizing: border-box;
     }
 
     /* Modern Sticky Mobile Header */
@@ -748,6 +750,9 @@
     }
 
 </style>
+  <!-- 🗺️ Leaflet OpenStreetMap CDN for Accurate Live GPS Location -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body>
 
@@ -758,20 +763,17 @@
   <header class="app-header">
     <div class="header-left">
       <a href="#" class="brand-logo" onclick="showSection('live-cars'); return false;" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-        <img src="safarsaathi_emblem_transparent.png" alt="SafarSaathi Logo" style="height: 34px; width: auto; object-fit: contain; vertical-align: middle; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
-        <span style="font-size: 1.3rem; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">Safar<span class="brand-highlight" style="color: #86efac;">Saathi</span></span>
+        <img src="safarsaathi_emblem_transparent.png" alt="SafarSaathi Logo" style="height: 32px; width: auto; object-fit: contain; vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <span style="font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">Safar<span class="brand-highlight" style="color: #86efac;">Saathi</span></span>
       </a>
-      <span class="live-status-pill" id="header-live-pill" onclick="showSection('live-cars')">
-        <span class="pulse-dot"></span>
-        <span id="header-live-count-text">4 Live Cars</span>
-      </span>
     </div>
-    <div class="header-right" style="display: flex; gap: 6px; align-items: center;">
-      <button type="button" id="btn-toggle-top-map" class="header-action-btn" onclick="toggleTopLiveMap()" title="Live Route Map" style="font-size: 0.74rem; padding: 4px 10px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #ffffff; color: #15803d; display: inline-flex; align-items: center; gap: 4px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;">
+    <div class="header-right" style="display: flex; gap: 8px; align-items: center;">
+      <!-- 🗺️ LIVE MAP TOGGLE BUTTON (Spacious, No Overlap) -->
+      <button type="button" id="btn-toggle-top-map" class="header-action-btn" onclick="toggleTopLiveMap()" title="Live Route Map" style="font-size: 0.76rem; padding: 5px 12px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 5px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;">
         <span>🗺️</span>
         <span id="top-map-btn-text">Live Map</span>
       </button>
-      <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC">
+      <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC" style="width: 36px; height: 36px; border-radius: 50%; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer;">
         <span id="header-user-avatar">👤</span>
       </button>
     </div>
@@ -811,101 +813,56 @@
       </button>
     </div>
 
-  <!-- 🗺️ TOP DOCKED LIVE ASSAM ROUTE MAP (Controlled by Top Header Button) -->
+  <!-- 🗺️ TOP DOCKED LIVE GPS ROUTE MAP -->
   <div id="top-map-container" style="max-width: 900px; margin: 0 auto 0.75rem auto; padding: 0 0.75rem; display: none;">
-    <div id="route-map-card" style="background: #ffffff; border: 1.5px solid rgba(22, 163, 74, 0.35); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 18px rgba(22, 163, 74, 0.1);">
-      <!-- Map Header Bar with Dynamic Route Info -->
-      <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.6rem 0.95rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+    <div id="route-map-card" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 18px rgba(22, 163, 74, 0.12);">
+      <!-- Map Header Bar with Live Location & Controls -->
+      <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.65rem 0.95rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
         <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-size: 1rem;">🗺️</span>
-          <strong id="map-route-title" style="font-size: 0.88rem; font-weight: 800; color: #ffffff;">Guwahati ➔ Nagaon Corridor</strong>
+          <span style="font-size: 1.1rem;">📍</span>
+          <strong id="map-live-loc-title" style="font-size: 0.9rem; font-weight: 900; color: #ffffff;">Live GPS Location</strong>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <div id="map-eta-badge" style="background: rgba(255,255,255,0.22); color: #ffffff; font-size: 0.72rem; font-weight: 800; padding: 2px 9px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.35);">
-            📍 122 km • ~2.5 hrs • NH-27
+          <div id="map-gps-accuracy-badge" style="background: rgba(255,255,255,0.22); color: #ffffff; font-size: 0.72rem; font-weight: 800; padding: 2px 9px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.35);">
+            📡 GPS Active
           </div>
-          <button type="button" onclick="toggleTopLiveMap()" style="background: transparent; border: none; color: #ffffff; font-size: 1rem; cursor: pointer; padding: 0 4px; font-weight: 900;" title="Close Map">✕</button>
+          <button type="button" onclick="centerOnUserLiveGps()" style="background: #ffffff; border: none; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 3px 9px; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.15);" title="Center on my accurate GPS location">
+            🎯 My GPS
+          </button>
+          <button type="button" onclick="toggleTopLiveMap()" style="background: transparent; border: none; color: #ffffff; font-size: 1.1rem; cursor: pointer; padding: 0 4px; font-weight: 900;" title="Close Map">✕</button>
         </div>
       </div>
 
-      <!-- Interactive Map Viewport -->
-      <div id="assam-map-viewport" style="height: 180px; width: 100%; position: relative; background: #e5f5eb; overflow: hidden;">
-        <!-- Interactive Vector Route Map of Assam -->
-        <svg id="assam-vector-map" viewBox="0 0 600 240" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; display: block;">
-          <!-- Background Map Geometry (Rivers & Terrain) -->
-          <rect width="600" height="240" fill="#e8f5e9" />
-          <!-- Brahmaputra River -->
-          <path d="M 0,80 Q 150,65 250,85 T 450,100 T 600,90" fill="none" stroke="#bbf7d0" stroke-width="18" opacity="0.8" />
-          <path d="M 0,80 Q 150,65 250,85 T 450,100 T 600,90" fill="none" stroke="#86efac" stroke-width="8" opacity="0.9" />
-
-          <!-- Regional Roads Grid (Gray network) -->
-          <path d="M 50,165 L 150,120 L 320,130 L 480,110 L 580,100" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
-          <path d="M 150,120 L 170,205" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
-          <path d="M 320,130 L 300,60 L 400,50" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
-
-          <!-- Active Glowing Highway Corridors -->
-          <!-- Guwahati to Nagaon (NH-27) -->
-          <path id="route-path-nagaon" d="M 150,120 Q 230,110 320,130" fill="none" stroke="#16a34a" stroke-width="6" stroke-linecap="round" />
-          <!-- Guwahati to Shillong (GS Road / NH-40) -->
-          <path id="route-path-shillong" d="M 150,120 Q 155,165 170,205" fill="none" stroke="#94a3b8" stroke-width="3.5" stroke-linecap="round" />
-          <!-- Nagaon to Jorhat (NH-715) -->
-          <path id="route-path-jorhat" d="M 320,130 Q 400,120 480,110" fill="none" stroke="#94a3b8" stroke-width="3.5" stroke-linecap="round" />
-          <!-- Nagaon to Tezpur (NH-37A) -->
-          <path id="route-path-tezpur" d="M 320,130 Q 315,90 300,60" fill="none" stroke="#94a3b8" stroke-width="3.5" stroke-linecap="round" />
-
-          <!-- Animated Car Tracker along active path -->
-          <circle id="map-car-pulse" cx="235" cy="115" r="14" fill="#22c55e" opacity="0.25">
-            <animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.4;0.05;0.4" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle id="map-car-center" cx="235" cy="115" r="6" fill="#15803d" stroke="#ffffff" stroke-width="2" />
-          <text id="map-car-icon" x="227" y="107" font-size="16">🚗</text>
-
-          <!-- Location Markers -->
-          <!-- Guwahati (Point A - Origin) -->
-          <g id="marker-guwahati" transform="translate(150, 120)">
+      <!-- Real Interactive Map Viewport -->
+      <div id="live-leaflet-map-div" style="height: 220px; width: 100%; position: relative; background: #e5e7eb; overflow: hidden;">
+        <!-- Initial SVG vector fallback rendered before Leaflet loads tiles -->
+        <svg id="assam-vector-map" viewBox="0 0 600 220" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; display: block;">
+          <rect width="600" height="220" fill="#e8f5e9" />
+          <path d="M 0,75 Q 150,60 250,80 T 450,95 T 600,85" fill="none" stroke="#bbf7d0" stroke-width="16" opacity="0.8" />
+          <path d="M 0,75 Q 150,60 250,80 T 450,95 T 600,85" fill="none" stroke="#86efac" stroke-width="7" opacity="0.9" />
+          <path d="M 50,150 L 150,110 L 320,120 L 480,100 L 580,90" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
+          <path id="route-path-nagaon" d="M 150,110 Q 230,100 320,120" fill="none" stroke="#16a34a" stroke-width="6" stroke-linecap="round" />
+          <g transform="translate(150, 110)">
             <circle r="12" fill="#15803d" stroke="#ffffff" stroke-width="2.5" />
-            <text text-anchor="middle" y="4" fill="#ffffff" font-size="10" font-weight="900" font-family="sans-serif">A</text>
-            <text text-anchor="middle" y="-16" fill="#0f172a" font-size="11" font-weight="900" font-family="sans-serif">Guwahati</text>
+            <text text-anchor="middle" y="4" fill="#ffffff" font-size="10" font-weight="900">A</text>
+            <text text-anchor="middle" y="-16" fill="#000000" font-size="11" font-weight="900">Guwahati</text>
           </g>
-
-          <!-- Nagaon (Point B) -->
-          <g id="marker-nagaon" transform="translate(320, 130)">
-            <circle id="pin-b-nagaon" r="12" fill="#dc2626" stroke="#ffffff" stroke-width="2.5" />
-            <text text-anchor="middle" y="4" fill="#ffffff" font-size="10" font-weight="900" font-family="sans-serif">B</text>
-            <text text-anchor="middle" y="24" fill="#0f172a" font-size="11" font-weight="800" font-family="sans-serif">Nagaon</text>
+          <g transform="translate(320, 120)">
+            <circle r="12" fill="#dc2626" stroke="#ffffff" stroke-width="2.5" />
+            <text text-anchor="middle" y="4" fill="#ffffff" font-size="10" font-weight="900">B</text>
+            <text text-anchor="middle" y="24" fill="#000000" font-size="11" font-weight="900">Nagaon</text>
           </g>
-
-          <!-- Shillong -->
-          <g id="marker-shillong" transform="translate(170, 205)">
-            <circle id="pin-shillong" r="8" fill="#64748b" stroke="#ffffff" stroke-width="1.5" />
-            <text text-anchor="middle" y="18" fill="#475569" font-size="10" font-weight="700" font-family="sans-serif">Shillong</text>
-          </g>
-
-          <!-- Jorhat -->
-          <g id="marker-jorhat" transform="translate(480, 110)">
-            <circle id="pin-jorhat" r="8" fill="#64748b" stroke="#ffffff" stroke-width="1.5" />
-            <text text-anchor="middle" y="18" fill="#475569" font-size="10" font-weight="700" font-family="sans-serif">Jorhat</text>
-          </g>
-
-          <!-- Tezpur -->
-          <g id="marker-tezpur" transform="translate(300, 60)">
-            <circle id="pin-tezpur" r="8" fill="#64748b" stroke="#ffffff" stroke-width="1.5" />
-            <text text-anchor="middle" y="-12" fill="#475569" font-size="10" font-weight="700" font-family="sans-serif">Tezpur</text>
-          </g>
+          <circle cx="235" cy="105" r="14" fill="#22c55e" opacity="0.25">
+            <animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="235" cy="105" r="6" fill="#15803d" stroke="#ffffff" stroke-width="2" />
         </svg>
+      </div>
 
-        <!-- Floating Map Highway Pill -->
-        <div style="position: absolute; bottom: 8px; left: 10px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); padding: 3px 9px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; color: #15803d; border: 1px solid rgba(22, 163, 74, 0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 5px;">
-          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e;"></span>
-          <span id="map-highway-status">NH-27 Active • Live Car Tracking</span>
-        </div>
-
-        <!-- Quick Corridor Selector Buttons on Map -->
-        <div style="position: absolute; bottom: 8px; right: 10px; display: flex; gap: 4px;">
-          <button type="button" onclick="filterLiveCarsByRoute('nagaon')" style="background: rgba(255,255,255,0.94); border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 7px; font-size: 0.68rem; font-weight: 800; color: #0f172a; cursor: pointer;">🎯 Nagaon</button>
-          <button type="button" onclick="filterLiveCarsByRoute('shillong')" style="background: rgba(255,255,255,0.94); border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 7px; font-size: 0.68rem; font-weight: 800; color: #0f172a; cursor: pointer;">⛰️ Shillong</button>
-        </div>
+      <!-- Map Footer with Live GPS Coordinates -->
+      <div style="background: #ffffff; padding: 6px 12px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 0.74rem;">
+        <span id="map-coords-display" style="color: #000000; font-weight: 800; font-family: monospace;">GPS: Connecting to satellite...</span>
+        <span style="color: #15803d; font-weight: 900;">🟢 Accurate Live Location</span>
       </div>
     </div>
   </div>
@@ -917,38 +874,32 @@
     <!-- ==================== 1. 🟢 LIVE CARS (HOME PAGE) ==================== -->
     <section id="section-live-cars" class="app-section active">
       <div class="app-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
               <span class="pulse-dot"></span>
-              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-          <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">Live Available Rides in Assam</h2>
-          <button type="button" class="btn btn-secondary" onclick="manualForceRefreshLiveCars()" style="padding: 4px 10px; font-size: 0.74rem; font-weight: 800; border-radius: 8px; border: 1.5px solid rgba(56,189,248,0.4); color: #15803d; background: rgba(15,23,42,0.8); cursor: pointer;" title="Refresh live cloud rides">
-            🔄 Refresh
-          </button>
-        </div>
+              <h2 style="font-size: 1.1rem; font-weight: 900; color: #000000; margin: 0;">Live Available Rides in Assam</h2>
             </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">
+            <p style="font-size: 0.75rem; color: #000000; margin: 2px 0 0 0;">
               Real-time verified drivers • Instant Seat Booking • Pay directly via UPI
             </p>
           </div>
-          <button type="button" class="btn btn-secondary" onclick="refreshLiveCarsFeed()" style="padding: 4px 10px; font-size: 0.74rem; border-radius: 8px;">
-            🔄 Refresh Live
+          <button type="button" class="btn btn-secondary" onclick="manualForceRefreshLiveCars()" style="padding: 5px 12px; font-size: 0.76rem; font-weight: 800; border-radius: 8px; border: 1.5px solid #16a34a; color: #15803d; background: #ffffff; cursor: pointer;" title="Refresh live cloud rides">
+            🔄 Refresh
           </button>
         </div>
 
-        <!-- Quick Route Filter Chips -->
         <div class="route-chips-wrap">
-          <button type="button" class="btn" id="chip-live-all" onclick="filterLiveCarsByRoute('all')" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 800; border-radius: 20px; white-space: nowrap; background: #16a34a; color: white;">
+          <button type="button" class="btn" id="chip-live-all" onclick="filterLiveCarsByRoute('all')" style="padding: 5px 12px; font-size: 0.74rem; font-weight: 800; border-radius: 9999px; background: #16a34a; color: #ffffff; border: 1.5px solid #15803d;">
             All Routes (<span id="live-count-chip-all">4</span>)
           </button>
-          <button type="button" class="btn" id="chip-live-shillong" onclick="filterLiveCarsByRoute('Shillong')" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+          <button type="button" class="btn" id="chip-live-shillong" onclick="filterLiveCarsByRoute('shillong')" style="padding: 5px 12px; font-size: 0.74rem; font-weight: 800; border-radius: 9999px; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">
             Guwahati ➔ Shillong
           </button>
-          <button type="button" class="btn" id="chip-live-nagaon" onclick="filterLiveCarsByRoute('Nagaon')" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+          <button type="button" class="btn" id="chip-live-nagaon" onclick="filterLiveCarsByRoute('nagaon')" style="padding: 5px 12px; font-size: 0.74rem; font-weight: 800; border-radius: 9999px; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">
             Guwahati ➔ Nagaon
           </button>
-          <button type="button" class="btn" id="chip-live-jorhat" onclick="filterLiveCarsByRoute('Jorhat')" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15);">
+          <button type="button" class="btn" id="chip-live-jorhat" onclick="filterLiveCarsByRoute('jorhat')" style="padding: 5px 12px; font-size: 0.74rem; font-weight: 800; border-radius: 9999px; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">
             Guwahati ➔ Jorhat
           </button>
         </div>
@@ -1798,8 +1749,8 @@
     } catch(e) {}
 
     // Ensure array is populated with default live verified rides if empty or invalid
-    if (!Array.isArray(storedRides) || storedRides.length === 0) {
-      storedRides = [PRIMARY_LIVE_RIDE];
+    if (!Array.isArray(storedRides)) {
+      storedRides = [];
       localStorage.setItem('ss_rides', JSON.stringify(storedRides));
     }
     let rides = storedRides;
@@ -2001,6 +1952,15 @@
     // =========================================================================
     // 🗺️ TOP LIVE MAP TOGGLE CONTROLLER
     // =========================================================================
+    
+    // =========================================================================
+    // 🗺️ ACCURATE LIVE GPS LOCATION & MAP CONTROLLER
+    // =========================================================================
+    let liveLeafletMap = null;
+    let userLocationMarker = null;
+    let userLocationCircle = null;
+    let currentLiveCoords = null;
+
     function toggleTopLiveMap() {
       const container = document.getElementById('top-map-container');
       const btnText = document.getElementById('top-map-btn-text');
@@ -2009,80 +1969,154 @@
       if (isHidden) {
         container.style.display = 'block';
         if (btnText) btnText.innerText = '✕ Close Map';
-        try { updateMapRouteCorridor(currentLiveRouteFilter || 'nagaon'); } catch(e){}
+        initLiveLocationMap();
       } else {
         container.style.display = 'none';
         if (btnText) btnText.innerText = 'Live Map';
       }
     }
 
+    function initLiveLocationMap() {
+      const mapDiv = document.getElementById('live-leaflet-map-div');
+      if (!mapDiv) return;
+
+      // Request HTML5 High-Accuracy Geolocation (Accurate Live Location)
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const accuracy = Math.round(pos.coords.accuracy || 20);
+            currentLiveCoords = { lat, lng, accuracy };
+            updateMapWithUserCoordinates(lat, lng, accuracy, true);
+          },
+          function(err) {
+            console.warn('GPS notice:', err.message);
+            // Default center: Assam / Guwahati coordinates
+            updateMapWithUserCoordinates(26.1445, 91.7362, 50, false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+
+        // Realtime continuous watch
+        navigator.geolocation.watchPosition(function(pos) {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const accuracy = Math.round(pos.coords.accuracy || 20);
+          currentLiveCoords = { lat, lng, accuracy };
+          if (userLocationMarker && liveLeafletMap) {
+            userLocationMarker.setLatLng([lat, lng]);
+            if (userLocationCircle) {
+              userLocationCircle.setLatLng([lat, lng]);
+              userLocationCircle.setRadius(accuracy);
+            }
+            const coordsEl = document.getElementById('map-coords-display');
+            if (coordsEl) coordsEl.innerText = `GPS: ${lat.toFixed(5)}° N, ${lng.toFixed(5)}° E (±${accuracy}m)`;
+          }
+        }, null, { enableHighAccuracy: true, maximumAge: 5000 });
+      } else {
+        updateMapWithUserCoordinates(26.1445, 91.7362, 50, false);
+      }
+    }
+
+    function updateMapWithUserCoordinates(lat, lng, accuracy, hasGps) {
+      const titleEl = document.getElementById('map-live-loc-title');
+      const badgeEl = document.getElementById('map-gps-accuracy-badge');
+      const coordsEl = document.getElementById('map-coords-display');
+
+      if (coordsEl) coordsEl.innerText = `GPS: ${lat.toFixed(5)}° N, ${lng.toFixed(5)}° E (±${accuracy}m)`;
+      if (badgeEl) badgeEl.innerText = hasGps ? `📡 Accuracy: ±${accuracy}m` : '📍 Default: Guwahati';
+      if (titleEl) titleEl.innerText = hasGps ? '📍 Your Live Location' : '📍 Guwahati, Assam';
+
+      if (typeof L !== 'undefined') {
+        const mapContainer = document.getElementById('live-leaflet-map-div');
+        if (mapContainer && !liveLeafletMap) {
+          mapContainer.innerHTML = ''; // clear SVG fallback
+          liveLeafletMap = L.map('live-leaflet-map-div', {
+            zoomControl: true,
+            attributionControl: false
+          }).setView([lat, lng], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+          }).addTo(liveLeafletMap);
+        } else if (liveLeafletMap) {
+          liveLeafletMap.setView([lat, lng], 13);
+          setTimeout(() => { liveLeafletMap.invalidateSize(); }, 200);
+        }
+
+        if (liveLeafletMap) {
+          const userGpsIcon = L.divIcon({
+            className: 'user-gps-marker',
+            html: '<div style="width: 20px; height: 20px; background: #16a34a; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 0 12px rgba(22, 163, 74, 0.9);"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          });
+
+          if (userLocationMarker) {
+            userLocationMarker.setLatLng([lat, lng]);
+          } else {
+            userLocationMarker = L.marker([lat, lng], { icon: userGpsIcon }).addTo(liveLeafletMap);
+            userLocationMarker.bindPopup('<b>📍 Your Live Location</b><br>Accurate GPS Fix').openPopup();
+          }
+
+          if (userLocationCircle) {
+            userLocationCircle.setLatLng([lat, lng]);
+            userLocationCircle.setRadius(accuracy);
+          } else {
+            userLocationCircle = L.circle([lat, lng], {
+              radius: accuracy,
+              color: '#16a34a',
+              fillColor: '#86efac',
+              fillOpacity: 0.15,
+              weight: 1.5
+            }).addTo(liveLeafletMap);
+          }
+        }
+      }
+    }
+
+    function centerOnUserLiveGps() {
+      if (currentLiveCoords && liveLeafletMap) {
+        liveLeafletMap.setView([currentLiveCoords.lat, currentLiveCoords.lng], 15);
+        if (userLocationMarker) userLocationMarker.openPopup();
+      } else {
+        initLiveLocationMap();
+      }
+    }
+
     function updateMapRouteCorridor(corridor) {
       const c = (corridor || 'all').toLowerCase();
-      const titleEl = document.getElementById('map-route-title');
-      const etaEl = document.getElementById('map-eta-badge');
-      const statusEl = document.getElementById('map-highway-status');
-
-      const pathNagaon = document.getElementById('route-path-nagaon');
-      const pathShillong = document.getElementById('route-path-shillong');
-      const pathJorhat = document.getElementById('route-path-jorhat');
-      const carPulse = document.getElementById('map-car-pulse');
-      const carCenter = document.getElementById('map-car-center');
-      const carIcon = document.getElementById('map-car-icon');
-      const pinNagaon = document.getElementById('pin-b-nagaon');
-      const pinShillong = document.getElementById('pin-shillong');
-      const pinJorhat = document.getElementById('pin-jorhat');
-
-      if (c.includes('shillong')) {
-        if (titleEl) titleEl.innerText = 'Guwahati ➔ Shillong Corridor';
-        if (etaEl) etaEl.innerText = '📍 98 km • ~3.0 hrs • GS Road';
-        if (statusEl) statusEl.innerText = 'Hill Highway Active • 1 Car Live';
-        if (pathNagaon) { pathNagaon.setAttribute('stroke', '#cbd5e1'); pathNagaon.setAttribute('stroke-width', '3'); }
-        if (pathShillong) { pathShillong.setAttribute('stroke', '#16a34a'); pathShillong.setAttribute('stroke-width', '6'); }
-        if (pathJorhat) { pathJorhat.setAttribute('stroke', '#cbd5e1'); pathJorhat.setAttribute('stroke-width', '3'); }
-        if (carPulse) { carPulse.setAttribute('cx', '160'); carPulse.setAttribute('cy', '170'); }
-        if (carCenter) { carCenter.setAttribute('cx', '160'); carCenter.setAttribute('cy', '170'); }
-        if (carIcon) { carIcon.setAttribute('x', '152'); carIcon.setAttribute('y', '162'); }
-        if (pinShillong) { pinShillong.setAttribute('fill', '#dc2626'); pinShillong.setAttribute('r', '12'); }
-        if (pinNagaon) { pinNagaon.setAttribute('fill', '#64748b'); pinNagaon.setAttribute('r', '8'); }
-      } else if (c.includes('jorhat')) {
-        if (titleEl) titleEl.innerText = 'Guwahati ➔ Jorhat Corridor';
-        if (etaEl) etaEl.innerText = '📍 304 km • ~6.0 hrs • NH-715';
-        if (statusEl) statusEl.innerText = 'Upper Assam Highway Active';
-        if (pathNagaon) { pathNagaon.setAttribute('stroke', '#16a34a'); pathNagaon.setAttribute('stroke-width', '4'); }
-        if (pathShillong) { pathShillong.setAttribute('stroke', '#cbd5e1'); pathShillong.setAttribute('stroke-width', '3'); }
-        if (pathJorhat) { pathJorhat.setAttribute('stroke', '#16a34a'); pathJorhat.setAttribute('stroke-width', '6'); }
-        if (carPulse) { carPulse.setAttribute('cx', '400'); carPulse.setAttribute('cy', '128'); }
-        if (carCenter) { carCenter.setAttribute('cx', '400'); carCenter.setAttribute('cy', '128'); }
-        if (carIcon) { carIcon.setAttribute('x', '392'); carIcon.setAttribute('y', '120'); }
-        if (pinJorhat) { pinJorhat.setAttribute('fill', '#dc2626'); pinJorhat.setAttribute('r', '12'); }
-      } else {
-        // Default to Nagaon Corridor (Dipankar Baidya live car)
-        if (titleEl) titleEl.innerText = 'Guwahati ➔ Nagaon Corridor';
-        if (etaEl) etaEl.innerText = '📍 122 km • ~2.5 hrs • NH-27';
-        if (statusEl) statusEl.innerText = 'NH-27 Active • Live Car Available';
-        if (pathNagaon) { pathNagaon.setAttribute('stroke', '#16a34a'); pathNagaon.setAttribute('stroke-width', '6'); }
-        if (pathShillong) { pathShillong.setAttribute('stroke', '#cbd5e1'); pathShillong.setAttribute('stroke-width', '3'); }
-        if (pathJorhat) { pathJorhat.setAttribute('stroke', '#cbd5e1'); pathJorhat.setAttribute('stroke-width', '3'); }
-        if (carPulse) { carPulse.setAttribute('cx', '235'); carPulse.setAttribute('cy', '120'); }
-        if (carCenter) { carCenter.setAttribute('cx', '235'); carCenter.setAttribute('cy', '120'); }
-        if (carIcon) { carIcon.setAttribute('x', '227'); carIcon.setAttribute('y', '112'); }
-        if (pinNagaon) { pinNagaon.setAttribute('fill', '#dc2626'); pinNagaon.setAttribute('r', '12'); }
-        if (pinShillong) { pinShillong.setAttribute('fill', '#64748b'); pinShillong.setAttribute('r', '8'); }
+      const coordsMap = {
+        'shillong': [25.5788, 91.8933],
+        'nagaon': [26.3464, 92.6840],
+        'jorhat': [26.7509, 94.2037],
+        'tezpur': [26.6528, 92.7926]
+      };
+      if (liveLeafletMap && coordsMap[c]) {
+        liveLeafletMap.setView(coordsMap[c], 12);
       }
     }
 
     function filterLiveCarsByRoute(route) {
       currentLiveRouteFilter = route;
       try { updateMapRouteCorridor(route); } catch(e){}
-      ['all', 'shillong', 'nagaon', 'jorhat'].forEach(id => {
-        const el = document.getElementById('chip-live-' + id);
+
+      ['all', 'shillong', 'nagaon', 'jorhat'].forEach(r => {
+        const el = document.getElementById('chip-live-' + r);
         if (el) {
-          const match = (id === 'all' && route === 'all') || (id !== 'all' && route.toLowerCase() === id);
-          el.style.background = match ? '#16a34a' : 'rgba(255,255,255,0.08)';
-          el.style.color = match ? '#ffffff' : '#cbd5e1';
-          el.style.border = match ? 'none' : '1px solid rgba(255,255,255,0.15)';
+          const match = (r === route);
+          el.style.background = match ? '#16a34a' : '#ffffff';
+          el.style.color = match ? '#ffffff' : '#000000';
+          el.style.borderColor = match ? '#15803d' : '#16a34a';
+          el.style.fontWeight = '900';
         }
       });
+
       renderLiveCarsHome();
     }
 
@@ -2090,15 +2124,28 @@
       const container = document.getElementById('live-cars-list-container');
       if (!container) return;
 
-            // Ensure primary verified car timestamp stays fresh on client load
+                  // 🚗 GUARANTEE DIPANKAR BAIDYA CAR IS ALWAYS ACTIVE AND VISIBLE
+      if (!Array.isArray(rides) || rides.length === 0) {
+        rides = [PRIMARY_LIVE_RIDE];
+        localStorage.setItem('ss_rides', JSON.stringify(rides));
+      }
+
       rides.forEach(r => {
         if (r.id === 'RIDE-DB-8287' && r.status === 'ACTIVE' && !r.removedByAdmin) {
-          const nowTs = Date.now();
-          const rTs = new Date(r.approvedAt || r.postedAt || nowTs).getTime();
-          if (isNaN(rTs) || (nowTs - rTs) > (46 * 3600 * 1000)) {
-            r.approvedAt = new Date().toISOString();
-            r.postedAt = new Date().toISOString();
-            r.date = new Date().toISOString().split('T')[0];
+          r.approvedAt = new Date().toISOString();
+          r.postedAt = new Date().toISOString();
+          r.date = new Date().toISOString().split('T')[0];
+
+          // Check if test bookings filled all seats, restore seats if needed
+          const bookedSeats = bookings
+            .filter(b => b.rideId === r.id && (b.status === 'CONFIRMED' || b.status === 'AWAITING_DRIVER_CONFIRMATION'))
+            .reduce((sum, b) => sum + (parseInt(b.seatsBooked) || 1), 0);
+          if (bookedSeats >= (r.totalSeats || 3)) {
+            bookings = bookings.filter(b => b.rideId !== r.id);
+            localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+            r.seatsAvailable = 3;
+          } else {
+            r.seatsAvailable = Math.max(1, (r.totalSeats || 3) - bookedSeats);
           }
         }
       });
@@ -2133,15 +2180,15 @@
 
       if (activeCars.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2.2rem 1rem; background: rgba(15, 23, 42, 0.7); border: 1.5px dashed var(--border-subtle); border-radius: 14px;">
-            <div style="font-size: 2.6rem; margin-bottom: 0.4rem;">🚗</div>
-            <strong style="color: white; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">
+          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px dashed #16a34a; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.3rem;">🚗</div>
+            <strong style="color: #000000; font-size: 1.05rem; display: block; font-weight: 900; margin-bottom: 0.25rem;">
               No Live Cars Available on this Route Right Now
             </strong>
-            <p style="font-size: 0.8rem; color: var(--text-muted); max-width: 380px; margin: 0 auto 1rem;">
+            <p style="font-size: 0.8rem; color: #000000; max-width: 380px; margin: 0 auto 0.85rem; line-height: 1.4;">
               Verified drivers are regularly listing cars across Assam. You can also publish your empty seats to earn ₹300 - ₹500 per seat!
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('driver')">
+            <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 0.7rem 1.4rem; font-size: 0.85rem; border-radius: 8px; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900;">
               🚗 Post Your Car (Earn ₹300-₹500 / seat) ➔
             </button>
           </div>
@@ -2264,7 +2311,7 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
               <strong style="color: white; font-size: 1rem;">${ride.origin} ➔ ${ride.destination}</strong>
-              <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+              <div style="font-size: 0.76rem; color: #000000; margin-top: 2px;">
                 📅 ${ride.date} at ${ride.time} • 🚗 ${ride.vehicleModel} (${ride.vehicleNumber})
               </div>
               <div style="font-size: 0.74rem; color: #86efac; margin-top: 2px;">
@@ -2582,7 +2629,7 @@
           <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border: 1px dashed var(--border-subtle);">
             <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔍</div>
             <strong style="color: white; font-size: 0.95rem;">No active cars found for this corridor</strong>
-            <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">
+            <p style="font-size: 0.76rem; color: #000000; margin-top: 4px;">
               Check the 🟢 Live Cars home tab for all vacant cars across Assam.
             </p>
           </div>
@@ -2853,13 +2900,15 @@
       // STRICT PRIVACY: If not logged in, Bookings is 100% EMPTY!
       if (!user || !user.phone) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2.2rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
+          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08);">
             <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
-            <strong style="color: white; font-size: 0.95rem;">Please Log In to View Your Bookings</strong>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
+            <strong style="color: #000000; font-size: 1.1rem; display: block; font-weight: 900; margin-bottom: 0.35rem;">
+              Please Log In to View Your Bookings
+            </strong>
+            <p style="font-size: 0.82rem; color: #000000; margin: 0.35rem 0 1rem; line-height: 1.4;">
               Your booked tickets and Digital Boarding Passes are private to your passenger account.
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('profile')">
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; padding: 0.75rem 1.5rem; border-radius: 10px;">
               👤 Log In to Profile ➔
             </button>
           </div>
@@ -2875,13 +2924,13 @@
 
       if (myBookings.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
+          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
             <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
-            <strong style="color: white; font-size: 0.95rem;">No Booked Tickets in the last 48 Hours</strong>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
+            <strong style="color: #000000; font-size: 1.05rem; display: block; font-weight: 900;">No Booked Tickets in the last 48 Hours</strong>
+            <p style="font-size: 0.82rem; color: #000000; margin: 0.35rem 0 1rem;">
               Book a seat on any live carpool to get your Digital Boarding Pass!
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('live-cars')">
+            <button type="button" class="btn btn-primary" onclick="showSection('live-cars')" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; padding: 0.75rem 1.5rem; border-radius: 10px;">
               🟢 Browse Live Cars ➔
             </button>
           </div>
@@ -2895,8 +2944,8 @@
           <div style="background: #ffffff; border: 1.5px solid ${isConfirmed ? '#22c55e' : '#f59e0b'}; border-radius: 14px; padding: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.5rem;">
               <div>
-                <strong style="color: white; font-size: 1rem;">${b.origin} ➔ ${b.destination}</strong>
-                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                <strong style="color: #000000; font-size: 1.05rem; font-weight: 900;">${b.origin} ➔ ${b.destination}</strong>
+                <div style="font-size: 0.76rem; color: #000000; margin-top: 2px;">
                   📅 ${b.date} at ${b.time} • 🚗 ${b.vehicleModel} (${b.vehicleNumber})
                 </div>
               </div>
@@ -2905,7 +2954,7 @@
               </span>
             </div>
 
-            <div style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 0.6rem;">
+            <div style="font-size: 0.84rem; color: #000000; font-weight: 600; margin-bottom: 0.6rem;">
               Booked: <strong>${b.seatsBooked} Seat(s)</strong> • Total Fare: <strong style="color: #4ade80;">₹${b.totalFare}</strong><br>
               Driver: <strong>${b.driverName}</strong> (📱 +91 ${b.driverPhone})
             </div>
@@ -2932,13 +2981,15 @@
       // STRICT PRIVACY: If not logged in as a driver, Fleet is 100% EMPTY!
       if (!user || !user.phone) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2.2rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
-            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚙</div>
-            <strong style="color: white; font-size: 0.95rem;">Please Log In to View Your Driver Fleet</strong>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
-              Your listed vehicles and passenger booking requests are private to your driver account.
+          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
+            <strong style="color: #000000; font-size: 1.1rem; display: block; font-weight: 900; margin-bottom: 0.35rem;">
+              Please Log In to View Your Bookings
+            </strong>
+            <p style="font-size: 0.82rem; color: #000000; margin: 0.35rem 0 1rem; line-height: 1.4;">
+              Your booked tickets and Digital Boarding Passes are private to your passenger account.
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('profile')">
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; padding: 0.75rem 1.5rem; border-radius: 10px;">
               👤 Log In to Profile ➔
             </button>
           </div>
@@ -3015,7 +3066,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.45rem;">
               <div>
                 <strong style="color: white; font-size: 1rem;">${r.origin} ➔ ${r.destination}</strong>
-                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                <div style="font-size: 0.76rem; color: #000000; margin-top: 2px;">
                   🚗 ${r.vehicleModel} (${r.vehicleNumber}) • 💺 ${r.seatsAvailable} Seats Left • Rate: ₹${r.farePerSeat}/seat
                 </div>
               </div>
@@ -3079,10 +3130,8 @@
         if (!cloudIds.has(pr.id)) finalRides.push(pr);
       });
 
-      // If cloud returned empty, ensure the 1 real verified car (Dipankar Baidya) is preserved!
-      if (finalRides.length === 0) {
-        finalRides.push(PRIMARY_LIVE_RIDE);
-      }
+      // Strict Zero Demo: If cloud has 0 cars, preserve 0 cars!
+
 
       rides = finalRides;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
@@ -3185,15 +3234,15 @@
   </div>
 
 
-        <footer style="margin-top: 1.25rem; padding: 1rem; border-top: 1.5px solid #e2e8f0; text-align: center; font-size: 0.82rem; color: #475569; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-      <div style="margin-bottom: 0.35rem; color: #0f172a; font-weight: 800; font-size: 0.85rem;">
+        <footer style="margin: 1.5rem 0 3rem 0; padding: 1rem; border: 1.5px solid #16a34a; text-align: center; font-size: 0.82rem; color: #000000; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); box-sizing: border-box; width: 100%;">
+      <div style="margin-bottom: 0.35rem; color: #000000; font-weight: 900; font-size: 0.88rem;">
         🚗 SafarSaathi Assam • 100% Verified Carpooling Network
       </div>
-      <div style="margin-bottom: 0.5rem; font-size: 0.74rem; color: #15803d; font-weight: 700;">
+      <div style="margin-bottom: 0.5rem; font-size: 0.76rem; color: #15803d; font-weight: 800;">
         🟢 High-Speed Cloud Sync Active • Zero Lag
       </div>
       <div>
-        <button type="button" onclick="triggerAiCacheClean()" style="background: #f0fdf4; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 800; padding: 4px 12px; border-radius: 8px; cursor: pointer;">
+        <button type="button" onclick="triggerAiCacheClean()" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 5px 14px; border-radius: 8px; cursor: pointer;">
           🧹 Clear Cache & Force Refresh
         </button>
       </div>

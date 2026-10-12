@@ -331,10 +331,6 @@
     };
 
     let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-    if (!Array.isArray(rides) || rides.length === 0) {
-      rides = [PRIMARY_LIVE_RIDE];
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
-    }
     
     // ⚡ Local Broadcast Channel for instant (<100ms) sync with Customer App
     let syncBroadcastChannel = null;
@@ -402,11 +398,7 @@
       const fakeDemoNames = new Set(['Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
       const fakeDemoIds = new Set(['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-1902', 'RIDE-3311']);
       let clean = cloudRides.filter(r => !fakeDemoNames.has(r.driverName) && !fakeDemoIds.has(r.id));
-      if (clean.length === 0 && rides.length > 0) {
-        clean = rides;
-      } else if (clean.length === 0) {
-        clean = [PRIMARY_LIVE_RIDE];
-      }
+      // 0% Demo: If clean is empty, keep it empty
       rides = clean;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
       renderAdminVehicles();
@@ -480,10 +472,6 @@
 
     function renderAdminVehicles() {
       rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
-      if (!Array.isArray(rides) || rides.length === 0) {
-        rides = [PRIMARY_LIVE_RIDE];
-        localStorage.setItem('ss_rides', JSON.stringify(rides));
-      }
 
       const activeCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE').length;
       const pendingCount = rides.filter(r => (r.status || '').toUpperCase() !== 'ACTIVE').length;
