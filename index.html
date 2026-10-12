@@ -850,6 +850,66 @@
         <!-- Clean Leaflet Engine running Google Maps Tiles & Live Car Markers -->
       </div>
 
+      <!-- 🟢 OLA/UBER STYLE LIVE CONNECTING RIDE TRACKER HUD -->
+      <div id="active-ride-tracking-hud" style="display: none; background: #ffffff; border-top: 2px solid #16a34a; padding: 10px 14px;">
+        <!-- Top Status Row: ETA & Distance -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #dcfce7; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              🚗
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s infinite;"></span>
+                <strong style="color: #000000; font-size: 0.92rem; font-weight: 900;" id="hud-status-title">
+                  Gaadi On The Way (Live Connecting)
+                </strong>
+              </div>
+              <span id="hud-status-subtitle" style="font-size: 0.72rem; color: #15803d; font-weight: 800; display: block; margin-top: 1px;">
+                Driver aapke pickup point ki taraf aa rahe hain
+              </span>
+            </div>
+          </div>
+          <!-- ETA & Distance Badges -->
+          <div style="text-align: right; background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 4px 10px;">
+            <div style="font-size: 1.15rem; font-weight: 900; color: #15803d; line-height: 1.1;" id="hud-eta-display">
+              -- min
+            </div>
+            <div style="font-size: 0.72rem; color: #000000; font-weight: 900; margin-top: 2px;" id="hud-distance-display">
+              -- km door
+            </div>
+          </div>
+        </div>
+
+        <!-- Driver & Vehicle Info Row -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.76rem;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img id="hud-driver-img" src="driver_photo_avatar.png" alt="Driver" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #16a34a;">
+            <div>
+              <b style="color: #000000;" id="hud-driver-name">Dipankar Baidya</b>
+              <div style="margin-top: 2px;">
+                <span class="rc-hsrp-badge" id="hud-vehicle-plate" style="font-size: 0.7rem; background: #ffffff; color: #000000; border: 1px solid #000000; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-weight: 900;">
+                  IND • AS 02 M 8287
+                </span>
+                <span style="color: #64748b; font-weight: 700; margin-left: 4px;" id="hud-vehicle-model">Maruti Dzire</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <a id="hud-call-btn" href="tel:" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
+              📞 Call
+            </a>
+            <a id="hud-wa-btn" href="#" target="_blank" style="background: #ffffff; color: #15803d; border: 1px solid #16a34a; font-weight: 900; font-size: 0.72rem; padding: 4px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
+              💬 WhatsApp
+            </a>
+            <button type="button" onclick="stopActiveRideTracking(true)" style="background: #f1f5f9; color: #000000; border: 1px solid #cbd5e1; font-weight: 800; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; cursor: pointer;" title="Close Tracking View">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Map Footer with Live Radar Status -->
       <div style="background: #ffffff; padding: 8px 12px; border-top: 1.5px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.74rem;">
         <div style="display: flex; align-items: center; gap: 6px;">
@@ -1986,6 +2046,24 @@
       'silchar': [24.8170, 92.7972]
     };
 
+    // 🚗 LIVE RIDE TRACKING STATE (Ola/Uber Style)
+    let activeTrackingTimer = null;
+    let trackingRouteLine = null;
+    let trackingCarMarker = null;
+    let trackingPassengerMarker = null;
+    let currentTrackingBooking = null;
+
+    function getHaversineDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return Math.round(R * c * 10) / 10;
+    }
+
     function toggleTopLiveMap() {
       const container = document.getElementById('top-map-container');
       const btnText = document.getElementById('top-map-btn-text');
@@ -1995,7 +2073,16 @@
         container.style.display = 'block';
         if (btnText) btnText.innerText = '✕ Close Map';
         initCleanGoogleLiveMap();
-        if (googleLiveMap) {
+
+        // If customer has an active booked ticket, automatically open in Live Tracking Mode!
+        const user = getActiveUserProfile();
+        const activeBooking = user ? bookings.find(b => b.passengerPhone === user.phone && isWithin48Hours(b.timestamp)) : null;
+
+        if (activeBooking) {
+          setTimeout(() => {
+            trackBookedRideLive(activeBooking.bookingId);
+          }, 200);
+        } else if (googleLiveMap) {
           setTimeout(() => {
             googleLiveMap.invalidateSize();
             centerOnUserLiveGps(true);
@@ -2004,6 +2091,208 @@
       } else {
         container.style.display = 'none';
         if (btnText) btnText.innerText = 'Live Map';
+        stopActiveRideTracking(true);
+      }
+    }
+
+    // 🗺️ OLA/UBER STYLE CONNECTING RIDE TRACKER
+    function trackBookedRideLive(bookingId) {
+      const user = getActiveUserProfile();
+      const b = bookings.find(item => item.bookingId === bookingId) ||
+                (user ? bookings.find(item => item.passengerPhone === user.phone) : null);
+
+      if (!b) {
+        showToast('Booking details not found.', '#dc2626');
+        return;
+      }
+
+      currentTrackingBooking = b;
+
+      // 1. Ensure top map container is visible
+      const container = document.getElementById('top-map-container');
+      const btnText = document.getElementById('top-map-btn-text');
+      if (container) {
+        container.style.display = 'block';
+        if (btnText) btnText.innerText = '✕ Close Map';
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Initialize map if needed
+      initCleanGoogleLiveMap();
+
+      // Show HUD
+      const hudEl = document.getElementById('active-ride-tracking-hud');
+      if (hudEl) hudEl.style.display = 'block';
+
+      // Update Map Header Title
+      const mapTitle = document.getElementById('map-live-loc-title');
+      if (mapTitle) mapTitle.innerText = 'Google Maps • Live Connecting Tracker';
+      const badgeEl = document.getElementById('map-radar-count-badge');
+      if (badgeEl) badgeEl.innerText = `🟢 Connected to ${b.driverName}'s Car (${b.vehicleModel})`;
+
+      // Populate HUD details
+      const hudDriverName = document.getElementById('hud-driver-name');
+      if (hudDriverName) hudDriverName.innerText = b.driverName;
+      const hudDriverImg = document.getElementById('hud-driver-img');
+      if (hudDriverImg) hudDriverImg.src = b.driverPhoto || 'driver_photo_avatar.png';
+      const hudPlate = document.getElementById('hud-vehicle-plate');
+      if (hudPlate) hudPlate.innerText = 'IND • ' + b.vehicleNumber;
+      const hudModel = document.getElementById('hud-vehicle-model');
+      if (hudModel) hudModel.innerText = b.vehicleModel || 'Car';
+      const hudCallBtn = document.getElementById('hud-call-btn');
+      if (hudCallBtn) hudCallBtn.href = `tel:${b.driverPhone}`;
+      const hudWaBtn = document.getElementById('hud-wa-btn');
+      if (hudWaBtn) hudWaBtn.href = `https://wa.me/91${b.driverPhone}?text=Hello%20${encodeURIComponent(b.driverName)},%20I%20am%20tracking%20your%20car%20for%20my%20SafarSaathi%20pickup!`;
+
+      // 2. Determine Passenger Coordinates
+      const originKey = (b.origin || 'guwahati').toLowerCase().trim();
+      let passengerLat = currentLiveCoords ? currentLiveCoords.lat : (ASSAM_CITY_COORDS[originKey] ? ASSAM_CITY_COORDS[originKey][0] : 26.1445);
+      let passengerLng = currentLiveCoords ? currentLiveCoords.lng : (ASSAM_CITY_COORDS[originKey] ? ASSAM_CITY_COORDS[originKey][1] : 91.7362);
+
+      // 3. Determine Car Approaching Position (~4.5 km away along corridor)
+      const destKey = (b.destination || 'nagaon').toLowerCase().trim();
+      let deltaLat = 0.035;
+      let deltaLng = 0.030;
+      if (destKey.includes('shillong')) {
+        deltaLat = -0.035;
+        deltaLng = 0.020;
+      } else if (destKey.includes('nagaon') || destKey.includes('jorhat')) {
+        deltaLat = 0.035;
+        deltaLng = 0.035;
+      }
+      let carLat = passengerLat + deltaLat;
+      let carLng = passengerLng + deltaLng;
+
+      // Stop any prior tracking
+      stopActiveRideTracking(false);
+
+      if (googleLiveMap && typeof L !== 'undefined') {
+        // Plot Passenger Pickup Marker
+        const passIcon = L.divIcon({
+          className: 'passenger-pickup-pin',
+          html: `
+            <div style="position:relative; width:34px; height:34px; display:flex; align-items:center; justify-content:center;">
+              <div style="position:absolute; width:32px; height:32px; border-radius:50%; background:rgba(22,163,74,0.35); animation:pulse 1.8s infinite;"></div>
+              <div style="width:20px; height:20px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 10px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:10px; font-weight:900;">
+                👤
+              </div>
+            </div>
+          `,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+        trackingPassengerMarker = L.marker([passengerLat, passengerLng], { icon: passIcon }).addTo(googleLiveMap);
+        trackingPassengerMarker.bindPopup(`<b>📍 Aapka Pickup Location</b><br>${b.origin} • Passenger Waiting`);
+
+        // Plot Approaching Car Marker
+        const carIcon = L.divIcon({
+          className: 'tracking-car-pin',
+          html: `
+            <div style="position:relative; width:48px; height:48px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+              <div style="position:absolute; width:44px; height:44px; border-radius:50%; background:rgba(22,163,74,0.35); animation:pulse 1.5s infinite;"></div>
+              <div style="width:34px; height:34px; background:#ffffff; border:2.5px solid #16a34a; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.35); font-size:19px;">
+                🚗
+              </div>
+              <div style="position:absolute; bottom:-12px; background:#15803d; color:#ffffff; font-size:8.5px; font-weight:900; padding:1px 5px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.25); white-space:nowrap; border:1px solid #86efac; font-family:monospace;">
+                ${b.vehicleNumber}
+              </div>
+            </div>
+          `,
+          iconSize: [48, 48],
+          iconAnchor: [24, 24]
+        });
+        trackingCarMarker = L.marker([carLat, carLng], { icon: carIcon }).addTo(googleLiveMap);
+        trackingCarMarker.bindPopup(`<b>🚗 ${b.vehicleModel}</b><br>Driver: ${b.driverName}<br>Plate: ${b.vehicleNumber}<br><b style="color:#15803d;">On the way to pick you up!</b>`);
+
+        // Draw Connecting Route Line (Dashed Green Polyline)
+        trackingRouteLine = L.polyline([[carLat, carLng], [passengerLat, passengerLng]], {
+          color: '#16a34a',
+          weight: 4.5,
+          opacity: 0.9,
+          dashArray: '8, 8',
+          lineCap: 'round',
+          lineJoin: 'round'
+        }).addTo(googleLiveMap);
+
+        // Fit Bounds to display both Car and Passenger
+        googleLiveMap.fitBounds(L.latLngBounds([[carLat, carLng], [passengerLat, passengerLng]]), {
+          padding: [50, 50],
+          maxZoom: 16
+        });
+      }
+
+      function updateTrackingStats() {
+        const distKm = getHaversineDistanceKm(passengerLat, passengerLng, carLat, carLng);
+        const etaMins = Math.max(1, Math.round((distKm / 35) * 60));
+
+        const distEl = document.getElementById('hud-distance-display');
+        const etaEl = document.getElementById('hud-eta-display');
+        const titleEl = document.getElementById('hud-status-title');
+        const subEl = document.getElementById('hud-status-subtitle');
+
+        if (distKm <= 0.15) {
+          if (distEl) distEl.innerText = 'Pahunch gayi!';
+          if (etaEl) etaEl.innerText = '0 min';
+          if (titleEl) titleEl.innerText = '🎉 Gaadi Pickup Point Par Pahunch Gayi!';
+          if (subEl) subEl.innerText = 'Driver aapke location par khada hai. Gadi me baithiye!';
+          clearInterval(activeTrackingTimer);
+          activeTrackingTimer = null;
+        } else {
+          if (distEl) distEl.innerText = `${distKm.toFixed(1)} km door`;
+          if (etaEl) etaEl.innerText = `${etaMins} min`;
+          if (titleEl) titleEl.innerText = 'Gaadi On The Way (Live Connecting)';
+          if (subEl) subEl.innerText = `Driver ${b.driverName} aapke pickup point ki taraf aa rahe hain.`;
+        }
+      }
+
+      updateTrackingStats();
+
+      // Live movement simulation towards passenger (updates every 2.5s)
+      activeTrackingTimer = setInterval(() => {
+        carLat += (passengerLat - carLat) * 0.045;
+        carLng += (passengerLng - carLng) * 0.045;
+
+        if (trackingCarMarker) {
+          trackingCarMarker.setLatLng([carLat, carLng]);
+        }
+        if (trackingRouteLine) {
+          trackingRouteLine.setLatLngs([[carLat, carLng], [passengerLat, passengerLng]]);
+        }
+
+        updateTrackingStats();
+      }, 2500);
+
+      showToast(`📍 Live Tracking Started: Driver ${b.driverName} is on the way!`, '#15803d');
+    }
+
+    function stopActiveRideTracking(hideHud = true) {
+      if (activeTrackingTimer) {
+        clearInterval(activeTrackingTimer);
+        activeTrackingTimer = null;
+      }
+      if (googleLiveMap && typeof L !== 'undefined') {
+        if (trackingRouteLine) {
+          googleLiveMap.removeLayer(trackingRouteLine);
+          trackingRouteLine = null;
+        }
+        if (trackingCarMarker) {
+          googleLiveMap.removeLayer(trackingCarMarker);
+          trackingCarMarker = null;
+        }
+        if (trackingPassengerMarker) {
+          googleLiveMap.removeLayer(trackingPassengerMarker);
+          trackingPassengerMarker = null;
+        }
+      }
+      if (hideHud) {
+        const hudEl = document.getElementById('active-ride-tracking-hud');
+        if (hudEl) hudEl.style.display = 'none';
+
+        const mapTitle = document.getElementById('map-live-loc-title');
+        if (mapTitle) mapTitle.innerText = 'Google Maps • Live Car See';
+
+        centerOnUserLiveGps(true);
+        updateMapLiveCarRadar();
       }
     }
 
@@ -2645,6 +2934,10 @@
       closeBookingModal();
       showToast('🎉 Booking Submitted! Ticket issued under My Tickets.', '#15803d');
       showSection('my-tickets');
+      // Automatically open live tracking map so customer sees their approaching car immediately
+      setTimeout(() => {
+        trackBookedRideLive(booking.bookingId);
+      }, 400);
     }
 
     // =========================================================================
@@ -3204,6 +3497,12 @@
               <div>💰 Total: <b style="color: #15803d; font-size: 0.95rem;">₹${b.totalFare}</b></div>
               <div>UTR: <code style="font-family: monospace; background: #f1f5f9; padding: 2px 5px; border-radius: 4px;">${b.passengerUtr}</code></div>
             </div>
+
+            <!-- 🗺️ OLA/UBER STYLE LIVE CONNECTING RIDE TRACKER BUTTON -->
+            <button type="button" onclick="trackBookedRideLive('${b.bookingId}')" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; font-size: 0.82rem; padding: 0.65rem; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 3px 8px rgba(22, 163, 74, 0.25);">
+              <span>🗺️</span>
+              <span>Live Ride Track Karein (Ola/Uber Connecting Map) ➔</span>
+            </button>
           </div>
         `;
       }).join('');
