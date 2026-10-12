@@ -303,33 +303,6 @@
     let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
     let adminDb = null;
     
-    // 🚗 THE 1 REAL ACTIVE LIVE VEHICLE IN ASSAM (Verified by Admin)
-    const PRIMARY_LIVE_RIDE = {
-      id: 'RIDE-DB-8287',
-      driverName: 'Dipankar Baidya',
-      driverPhone: '9864012345',
-      driverUpi: '9864012345@upi',
-      driverPhoto: '',
-      driverQr: 'mitali_qr_compact.svg',
-      carPhoto: 'car-bg.jpg',
-      platePhoto: '',
-      origin: 'Guwahati',
-      destination: 'Nagaon',
-      date: new Date().toISOString().split('T')[0],
-      time: '08:30 AM',
-      seatsAvailable: 3,
-      totalSeats: 3,
-      farePerSeat: 200,
-      vehicleModel: 'Maruti Suzuki Dzire',
-      vehicleNumber: 'AS 02 M 8287',
-      platformFeeUtr: '145266378478',
-      utrNumber: '145266378478',
-      status: 'ACTIVE',
-      verifiedByAdmin: true,
-      postedAt: new Date().toISOString(),
-      approvedAt: new Date().toISOString()
-    };
-
     let rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
     
     // ⚡ Local Broadcast Channel for instant (<100ms) sync with Customer App
@@ -719,7 +692,7 @@
 
       const nowIso = new Date().toISOString();
       const newRide = {
-        id: 'RIDE-DB-8287',
+        id: 'RIDE-' + Date.now(),
         driverName: name,
         driverPhone: phone,
         driverUpi: phone ? (phone + '@upi') : '9864012345@upi',
