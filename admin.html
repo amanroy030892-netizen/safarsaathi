@@ -73,17 +73,17 @@
 
   <style>
     :root {
-      --bg-dark: #020617;
-      --card-bg: #0f172a;
-      --card-border: rgba(56, 189, 248, 0.25);
-      --primary: #0284c7;
-      --accent: #38bdf8;
-      --success: #22c55e;
+      --bg-dark: #f4fbf7;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --primary: #16a34a;
+      --accent: #22c55e;
+      --success: #16a34a;
       --danger: #ef4444;
       --warning: #f59e0b;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-gray: rgba(255, 255, 255, 0.12);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border-gray: #cbd5e1;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -91,8 +91,9 @@
     body { background-color: var(--bg-dark); color: var(--text); min-height: 100vh; padding-bottom: 3rem; }
 
     .admin-header {
-      background: rgba(15, 23, 42, 0.95);
-      border-bottom: 1.5px solid var(--border-gray);
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      box-shadow: 0 4px 16px rgba(21, 128, 61, 0.25);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       padding: 0.75rem 1rem;
       display: flex;
       justify-content: space-between;
@@ -147,7 +148,7 @@
       text-decoration: none;
     }
 
-    .btn-primary { background: linear-gradient(135deg, #0284c7, #1d4ed8); color: white; }
+    .btn-primary { background: linear-gradient(135deg, #16a34a, #15803d); color: white; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3); }
     .btn-success { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
     .btn-warning { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
     .btn-danger { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; }
@@ -182,8 +183,9 @@
 <body>
 
   <header class="admin-header">
-    <div style="font-size: 1.15rem; font-weight: 900; color: white;">
-      🔒 SafarSaathi <span style="color: #38bdf8;">Admin Portal</span>
+    <div style="font-size: 1.15rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 8px;">
+      <img src="safarsaathi_emblem_transparent.png" alt="SafarSaathi Logo" style="height: 28px; width: auto; vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">
+      <span>Safar<span style="color: #86efac;">Saathi</span> <span style="color: #dcfce7; font-size: 0.85rem; font-weight: 700;">Admin Portal</span></span>
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <span id="adm-cloud-indicator" style="font-size: 0.72rem; color: #86efac; background: rgba(34,197,94,0.15); padding: 2px 8px; border-radius: 9999px; border: 1px solid #22c55e;">
