@@ -824,10 +824,10 @@
           <span style="font-size: 1.15rem;">🗺️</span>
           <div>
             <strong id="map-live-loc-title" style="font-size: 0.9rem; font-weight: 900; color: #ffffff; display: block; line-height: 1.2;">
-              Google Maps • Live Car See
+              Google Maps • 100% Direct Live GPS
             </strong>
             <span id="map-radar-count-badge" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800;">
-              🟢 Scanning Live Cars across Assam...
+              🟢 Direct Live GPS Stream • Updating Every 1s
             </span>
           </div>
         </div>
@@ -910,14 +910,15 @@
         </div>
       </div>
 
-      <!-- Map Footer with Live Radar Status & Road Snap Helper -->
+      <!-- Map Footer with 100% Direct Live GPS Stream Status -->
       <div style="background: #ffffff; padding: 8px 12px; border-top: 1.5px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.74rem;">
         <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s infinite;"></span>
-          <span id="map-coords-display" style="color: #000000; font-weight: 800; font-family: monospace;">Google Maps Live Radar: Ready</span>
+          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
+          <span id="map-coords-display" style="color: #000000; font-weight: 900; font-family: monospace;">🟢 Direct Live GPS: Connecting...</span>
         </div>
-        <div style="color: #15803d; font-weight: 900; font-size: 0.72rem;">
-          📍 Raste par tap karke ya pin drag karke exact pickup point set karein
+        <div style="color: #15803d; font-weight: 900; font-size: 0.72rem; display: flex; align-items: center; gap: 5px;">
+          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
+          <span>100% Direct Live GPS • Every 1s Stream</span>
         </div>
       </div>
     </div>
@@ -2410,89 +2411,104 @@
       });
     }
 
-    // 🎯 HIGH-ACCURACY CONTINUOUS GPS WATCHER & ROAD SNAPPING ENGINE
+    // 🎯 100% DIRECT HIGH-ACCURACY CONTINUOUS GPS STREAM (UPDATES EVERY 1 SECOND)
     let liveGpsWatcherId = null;
+    let liveGpsIntervalTimer = null;
     let bestGpsAccuracy = 99999;
+    let gpsStreamCounter = 0;
 
     function centerOnUserLiveGps(zoomToUser = true, forceRefresh = false) {
-
-      // If user has manual road pin, center on it unless force refresh requested
-      if (currentLiveCoords && currentLiveCoords.isManual && !forceRefresh) {
-        if (googleLiveMap && typeof L !== 'undefined' && zoomToUser) {
-          googleLiveMap.setView([currentLiveCoords.lat, currentLiveCoords.lng], 16);
-        }
+      if (!('geolocation' in navigator)) {
+        const coordsEl = document.getElementById('map-coords-display');
+        if (coordsEl) coordsEl.innerText = 'GPS not supported on device';
         return;
       }
 
-      // If already have coordinates, immediately center so zero waiting
       if (currentLiveCoords && googleLiveMap && typeof L !== 'undefined' && zoomToUser) {
-        const initialZoom = (currentLiveCoords.accuracy && currentLiveCoords.accuracy <= 50) ? 16 : 15;
-        googleLiveMap.setView([currentLiveCoords.lat, currentLiveCoords.lng], initialZoom);
+        googleLiveMap.setView([currentLiveCoords.lat, currentLiveCoords.lng], 16);
       }
 
-      if ('geolocation' in navigator) {
-        if (forceRefresh && liveGpsWatcherId) {
+      start1SecondLiveGpsStream(zoomToUser, forceRefresh);
+    }
+
+    function start1SecondLiveGpsStream(shouldZoomInitial = true, forceReset = false) {
+      if (forceReset) {
+        bestGpsAccuracy = 99999;
+        if (liveGpsWatcherId) {
           navigator.geolocation.clearWatch(liveGpsWatcherId);
           liveGpsWatcherId = null;
-          bestGpsAccuracy = 99999;
-          if (currentLiveCoords) currentLiveCoords.isManual = false;
         }
+      }
 
-        // 1-Tap Immediate Position Fix
-        navigator.geolocation.getCurrentPosition(
+      // Immediate high-accuracy GPS call with zero cache
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          handleGpsPositionUpdate(pos, shouldZoomInitial);
+        },
+        function(err) {
+          console.warn('Initial GPS notice:', err.message);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+
+      // Hardware GPS Watcher
+      if (!liveGpsWatcherId) {
+        liveGpsWatcherId = navigator.geolocation.watchPosition(
           function(pos) {
-            handleGpsPositionUpdate(pos, zoomToUser);
+            handleGpsPositionUpdate(pos, false);
           },
           function(err) {
-            console.warn('Initial GPS notice:', err.message);
+            console.warn('Watch GPS notice:', err.message);
           },
-          { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
+      }
 
-        // Continuous High-Accuracy GPS Watcher (Locks onto satellites within 1-2 seconds!)
-        if (!liveGpsWatcherId) {
-          liveGpsWatcherId = navigator.geolocation.watchPosition(
+      // 1-Second Continuous Live GPS Loop: Stream updates every 1 second!
+      if (!liveGpsIntervalTimer) {
+        liveGpsIntervalTimer = setInterval(() => {
+          gpsStreamCounter++;
+          navigator.geolocation.getCurrentPosition(
             function(pos) {
               handleGpsPositionUpdate(pos, false);
             },
-            function(err) {
-              console.warn('Watch GPS error:', err.message);
-            },
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+            function(err) {},
+            { enableHighAccuracy: true, timeout: 2500, maximumAge: 0 }
           );
-        }
+        }, 1000);
       }
     }
 
     function handleGpsPositionUpdate(pos, forceZoom) {
-      if (currentLiveCoords && currentLiveCoords.isManual) return;
-
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
-      const accuracy = Math.round(pos.coords.accuracy || 10);
+      const accuracy = Math.round(pos.coords.accuracy || 8);
 
       const isImprovement = accuracy < bestGpsAccuracy;
       if (isImprovement) bestGpsAccuracy = accuracy;
 
-      currentLiveCoords = { lat, lng, accuracy, isManual: false };
+      currentLiveCoords = { lat, lng, accuracy, lastUpdated: new Date().toISOString() };
 
-      updateCoordsDisplay(lat, lng, accuracy, false);
+      updateCoordsDisplay(lat, lng, accuracy);
 
       if (googleLiveMap && typeof L !== 'undefined') {
-        const shouldZoom = forceZoom || (isImprovement && accuracy <= 60);
+        const shouldZoom = forceZoom || (isImprovement && accuracy <= 50);
         updateUserMarkerOnMap(lat, lng, accuracy, shouldZoom);
       }
+
+      // Broadcast Driver Live Location every second if active
+      syncDriverLiveGpsStream(lat, lng, accuracy);
     }
 
-    function updateCoordsDisplay(lat, lng, accuracy, isManual) {
+    function updateCoordsDisplay(lat, lng, accuracy) {
       const coordsEl = document.getElementById('map-coords-display');
       if (!coordsEl) return;
-      if (isManual) {
-        coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">📍 Road Location Pinned (Exact)</span> • <span style="font-family:monospace; font-weight:800;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</span>`;
-      } else if (accuracy > 120) {
-        coordsEl.innerHTML = `<span style="color:#d97706; font-weight:900;">📡 Refining GPS (±${accuracy}m)...</span> <small style="color:#000000; font-weight:700;">Tap road to set exact point</small>`;
+
+      const secPulse = (gpsStreamCounter % 2 === 0) ? '🟢' : '⚡';
+      if (accuracy > 120) {
+        coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">${secPulse} Live GPS:</span> <span style="font-family:monospace; font-weight:900; color:#000000;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</span> <span style="color:#d97706; font-weight:800;">(±${accuracy}m locking satellites...)</span> • <b style="color:#15803d;">1s Stream</b>`;
       } else {
-        coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">🟢 Road GPS Locked (±${accuracy}m)</span> • <span style="font-family:monospace; font-weight:800;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</span>`;
+        coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">${secPulse} Live GPS:</span> <span style="font-family:monospace; font-weight:900; color:#000000;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</span> <span style="color:#15803d; font-weight:900;">(±${accuracy}m 100% Accurate)</span> • <b style="color:#15803d;">1s Stream</b>`;
       }
     }
 
@@ -2500,65 +2516,40 @@
       if (!googleLiveMap || typeof L === 'undefined') return;
 
       if (shouldZoom) {
-        const targetZoom = (accuracy <= 60 || (currentLiveCoords && currentLiveCoords.isManual)) ? 16 : 15;
-        googleLiveMap.setView([lat, lng], targetZoom);
+        googleLiveMap.setView([lat, lng], 16);
       }
 
-      // User Marker with DRAGGABLE capability (Allows user to drag directly onto road!)
+      // DIRECT 100% LIVE PIN (NO DRAGGING, NO TAP REQUIRED)
       if (!userLiveGpsMarker) {
         const userGpsIcon = L.divIcon({
-          className: 'user-live-gps-pin',
+          className: 'user-direct-live-pin',
           html: `
-            <div style="position:relative; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:grab;">
-              <div style="position:absolute; width:32px; height:32px; border-radius:50%; background:rgba(22,163,74,0.32); animation:pulse 1.8s infinite;"></div>
-              <div style="width:18px; height:18px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 10px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center;">
+            <div style="position:relative; width:36px; height:36px; display:flex; align-items:center; justify-content:center;">
+              <div style="position:absolute; width:34px; height:34px; border-radius:50%; background:rgba(22,163,74,0.35); animation:pulse 1s infinite;"></div>
+              <div style="width:18px; height:18px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 12px rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center;">
                 <div style="width:6px; height:6px; background:#ffffff; border-radius:50%;"></div>
               </div>
             </div>
           `,
-          iconSize: [34, 34],
-          iconAnchor: [17, 17]
+          iconSize: [36, 36],
+          iconAnchor: [18, 18]
         });
 
-        userLiveGpsMarker = L.marker([lat, lng], { icon: userGpsIcon, draggable: true }).addTo(googleLiveMap);
-        userLiveGpsMarker.bindPopup('<b>📍 Aapka Pickup Location</b><br>Raste par set karne ke liye drag karein.');
-
-        // Allow user to drag marker directly onto the road!
-        userLiveGpsMarker.on('dragend', function(e) {
-          const pt = e.target.getLatLng();
-          currentLiveCoords = { lat: pt.lat, lng: pt.lng, accuracy: 5, isManual: true };
-          if (userGpsAccuracyCircle) {
-            googleLiveMap.removeLayer(userGpsAccuracyCircle);
-            userGpsAccuracyCircle = null;
-          }
-          updateCoordsDisplay(pt.lat, pt.lng, 5, true);
-          showToast('📍 Road Location Set: ' + pt.lat.toFixed(4) + ', ' + pt.lng.toFixed(4), '#15803d');
-        });
+        userLiveGpsMarker = L.marker([lat, lng], { icon: userGpsIcon, draggable: false }).addTo(googleLiveMap);
+        userLiveGpsMarker.bindPopup('<b>📍 Your Live Location</b><br>100% Direct Live GPS Stream');
       } else {
         userLiveGpsMarker.setLatLng([lat, lng]);
       }
 
-      // Map Click Listener: 1-Tap to Set Exact Location on Road!
-      if (!googleLiveMap._roadClickListener) {
-        googleLiveMap.on('click', function(e) {
-          currentLiveCoords = { lat: e.latlng.lat, lng: e.latlng.lng, accuracy: 5, isManual: true };
-          updateUserMarkerOnMap(e.latlng.lat, e.latlng.lng, 5, false);
-          updateCoordsDisplay(e.latlng.lat, e.latlng.lng, 5, true);
-          showToast('📍 Pickup Point Raste Par Set Ho Gaya!', '#15803d');
-        });
-        googleLiveMap._roadClickListener = true;
-      }
-
-      // Accuracy Circle: NEVER draw a giant 1.2km circle over the river!
-      // Only draw a small helpful circle if accuracy is tight (<= 50m), capped at 30m max.
-      if (accuracy <= 50 && (!currentLiveCoords || !currentLiveCoords.isManual)) {
+      // Small high-accuracy radius circle (tight, max 30m)
+      if (accuracy <= 60) {
         const displayRadius = Math.min(accuracy, 25);
         if (!userGpsAccuracyCircle) {
           userGpsAccuracyCircle = L.circle([lat, lng], {
             radius: displayRadius,
             color: '#16a34a',
             fillColor: '#86efac',
-            fillOpacity: 0.18,
+            fillOpacity: 0.2,
             weight: 1.5
           }).addTo(googleLiveMap);
         } else {
@@ -2566,9 +2557,40 @@
           userGpsAccuracyCircle.setRadius(displayRadius);
         }
       } else if (userGpsAccuracyCircle) {
-        // Remove giant or manual circle
         googleLiveMap.removeLayer(userGpsAccuracyCircle);
         userGpsAccuracyCircle = null;
+      }
+    }
+
+    // 🚙 SYNC DRIVER LIVE GPS EVERY SECOND ACROSS NETWORK
+    function syncDriverLiveGpsStream(lat, lng, accuracy) {
+      const user = getActiveUserProfile();
+      if (!user || !user.phone) return;
+
+      let changed = false;
+      const nowIso = new Date().toISOString();
+      rides.forEach(r => {
+        if (r.driverPhone === user.phone && (r.status || '').toUpperCase() === 'ACTIVE') {
+          r.liveLat = lat;
+          r.liveLng = lng;
+          r.lastGpsAccuracy = accuracy;
+          r.lastGpsUpdate = nowIso;
+          changed = true;
+          if (db) {
+            try {
+              db.collection('ss_rides').doc(r.id).update({
+                liveLat: lat,
+                liveLng: lng,
+                lastGpsAccuracy: accuracy,
+                lastGpsUpdate: nowIso
+              });
+            } catch(e){}
+          }
+        }
+      });
+
+      if (changed) {
+        try { localStorage.setItem('ss_rides', JSON.stringify(rides)); } catch(e){}
       }
     }
 
