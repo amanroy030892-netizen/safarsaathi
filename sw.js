@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v25-live-zero-demo)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v28-direct-customer-download)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v25-live-zero-demo';
+const CACHE_NAME = 'safarsaathi-v28-direct-customer-download';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

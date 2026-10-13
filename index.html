@@ -220,8 +220,8 @@
       padding-top: 54px !important;
       min-height: 108px !important;
     }
-    .ios-standalone #gemini-bottom-dock {
-      bottom: 22px !important;
+    .ios-standalone #gemini-floating-btn {
+      bottom: 96px !important;
     }
 
     /* Native Media Query Fallback for iOS Standalone Mode */
@@ -231,8 +231,8 @@
           padding-top: 54px !important;
           min-height: 108px !important;
         }
-        #gemini-bottom-dock {
-          bottom: 22px !important;
+        #gemini-floating-btn {
+          bottom: 96px !important;
         }
       }
     }
@@ -325,10 +325,21 @@
 
     .nav-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr) !important;
+      grid-template-columns: repeat(4, 1fr) !important;
       gap: 6px;
       margin-bottom: 6px;
       width: 100%;
+    }
+
+    @media (max-width: 480px) {
+      .nav-row {
+        gap: 4px;
+      }
+      .nav-btn {
+        padding: 0.4rem 0.1rem !important;
+        font-size: 0.68rem !important;
+        min-height: 46px !important;
+      }
     }
 
     .nav-btn {
@@ -889,12 +900,18 @@
         <span style="font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">Safar<span class="brand-highlight" style="color: #86efac;">Saathi</span></span>
       </a>
     </div>
-    <div class="header-right" style="display: flex; gap: 8px; align-items: center;">
-      <!-- 🗺️ LIVE MAP TOGGLE BUTTON (Spacious, No Overlap) -->
-      <button type="button" id="btn-toggle-top-map" class="header-action-btn" onclick="toggleTopLiveMap()" title="Live Route Map" style="font-size: 0.76rem; padding: 5px 12px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 5px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;">
+    <div class="header-right" style="display: flex; gap: 6px; align-items: center;">
+      <!-- 🗺️ LIVE MAP TOGGLE BUTTON -->
+      <button type="button" id="btn-toggle-top-map" class="header-action-btn" onclick="showSection('map')" title="Live Route Map" style="font-size: 0.74rem; padding: 5px 10px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 4px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.12); cursor: pointer;">
         <span>🗺️</span>
         <span id="top-map-btn-text">Live Map</span>
       </button>
+      <!-- ✨ GEMINI AI COPILOT BUTTON -->
+      <button type="button" id="btn-toggle-gemini-ai" class="header-action-btn" onclick="showSection('gemini-ai')" title="Ask Gemini AI" style="font-size: 0.74rem; padding: 5px 10px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 4px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.12); cursor: pointer;">
+        <span>✨</span>
+        <span>Gemini AI</span>
+      </button>
+      <!-- 👤 PROFILE BUTTON -->
       <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC" style="width: 36px; height: 36px; border-radius: 50%; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer;">
         <span id="header-user-avatar">👤</span>
       </button>
@@ -903,7 +920,7 @@
 
   <!-- 6-Button Navigation Matrix (Strict 3x2 Grid - Never Stacks Vertically!) -->
   <nav class="nav-grid-wrapper">
-    <!-- Row 1: 3 Live Action Buttons -->
+    <!-- Row 1: 4 Travel & Navigation Buttons -->
     <div class="nav-row">
       <button class="nav-btn active" id="btn-nav-live" onclick="showSection('live-cars')">
         <span>🟢</span>
@@ -917,13 +934,17 @@
         <span>🔍</span>
         <span>Find Ride</span>
       </button>
+      <button class="nav-btn" id="btn-nav-map" onclick="showSection('map')">
+        <span>🗺️</span>
+        <span>Live Map</span>
+      </button>
     </div>
 
-    <!-- Row 2: 3 Account & Hub Buttons -->
+    <!-- Row 2: 4 Copilot, Tickets & Account Buttons -->
     <div class="nav-row">
-      <button class="nav-btn" id="btn-nav-profile" onclick="showSection('profile')">
-        <span>👤</span>
-        <span>Profile</span>
+      <button class="nav-btn" id="btn-nav-gemini" onclick="showSection('gemini-ai')">
+        <span>✨</span>
+        <span>Gemini AI</span>
       </button>
       <button class="nav-btn" id="btn-nav-bookings" onclick="showSection('my-tickets')">
         <span>🎟️</span>
@@ -933,118 +954,14 @@
         <span>🚙</span>
         <span>Driver Fleet (<span id="nav-fleet-count">4</span>)</span>
       </button>
+      <button class="nav-btn" id="btn-nav-profile" onclick="showSection('profile')">
+        <span>👤</span>
+        <span>Profile</span>
+      </button>
     </div>
   </nav>
 
-  <!-- 🗺️ TOP DOCKED LIVE GPS ROUTE MAP -->
-  <!-- 🗺️ CLEAN GOOGLE MAPS WITH LIVE CAR SEE RADAR -->
-  <div id="top-map-container" style="max-width: 900px; margin: 0 auto 0.75rem auto; padding: 0 0.75rem; display: none;">
-    <div id="route-map-card" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(22, 163, 74, 0.12);">
-      <!-- Google Map Header with Controls -->
-      <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.65rem 0.95rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-        <div style="display: flex; align-items: center; gap: 7px;">
-          <span style="font-size: 1.15rem;">🗺️</span>
-          <div>
-            <strong id="map-live-loc-title" style="font-size: 0.9rem; font-weight: 900; color: #ffffff; display: block; line-height: 1.2;">
-              Google Maps • AI Smart Road-Lock
-            </strong>
-            <span id="map-radar-count-badge" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800;">
-              🟢 AI Road-Snap Active • 100% Accurate on Road (1s Stream)
-            </span>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <!-- 1-Tap My GPS Button (Centers directly on user's current live location) -->
-          <button type="button" onclick="centerOnUserLiveGps(true)" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" title="Center on my accurate GPS location">
-            🎯 My Live GPS
-          </button>
-          <!-- Satellite Layer Toggle Button -->
-          <button type="button" id="btn-gmap-satellite" onclick="toggleGoogleMapSatelliteLayer()" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 4px 10px; font-size: 0.74rem; font-weight: 900; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" title="Toggle Satellite View">
-            🛰️ Satellite
-          </button>
-          <!-- Close Map Button -->
-          <button type="button" onclick="toggleTopLiveMap()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; font-size: 1rem; cursor: pointer; padding: 2px 7px; border-radius: 6px; font-weight: 900;" title="Close Map">✕</button>
-        </div>
-      </div>
-
-      <!-- Live Interactive Google Maps Viewport with Car Pins -->
-      <div id="google-live-map-div" style="height: 280px; width: 100%; position: relative; background: #e5e7eb; overflow: hidden;">
-        <!-- Clean Leaflet Engine running Google Maps Tiles & Live Car Markers -->
-      </div>
-
-      <!-- 🟢 OLA/UBER STYLE LIVE CONNECTING RIDE TRACKER HUD -->
-      <div id="active-ride-tracking-hud" style="display: none; background: #ffffff; border-top: 2px solid #16a34a; padding: 10px 14px;">
-        <!-- Top Status Row: ETA & Distance -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-          <div style="display: flex; align-items: center; gap: 9px;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: #dcfce7; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-              🚗
-            </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s infinite;"></span>
-                <strong style="color: #000000; font-size: 0.92rem; font-weight: 900;" id="hud-status-title">
-                  Gaadi On The Way (Live Connecting)
-                </strong>
-              </div>
-              <span id="hud-status-subtitle" style="font-size: 0.72rem; color: #15803d; font-weight: 800; display: block; margin-top: 1px;">
-                Driver aapke pickup point ki taraf aa rahe hain
-              </span>
-            </div>
-          </div>
-          <!-- ETA & Distance Badges -->
-          <div style="text-align: right; background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 4px 10px;">
-            <div style="font-size: 1.15rem; font-weight: 900; color: #15803d; line-height: 1.1;" id="hud-eta-display">
-              -- min
-            </div>
-            <div style="font-size: 0.72rem; color: #000000; font-weight: 900; margin-top: 2px;" id="hud-distance-display">
-              -- km door
-            </div>
-          </div>
-        </div>
-
-        <!-- Driver & Vehicle Info Row -->
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.76rem;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <img id="hud-driver-img" src="driver_photo_avatar.png" alt="Driver" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #16a34a;">
-            <div>
-              <b style="color: #000000;" id="hud-driver-name">Dipankar Baidya</b>
-              <div style="margin-top: 2px;">
-                <span class="rc-hsrp-badge" id="hud-vehicle-plate" style="font-size: 0.7rem; background: #ffffff; color: #000000; border: 1px solid #000000; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-weight: 900;">
-                  IND • AS 02 M 8287
-                </span>
-                <span style="color: #64748b; font-weight: 700; margin-left: 4px;" id="hud-vehicle-model">Maruti Dzire</span>
-              </div>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 6px; align-items: center;">
-            <a id="hud-call-btn" href="tel:" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
-              📞 Call
-            </a>
-            <a id="hud-wa-btn" href="#" target="_blank" style="background: #ffffff; color: #15803d; border: 1px solid #16a34a; font-weight: 900; font-size: 0.72rem; padding: 4px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
-              💬 WhatsApp
-            </a>
-            <button type="button" onclick="stopActiveRideTracking(true)" style="background: #f1f5f9; color: #000000; border: 1px solid #cbd5e1; font-weight: 800; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; cursor: pointer;" title="Close Tracking View">
-              ✕
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Map Footer with AI Smart Road GPS Status -->
-      <div style="background: #ffffff; padding: 8px 12px; border-top: 1.5px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.74rem;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
-          <span id="map-coords-display" style="color: #000000; font-weight: 900; font-family: monospace;">🟢 AI Road-Lock: Initializing...</span>
-        </div>
-        <div style="color: #15803d; font-weight: 900; font-size: 0.72rem; display: flex; align-items: center; gap: 5px;">
-          <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
-          <span>AI Smart Road-Lock • Real-Time 1s Stream</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 
   <main>
 
@@ -1313,6 +1230,158 @@
       </div>
     </section>
 
+    <!-- ==================== 4. 🗺️ LIVE MAP (FULL FLIP SECTION) ==================== -->
+    <section id="section-map" class="app-section" style="display: none;">
+      <div id="top-map-container" style="max-width: 900px; margin: 0 auto; padding: 0;">
+        <div id="route-map-card" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(22, 163, 74, 0.12);">
+          <!-- Google Map Header with Controls -->
+          <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.65rem 0.95rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <span style="font-size: 1.15rem;">🗺️</span>
+              <div>
+                <strong id="map-live-loc-title" style="font-size: 0.9rem; font-weight: 900; color: #ffffff; display: block; line-height: 1.2;">
+                  Google Maps • AI Smart Road-Lock
+                </strong>
+                <span id="map-radar-count-badge" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800;">
+                  🟢 AI Road-Snap Active • 100% Accurate on Road (1s Stream)
+                </span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" onclick="centerOnUserLiveGps(true)" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 4px 10px; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" title="Center on my accurate GPS location">
+                🎯 My Live GPS
+              </button>
+              <button type="button" id="btn-gmap-satellite" onclick="toggleGoogleMapSatelliteLayer()" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 4px 10px; font-size: 0.74rem; font-weight: 900; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.15);" title="Toggle Satellite View">
+                🛰️ Satellite
+              </button>
+              <button type="button" onclick="showSection('live-cars')" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; font-size: 1rem; cursor: pointer; padding: 2px 7px; border-radius: 6px; font-weight: 900;" title="Close Map">✕</button>
+            </div>
+          </div>
+
+          <!-- Live Interactive Google Maps Viewport with Car Pins -->
+          <div id="google-live-map-div" style="height: 500px; min-height: 420px; width: 100%; position: relative; background: #e5e7eb; overflow: hidden;">
+            <!-- Clean Leaflet Engine running Google Maps Tiles & Live Car Markers -->
+          </div>
+
+          <!-- 🟢 OLA/UBER STYLE LIVE CONNECTING RIDE TRACKER HUD -->
+          <div id="active-ride-tracking-hud" style="display: none; background: #ffffff; border-top: 2px solid #16a34a; padding: 10px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 9px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: #dcfce7; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                  🚗
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s infinite;"></span>
+                    <strong style="color: #000000; font-size: 0.92rem; font-weight: 900;" id="hud-status-title">
+                      Gaadi On The Way (Live Connecting)
+                    </strong>
+                  </div>
+                  <span id="hud-status-subtitle" style="font-size: 0.72rem; color: #15803d; font-weight: 800; display: block; margin-top: 1px;">
+                    Driver aapke pickup point ki taraf aa rahe hain
+                  </span>
+                </div>
+              </div>
+              <div style="text-align: right; background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 4px 10px;">
+                <div style="font-size: 1.15rem; font-weight: 900; color: #15803d; line-height: 1.1;" id="hud-eta-display">-- min</div>
+                <div style="font-size: 0.72rem; color: #000000; font-weight: 900; margin-top: 2px;" id="hud-distance-display">-- km door</div>
+              </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.76rem;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img id="hud-driver-img" src="driver_photo_avatar.png" alt="Driver" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #16a34a;">
+                <div>
+                  <b style="color: #000000;" id="hud-driver-name">Dipankar Baidya</b>
+                  <div style="margin-top: 2px;">
+                    <span class="rc-hsrp-badge" id="hud-vehicle-plate" style="font-size: 0.7rem; background: #ffffff; color: #000000; border: 1px solid #000000; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-weight: 900;">
+                      IND • AS 02 M 8287
+                    </span>
+                    <span style="color: #64748b; font-weight: 700; margin-left: 4px;" id="hud-vehicle-model">Maruti Dzire</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <a id="hud-call-btn" href="tel:" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
+                  📞 Call
+                </a>
+                <a id="hud-wa-btn" href="#" target="_blank" style="background: #ffffff; color: #15803d; border: 1px solid #16a34a; font-weight: 900; font-size: 0.72rem; padding: 4px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
+                  💬 WhatsApp
+                </a>
+                <button type="button" onclick="stopActiveRideTracking(true); showSection('live-cars');" style="background: #f1f5f9; color: #000000; border: 1px solid #cbd5e1; font-weight: 800; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; cursor: pointer;" title="Close Tracking View">
+                  ✕
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Footer with Status -->
+          <div style="background: #ffffff; padding: 8px 12px; border-top: 1.5px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 0.74rem;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
+              <span id="map-coords-display" style="color: #000000; font-weight: 900; font-family: monospace;">🟢 AI Road-Lock: Initializing...</span>
+            </div>
+            <div style="color: #15803d; font-weight: 900; font-size: 0.72rem; display: flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
+              <span>AI Smart Road-Lock • Real-Time 1s Stream</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. ✨ GEMINI AI COPILOT (FULL FLIP SECTION) ==================== -->
+    <section id="section-gemini-ai" class="app-section" style="display: none;">
+      <div class="app-card" style="padding: 0; overflow: hidden; border: 1.5px solid #16a34a; border-radius: 16px; box-shadow: 0 4px 20px rgba(22, 163, 74, 0.12);">
+        <!-- Gemini Section Header -->
+        <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.85rem 1.15rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 2px solid #86efac; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; box-shadow: 0 2px 6px rgba(0,0,0,0.18);">
+              ✨
+            </div>
+            <div>
+              <h2 style="margin: 0; font-size: 1.05rem; font-weight: 900; color: #ffffff;">SafarSaathi Gemini AI Copilot</h2>
+              <span id="gemini-section-status" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800;">🟢 Google Gemini 1.5 Pro • 24/7 Assam Real-Time Carpool Assistant</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="showSection('live-cars')" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; padding: 4px 10px; font-size: 0.76rem; border-radius: 8px; font-weight: 900; cursor: pointer;">
+            ✕ Close AI
+          </button>
+        </div>
+
+        <!-- Quick Action Prompt Chips -->
+        <div class="gemini-quick-chips" style="display: flex; gap: 6px; padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; overflow-x: auto; scrollbar-width: none;">
+          <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Shillong ke liye live cars available hain?')" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; cursor: pointer;">🚗 Rides to Shillong</button>
+          <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Jorhat ke liye available rides check karo')" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; cursor: pointer;">🚗 Rides to Jorhat</button>
+          <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Car kaise post karein aur ₹100 platform fee kaise pay karein?')" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; cursor: pointer;">🚙 How to Post Car</button>
+          <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Aadhaar AI Verification kaise kaam karta hai?')" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; cursor: pointer;">🛡️ Aadhaar Security</button>
+          <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Guwahati se Nagaon ka fair fare kitna hai?')" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 5px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; white-space: nowrap; cursor: pointer;">💰 Fare to Nagaon</button>
+        </div>
+
+        <!-- Chat History Area -->
+        <div id="gemini-chat-history" style="min-height: 380px; max-height: 520px; overflow-y: auto; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; background: #ffffff;">
+          <div class="gemini-msg gemini-msg-ai" style="display: flex; gap: 8px; max-width: 90%;">
+            <div class="gemini-msg-bubble" style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 14px; padding: 0.85rem 1rem; color: #000000; font-size: 0.84rem; line-height: 1.45;">
+              <strong style="color: #15803d; font-size: 0.9rem;">✨ नमस्कार! I am your SafarSaathi Gemini AI Copilot.</strong><br><br>
+              I can find live rides for any route in Assam, calculate exact fair highway fares, guide you through posting a vehicle, verify UPI UTR numbers, or answer questions in <strong>Hindi, Assamese, or English</strong>.<br><br>
+              Aapki journey mein main kya madad kar sakta hoon?
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div style="padding: 0.75rem 1rem; background: #ffffff; border-top: 1.5px solid #e2e8f0; display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="gemini-user-input" class="form-control" placeholder="Ask Gemini AI anything (e.g. Shillong gadi hai?)..." onkeypress="if(event.key==='Enter') sendGeminiMessage()" style="font-size: 0.85rem; padding: 0.65rem 0.9rem; background: #ffffff; color: #000000; border: 1.5px solid #16a34a; border-radius: 8px; flex: 1;">
+          <button type="button" class="btn btn-primary" onclick="sendGeminiMessage()" style="background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: none; font-weight: 900; padding: 0.65rem 1.25rem; border-radius: 8px; cursor: pointer; white-space: nowrap;">
+            <span>⚡ Send</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+
     <!-- ==================== 4. 👤 PROFILE & AADHAAR KYC (100% FREE) ==================== -->
     <section id="section-profile" class="app-section">
       <div class="app-card">
@@ -1513,6 +1582,64 @@
     </div>
   </div>
 
+  <!-- ==================== 🎉 FINAL BOOKING SUCCESS & DIRECT TICKET DOWNLOAD MODAL ==================== -->
+  <div class="modal-backdrop" id="booking-success-modal" style="display: none; z-index: 10000;" onclick="if(event.target===this) closeBookingSuccessModalAndShowTickets();">
+    <div class="modal-card" style="background: #ffffff; color: #000000; border: 2px solid #16a34a; border-radius: 20px; max-width: 480px; width: 92vw; padding: 1.4rem; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); box-sizing: border-box;">
+      <!-- Success Icon -->
+      <div style="width: 58px; height: 58px; border-radius: 50%; background: #dcfce7; border: 2.5px solid #16a34a; margin: 0 auto 0.65rem auto; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
+        🎉
+      </div>
+      <h3 style="font-size: 1.25rem; font-weight: 900; color: #15803d; margin: 0 0 4px 0;">
+        Seat Booked Successfully!
+      </h3>
+      <p style="font-size: 0.78rem; color: #475569; margin: 0 0 0.9rem 0; font-weight: 700;">
+        Aapka Digital Boarding Pass generate ho gaya hai.
+      </p>
+
+      <!-- Mini Ticket Summary Box -->
+      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 0.85rem; text-align: left; margin-bottom: 1rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 6px;">
+          <div>
+            <span style="color: #64748b; font-size: 0.7rem; font-weight: 800;">Ticket Reference:</span>
+            <div id="bsm-ticket-id" style="font-size: 0.95rem; font-weight: 900; color: #15803d; font-family: monospace;">SS-BK-XXXXX</div>
+          </div>
+          <span style="background: #16a34a; color: #ffffff; font-size: 0.68rem; font-weight: 900; padding: 3px 8px; border-radius: 6px;">✓ CONFIRMED</span>
+        </div>
+        <div style="margin-bottom: 4px; color: #000000;">
+          🛣️ <b>Route:</b> <span id="bsm-route" style="font-weight: 800;">Guwahati ➔ Shillong</span>
+        </div>
+        <div style="margin-bottom: 4px; color: #000000;">
+          ⏰ <b>Departure:</b> <span id="bsm-datetime" style="font-weight: 800;">14 Oct 2026 at 02:00 PM</span>
+        </div>
+        <div style="margin-bottom: 4px; color: #000000;">
+          🚗 <b>Driver:</b> <span id="bsm-driver" style="font-weight: 800;">Dipankar Baidya (Maruti Dzire • AS 02 M 8287)</span>
+        </div>
+        <div style="color: #000000;">
+          💺 <b>Seats:</b> <span id="bsm-seats" style="font-weight: 800;">1 Seat</span> • 💰 <b>Total Fare:</b> <span id="bsm-fare" style="color: #15803d; font-weight: 900;">₹300 (Paid via UPI)</span>
+        </div>
+      </div>
+
+      <!-- BIG DIRECT DOWNLOAD TICKET BUTTON (PRIMARY ACTION) -->
+      <button type="button" id="bsm-download-btn" onclick="triggerDirectModalDownload()" style="width: 100%; padding: 0.95rem; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(22, 163, 74, 0.4); margin-bottom: 6px; box-sizing: border-box;">
+        <span style="font-size: 1.25rem;">📥</span>
+        <span>Download Ticket (PDF)</span>
+      </button>
+
+      <div style="font-size: 0.72rem; color: #15803d; font-weight: 800; margin-bottom: 1rem;">
+        ⚡ Instant Download • Direct phone par ticket save ho jayega
+      </div>
+
+      <!-- Secondary Actions: Go to My Tickets or Track on Map -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button type="button" onclick="closeBookingSuccessModalAndShowTickets()" style="background: #ffffff; color: #000000; border: 1.5px solid #16a34a; padding: 9px; border-radius: 10px; font-weight: 800; font-size: 0.76rem; cursor: pointer;">
+          🎟️ View in My Tickets
+        </button>
+        <button type="button" onclick="closeBookingSuccessModalAndTrackLive()" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #16a34a; padding: 9px; border-radius: 10px; font-weight: 800; font-size: 0.76rem; cursor: pointer;">
+          🗺️ Live Map Tracking
+        </button>
+      </div>
+    </div>
+  </div>
   <!-- Change Password Modal -->
   <div class="modal-backdrop" id="change-pwd-modal">
     <div class="modal-card">
@@ -2085,36 +2212,59 @@
     // =========================================================================
     // 2. NAVIGATION & TAB SWITCHER (6 SEPARATE CLEAN SECTIONS)
     // =========================================================================
+    let lastActiveSection = 'live-cars';
+
     function showSection(tab) {
       const secLive = document.getElementById('section-live-cars');
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
-      const secProf = document.getElementById('section-profile');
+      const secMap = document.getElementById('section-map');
+      const secGemini = document.getElementById('section-gemini-ai');
       const secTickets = document.getElementById('section-my-tickets');
       const secFleet = document.getElementById('section-driver-fleet');
+      const secProf = document.getElementById('section-profile');
 
-      // 1. Strict Tab Isolation: ONLY target section is displayed, other 5 are completely hidden!
+      if (tab !== 'map' && tab !== 'gemini-ai' && tab !== 'ai') {
+        lastActiveSection = tab;
+      }
+
+      // 1. Strict Flip System: ONLY target section is displayed; ALL OTHER 7 SECTIONS are 100% hidden!
       if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
       if (secDriver) secDriver.style.display = (tab === 'driver') ? 'block' : 'none';
       if (secPass) secPass.style.display = (tab === 'passenger') ? 'block' : 'none';
-      if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
+      if (secMap) secMap.style.display = (tab === 'map') ? 'block' : 'none';
+      if (secGemini) secGemini.style.display = (tab === 'gemini-ai' || tab === 'ai') ? 'block' : 'none';
       if (secTickets) secTickets.style.display = (tab === 'my-tickets' || tab === 'bookings') ? 'block' : 'none';
       if (secFleet) secFleet.style.display = (tab === 'driver-fleet' || tab === 'fleet') ? 'block' : 'none';
+      if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
 
-      // 2. Update 6 Nav Button Active States
+      // 2. Update active state across all 8 navigation buttons
       const btnLive = document.getElementById('btn-nav-live');
       const btnDriver = document.getElementById('btn-nav-driver');
       const btnSearch = document.getElementById('btn-nav-search');
-      const btnProf = document.getElementById('btn-nav-profile');
-      const btnBookings = document.getElementById('btn-nav-bookings');
+      const btnMap = document.getElementById('btn-nav-map');
+      const btnGemini = document.getElementById('btn-nav-gemini');
+      const btnTickets = document.getElementById('btn-nav-bookings');
       const btnFleet = document.getElementById('btn-nav-fleet');
+      const btnProf = document.getElementById('btn-nav-profile');
 
       if (btnLive) btnLive.classList.toggle('active', tab === 'live-cars');
       if (btnDriver) btnDriver.classList.toggle('active', tab === 'driver');
       if (btnSearch) btnSearch.classList.toggle('active', tab === 'passenger');
-      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
-      if (btnBookings) btnBookings.classList.toggle('active', tab === 'my-tickets' || tab === 'bookings');
+      if (btnMap) btnMap.classList.toggle('active', tab === 'map');
+      if (btnGemini) btnGemini.classList.toggle('active', tab === 'gemini-ai' || tab === 'ai');
+      if (btnTickets) btnTickets.classList.toggle('active', tab === 'my-tickets' || tab === 'bookings');
       if (btnFleet) btnFleet.classList.toggle('active', tab === 'driver-fleet' || tab === 'fleet');
+      if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
+
+      // Update header map button label
+      const mapBtnText = document.getElementById('top-map-btn-text');
+      const mapHeaderBtn = document.getElementById('btn-toggle-top-map');
+      if (mapBtnText) mapBtnText.innerText = (tab === 'map') ? '✕ Close Map' : 'Live Map';
+      if (mapHeaderBtn) {
+        mapHeaderBtn.style.background = (tab === 'map') ? '#16a34a' : '#ffffff';
+        mapHeaderBtn.style.color = (tab === 'map') ? '#ffffff' : '#15803d';
+      }
 
       // 3. Execution logic for each distinct section
       if (tab === 'live-cars') {
@@ -2123,6 +2273,12 @@
         checkDriverAadhaarAndOpenPost();
       } else if (tab === 'passenger') {
         executePassengerCorridorSearch();
+      } else if (tab === 'map') {
+        initCleanGoogleLiveMap();
+        setTimeout(() => { if (googleLiveMap) googleLiveMap.invalidateSize(); }, 120);
+      } else if (tab === 'gemini-ai' || tab === 'ai') {
+        const inp = document.getElementById('gemini-user-input');
+        if (inp) setTimeout(() => inp.focus(), 150);
       } else if (tab === 'my-tickets' || tab === 'bookings') {
         renderPassengerBookings();
       } else if (tab === 'driver-fleet' || tab === 'fleet') {
@@ -2131,9 +2287,22 @@
         renderProfileView();
       }
 
+      if (tab !== 'map') {
+        stopActiveRideTracking(false);
+      }
+
       updateNavCounts();
       const mainEl = document.querySelector('main');
       if (mainEl) mainEl.scrollTop = 0;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openGeminiAiModal() {
+      showSection('gemini-ai');
+    }
+
+    function closeGeminiAiModal() {
+      showSection(lastActiveSection || 'live-cars');
     }
 
     function checkDriverAadhaarAndOpenPost() {
@@ -2241,13 +2410,11 @@
 
     function toggleTopLiveMap() {
       const container = document.getElementById('top-map-container');
-      const btnText = document.getElementById('top-map-btn-text');
-      if (!container) return;
-      const isHidden = (container.style.display === 'none' || !container.style.display);
-      if (isHidden) {
-        container.style.display = 'block';
-        if (btnText) btnText.innerText = '✕ Close Map';
-        initCleanGoogleLiveMap();
+      const isMapOpen = (container && container.style.display !== 'none' && container.style.display !== '');
+      if (isMapOpen) {
+        showSection(lastActiveSection || 'live-cars');
+      } else {
+        showSection('map');
 
         // If customer has an active booked ticket, automatically open in Live Tracking Mode!
         const user = getActiveUserProfile();
@@ -2263,11 +2430,11 @@
             centerOnUserLiveGps(true);
           }, 150);
         }
-      } else {
-        container.style.display = 'none';
-        if (btnText) btnText.innerText = 'Live Map';
-        stopActiveRideTracking(true);
       }
+    }
+
+    function closeTopLiveMap() {
+      showSection(lastActiveSection || 'live-cars');
     }
 
     // 🗺️ OLA/UBER STYLE CONNECTING RIDE TRACKER
@@ -3289,6 +3456,309 @@
       }
     }
 
+        // =========================================================================
+    // 📄 OFFICIAL SAFARSAATHI DIGITAL BOARDING PASS PDF GENERATION ENGINE
+    // =========================================================================
+    function generateTicketPdfBinary(b) {
+      const origin = (b.origin || 'Guwahati').replace(/[()\\]/g, '');
+      const dest = (b.destination || 'Shillong').replace(/[()\\]/g, '');
+      const bookingId = (b.bookingId || 'SS-BK-82910').replace(/[()\\]/g, '');
+      const driverName = (b.driverName || 'Dipankar Baidya').replace(/[()\\]/g, '');
+      const driverPhone = (b.driverPhone || '9435012345').replace(/[()\\]/g, '');
+      const passName = (b.passengerName || 'Passenger').replace(/[()\\]/g, '');
+      const passPhone = (b.passengerPhone || '').replace(/[()\\]/g, '');
+      const vehicle = (b.vehicleModel || 'Maruti Dzire').replace(/[()\\]/g, '');
+      const plate = (b.vehicleNumber || 'AS 02 M 8287').replace(/[()\\]/g, '');
+      const date = (b.date || '14 Oct 2026').replace(/[()\\]/g, '');
+      const time = (b.time || '02:00 PM').replace(/[()\\]/g, '');
+      const seats = b.seatsBooked || 1;
+      const fare = b.totalFare || 300;
+      const utr = (b.passengerUtr || '987654321012').replace(/[()\\]/g, '');
+
+      const streamContent = 
+`BT
+/F1 22 Tf
+0.08 0.50 0.24 rg
+50 780 Td
+(SAFARSAATHI ASSAM) Tj
+ET
+BT
+/F1 15 Tf
+0 0 0 rg
+50 755 Td
+(DIGITAL BOARDING PASS) Tj
+ET
+BT
+/F2 9.5 Tf
+0.3 0.3 0.3 rg
+50 738 Td
+(Real-time Peer-to-Peer Carpooling Network of Assam) Tj
+ET
+q
+0.08 0.50 0.24 rg
+50 725 495 2 re f
+Q
+BT
+/F1 12 Tf
+0 0 0 rg
+50 700 Td
+(BOOKING REF: ${bookingId}) Tj
+ET
+BT
+/F1 11 Tf
+0.08 0.50 0.24 rg
+380 700 Td
+(STATUS: 100% CONFIRMED) Tj
+ET
+q
+0.94 0.98 0.95 rg
+50 635 495 50 re f
+0.08 0.50 0.24 RG
+1.5 w
+50 635 495 50 re s
+Q
+BT
+/F1 15 Tf
+0.08 0.50 0.24 rg
+70 655 Td
+(${origin}  =========>  ${dest}) Tj
+ET
+BT
+/F2 10 Tf
+0 0 0 rg
+70 600 Td
+(Departure Date: ${date}) Tj
+260 600 Td
+(Departure Time: ${time}) Tj
+ET
+BT
+/F2 10 Tf
+70 575 Td
+(Assigned Seat: S1 (${seats} Seat)) Tj
+260 575 Td
+(Total Fare: INR ${fare} [PAID VIA UPI]) Tj
+ET
+BT
+/F2 10 Tf
+70 550 Td
+(Bank UTR Reference: ${utr}) Tj
+260 550 Td
+(Payment Status: VERIFIED BY NPCI) Tj
+ET
+q
+0.98 0.98 0.98 rg
+50 465 495 70 re f
+0.8 0.8 0.8 RG
+1 w
+50 465 495 70 re s
+Q
+BT
+/F1 11 Tf
+0.08 0.50 0.24 rg
+70 515 Td
+(DRIVER & VEHICLE DETAILS [UNLOCKED]) Tj
+ET
+BT
+/F2 10 Tf
+0 0 0 rg
+70 495 Td
+(Driver: ${driverName} - Phone: +91 ${driverPhone}) Tj
+ET
+BT
+/F2 10 Tf
+70 480 Td
+(Vehicle: ${vehicle} - Plate: ${plate}) Tj
+ET
+BT
+/F2 10 Tf
+70 435 Td
+(Passenger Name: ${passName}) Tj
+260 435 Td
+(Passenger Phone: +91 ${passPhone}) Tj
+ET
+q
+[4 3] 0 d
+0.5 0.5 0.5 RG
+1 w
+50 410 m 545 410 l s
+Q
+BT
+/F1 11 Tf
+0.08 0.50 0.24 rg
+50 385 Td
+(BOARDING STUB - PRESENT TO DRIVER AT VEHICLE) Tj
+ET
+BT
+/F2 9 Tf
+0.3 0.3 0.3 rg
+50 368 Td
+(Please carry your Aadhaar photo ID for verification before boarding.) Tj
+ET
+BT
+/F1 14 Tf
+0 0 0 rg
+175 330 Td
+(||| | |||| || ||| |||| | |||||| || | ||||) Tj
+ET
+BT
+/F2 9.5 Tf
+0 0 0 rg
+205 314 Td
+(* ${bookingId} *) Tj
+ET
+BT
+/F2 8.5 Tf
+0.35 0.35 0.35 rg
+50 260 Td
+(Official Support: support@safarsaathi.com | Admin WhatsApp: +91 6901027507) Tj
+ET
+`;
+
+      const streamBytes = [];
+      for (let i = 0; i < streamContent.length; i++) {
+        streamBytes.push(streamContent.charCodeAt(i) & 0xff);
+      }
+      const streamLen = streamBytes.length;
+
+      const obj1 = '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n';
+      const obj2 = '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n';
+      const obj3 = '3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>\nendobj\n';
+      const obj4Head = `4 0 obj\n<< /Length ${streamLen} >>\nstream\n`;
+      const obj4Tail = '\nendstream\nendobj\n';
+      const obj5 = '5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n';
+      const obj6 = '6 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n';
+
+      const headerStr = '%PDF-1.4\n';
+      const parts = [
+        headerStr,
+        obj1,
+        obj2,
+        obj3,
+        obj4Head,
+        streamContent,
+        obj4Tail,
+        obj5,
+        obj6
+      ];
+
+      // Calculate byte offsets
+      let pos = headerStr.length;
+      const off1 = pos; pos += obj1.length;
+      const off2 = pos; pos += obj2.length;
+      const off3 = pos; pos += obj3.length;
+      const off4 = pos; pos += obj4Head.length + streamLen + obj4Tail.length;
+      const off5 = pos; pos += obj5.length;
+      const off6 = pos; pos += obj6.length;
+
+      const xrefOffset = pos;
+      const pad = (num) => num.toString().padStart(10, '0');
+      const xrefStr = 
+`xref\n` +
+`0 7\n` +
+`0000000000 65535 f \n` +
+`${pad(off1)} 00000 n \n` +
+`${pad(off2)} 00000 n \n` +
+`${pad(off3)} 00000 n \n` +
+`${pad(off4)} 00000 n \n` +
+`${pad(off5)} 00000 n \n` +
+`${pad(off6)} 00000 n \n` +
+`trailer\n` +
+`<< /Size 7 /Root 1 0 R >>\n` +
+`startxref\n` +
+`${xrefOffset}\n` +
+`%%EOF\n`;
+
+      return headerStr + obj1 + obj2 + obj3 + obj4Head + streamContent + obj4Tail + obj5 + obj6 + xrefStr;
+    }
+
+    function downloadTicketPdf(bookingId) {
+      const user = getActiveUserProfile();
+      const b = bookings.find(item => item.bookingId === bookingId) ||
+                (user ? bookings.find(item => item.passengerPhone === user.phone) : null) ||
+                rides.find(r => r.id === bookingId);
+
+      if (!b) {
+        showToast('Booking details not found for PDF export.', '#dc2626');
+        return;
+      }
+
+      try {
+        const pdfStr = generateTicketPdfBinary(b);
+        const uint8Array = new Uint8Array(pdfStr.length);
+        for (let i = 0; i < pdfStr.length; i++) {
+          uint8Array[i] = pdfStr.charCodeAt(i) & 0xff;
+        }
+
+        const blob = new Blob([uint8Array], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `SafarSaathi_Ticket_${b.bookingId || 'BoardingPass'}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        showToast('✓ Boarding Pass PDF Downloaded! Send via WhatsApp.', '#15803d');
+      } catch (err) {
+        console.error('PDF error:', err);
+        showToast('PDF download ready. Opening print dialog...', '#15803d');
+        window.print();
+      }
+    }
+
+
+        // =========================================================================
+    // 🎉 FINAL BOOKING SUCCESS & DIRECT TICKET DOWNLOAD CONTROLLER
+    // =========================================================================
+    let currentSuccessBookingId = null;
+
+    function showBookingSuccessModal(booking) {
+      currentSuccessBookingId = booking.bookingId;
+      const ticketIdEl = document.getElementById('bsm-ticket-id');
+      const routeEl = document.getElementById('bsm-route');
+      const datetimeEl = document.getElementById('bsm-datetime');
+      const driverEl = document.getElementById('bsm-driver');
+      const seatsEl = document.getElementById('bsm-seats');
+      const fareEl = document.getElementById('bsm-fare');
+
+      if (ticketIdEl) ticketIdEl.innerText = booking.bookingId;
+      if (routeEl) routeEl.innerText = `${booking.origin} ➔ ${booking.destination}`;
+      if (datetimeEl) datetimeEl.innerText = `${booking.date} at ${booking.time}`;
+      if (driverEl) driverEl.innerText = `${booking.driverName} (${booking.vehicleModel} • ${booking.vehicleNumber})`;
+      if (seatsEl) seatsEl.innerText = `${booking.seatsBooked} Seat(s)`;
+      if (fareEl) fareEl.innerText = `₹${booking.totalFare} (Paid via UPI)`;
+
+      const modal = document.getElementById('booking-success-modal');
+      if (modal) modal.style.display = 'flex';
+
+      // Automatically start direct download for customer convenience!
+      setTimeout(() => {
+        downloadTicketPdf(booking.bookingId);
+      }, 350);
+    }
+
+    function triggerDirectModalDownload() {
+      if (currentSuccessBookingId) {
+        downloadTicketPdf(currentSuccessBookingId);
+      }
+    }
+
+    function closeBookingSuccessModalAndShowTickets() {
+      const modal = document.getElementById('booking-success-modal');
+      if (modal) modal.style.display = 'none';
+      showSection('my-tickets');
+    }
+
+    function closeBookingSuccessModalAndTrackLive() {
+      const modal = document.getElementById('booking-success-modal');
+      if (modal) modal.style.display = 'none';
+      showSection('map');
+      if (currentSuccessBookingId) {
+        trackBookedRideLive(currentSuccessBookingId);
+      }
+    }
+
     function submitPassengerBooking() {
       if (!selectedRideForBooking) return;
       const utr = (document.getElementById('bm-utr-input')?.value || '').trim();
@@ -3337,12 +3807,9 @@
       }
 
       closeBookingModal();
-      showToast('🎉 Booking Submitted! Ticket issued under My Tickets.', '#15803d');
-      showSection('my-tickets');
-      // Automatically open live tracking map so customer sees their approaching car immediately
-      setTimeout(() => {
-        trackBookedRideLive(booking.bookingId);
-      }, 400);
+      showToast('🎉 Booking Confirmed! Ticket PDF downloading...', '#15803d');
+      renderPassengerBookings();
+      showBookingSuccessModal(booking);
     }
 
     // =========================================================================
@@ -3830,14 +4297,12 @@
         return;
       }
 
-      // Strictly ONLY tickets booked by THIS passenger's phone number!
       const myBookings = bookings.filter(b => b.passengerPhone === user.phone && isWithin48Hours(b.timestamp));
-
       updateNavCounts();
 
       if (myBookings.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.04);">
             <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
             <strong style="color: #000000; font-size: 1.05rem; display: block; font-weight: 900;">No Booked Tickets in the last 48 Hours</strong>
             <p style="font-size: 0.82rem; color: #000000; margin: 0.35rem 0 1rem;">
@@ -3852,63 +4317,200 @@
       }
 
       container.innerHTML = myBookings.map(b => {
-        const isConfirmed = b.status === 'CONFIRMED';
+        const isConfirmed = (b.status || 'CONFIRMED').toUpperCase() === 'CONFIRMED';
+        const driverName = b.driverName || 'Dipankar Baidya';
+        const driverPhone = b.driverPhone || '9435012345';
+        const adminPhone = '6901027507';
+        const passengerName = b.passengerName || (user ? user.name : 'Customer');
+        const passengerPhone = b.passengerPhone || (user ? user.phone : '');
+        const seatsText = (parseInt(b.seatsBooked) > 1) ? `S1, S2 (${b.seatsBooked} Seats)` : `S1 (1 Seat)`;
+        
+        // WhatsApp pre-formatted confirmation message
+        const waMsgText = encodeURIComponent(
+          `🚗 *SAFARSAATHI ASSAM - OFFICIAL DIGITAL BOARDING PASS*\n` +
+          `🎟️ *Ticket Ref:* ${b.bookingId}\n` +
+          `👤 *Passenger:* ${passengerName} (+91 ${passengerPhone})\n` +
+          `🛣️ *Corridor:* ${b.origin} ➔ ${b.destination}\n` +
+          `📅 *Departure:* ${b.date} at ${b.time}\n` +
+          `💺 *Seats Allocated:* ${seatsText}\n` +
+          `💰 *Total Fare:* ₹${b.totalFare} (Paid via UPI)\n` +
+          `🏦 *Bank UTR Ref:* ${b.passengerUtr}\n` +
+          `🚗 *Vehicle:* ${b.vehicleModel} (${b.vehicleNumber})\n` +
+          `👤 *Driver:* ${driverName} (+91 ${driverPhone})\n` +
+          `🛡️ *Status:* 100% CONFIRMED & VERIFIED\n\n` +
+          `📄 Official PDF Boarding Pass generated on SafarSaathi Peer-to-Peer Carpooling Network.`
+        );
+
         return `
-          <div style="background: #ffffff; border: 1.5px solid ${isConfirmed ? '#16a34a' : '#000000'}; border-radius: 16px; padding: 1.1rem; box-shadow: 0 4px 15px rgba(22, 163, 74, 0.08); margin-bottom: 0.85rem;">
-            <!-- Header: Route, Schedule, Plate & Status Badge -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.55rem;">
-              <div>
-                <strong style="color: #000000; font-size: 1.1rem; font-weight: 900;">${b.origin} ➔ ${b.destination}</strong>
-                <div style="font-size: 0.76rem; color: #475569; margin-top: 2px;">
-                  📅 ${b.date} at <strong>${b.time}</strong> • 🚗 <b>${b.vehicleModel}</b>
-                </div>
-                <div class="rc-hsrp-badge" style="margin-top: 3px; font-size: 0.75rem; background: #ffffff; color: #000000; border: 1px solid #000000; padding: 1px 6px; border-radius: 3px; font-family: monospace; font-weight: 900;">
-                  IND • ${b.vehicleNumber}
-                </div>
+          <!-- 🎫 EXACT BOARDING PASS TICKET CARD (MATCHING USER PHOTO) -->
+          <div class="boarding-pass-ticket" style="position: relative; background: #ffffff; border: 1.8px solid #16a34a; border-radius: 18px; box-shadow: 0 6px 24px rgba(22, 163, 74, 0.12); margin-bottom: 1.5rem; overflow: hidden; box-sizing: border-box;">
+            
+            <!-- 1. Header Banner: Green Boarding Pass Header -->
+            <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.75rem 1rem; color: #ffffff; text-align: center; border-bottom: 1.5px solid #15803d;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; font-weight: 800; color: #dcfce7; letter-spacing: 0.5px;">🚗 SAFARSAATHI</span>
+                <span style="font-size: 1.05rem; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; color: #ffffff;">BOARDING PASS</span>
+                <span style="background: rgba(255,255,255,0.22); color: #ffffff; font-size: 0.68rem; font-weight: 900; padding: 2px 7px; border-radius: 6px;">✓ VERIFIED</span>
               </div>
-              <span style="background: ${isConfirmed ? '#15803d' : '#000000'}; color: #ffffff; font-size: 0.7rem; font-weight: 900; padding: 3px 8px; border-radius: 6px;">
-                ${isConfirmed ? '✓ CONFIRMED' : '⏳ TICKET RESERVED'}
-              </span>
             </div>
 
-            <!-- DRIVER DETAILS WITH PHOTO & UNLOCKED PHONE NUMBER -->
-            <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 12px; padding: 0.75rem; margin-bottom: 0.75rem;">
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
-                <img src="${b.driverPhoto || 'driver_photo_avatar.png'}" alt="Driver Photo" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2.5px solid #16a34a; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+            <!-- 2. Upper Ticket Body: Flight/Ride Route & Schedule -->
+            <div style="padding: 1rem 1.15rem 0.85rem 1.15rem;">
+              <!-- Seat & Ticket Row -->
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem;">
                 <div>
-                  <div style="font-size: 0.95rem; font-weight: 900; color: #000000;">
-                    ${b.driverName} <span style="font-size: 0.72rem; color: #15803d; font-weight: 800;">🛡️ Verified Driver</span>
+                  <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Seat:</div>
+                  <div style="font-size: 1.15rem; font-weight: 900; color: #000000; line-height: 1.2;">
+                    ${seatsText}
                   </div>
-                  <!-- UNLOCKED PHONE NUMBER (Only Visible After Booking) -->
-                  <div style="font-size: 0.85rem; font-weight: 900; color: #15803d; margin-top: 1px;">
-                    🔓 Phone: +91 ${b.driverPhone}
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Ticket-Ticket:</div>
+                  <div style="font-size: 0.95rem; font-weight: 900; color: #15803d; font-family: monospace; line-height: 1.2;">
+                    ${b.bookingId}
                   </div>
                 </div>
               </div>
 
-              <!-- UNLOCKED CONTACT ACTIONS (Direct Call & WhatsApp Unlocked) -->
-              <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; width: 100%; box-sizing: border-box;">
-                <a href="tel:${b.driverPhone}" class="btn" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 0.78rem; padding: 0.55rem; border-radius: 8px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);">
-                  📞 Call Driver
-                </a>
-                <a href="https://wa.me/91${b.driverPhone}?text=Hello%20${encodeURIComponent(b.driverName)},%20I%20have%20booked%20${b.seatsBooked}%20seat(s)%20on%20SafarSaathi%20with%20UTR%20${b.passengerUtr}" target="_blank" class="btn" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; font-weight: 900; font-size: 0.78rem; padding: 0.55rem; border-radius: 8px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                  💬 WhatsApp
-                </a>
+              <!-- Route Dotted Visual Graphic with Vehicle Icon -->
+              <div style="position: relative; margin: 0.85rem 0; display: flex; align-items: center; justify-content: space-between;">
+                <!-- Origin Node -->
+                <div style="text-align: left; max-width: 42%;">
+                  <div style="display: flex; align-items: center; gap: 5px;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+                    <strong style="color: #000000; font-size: 1.05rem; font-weight: 900;">${b.origin}</strong>
+                  </div>
+                  <span style="font-size: 0.7rem; color: #64748b; font-weight: 700; margin-left: 15px;">Pickup Point</span>
+                </div>
+
+                <!-- Dotted Line with Icon in Center -->
+                <div style="flex: 1; margin: 0 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                  <div style="border-top: 2px dashed #86efac; width: 100%; position: absolute; top: 50%;"></div>
+                  <div style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; position: relative; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                    🚗
+                  </div>
+                </div>
+
+                <!-- Destination Node -->
+                <div style="text-align: right; max-width: 42%;">
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px;">
+                    <strong style="color: #000000; font-size: 1.05rem; font-weight: 900;">${b.destination}</strong>
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #15803d; display: inline-block;"></span>
+                  </div>
+                  <span style="font-size: 0.7rem; color: #64748b; font-weight: 700; margin-right: 15px;">Drop Corridor</span>
+                </div>
+              </div>
+
+              <!-- Time & Ride By Row -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0.65rem; padding: 0.6rem 0.75rem; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 0.76rem;">
+                <div>
+                  <div style="color: #64748b; font-weight: 700;">Departure Time:</div>
+                  <div style="font-size: 0.95rem; font-weight: 900; color: #000000; margin-top: 1px;">
+                    ⏰ ${b.time}
+                  </div>
+                  <div style="color: #15803d; font-weight: 800; font-size: 0.72rem;">📅 ${b.date}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="color: #64748b; font-weight: 700;">Ride by Verified Driver:</div>
+                  <div style="font-size: 0.9rem; font-weight: 900; color: #000000; margin-top: 1px;">
+                    👤 ${driverName}
+                  </div>
+                  <div style="font-size: 0.72rem; color: #475569; font-family: monospace; font-weight: 800;">
+                    ${b.vehicleModel} • ${b.vehicleNumber}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fare & Bank UTR Pill -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; font-size: 0.75rem;">
+                <div>
+                  Fare Paid: <b style="color: #15803d; font-size: 0.95rem;">₹${b.totalFare}</b>
+                </div>
+                <div>
+                  Bank UTR: <span style="font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-weight: 900; border: 1px solid #cbd5e1;">${b.passengerUtr}</span>
+                </div>
               </div>
             </div>
 
-            <!-- Booking Details Summary -->
-            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #000000; font-weight: 700; align-items: center;">
-              <div>💺 Booked: <b>${b.seatsBooked} Seat(s)</b></div>
-              <div>💰 Total: <b style="color: #15803d; font-size: 0.95rem;">₹${b.totalFare}</b></div>
-              <div>UTR: <code style="font-family: monospace; background: #f1f5f9; padding: 2px 5px; border-radius: 4px;">${b.passengerUtr}</code></div>
+            <!-- 3. Perforated Tear Line with Semicircular Cutout Notches on Left & Right -->
+            <div style="position: relative; margin: 0.5rem 0;">
+              <!-- Left Semicircle Cutout -->
+              <div style="position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; border: 1.8px solid #16a34a; box-sizing: border-box; z-index: 3;"></div>
+              <!-- Dashed Perforation Line -->
+              <div style="border-top: 2px dashed #94a3b8; width: 100%;"></div>
+              <!-- Right Semicircle Cutout -->
+              <div style="position: absolute; right: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; border: 1.8px solid #16a34a; box-sizing: border-box; z-index: 3;"></div>
             </div>
 
-            <!-- 🗺️ OLA/UBER STYLE LIVE CONNECTING RIDE TRACKER BUTTON -->
-            <button type="button" onclick="trackBookedRideLive('${b.bookingId}')" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; font-size: 0.82rem; padding: 0.65rem; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 3px 8px rgba(22, 163, 74, 0.25);">
-              <span>🗺️</span>
-              <span>Live Ride Track Karein (Ola/Uber Connecting Map) ➔</span>
-            </button>
+            <!-- 4. Lower Ticket Stub (WhatsApp & PDF Actions & Scannable Barcode) -->
+            <div style="padding: 0.85rem 1.15rem 1rem 1.15rem; background: #ffffff;">
+              <!-- 1. BIG DIRECT DOWNLOAD TICKET BUTTON (PRIMARY ACTION) -->
+              <button type="button" onclick="downloadTicketPdf('${b.bookingId}')" style="width: 100%; padding: 11px 16px; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(22, 163, 74, 0.35); margin-bottom: 8px;">
+                <span style="font-size: 1.25rem;">📥</span>
+                <span>Download Boarding Pass (PDF)</span>
+              </button>
+
+              <!-- 2. DIRECT CONTACT ACTIONS (DIRECT WHATSAPP & MAP TRACKING) -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                <a href="https://wa.me/91${driverPhone}?text=${waMsgText}" target="_blank" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 7px 8px; border-radius: 8px; font-weight: 800; font-size: 0.74rem; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  💬 WhatsApp Driver
+                </a>
+                <button type="button" onclick="showSection('map'); trackBookedRideLive('${b.bookingId}');" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #16a34a; padding: 7px 8px; border-radius: 8px; font-weight: 800; font-size: 0.74rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                  🗺️ Track Live Map
+                </button>
+              </div>
+
+              <!-- Authentic Barcode Display (Exact barcode layout from user photo!) -->
+              <div style="text-align: center; margin-top: 8px; padding-top: 6px; border-top: 1px solid #f1f5f9;">
+                <!-- High-Resolution SVG Barcode -->
+                <svg viewBox="0 0 220 38" style="width: 170px; height: 32px; display: inline-block; vertical-align: middle;">
+                  <!-- Barcode stripes -->
+                  <rect x="5" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="11" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="16" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="23" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="28" y="0" width="5" height="38" fill="#000000"/>
+                  <rect x="36" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="41" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="47" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="54" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="59" y="0" width="5" height="38" fill="#000000"/>
+                  <rect x="67" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="73" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="78" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="85" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="91" y="0" width="5" height="38" fill="#000000"/>
+                  <rect x="99" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="104" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="111" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="116" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="122" y="0" width="5" height="38" fill="#000000"/>
+                  <rect x="130" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="135" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="142" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="148" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="155" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="160" y="0" width="5" height="38" fill="#000000"/>
+                  <rect x="168" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="174" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="179" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="186" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="192" y="0" width="4" height="38" fill="#000000"/>
+                  <rect x="199" y="0" width="2" height="38" fill="#000000"/>
+                  <rect x="204" y="0" width="3" height="38" fill="#000000"/>
+                  <rect x="210" y="0" width="2" height="38" fill="#000000"/>
+                </svg>
+                <div style="font-family: monospace; font-size: 0.78rem; font-weight: 900; color: #000000; letter-spacing: 2px; margin-top: 3px;">
+                  * ${b.bookingId} *
+                </div>
+              </div>
+
+              <!-- Live Ride Radar Connecting Map Trigger -->
+              <button type="button" onclick="showSection('map'); trackBookedRideLive('${b.bookingId}');" style="width: 100%; margin-top: 10px; background: #f0fdf4; color: #15803d; border: 1.5px solid #16a34a; font-weight: 900; font-size: 0.78rem; padding: 7px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span>🗺️</span>
+                <span>Live Ride Track Karein (Ola/Uber Connecting Map) ➔</span>
+              </button>
+            </div>
           </div>
         `;
       }).join('');
@@ -4133,9 +4735,9 @@
             hdr.style.paddingTop = '54px';
             hdr.style.minHeight = '108px';
           }
-          const dock = document.getElementById('gemini-bottom-dock');
+          const dock = document.getElementById('gemini-floating-btn');
           if (dock) {
-            dock.style.bottom = '22px';
+            dock.style.bottom = '96px';
           }
         }
       } catch(e){}
@@ -4154,40 +4756,7 @@
 
   
 
-  <!-- ✨ GEMINI AI INTERACTIVE MODAL DIALOG -->
-  <div id="gemini-ai-modal" class="modal-backdrop" style="display: none;" onclick="if(event.target===this) closeGeminiAiModal();">
-    <div class="modal-card gemini-modal-card">
-      <!-- Header -->
-      <div class="gemini-modal-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div class="gemini-avatar">✨</div>
-          <div>
-            <h3 style="margin: 0; font-size: 1.05rem; font-weight: 900; color: #ffffff;">SafarSaathi Gemini AI Copilot</h3>
-            <span style="font-size: 0.72rem; color: #dcfce7; font-weight: 700;">🟢 Google Gemini 1.5 Pro • Assam 24/7 Carpool Assistant</span>
-          </div>
-        </div>
-        <button type="button" class="btn btn-secondary" onclick="closeGeminiAiModal()" style="padding: 4px 10px; font-size: 0.78rem; border-radius: 8px;">✕</button>
-      </div>
-
-      <!-- Quick Action Prompt Chips -->
-      <div class="gemini-quick-chips">
-        <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Shillong ke liye live cars available hain?')">🚗 Rides to Shillong</button>
-        <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Jorhat ke liye available rides check karo')">🚗 Rides to Jorhat</button>
-        <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Car kaise post karein aur ₹100 platform fee kaise pay karein?')">🚙 How to Post Car</button>
-        <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Aadhaar AI Verification kaise kaam karta hai?')">🛡️ Aadhaar Security</button>
-        <button type="button" class="gemini-chip" onclick="askGeminiPrompt('Guwahati se Nagaon ka fair fare kitna hai?')">💰 Fare to Nagaon</button>
-      </div>
-
-      <!-- Chat History Area -->
-      <div id="gemini-chat-history" class="gemini-chat-history">
-        <div class="gemini-msg gemini-msg-ai">
-          <div class="gemini-msg-bubble">
-            <strong>✨ नमस्कार! I am your SafarSaathi Gemini AI Copilot.</strong><br>
-            I can find live rides for any route in Assam, calculate exact fares, guide you through posting a vehicle, or answer questions in <strong>Hindi, Assamese, or English</strong>.<br><br>
-            How can I assist your journey across Assam today?
-          </div>
-        </div>
-      </div>
+  
 
       <!-- Input Bar -->
       <div class="gemini-input-bar">
@@ -4200,40 +4769,78 @@
   </div>
 
 
-        <footer style="margin: 1.5rem 0 5rem 0; padding: 1rem; border: 1.5px solid #16a34a; text-align: center; font-size: 0.82rem; color: #000000; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); box-sizing: border-box; width: 100%;">
-      <div style="margin-bottom: 0.35rem; color: #000000; font-weight: 900; font-size: 0.88rem;">
-        🚗 SafarSaathi Assam • 100% Verified Carpooling Network
-      </div>
-      <div style="margin-bottom: 0.5rem; font-size: 0.76rem; color: #15803d; font-weight: 800;">
-        🟢 High-Speed Cloud Sync Active • Zero Lag
-      </div>
-      <div>
-        <button type="button" onclick="triggerAiCacheClean()" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 5px 14px; border-radius: 8px; cursor: pointer;">
-          🧹 Clear Cache & Force Refresh
-        </button>
-      </div>
-    </footer>
-
-  <!-- ✨ GEMINI AI MASTER 24/7 NETWORK COPILOT (FIXED BOTTOM DOCK) -->
-  <div id="gemini-bottom-dock" onclick="openGeminiAiModal()" style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: calc(100% - 20px); max-width: 480px; z-index: 9999; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 16px; padding: 8px 12px; box-shadow: 0 6px 25px rgba(22, 163, 74, 0.45); cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; touch-action: manipulation;">
-    <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #ffffff; border: 2px solid #86efac; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-shrink: 0;">
+          <!-- ✨ GEMINI AI MASTER 24/7 NETWORK COPILOT (POSITIONED ABOVE COMPANY DETAILS) -->
+  <div id="gemini-page-dock" onclick="openGeminiAiModal()" style="max-width: 900px; margin: 1.75rem auto 0.75rem auto; padding: 0.85rem 1.15rem; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 16px; box-shadow: 0 4px 18px rgba(22, 163, 74, 0.22); cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: calc(100% - 1.5rem); touch-action: manipulation;">
+    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+      <div style="width: 36px; height: 36px; border-radius: 50%; background: #ffffff; border: 2px solid #86efac; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; box-shadow: 0 2px 6px rgba(0,0,0,0.18); flex-shrink: 0;">
         ✨
       </div>
       <div style="min-width: 0;">
         <div style="display: flex; align-items: center; gap: 6px;">
-          <strong style="color: #ffffff; font-size: 0.85rem; font-weight: 900; white-space: nowrap;">Gemini AI Master Copilot</strong>
+          <strong style="color: #ffffff; font-size: 0.9rem; font-weight: 900; white-space: nowrap;">Gemini AI Master Copilot</strong>
           <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #86efac; animation: pulse 1.2s infinite; flex-shrink: 0;"></span>
         </div>
-        <div id="gemini-network-status" style="font-size: 0.68rem; color: #dcfce7; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <div id="gemini-network-status" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           🟢 All Connected: Admin • Web • GPS • Cloud
         </div>
       </div>
     </div>
 
-    <button type="button" onclick="event.stopPropagation(); openGeminiAiModal();" style="background: #ffffff; color: #15803d; border: 1.5px solid #ffffff; font-size: 0.72rem; font-weight: 900; padding: 4px 11px; border-radius: 9999px; cursor: pointer; display: flex; align-items: center; gap: 4px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+    <button type="button" onclick="event.stopPropagation(); openGeminiAiModal();" style="background: #ffffff; color: #15803d; border: 1.5px solid #ffffff; font-size: 0.75rem; font-weight: 900; padding: 5px 14px; border-radius: 9999px; cursor: pointer; display: flex; align-items: center; gap: 4px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
       <span>💬 Ask AI</span>
     </button>
+  </div>
+
+  <!-- ==================== 🏢 COMPANY DETAILS PUBLIC FOOTER ==================== -->
+  <footer style="margin: 0.75rem auto 3rem auto; max-width: 900px; padding: 1.4rem 1.1rem; border: 1.5px solid #16a34a; text-align: center; font-size: 0.82rem; color: #000000; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); box-sizing: border-box; width: calc(100% - 1.5rem);">
+    <!-- Company Name & Core Identity -->
+    <div style="font-weight: 900; color: #000000; font-size: 0.96rem; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <span>🚗</span> <span>SafarSaathi (सफ़रसाथी) • Real-time Peer-to-Peer Carpooling Network of Assam</span>
+    </div>
+    <div style="font-size: 0.78rem; color: #15803d; font-weight: 800; margin-bottom: 0.5rem;">
+      Connecting Guwahati • Shillong • Jorhat • Nagaon • Dibrugarh • Silchar • Tezpur
+    </div>
+    <div style="font-size: 0.75rem; color: #334155; font-weight: 700; margin-bottom: 0.75rem; line-height: 1.5;">
+      100% Aadhaar AI Verified Drivers • Direct UPI Payments (Zero Platform Cut) • Instant Digital Boarding Pass
+    </div>
+
+    <!-- Official Contacts & Links Row -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 16px; font-size: 0.76rem; font-weight: 800; margin-bottom: 0.85rem; border-top: 1.5px solid #f1f5f9; border-bottom: 1.5px solid #f1f5f9; padding: 0.65rem 0;">
+      <div>
+        📧 Official Support: <a href="mailto:support@safarsaathi.com" style="color: #15803d; text-decoration: none; font-weight: 900;">support@safarsaathi.com</a>
+      </div>
+      <div style="color: #cbd5e1;">|</div>
+      <div>
+        🌐 Official Website: <a href="https://amanroy030892-netizen.github.io/safarsaathi/" target="_blank" style="color: #15803d; text-decoration: none; font-weight: 900;">amanroy030892-netizen.github.io/safarsaathi/</a>
+      </div>
+      <div style="color: #cbd5e1;">|</div>
+      <div>
+        <a href="privacy.html" target="_blank" style="color: #000000; text-decoration: underline; font-weight: 900;">📜 Privacy Policy & Terms</a>
+      </div>
+      <div style="color: #cbd5e1;">|</div>
+      <div>
+        <a href="admin.html" style="color: #475569; text-decoration: none; font-weight: 800;">🔐 Admin Access</a>
+      </div>
+    </div>
+
+    <!-- System Status & Refresh Action -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 0.4rem; font-size: 0.74rem;">
+      <div style="color: #15803d; font-weight: 900; display: flex; align-items: center; gap: 5px;">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.5s infinite;"></span>
+        <span>High-Speed Cloud Sync Active • Zero Lag • Official Assam Network</span>
+      </div>
+      <div>
+        <button type="button" onclick="triggerAiCacheClean()" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 5px 14px; border-radius: 8px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+          🧹 Clear Cache & Force Refresh
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ✨ GEMINI AI FLOATING BUTTON (ELEVATED "थोड़ा ऊपर" AT BOTTOM: 80PX) -->
+  <div id="gemini-floating-btn" onclick="openGeminiAiModal()" style="position: fixed; bottom: 80px; right: 16px; z-index: 9999; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 9999px; padding: 8px 14px; box-shadow: 0 4px 20px rgba(22, 163, 74, 0.45); cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 900; font-size: 0.78rem; touch-action: manipulation;">
+    <span style="font-size: 1.1rem; line-height: 1;">✨</span>
+    <span>Ask Gemini AI</span>
   </div>
 
 </body>
