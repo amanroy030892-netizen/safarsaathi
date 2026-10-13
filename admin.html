@@ -310,6 +310,13 @@
     try {
       if (typeof BroadcastChannel !== 'undefined') {
         syncBroadcastChannel = new BroadcastChannel('safarsaathi_multi_cloud_stream');
+        syncBroadcastChannel.onmessage = (event) => {
+          if (event && event.data && event.data.type === 'RIDES_UPDATED') {
+            rides = event.data.rides || [];
+            localStorage.setItem('ss_rides', JSON.stringify(rides));
+            renderAdminVehicles();
+          }
+        };
       }
     } catch(e){}
     
@@ -572,13 +579,16 @@
     function approveRide(rideId) {
       reLiveRide(rideId);
     }
-    function oldApproveRideUnused(rideId) {
+
+    function reLiveRide(rideId) {
       const r = rides.find(item => item.id === rideId);
       if (!r) return;
       r.status = 'ACTIVE';
       r.verifiedByAdmin = true;
+      r.removedByAdmin = false;
       r.approvedAt = new Date().toISOString();
       r.postedAt = new Date().toISOString();
+      if (!r.seatsAvailable || r.seatsAvailable < 1) r.seatsAvailable = r.totalSeats || 3;
 
       broadcastRidesToCloud(rides);
 

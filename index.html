@@ -107,7 +107,7 @@
       box-sizing: border-box;
     }
 
-    /* Modern Sticky Mobile Header */
+    /* Modern Sticky Mobile Header with Full iOS Safe-Area Notch/Dynamic Island Support */
     .app-header {
       position: sticky;
       top: 0;
@@ -115,13 +115,26 @@
       background: linear-gradient(135deg, #15803d, #16a34a);
       box-shadow: 0 4px 16px rgba(21, 128, 61, 0.28);
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 0.6rem 0.85rem;
+      padding-top: calc(0.65rem + env(safe-area-inset-top, 0px));
+      padding-bottom: 0.65rem;
+      padding-left: calc(0.85rem + env(safe-area-inset-left, 0px));
+      padding-right: calc(0.85rem + env(safe-area-inset-right, 0px));
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 900px;
-      margin: 0 auto;
-      height: 56px;
+      width: 100%;
+      min-height: calc(56px + env(safe-area-inset-top, 0px));
+      box-sizing: border-box;
+    }
+
+    /* iOS PWA Standalone Mode (Add to Home Screen) - Strict Dynamic Island & Clock Clearance */
+    @supports (-webkit-touch-callout: none) {
+      @media all and (display-mode: standalone) {
+        .app-header {
+          padding-top: max(env(safe-area-inset-top, 0px), 48px) !important;
+          min-height: calc(56px + max(env(safe-area-inset-top, 0px), 48px)) !important;
+        }
+      }
     }
 
     .header-left {
@@ -527,15 +540,16 @@
     }
 
     .modal-card {
-      background: #0f172a;
-      border: 1.5px solid #16a34a;
+      background: #ffffff;
+      color: #000000;
+      border: 2px solid #16a34a;
       border-radius: 18px;
       padding: 1.25rem;
       width: 100%;
       max-width: 440px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
 
     .toast-banner {
@@ -609,11 +623,12 @@
       50% { transform: scale(1.2) rotate(15deg); }
     }
 
-    /* Gemini Modal & Chat Styling */
+    /* Gemini Modal & Chat Styling (Strict Green, White & Black) */
     .gemini-modal-card {
-      background: var(--gemini-card) !important;
-      border: 1.5px solid var(--gemini-border) !important;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(139, 92, 246, 0.25) !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid #16a34a !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
       max-width: 520px !important;
       max-height: 90vh !important;
       display: flex !important;
@@ -622,9 +637,10 @@
       overflow: hidden !important;
     }
     .gemini-modal-header {
-      background: linear-gradient(135deg, rgba(30, 27, 75, 0.95), rgba(15, 23, 42, 0.95));
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      color: #ffffff;
       padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--gemini-border);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -633,39 +649,40 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: var(--gemini-gradient);
+      background: #ffffff;
+      color: #15803d;
+      border: 2px solid #86efac;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.2rem;
-      box-shadow: 0 0 12px var(--gemini-glow);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     .gemini-quick-chips {
       display: flex;
       gap: 6px;
       padding: 0.65rem 1rem;
-      background: rgba(15, 23, 42, 0.75);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #f8fafc;
+      border-bottom: 1.5px solid #e2e8f0;
       overflow-x: auto;
       scrollbar-width: none;
     }
     .gemini-quick-chips::-webkit-scrollbar { display: none; }
     .gemini-chip {
-      background: rgba(139, 92, 246, 0.15);
-      color: #dcfce7;
-      border: 1px solid rgba(167, 139, 250, 0.3);
+      background: #ffffff;
+      color: #15803d;
+      border: 1.5px solid #16a34a;
       padding: 4px 10px;
       border-radius: 20px;
       font-size: 0.72rem;
-      font-weight: 700;
+      font-weight: 800;
       white-space: nowrap;
       cursor: pointer;
       transition: all 0.2s ease;
     }
     .gemini-chip:hover {
-      background: var(--gemini-gradient);
-      color: white;
-      border-color: transparent;
+      background: #16a34a;
+      color: #ffffff;
     }
     .gemini-chat-history {
       flex: 1;
@@ -676,7 +693,7 @@
       gap: 0.75rem;
       max-height: 400px;
       min-height: 240px;
-      background: #090d16;
+      background: #ffffff;
     }
     .gemini-msg {
       display: flex;
@@ -697,20 +714,21 @@
       line-height: 1.45;
     }
     .gemini-msg-user .gemini-msg-bubble {
-      background: #15803d;
-      color: white;
+      background: #16a34a;
+      color: #ffffff;
       border-bottom-right-radius: 3px;
+      font-weight: 700;
     }
     .gemini-msg-ai .gemini-msg-bubble {
-      background: rgba(30, 41, 59, 0.95);
-      color: #e2e8f0;
-      border: 1px solid rgba(167, 139, 250, 0.25);
+      background: #f0fdf4;
+      color: #000000;
+      border: 1.5px solid #16a34a;
       border-bottom-left-radius: 3px;
     }
     .gemini-input-bar {
       padding: 0.75rem 1rem;
-      background: #0f172a;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border-top: 1.5px solid #e2e8f0;
       display: flex;
       gap: 8px;
       align-items: center;
@@ -1026,33 +1044,33 @@
             <input type="text" id="df-model" class="form-control" value="Swift Dzire" placeholder="e.g. Maruti Dzire, Ertiga, Innova">
           </div>
 
-          <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
+          <div style="background: #f0fdf4; border: 2px dashed #16a34a; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <label style="font-size: 0.8rem; font-weight: 800; color: #ffffff; margin: 0;">
+              <label style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 0;">
                 📸 Live Car Number Plate Scan*
               </label>
-              <span style="font-size: 0.68rem; color: #86efac; background: rgba(34,197,94,0.2); padding: 1px 6px; border-radius: 9999px;">AI Auto-Extract</span>
+              <span style="font-size: 0.68rem; color: #15803d; background: #dcfce7; padding: 1px 6px; border-radius: 9999px; font-weight: 800; border: 1px solid #16a34a;">AI Auto-Extract</span>
             </div>
-            <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0 0 0.5rem 0;">
+            <p style="font-size: 0.72rem; color: #000000; margin: 0 0 0.5rem 0;">
               गाड़ी की नंबर प्लेट की लाइव फ़ोटो लें — नंबर अपने आप सेट हो जाएगा:
             </p>
 
-            <label for="df-plate-camera-input" class="btn btn-primary" style="width: 100%; padding: 0.65rem; font-size: 0.82rem; cursor: pointer;">
+            <label for="df-plate-camera-input" class="btn btn-primary" style="width: 100%; padding: 0.65rem; font-size: 0.82rem; cursor: pointer; justify-content: center;">
               📷 Open Camera / Scan Plate Photo
             </label>
             <input type="file" id="df-plate-camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handleCarPlateLiveScan(event)">
 
             <input type="hidden" id="df-plate" value="AS 01 TX 2010">
 
-            <div id="df-plate-scan-result" style="margin-top: 0.65rem; background: rgba(15, 23, 42, 0.9); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.55rem 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+            <div id="df-plate-scan-result" style="margin-top: 0.65rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.55rem 0.75rem; display: flex; align-items: center; justify-content: space-between;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <img id="df-plate-photo-preview" src="car-bg.jpg" style="width: 52px; height: 34px; object-fit: cover; border-radius: 4px; border: 1px solid #22c55e;">
+                <img id="df-plate-photo-preview" src="car-bg.jpg" style="width: 52px; height: 34px; object-fit: cover; border-radius: 4px; border: 1px solid #16a34a;">
                 <div>
-                  <div style="font-size: 0.68rem; color: #86efac; font-weight: 800;">✓ Plate Verified</div>
-                  <div id="df-scanned-plate-badge" class="rc-hsrp-badge">AS 01 TX 2010</div>
+                  <div style="font-size: 0.68rem; color: #15803d; font-weight: 900;">✓ Plate Verified</div>
+                  <div id="df-scanned-plate-badge" class="rc-hsrp-badge" style="background:#ffffff; color:#000000; border:1px solid #000000;">AS 01 TX 2010</div>
                 </div>
               </div>
-              <button type="button" onclick="rescanCarPlate()" class="btn btn-secondary" style="padding: 3px 7px; font-size: 0.7rem;">🔄 Re-scan</button>
+              <button type="button" onclick="rescanCarPlate()" class="btn btn-secondary" style="padding: 3px 7px; font-size: 0.7rem; background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:800;">🔄 Re-scan</button>
             </div>
           </div>
 
@@ -1071,9 +1089,9 @@
 
             <div class="form-group" style="margin: 0;">
               <label>Fare Per Seat (Rs.)*</label>
-              <div style="display: flex; align-items: center; background: rgba(2, 6, 23, 0.95); border: 1.5px solid rgba(56, 189, 248, 0.5); border-radius: 12px; overflow: hidden;">
-                <span style="padding: 0.65rem 0.85rem; background: #ffffff; color: #15803d; font-weight: 900; font-size: 0.95rem; border-right: 1.5px solid rgba(56, 189, 248, 0.35);">Rs.</span>
-                <input type="number" id="df-fare" class="form-control" value="300" style="border: none !important; background: transparent !important; padding-left: 0.75rem !important; font-weight: 900; color: #4ade80; font-size: 1.15rem; width: 100%;">
+              <div style="display: flex; align-items: center; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden;">
+                <span style="padding: 0.65rem 0.85rem; background: #f0fdf4; color: #15803d; font-weight: 900; font-size: 0.95rem; border-right: 1.5px solid #16a34a;">Rs.</span>
+                <input type="number" id="df-fare" class="form-control" value="300" style="border: none !important; background: transparent !important; padding-left: 0.75rem !important; font-weight: 900; color: #000000; font-size: 1.15rem; width: 100%;">
               </div>
             </div>
           </div>
@@ -1090,11 +1108,11 @@
             Upload your receiving UPI QR screenshot. Passengers will pay fares directly to your QR!
           </p>
 
-          <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 1rem; text-align: center; margin-bottom: 0.75rem;">
-            <strong style="display: block; font-size: 0.85rem; color: white; margin-bottom: 0.35rem;">Upload UPI QR Screenshot</strong>
-            <input type="file" id="df-qr-file" accept="image/*" class="form-control" style="max-width: 300px; margin: 0 auto;" onchange="handleDriverQrUpload(event)">
+          <div style="background: #f0fdf4; border: 2px dashed #16a34a; border-radius: 12px; padding: 1rem; text-align: center; margin-bottom: 0.75rem;">
+            <strong style="display: block; font-size: 0.85rem; color: #000000; margin-bottom: 0.35rem; font-weight: 900;">Upload UPI QR Screenshot</strong>
+            <input type="file" id="df-qr-file" accept="image/*" class="form-control" style="max-width: 300px; margin: 0 auto; background:#ffffff; color:#000000; border:1.5px solid #16a34a;" onchange="handleDriverQrUpload(event)">
             <div id="df-qr-preview-box" style="display: none; margin-top: 0.65rem;">
-              <img id="df-qr-preview" style="max-width: 120px; max-height: 120px; border-radius: 8px; border: 1.5px solid var(--accent);">
+              <img id="df-qr-preview" style="max-width: 120px; max-height: 120px; border-radius: 8px; border: 1.5px solid #16a34a;">
             </div>
           </div>
 
@@ -1111,34 +1129,38 @@
 
         <!-- Step 4: ₹100 Platform Fee & UTR -->
         <div id="driver-step-4" style="display: none;">
-          <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid var(--primary); border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
-            <div style="font-weight: 800; font-size: 0.85rem; color: white;">Pay ₹100 Platform Listing Fee</div>
-            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.4rem;">Jana Small Finance Bank • 6901027507@nyes</div>
+          <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
+            <div style="font-weight: 900; font-size: 0.92rem; color: #000000;">Pay ₹100 Platform Listing Fee</div>
+            <div style="font-size: 0.74rem; color: #15803d; font-weight: 800; margin-bottom: 0.4rem;">Jana Small Finance Bank • 6901027507@nyes</div>
 
-            <img src="mitali_qr_compact.svg" style="width: 110px; height: 110px; background: white; border-radius: 8px; padding: 3px; border: 1.5px solid var(--primary); margin: 0 auto 0.4rem;">
+            <img src="mitali_qr_compact.svg" style="width: 110px; height: 110px; background: white; border-radius: 8px; padding: 3px; border: 1.5px solid #16a34a; margin: 0 auto 0.4rem;">
 
-            <!-- Direct 1-Tap Payment Launchers -->
+            <!-- Direct 1-Tap Payment Launchers with Original Brand Logos -->
             <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; margin-top: 4px; width: 100%; box-sizing: border-box;">
-              <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#5f259f; color:white; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-                🟣 PhonePe (₹100)
+              <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+                <svg viewBox="0 0 48 48" style="width:19px; height:19px; flex-shrink:0; vertical-align:middle;" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="23" fill="#5f259f"/><path d="M28.4 15.6H20.2C18.6 15.6 17.4 16.8 17.4 18.4V32.4C17.4 33.2 18 33.8 18.8 33.8C19.6 33.8 20.2 33.2 20.2 32.4V28H24.8C28.2 28 31 25.2 31 21.8C31 18.4 28.2 15.6 24.8 15.6H28.4ZM24.8 25.2H20.2V18.4H24.8C26.7 18.4 28.2 19.9 28.2 21.8C28.2 23.7 26.7 25.2 24.8 25.2Z" fill="white"/></svg>
+                <span>PhonePe (₹100)</span>
               </a>
-              <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#1a73e8; color:white; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-                🔵 Google Pay (₹100)
+              <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+                <span>Google Pay (₹100)</span>
               </a>
             </div>
             <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; margin-top: 6px; width: 100%; box-sizing: border-box;">
-              <a href="paytmmp://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#00b9f1; color:#020617; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-                📱 Paytm (₹100)
+              <a href="paytmmp://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#002e6e"/><text x="2.5" y="16" font-family="'Arial Black', sans-serif" font-weight="900" font-size="9" fill="#00b9f1">tm</text><text x="2.5" y="9.5" font-family="'Arial Black', sans-serif" font-weight="900" font-size="6.5" fill="#ffffff">PAY</text></svg>
+                <span>Paytm (₹100)</span>
               </a>
-              <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#16a34a; color:white; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-                🇮🇳 Any UPI App
+              <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20Platform%20Fee" class="btn" style="background:#16a34a; color:#ffffff; border:1.5px solid #15803d; font-weight:900; padding: 0.5rem; font-size: 0.75rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ffffff"/><path d="M5 12L12 5L19 12L12 19Z" fill="#15803d"/><path d="M9 12L12 9L15 12L12 15Z" fill="#ff9933"/></svg>
+                <span>Any UPI App</span>
               </a>
             </div>
           </div>
 
           <div class="form-group" style="margin-bottom: 0.85rem;">
             <label>12-Digit Bank Payment UTR Number (₹100)*</label>
-            <input type="text" id="df-utr" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="color: #fbbf24; font-family: monospace; font-weight: 800; font-size: 1rem; border: 1.5px solid var(--primary);">
+            <input type="text" id="df-utr" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="color: #000000; font-family: monospace; font-weight: 900; font-size: 1.05rem; border: 1.5px solid #16a34a; background: #ffffff;">
           </div>
 
             <!-- ✨ Gemini AI Real-Time UTR Anti-Fraud Verification Badge -->
@@ -1234,16 +1256,16 @@
             </div>
 
             <!-- Aadhaar Card Photo Upload -->
-            <div style="background: rgba(2, 6, 23, 0.85); border: 2px dashed var(--primary); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
-              <strong style="color: white; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">
+            <div style="background: #f0fdf4; border: 2px dashed #16a34a; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
+              <strong style="color: #000000; font-size: 0.85rem; display: block; margin-bottom: 0.25rem; font-weight: 900;">
                 🛡️ Upload Aadhaar Photo (आधार कार्ड फ़ोटो)*
               </strong>
-              <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+              <p style="font-size: 0.72rem; color: #475569; margin-bottom: 0.5rem;">
                 AI verifies UIDAI Secure QR code for 100% passenger & driver safety:
               </p>
-              <input type="file" id="auth-aadhaar-file" accept="image/*" class="form-control" onchange="handleAuthAadhaarScan(event)">
+              <input type="file" id="auth-aadhaar-file" accept="image/*" class="form-control" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a;" onchange="handleAuthAadhaarScan(event)">
               <div id="auth-aadhaar-preview-box" style="display: none; margin-top: 0.5rem;">
-                <img id="auth-aadhaar-img-preview" style="max-height: 90px; border-radius: 6px; border: 1px solid #22c55e;">
+                <img id="auth-aadhaar-img-preview" style="max-height: 90px; border-radius: 6px; border: 1px solid #16a34a;">
               </div>
             </div>
           </div>
@@ -1360,14 +1382,14 @@
       </div>
 
       <!-- Payment Section -->
-      <div style="background: rgba(2, 6, 23, 0.85); border: 1.5px solid var(--primary); border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.85rem;">
-        <div style="font-size: 0.78rem; color: var(--text-muted);">Total Fare to Pay Directly to Driver:</div>
-        <div id="bm-total-fare-text" style="font-size: 1.6rem; font-weight: 900; color: #4ade80; margin: 2px 0 0.5rem 0;">₹300</div>
+      <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 14px; padding: 0.85rem; text-align: center; margin-bottom: 0.85rem;">
+        <div style="font-size: 0.78rem; color: #000000; font-weight: 800;">Total Fare to Pay Directly to Driver:</div>
+        <div id="bm-total-fare-text" style="font-size: 1.6rem; font-weight: 900; color: #15803d; margin: 2px 0 0.5rem 0;">₹300</div>
 
-        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem;">Scan Driver's PhonePe / GPay QR:</div>
-        <img id="bm-driver-qr-img" src="mitali_qr_compact.svg" style="width: 120px; height: 120px; background: white; border-radius: 10px; padding: 4px; border: 1.5px solid var(--primary); margin: 0 auto 0.4rem;">
+        <div style="font-size: 0.74rem; color: #000000; margin-bottom: 0.35rem; font-weight: 700;">Scan Driver's PhonePe / GPay QR:</div>
+        <img id="bm-driver-qr-img" src="mitali_qr_compact.svg" style="width: 120px; height: 120px; background: white; border-radius: 10px; padding: 4px; border: 1.5px solid #16a34a; margin: 0 auto 0.4rem;">
         
-        <div id="bm-driver-upi-text" style="font-family: monospace; font-size: 0.82rem; font-weight: 800; color: #15803d; background: rgba(2,132,199,0.2); padding: 3px 8px; border-radius: 6px; display: inline-block;">
+        <div id="bm-driver-upi-text" style="font-family: monospace; font-size: 0.82rem; font-weight: 900; color: #15803d; background: #ffffff; border: 1px solid #16a34a; padding: 3px 8px; border-radius: 6px; display: inline-block;">
           driver@upi
         </div>
 
@@ -3138,19 +3160,23 @@
         const dName = encodeURIComponent(selectedRideForBooking.driverName || 'Driver');
         upiBox.innerHTML = `
           <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; margin-top: 6px; width: 100%; box-sizing: border-box;">
-            <a href="phonepe://pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#5f259f; color:white; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-              🟣 Pay PhonePe (₹${total})
+            <a href="phonepe://pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+              <svg viewBox="0 0 48 48" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="23" fill="#5f259f"/><path d="M28.4 15.6H20.2C18.6 15.6 17.4 16.8 17.4 18.4V32.4C17.4 33.2 18 33.8 18.8 33.8C19.6 33.8 20.2 33.2 20.2 32.4V28H24.8C28.2 28 31 25.2 31 21.8C31 18.4 28.2 15.6 24.8 15.6H28.4ZM24.8 25.2H20.2V18.4H24.8C26.7 18.4 28.2 19.9 28.2 21.8C28.2 23.7 26.7 25.2 24.8 25.2Z" fill="white"/></svg>
+              <span>Pay PhonePe (₹${total})</span>
             </a>
-            <a href="tez://upi/pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#1a73e8; color:white; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-              🔵 Pay GPay (₹${total})
+            <a href="tez://upi/pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+              <span>Pay GPay (₹${total})</span>
             </a>
           </div>
           <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; margin-top: 6px; width: 100%; box-sizing: border-box;">
-            <a href="paytmmp://pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#00b9f1; color:#020617; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-              📱 Pay Paytm (₹${total})
+            <a href="paytmmp://pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#002e6e"/><text x="2.5" y="16" font-family="'Arial Black', sans-serif" font-weight="900" font-size="9" fill="#00b9f1">tm</text><text x="2.5" y="9.5" font-family="'Arial Black', sans-serif" font-weight="900" font-size="6.5" fill="#ffffff">PAY</text></svg>
+              <span>Pay Paytm (₹${total})</span>
             </a>
-            <a href="upi://pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#16a34a; color:white; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis;">
-              🇮🇳 Any UPI App
+            <a href="upi://pay?pa=${dUpi}&pn=${dName}&am=${total}&cu=INR&tn=SafarSaathi%20Fare" class="btn" style="background:#16a34a; color:#ffffff; border:1.5px solid #15803d; font-weight:900; padding: 0.45rem; font-size: 0.74rem; border-radius: 8px; min-width: 0; overflow: hidden; text-overflow: ellipsis; justify-content: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" style="width:18px; height:18px; flex-shrink:0; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#ffffff"/><path d="M5 12L12 5L19 12L12 19Z" fill="#15803d"/><path d="M9 12L12 9L15 12L12 15Z" fill="#ff9933"/></svg>
+              <span>Any UPI App</span>
             </a>
           </div>
         `;
@@ -3352,6 +3378,7 @@
 
       rides.unshift(newRide);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
+      broadcastRidesLocally(rides); // Instant (<50ms) push to Admin Portal!
 
       if (db) {
         try {
@@ -3418,7 +3445,7 @@
       }
 
       container.innerHTML = filtered.map(r => `
-        <div style="background: rgba(2, 6, 23, 0.9); border: 1.5px solid var(--primary); border-radius: 12px; padding: 0.85rem;">
+        <div style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 12px; padding: 0.85rem; color: #000000;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
             <strong>${r.origin} ➔ ${r.destination}</strong>
             <span style="color: #4ade80; font-weight: 900; font-size: 1.1rem;">₹${r.farePerSeat}</span>
@@ -3987,6 +4014,15 @@
       executeAiCloudSync();
       showSection('live-cars');
       renderLiveCarsHome();
+      // iOS Standalone Safe-Area Header Clearance Enforcer
+      try {
+        const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (isIos && isStandalone) {
+          const hdr = document.querySelector('.app-header');
+          if (hdr) hdr.style.paddingTop = 'max(env(safe-area-inset-top), 48px)';
+        }
+      } catch(e){}
       // Pre-fetch user GPS in background so map opens instantly on customer's exact location
       try { centerOnUserLiveGps(false); } catch(e){}
     });
@@ -4039,7 +4075,7 @@
 
       <!-- Input Bar -->
       <div class="gemini-input-bar">
-        <input type="text" id="gemini-user-input" class="form-control" placeholder="Ask Gemini AI anything (e.g. Shillong gadi hai?)..." onkeypress="if(event.key==='Enter') sendGeminiMessage()" style="font-size: 0.85rem; padding: 0.6rem 0.85rem; background: rgba(2, 6, 23, 0.8); color: white; border: 1px solid rgba(167, 139, 250, 0.4);">
+        <input type="text" id="gemini-user-input" class="form-control" placeholder="Ask Gemini AI anything (e.g. Shillong gadi hai?)..." onkeypress="if(event.key==='Enter') sendGeminiMessage()" style="font-size: 0.85rem; padding: 0.6rem 0.85rem; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">
         <button type="button" class="btn-gemini-send" onclick="sendGeminiMessage()">
           <span>⚡ Send</span>
         </button>
