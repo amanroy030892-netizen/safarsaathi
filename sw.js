@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v30-clean-6btn-bottom-ai)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v31-zero-scroll-no-admin)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v30-clean-6btn-bottom-ai';
+const CACHE_NAME = 'safarsaathi-v31-zero-scroll-no-admin';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

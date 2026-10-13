@@ -154,7 +154,7 @@
       overflow-x: hidden !important;
       -webkit-overflow-scrolling: touch !important;
       box-sizing: border-box !important;
-      padding-bottom: 65px !important;
+      padding-bottom: 0.35rem !important;
     }
 
     /* Instant Touch & Flip Animation */
@@ -1568,65 +1568,23 @@
     </section>
 
   
-    <!-- ✨ GEMINI AI MASTER 24/7 NETWORK COPILOT (POSITIONED ABOVE COMPANY DETAILS) -->
-    <div id="gemini-page-dock" onclick="showSection('gemini-ai')" style="margin: 1.75rem auto 0.75rem auto; padding: 0.85rem 1.15rem; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 16px; box-shadow: 0 4px 18px rgba(22, 163, 74, 0.22); cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%; touch-action: manipulation;">
-      <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-        <div style="width: 36px; height: 36px; border-radius: 50%; background: #ffffff; border: 2px solid #86efac; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; box-shadow: 0 2px 6px rgba(0,0,0,0.18); flex-shrink: 0;">
-          ✨
-        </div>
-        <div style="min-width: 0;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <strong style="color: #ffffff; font-size: 0.9rem; font-weight: 900; white-space: nowrap;">Gemini AI Master Copilot</strong>
-            <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #86efac; animation: pulse 1.2s infinite; flex-shrink: 0;"></span>
-          </div>
-          <div id="gemini-network-status" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            🟢 All Connected: Admin • Web • GPS • Cloud
-          </div>
-        </div>
+        <!-- ✨ SLIM GEMINI AI COPILOT PILL (COMPACT, SCREEN-FITTING) -->
+    <div id="gemini-page-dock" onclick="openGeminiAiModal()" style="margin: 0.35rem auto 0.25rem auto; padding: 5px 12px; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 9999px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%; max-width: 480px; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.2); touch-action: manipulation;">
+      <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
+        <span style="font-size: 0.95rem;">✨</span>
+        <strong style="font-size: 0.78rem; font-weight: 900; color: #ffffff; white-space: nowrap;">Gemini AI Copilot</strong>
+        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #86efac; animation: pulse 1.2s infinite; flex-shrink: 0;"></span>
+        <span id="gemini-network-status" style="font-size: 0.68rem; color: #dcfce7; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🟢 All Connected • Real-Time</span>
       </div>
-      <button type="button" onclick="event.stopPropagation(); showSection('gemini-ai');" style="background: #ffffff; color: #15803d; border: 1.5px solid #ffffff; font-size: 0.75rem; font-weight: 900; padding: 5px 14px; border-radius: 9999px; cursor: pointer; display: flex; align-items: center; gap: 4px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
-        <span>💬 Ask AI</span>
-      </button>
+      <span style="background: #ffffff; color: #15803d; font-size: 0.68rem; font-weight: 900; padding: 2px 9px; border-radius: 9999px; flex-shrink: 0;">
+        💬 Ask AI
+      </span>
     </div>
 
-    <!-- ==================== 🏢 COMPANY DETAILS PUBLIC FOOTER (INSIDE MAIN) ==================== -->
-    <footer id="main-company-footer" style="margin: 0.75rem auto 3rem auto; width: 100%; padding: 1.4rem 1.1rem; border: 1.5px solid #16a34a; text-align: center; font-size: 0.82rem; color: #000000; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); box-sizing: border-box;">
-      <div style="font-weight: 900; color: #000000; font-size: 0.96rem; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
-        <span>🚗</span> <span>SafarSaathi (सफ़रसाथी) • Real-time Peer-to-Peer Carpooling Network of Assam</span>
-      </div>
-      <div style="font-size: 0.78rem; color: #15803d; font-weight: 800; margin-bottom: 0.5rem;">
-        Connecting Guwahati • Shillong • Jorhat • Nagaon • Dibrugarh • Silchar • Tezpur
-      </div>
-      <div style="font-size: 0.75rem; color: #334155; font-weight: 700; margin-bottom: 0.75rem; line-height: 1.5;">
-        100% Aadhaar AI Verified Drivers • Direct UPI Payments (Zero Platform Cut) • Instant Digital Boarding Pass
-      </div>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 16px; font-size: 0.76rem; font-weight: 800; margin-bottom: 0.85rem; border-top: 1.5px solid #f1f5f9; border-bottom: 1.5px solid #f1f5f9; padding: 0.65rem 0;">
-        <div>
-          📧 Official Support: <a href="mailto:support@safarsaathi.com" style="color: #15803d; text-decoration: none; font-weight: 900;">support@safarsaathi.com</a>
-        </div>
-        <div style="color: #cbd5e1;">|</div>
-        <div>
-          🌐 Official Website: <a href="https://amanroy030892-netizen.github.io/safarsaathi/" target="_blank" style="color: #15803d; text-decoration: none; font-weight: 900;">amanroy030892-netizen.github.io/safarsaathi/</a>
-        </div>
-        <div style="color: #cbd5e1;">|</div>
-        <div>
-          <a href="privacy.html" target="_blank" style="color: #000000; text-decoration: underline; font-weight: 900;">📜 Privacy Policy & Terms</a>
-        </div>
-        <div style="color: #cbd5e1;">|</div>
-        <div>
-          <a href="admin.html" style="color: #475569; text-decoration: none; font-weight: 800;">🔐 Admin Access</a>
-        </div>
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 0.4rem; font-size: 0.74rem;">
-        <div style="color: #15803d; font-weight: 900; display: flex; align-items: center; gap: 5px;">
-          <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.5s infinite;"></span>
-          <span>High-Speed Cloud Sync Active • Zero Lag • Official Assam Network</span>
-        </div>
-        <div>
-          <button type="button" onclick="triggerAiCacheClean()" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.74rem; font-weight: 900; padding: 5px 14px; border-radius: 8px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-            🧹 Clear Cache & Force Refresh
-          </button>
-        </div>
+    <!-- 🏢 ULTRA-COMPACT 1-LINE COMPANY FOOTER (NO BULK, ZERO ADMIN, SCREEN-FITTING) -->
+    <footer id="main-company-footer" style="margin: 0.2rem auto 0.35rem auto; width: 100%; text-align: center; font-size: 0.68rem; color: #475569; padding: 2px 0; box-sizing: border-box;">
+      <div>
+        <strong style="color: #000000;">🚗 SafarSaathi</strong> • Assam Carpooling Network • <a href="privacy.html" target="_blank" style="color: #15803d; text-decoration: underline; font-weight: 700;">Privacy & Terms</a>
       </div>
     </footer>
 
@@ -1825,9 +1783,9 @@
       if (statusEl) {
         const pulse = (geminiSyncPulseCount % 2 === 0) ? '🟢' : '⚡';
         if (hasGps && currentLiveCoords.roadName) {
-          statusEl.innerText = `${pulse} Connected: ${currentLiveCoords.roadName.split(',')[0]} • Admin Synced (${activeRidesCount} Cars Live)`;
+          statusEl.innerText = `${pulse} Connected: ${currentLiveCoords.roadName.split(',')[0]} • Cloud Synced (${activeRidesCount} Cars Live)`;
         } else {
-          statusEl.innerText = `${pulse} All Connected: Admin • Web • GPS (${activeRidesCount} Cars Live)`;
+          statusEl.innerText = `${pulse} All Connected: Live Network • GPS (${activeRidesCount} Cars Live)`;
         }
       }
 
@@ -1939,11 +1897,11 @@
       if (q.includes('admin') || q.includes('connect') || q.includes('sync') || q.includes('server')) {
         return `
           <strong>✨ Gemini AI Network Status:</strong><br>
-          • <b>Admin Portal:</b> 🟢 100% Connected & Synced (PIN 1432)<br>
+          • <b>Cloud Server:</b> 🟢 100% Connected & Live Synced<br>
           • <b>Web App / PWA:</b> 🟢 Active & Live Streaming<br>
           • <b>Cloud Relay:</b> 🟢 Sub-second latency active<br>
           • <b>Live Cars on Radar:</b> ${activeCars.length} Verified Vehicle(s)<br>
-          Admin द्वारा स्वीकृत कोई भी गाड़ी तुरंत बिना पेज रिफ्रेश किए लाइव हो जाती है।
+          वेरिफाई होते ही कोई भी गाड़ी तुरंत बिना पेज रिफ्रेश किए लाइव हो जाती है।
         `;
       }
 
@@ -1993,7 +1951,7 @@
           3. Upload/capture your vehicle number plate with Gemini AI Vision.<br>
           4. Upload your PhonePe/GPay QR code for receiving passenger fares directly.<br>
           5. Pay the <strong>₹100 platform fee</strong> to Jana Small Finance Bank (<code>6901027507@nyes</code>) and enter your 12-digit UTR.<br><br>
-          Once approved by Admin, your car stays <strong>100% LIVE</strong> for all passengers!
+          Once verified, your car stays <strong>100% LIVE</strong> for all passengers!
         `;
       }
 
@@ -3752,7 +3710,7 @@ BT
 /F2 8.5 Tf
 0.35 0.35 0.35 rg
 50 260 Td
-(Official Support: support@safarsaathi.com | Admin WhatsApp: +91 6901027507) Tj
+(Official Support: support@safarsaathi.com | Support: support@safarsaathi.com) Tj
 ET
 `;
 
@@ -4118,12 +4076,12 @@ ET
         `💺 *Seats:* ${seats} Seats @ Rs. ${fare} / seat%0A%0A` +
         `💰 *₹100 Platform Fee UTR:* ${utr}%0A` +
         `🏦 *Bank Payee:* Jana Small Finance Bank (6901027507@nyes)%0A%0A` +
-        `🔒 *ACTION FOR ADMIN (+91 6901027507):*%0A` +
-        `Check Jana SFB app for Rs. 100 deposit with UTR ${utr}, then open Admin Panel to activate.`;
+        `🔒 *NEW RIDE VERIFICATION REQUEST:*%0A` +
+        `Rs. 100 platform fee deposited with UTR ${utr}. Please activate on Cloud Server.`;
 
       window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
 
-      showToast('🎉 Ride submitted! Status pending ₹100 admin verification.', '#15803d');
+      showToast('🎉 Ride submitted! Status pending verification.', '#15803d');
       showSection('driver-fleet');
     }
 
@@ -4462,8 +4420,7 @@ ET
         const isConfirmed = (b.status || 'CONFIRMED').toUpperCase() === 'CONFIRMED';
         const driverName = b.driverName || 'Dipankar Baidya';
         const driverPhone = b.driverPhone || '9435012345';
-        const adminPhone = '6901027507';
-        const passengerName = b.passengerName || (user ? user.name : 'Customer');
+                const passengerName = b.passengerName || (user ? user.name : 'Customer');
         const passengerPhone = b.passengerPhone || (user ? user.phone : '');
         const seatsText = (parseInt(b.seatsBooked) > 1) ? `S1, S2 (${b.seatsBooked} Seats)` : `S1 (1 Seat)`;
         
