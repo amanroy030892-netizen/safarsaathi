@@ -947,7 +947,7 @@
   <header id="app-top-header" class="app-top-header">
     <div class="app-header">
       <div class="header-left">
-        <a href="#" class="brand-logo" onclick="showSection('live-cars'); return false;" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+        <a href="#" class="brand-logo" onclick="showSection('profile'); return false;" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
           <img src="safarsaathi_emblem_transparent.png" alt="SafarSaathi Logo" style="height: 32px; width: auto; object-fit: contain; vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
           <span style="font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">Safar<span class="brand-highlight" style="color: #86efac;">Saathi</span></span>
         </a>
@@ -967,11 +967,11 @@
 
     <!-- 6-Button Navigation Matrix (Strict 3x2 Grid - Never Stacks Vertically!) -->
     <nav class="nav-grid-wrapper">
-      <!-- Row 1: 3 Live Action Buttons -->
+      <!-- Row 1: 3 Live Action Buttons (Profile is Default Home Page) -->
       <div class="nav-row">
-        <button class="nav-btn active" id="btn-nav-live" onclick="showSection('live-cars')">
-          <span>🟢</span>
-          <span>Live Cars (<span id="nav-live-count">4</span>)</span>
+        <button class="nav-btn active" id="btn-nav-profile" onclick="showSection('profile')">
+          <span>👤</span>
+          <span>Profile (Home)</span>
         </button>
         <button class="nav-btn" id="btn-nav-driver" onclick="showSection('driver')">
           <span>🚗</span>
@@ -985,9 +985,9 @@
 
       <!-- Row 2: 3 Account & Hub Buttons -->
       <div class="nav-row">
-        <button class="nav-btn" id="btn-nav-profile" onclick="showSection('profile')">
-          <span>👤</span>
-          <span>Profile</span>
+        <button class="nav-btn" id="btn-nav-live" onclick="showSection('map')">
+          <span>🗺️</span>
+          <span>Live Map</span>
         </button>
         <button class="nav-btn" id="btn-nav-bookings" onclick="showSection('my-tickets')">
           <span>🎟️</span>
@@ -1426,8 +1426,54 @@
               ⚡ 1s Live Stream
             </div>
           </div>
-        </div>
-      </div>
+        </div><!-- /#route-map-card -->
+
+        <!-- 📢 AUTOMATED MULTI-MEDIA ADS & SPONSORS SHOWCASE BOX (VIDEO, BANNER, PDF & FILE ADS) -->
+        <div id="live-ads-showcase-box" style="margin-top: 0.45rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; overflow: hidden; box-shadow: 0 3px 14px rgba(22, 163, 74, 0.12); box-sizing: border-box;">
+          
+          <!-- Ad Box Header with Dynamic Category Switcher -->
+          <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.35rem 0.65rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.88rem;">📢</span>
+              <strong style="font-size: 0.76rem; font-weight: 900; color: #ffffff; white-space: nowrap;">Assam Sponsored Ads</strong>
+              <span id="active-ad-counter-badge" style="font-size: 0.62rem; background: rgba(255,255,255,0.22); color: #ffffff; padding: 1px 6px; border-radius: 9999px; font-weight: 800;">3 Live</span>
+            </div>
+            
+            <!-- Category Tabs: Video Ads, Banner Ads, PDF Flyer, Add New -->
+            <div style="display: flex; gap: 3px; align-items: center;">
+              <button type="button" class="btn-ad-tab active" id="btn-ad-tab-video" onclick="switchAdTab('video')" style="background: #ffffff; color: #15803d; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 900; cursor: pointer;">
+                🎬 Video
+              </button>
+              <button type="button" class="btn-ad-tab" id="btn-ad-tab-banner" onclick="switchAdTab('banner')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
+                🖼️ Banner
+              </button>
+              <button type="button" class="btn-ad-tab" id="btn-ad-tab-pdf" onclick="switchAdTab('pdf')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
+                📄 PDF
+              </button>
+              <button type="button" onclick="openCreateAdModal()" style="background: #fde047; color: #854d0e; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
+                <span>➕</span> <span>New</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Screen-Fitting Ad Body -->
+          <div id="ad-content-viewport" style="padding: 0.45rem 0.65rem; min-height: 95px; box-sizing: border-box; background: #ffffff;">
+            <!-- Injected dynamically via renderActiveAd() -->
+          </div>
+
+          <!-- Ad Box Navigation & Action Footer -->
+          <div id="ad-action-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 3px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem;">
+            <div id="ad-pagination-indicator" style="color: #64748b; font-weight: 800; font-size: 0.65rem;">
+              Showing 1 of 3 Ads
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <button type="button" onclick="cyclePreviousAd()" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer;">◀ Prev</button>
+              <button type="button" onclick="cycleNextAd()" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer;">Next ▶</button>
+            </div>
+          </div>
+        </div><!-- /#live-ads-showcase-box -->
+
+      </div><!-- /#top-map-container -->
     </section>
 
     <!-- ==================== 5. ✨ GEMINI AI COPILOT (SCREEN-FITTING ZERO-SCROLL CHAT) ==================== -->
@@ -1554,6 +1600,42 @@
             <a href="#" id="btn-forgot-password-link" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.72rem; color: #16a34a; text-decoration: none; font-weight: 800;">
               ❓ Forgot Password? (पासवर्ड भूल गए?)
             </a>
+          </div>
+
+          <!-- 🎬 DEDICATED PROFILE HOME VIDEO AD BOX (PLAYS WITH AUDIO • UP TO 1.5 MIN) -->
+          <div id="profile-home-video-ad-box" style="margin-top: 0.5rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(22, 163, 74, 0.12); box-sizing: border-box;">
+            
+            <!-- Official Sponsored Video Ad (Managed Strictly by Admin Portal) -->
+            <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.35rem 0.65rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 0.85rem;">🎬</span>
+                <strong style="font-size: 0.74rem; font-weight: 900; color: #ffffff;">Sponsored Video Ad</strong>
+                <span style="font-size: 0.6rem; background: rgba(255,255,255,0.25); color: #ffffff; padding: 1px 6px; border-radius: 4px; font-weight: 800;">🔊 Sound Active • 1.5 Min</span>
+              </div>
+              <span style="font-size: 0.62rem; color: #dcfce7; font-weight: 800; background: rgba(0,0,0,0.15); padding: 1px 5px; border-radius: 4px;">
+                Verified Sponsor
+              </span>
+            </div>
+
+            <!-- Video Player (Plays with Sound, Up to 1.5 Min) -->
+            <div style="padding: 0.45rem; background: #000000; position: relative; text-align: center;">
+              <video id="profile-video-player" src="promo_ad.mp4" playsinline controls loop style="width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; display: block; margin: 0 auto;"></video>
+            </div>
+
+            <!-- Ad Details & Sound Toggle -->
+            <div style="padding: 0.35rem 0.65rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+              <div style="min-width: 0; flex: 1;">
+                <div id="profile-video-title" style="font-size: 0.76rem; font-weight: 900; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  🚗 SafarSaathi Premium Carpool Network (Official Promo)
+                </div>
+                <div style="font-size: 0.64rem; color: #475569;">
+                  100% Verified Carpool Rides across Assam • Sound Enabled (Up to 1.5 Min)
+                </div>
+              </div>
+              <button type="button" id="btn-toggle-profile-video-sound" onclick="toggleProfileVideoSound()" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.68rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; cursor: pointer; flex-shrink: 0; white-space: nowrap;">
+                🔊 Unmute / Sound ON
+              </button>
+            </div>
           </div>
         </div>
 
@@ -2133,8 +2215,23 @@
       if (typeof BroadcastChannel !== 'undefined') {
         syncBroadcastChannel = new BroadcastChannel('safarsaathi_multi_cloud_stream');
         syncBroadcastChannel.onmessage = (event) => {
-          if (event && event.data && event.data.type === 'RIDES_UPDATED') {
-            mergeIncomingCloudRides(event.data.rides);
+          if (event && event.data) {
+            if (event.data.type === 'RIDES_UPDATED') {
+              mergeIncomingCloudRides(event.data.rides);
+            } else if (event.data.type === 'PROFILE_VIDEO_AD_UPDATED' && event.data.ad) {
+              const ad = event.data.ad;
+              localStorage.setItem('ss_profile_video_ad', JSON.stringify(ad));
+              const vidPlayer = document.getElementById('profile-video-player');
+              const titleEl = document.getElementById('profile-video-title');
+              if (vidPlayer && ad.src) {
+                vidPlayer.src = ad.src;
+                vidPlayer.muted = false;
+                vidPlayer.volume = 1.0;
+                vidPlayer.play().catch(() => {});
+              }
+              if (titleEl && ad.title) titleEl.innerText = '🚗 ' + ad.title;
+              showToast('📢 New Sponsor Video Ad Loaded!', '#15803d');
+            }
           }
         };
       }
@@ -2340,6 +2437,13 @@
         lastActiveSection = tab;
       }
 
+      // Stop & Hide Profile Video Ad whenever leaving the landing home page
+      if (tab !== 'profile') {
+        stopProfileHomeVideoAd();
+      } else {
+        resumeProfileHomeVideoAdIfNeeded();
+      }
+
       // 1. Strict Flip System: ONLY target section is displayed, other sections are 100% hidden!
       if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
       if (secDriver) secDriver.style.display = (tab === 'driver') ? 'block' : 'none';
@@ -2364,7 +2468,7 @@
       const btnBookings = document.getElementById('btn-nav-bookings');
       const btnFleet = document.getElementById('btn-nav-fleet');
 
-      if (btnLive) btnLive.classList.toggle('active', tab === 'live-cars');
+      if (btnLive) btnLive.classList.toggle('active', tab === 'map' || tab === 'live-cars');
       if (btnDriver) btnDriver.classList.toggle('active', tab === 'driver');
       if (btnSearch) btnSearch.classList.toggle('active', tab === 'passenger');
       if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
@@ -3015,7 +3119,7 @@
     let lastGpsTimestamp = 0;
     let currentVehicleSpeedKmH = 0;
     let currentVehicleHeading = 0;
-    let isVehicleDrivingMode = false;
+    let isVehicleDrivingMode = true; // DRIVE MODE ACTIVE BY DEFAULT!
 
     function calculateBearing(lat1, lon1, lat2, lon2) {
       const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -3197,33 +3301,77 @@
         googleLiveMap.setView([lat, lng], 16);
       }
 
-      // 🧭 GOOGLE MAPS STYLE 3D DRIVING ARROW & LIVE GPS MARKER
+      // 🧭 GOOGLE MAPS NAVIGATION: DRIVE MODE BY DEFAULT • CAR SCENE • STATIONARY POV CONE • WALKING DIRECTION
       let markerHtml = '';
-      if (isVehicleDrivingMode) {
+      const isStationary = (currentVehicleSpeedKmH < 1.5);
+      const isWalking = (currentVehicleSpeedKmH >= 1.5 && currentVehicleSpeedKmH < 7.0);
+
+      if (isStationary) {
+        // 👁️ STATIONARY POINT OF VIEW (POV): Dynamic 60° Compass Field-of-View Cone radiating forward
         markerHtml = `
-          <div style="position:relative; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
-            <!-- Directional Radar Wave -->
-            <div style="position:absolute; width:46px; height:46px; border-radius:50%; background:rgba(22,163,74,0.32); animation:pulse 1.2s infinite;"></div>
-            <!-- 3D Navigation Driving Arrow (Rotates in Journey Direction like Google Maps) -->
-            <div style="transform: rotate(${currentVehicleHeading}deg); transition: transform 0.35s cubic-bezier(0.2, 0, 0.2, 1); display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
-              <svg viewBox="0 0 40 40" style="width:38px; height:38px;" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 3L35 34L20 27L5 34L20 3Z" fill="#16a34a" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
-                <path d="M20 3L35 34L20 27V3Z" fill="#15803d"/>
-                <circle cx="20" cy="24" r="3.5" fill="#ffffff"/>
+          <div style="position:relative; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
+            <!-- Directional Flashlight / POV Beam pointing in the exact phone/compass direction -->
+            <div style="position:absolute; width:54px; height:54px; transform: rotate(${currentVehicleHeading}deg); transition: transform 0.25s ease-out; pointer-events:none;">
+              <svg viewBox="0 0 54 54" style="width:54px; height:54px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M27 27 L9 0 A34 34 0 0 1 45 0 Z" fill="url(#povGradient)" opacity="0.65"/>
+                <defs>
+                  <linearGradient id="povGradient" x1="27" y1="27" x2="27" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#16a34a" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#86efac" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
               </svg>
             </div>
-            <!-- Live Speed Pill -->
-            <div style="position:absolute; bottom:-12px; background:#15803d; color:#ffffff; font-size:9px; font-weight:900; padding:1px 5px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.3); border:1px solid #86efac; white-space:nowrap;">
-              ${currentVehicleSpeedKmH > 0 ? currentVehicleSpeedKmH + ' km/h' : 'DRIVING'}
+            <!-- Stationary Location Pulse -->
+            <div style="position:absolute; width:34px; height:34px; border-radius:50%; background:rgba(22,163,74,0.3); animation:pulse 1.4s infinite;"></div>
+            <!-- Center Dot -->
+            <div style="width:18px; height:18px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 10px rgba(0,0,0,0.4); position:relative; z-index:2; display:flex; align-items:center; justify-content:center;">
+              <div style="width:6px; height:6px; background:#ffffff; border-radius:50%;"></div>
+            </div>
+            <!-- POV Badge -->
+            <div style="position:absolute; bottom:-12px; background:#ffffff; color:#15803d; font-size:8.5px; font-weight:900; padding:1px 5px; border-radius:4px; border:1px solid #16a34a; white-space:nowrap; box-shadow:0 1px 4px rgba(0,0,0,0.15); z-index:3;">
+              👁️ POV: ${getCompassDirection(currentVehicleHeading)}
+            </div>
+          </div>
+        `;
+      } else if (isWalking) {
+        // 🚶 WALKING ON FOOT: Directional Chevron & Compass Beam showing walking path
+        markerHtml = `
+          <div style="position:relative; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
+            <div style="position:absolute; width:44px; height:44px; border-radius:50%; background:rgba(2,132,199,0.25); animation:pulse 1.2s infinite;"></div>
+            <!-- Directional Walking Arrow -->
+            <div style="transform: rotate(${currentVehicleHeading}deg); transition: transform 0.3s ease-out; display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 3px 8px rgba(0,0,0,0.4));">
+              <svg viewBox="0 0 36 36" style="width:36px; height:36px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 2L31 30L18 23L5 30L18 2Z" fill="#0284c7" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M18 2L31 30L18 23V2Z" fill="#0369a1"/>
+                <circle cx="18" cy="20" r="3" fill="#ffffff"/>
+              </svg>
+            </div>
+            <!-- Walking Speed Pill -->
+            <div style="position:absolute; bottom:-12px; background:#0284c7; color:#ffffff; font-size:8.5px; font-weight:900; padding:1px 5px; border-radius:4px; white-space:nowrap; box-shadow:0 1px 4px rgba(0,0,0,0.25);">
+              🚶 ${currentVehicleSpeedKmH} km/h
             </div>
           </div>
         `;
       } else {
+        // 🚗 CAR SCENE & DRIVE MODE (DEFAULT): 3D Navigation Vehicle Chevron in Travel Direction
         markerHtml = `
-          <div style="position:relative; width:38px; height:38px; display:flex; align-items:center; justify-content:center;">
-            <div style="position:absolute; width:36px; height:36px; border-radius:50%; background:rgba(22,163,74,0.38); animation:pulse 1s infinite;"></div>
-            <div style="width:20px; height:20px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 12px rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center;">
-              <div style="width:7px; height:7px; background:#ffffff; border-radius:50%;"></div>
+          <div style="position:relative; width:52px; height:52px; display:flex; align-items:center; justify-content:center;">
+            <div style="position:absolute; width:50px; height:50px; border-radius:50%; background:rgba(22,163,74,0.32); animation:pulse 1.1s infinite;"></div>
+            <!-- 3D Navigation Car Scene Arrow (Points and turns in direction of vehicle movement) -->
+            <div style="transform: rotate(${currentVehicleHeading}deg); transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1); display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+              <svg viewBox="0 0 44 44" style="width:42px; height:42px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Vehicle Car Headlights Beam -->
+                <path d="M22 22 L8 2 L36 2 Z" fill="#86efac" opacity="0.35"/>
+                <!-- 3D Navigation Car Chevron -->
+                <path d="M22 4L37 36L22 29L7 36L22 4Z" fill="#16a34a" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M22 4L37 36L22 29V4Z" fill="#15803d"/>
+                <circle cx="22" cy="26" r="3.5" fill="#ffffff"/>
+              </svg>
+            </div>
+            <!-- Driving Speed Pill -->
+            <div style="position:absolute; bottom:-12px; background:#15803d; color:#ffffff; font-size:9px; font-weight:900; padding:1px 6px; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.3); border:1px solid #86efac; white-space:nowrap;">
+              🚗 ${currentVehicleSpeedKmH > 0 ? currentVehicleSpeedKmH + ' km/h' : 'DRIVE MODE'}
             </div>
           </div>
         `;
@@ -3232,8 +3380,8 @@
       const userGpsIcon = L.divIcon({
         className: 'user-direct-live-pin',
         html: markerHtml,
-        iconSize: isVehicleDrivingMode ? [48, 48] : [38, 38],
-        iconAnchor: isVehicleDrivingMode ? [24, 24] : [19, 19]
+        iconSize: [54, 54],
+        iconAnchor: [27, 27]
       });
 
       if (!userLiveGpsMarker) {
@@ -4414,7 +4562,10 @@ ET
         if (authView) authView.style.display = 'block';
         if (cardView) cardView.style.display = 'none';
         setAuthMode('login');
+        resumeProfileHomeVideoAdIfNeeded();
       } else {
+        // User logged in / on next page: Video ad stops completely & is removed!
+        stopProfileHomeVideoAd();
         if (authView) authView.style.display = 'none';
         if (cardView) {
           cardView.style.display = 'block';
@@ -4951,12 +5102,14 @@ ET
       }
     }
 
-    // App Startup
+    // App Startup (👤 PROFILE IS NOW THE 100% DEFAULT HOME PAGE)
     window.addEventListener('DOMContentLoaded', () => {
       initFirebase();
       executeAiCloudSync();
-      showSection('live-cars');
-      renderLiveCarsHome();
+      showSection('profile');
+      renderProfileView();
+      initProfileHomeVideoAd();
+      resumeProfileHomeVideoAdIfNeeded();
       // iOS Standalone Safe-Area Header Clearance Enforcer (54px Dynamic Island / Clock Clearance)
       try {
         const isStandalone = (window.navigator.standalone === true) || 
@@ -4986,6 +5139,462 @@ ET
         reg.update();
       }).catch(() => {});
     }
-  </script>
+  
+    // =========================================================================
+    // 📢 AUTOMATED MULTI-MEDIA ADS & SPONSOR SHOWCASE ENGINE (VIDEO, BANNER, PDF)
+    // =========================================================================
+    let currentAdTab = 'video';
+    let currentAdIndex = 0;
+    let uploadedAdFileData = null;
+    let uploadedAdFileType = null;
+    let uploadedAdFileName = '';
+
+    const defaultSponsoredAds = [
+      {
+        id: 'ad-video-1',
+        type: 'video',
+        title: 'SafarSaathi Premium Carpool Network',
+        description: 'Verified Assam drivers • Zero commission • Direct UPI fare to driver.',
+        src: 'promo_ad.mp4',
+        ctaText: '💬 WhatsApp Sponsor',
+        ctaLink: 'https://wa.me/916901027507?text=Hi%20SafarSaathi%20Ad%20Promotion'
+      },
+      {
+        id: 'ad-banner-1',
+        type: 'banner',
+        title: 'Guwahati ➔ Shillong Weekend Special',
+        description: 'Flat ₹250 AC seats available. Verified drivers on GS Road corridor.',
+        src: 'feature-graphic-1024x500.png',
+        ctaText: '🔍 Book Route',
+        action: 'search_shillong'
+      },
+      {
+        id: 'ad-pdf-1',
+        type: 'pdf',
+        title: 'Official SafarSaathi Safety & Tariff Guide (PDF)',
+        description: 'Official route tariff table, passenger security rules & Aadhaar KYC guide.',
+        src: 'safarsaathi_guide.pdf',
+        ctaText: '📥 Download PDF',
+        downloadName: 'SafarSaathi_Official_Guide.pdf'
+      }
+    ];
+
+    let liveAdsDb = [];
+    try {
+      liveAdsDb = JSON.parse(localStorage.getItem('ss_live_ads')) || defaultSponsoredAds;
+    } catch(e) {
+      liveAdsDb = defaultSponsoredAds;
+    }
+
+    function switchAdTab(tab) {
+      currentAdTab = tab;
+      currentAdIndex = 0;
+
+      // Update Tab button active styles
+      ['video', 'banner', 'pdf'].forEach(t => {
+        const btn = document.getElementById('btn-ad-tab-' + t);
+        if (btn) {
+          if (t === tab) {
+            btn.style.background = '#ffffff';
+            btn.style.color = '#15803d';
+            btn.style.fontWeight = '900';
+          } else {
+            btn.style.background = 'rgba(255,255,255,0.2)';
+            btn.style.color = '#ffffff';
+            btn.style.fontWeight = '800';
+          }
+        }
+      });
+
+      renderActiveAd();
+    }
+
+    function getFilteredAds() {
+      const filtered = liveAdsDb.filter(ad => ad.type === currentAdTab);
+      return filtered.length > 0 ? filtered : defaultSponsoredAds.filter(ad => ad.type === currentAdTab);
+    }
+
+    function renderActiveAd() {
+      const container = document.getElementById('ad-content-viewport');
+      const counterEl = document.getElementById('active-ad-counter-badge');
+      const paginationEl = document.getElementById('ad-pagination-indicator');
+      if (!container) return;
+
+      if (counterEl) counterEl.innerText = liveAdsDb.length + ' Live';
+
+      const ads = getFilteredAds();
+      if (currentAdIndex >= ads.length) currentAdIndex = 0;
+      if (currentAdIndex < 0) currentAdIndex = ads.length - 1;
+
+      if (paginationEl) {
+        paginationEl.innerText = `Ad ${currentAdIndex + 1} of ${ads.length}`;
+      }
+
+      const ad = ads[currentAdIndex];
+      if (!ad) return;
+
+      if (ad.type === 'video') {
+        container.innerHTML = `
+          <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+            <div style="width: 130px; height: 85px; border-radius: 8px; overflow: hidden; background: #000000; flex-shrink: 0; position: relative; border: 1.5px solid #16a34a; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+              <video id="ad-video-element" src="${ad.src}" controls playsinline muted loop style="width: 100%; height: 100%; object-fit: cover;"></video>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <span style="background: #dcfce7; color: #15803d; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px; border: 1px solid #16a34a;">🎬 VIDEO AD</span>
+              <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
+              <p style="font-size: 0.68rem; color: #475569; margin: 0 0 5px 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${ad.description}</p>
+              <a href="${ad.ctaLink || 'https://wa.me/916901027507'}" target="_blank" style="background: #16a34a; color: #ffffff; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; display: inline-flex; align-items: center; gap: 3px;">
+                ${ad.ctaText || '💬 WhatsApp Sponsor'}
+              </a>
+            </div>
+          </div>
+        `;
+      } else if (ad.type === 'banner') {
+        container.innerHTML = `
+          <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+            <div style="width: 120px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1.5px solid #16a34a; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+              <img src="${ad.src}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <span style="background: #fef08a; color: #854d0e; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px;">🖼️ BANNER OFFER</span>
+              <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
+              <p style="font-size: 0.68rem; color: #475569; margin: 0 0 4px 0; line-height: 1.25;">${ad.description}</p>
+              <button type="button" onclick="showSection('passenger')" style="background: #16a34a; color: #ffffff; border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
+                ${ad.ctaText || '🔍 View Corridor'}
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (ad.type === 'pdf') {
+        container.innerHTML = `
+          <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+            <div style="width: 52px; height: 62px; background: #fef2f2; border: 1.5px solid #ef4444; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(239,68,68,0.15);">
+              <span style="font-size: 1.3rem;">📄</span>
+              <span style="font-size: 0.58rem; font-weight: 900; color: #ef4444;">PDF DOC</span>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <span style="background: #fee2e2; color: #991b1b; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px;">OFFICIAL BROCHURE</span>
+              <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
+              <p style="font-size: 0.68rem; color: #475569; margin: 0 0 4px 0; line-height: 1.25;">${ad.description}</p>
+              <div style="display: flex; gap: 4px;">
+                <a href="${ad.src}" download="${ad.downloadName || 'SafarSaathi_Brochure.pdf'}" style="background: #15803d; color: #ffffff; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; display: inline-flex; align-items: center; gap: 2px;">
+                  📥 Download PDF
+                </a>
+                <a href="${ad.src}" target="_blank" style="background: #ffffff; color: #15803d; border: 1px solid #16a34a; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; display: inline-flex; align-items: center; gap: 2px;">
+                  👁️ View
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function cycleNextAd() {
+      const ads = getFilteredAds();
+      currentAdIndex = (currentAdIndex + 1) % ads.length;
+      renderActiveAd();
+    }
+
+    function cyclePreviousAd() {
+      const ads = getFilteredAds();
+      currentAdIndex = (currentAdIndex - 1 + ads.length) % ads.length;
+      renderActiveAd();
+    }
+
+    function openCreateAdModal() {
+      const modal = document.getElementById('create-ad-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeCreateAdModal() {
+      const modal = document.getElementById('create-ad-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleAdFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      uploadedAdFileName = file.name;
+      const mime = file.type || '';
+
+      if (mime.startsWith('video/')) {
+        uploadedAdFileType = 'video';
+      } else if (mime === 'application/pdf' || file.name.endsWith('.pdf')) {
+        uploadedAdFileType = 'pdf';
+      } else {
+        uploadedAdFileType = 'banner';
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedAdFileData = e.target.result;
+        const statusEl = document.getElementById('ad-file-status-badge');
+        const pickerLabel = document.getElementById('ad-file-picker-label');
+        if (statusEl) {
+          statusEl.style.display = 'block';
+          statusEl.innerText = `✓ Selected: ${uploadedAdFileName} (${uploadedAdFileType.toUpperCase()} AD READY)`;
+        }
+        if (pickerLabel) {
+          pickerLabel.innerText = '✓ Change File';
+          pickerLabel.style.background = '#15803d';
+        }
+        showToast(`✓ ${uploadedAdFileType.toUpperCase()} file loaded! Set title & publish.`, '#15803d');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function submitNewAd() {
+      const title = (document.getElementById('ad-title-input')?.value || '').trim();
+      const desc = (document.getElementById('ad-desc-input')?.value || '').trim();
+      const link = (document.getElementById('ad-link-input')?.value || '').trim();
+
+      if (!uploadedAdFileData) {
+        alert('Please choose a Video, Image, or PDF file to create an ad!');
+        return;
+      }
+      if (!title) {
+        alert('Please enter an Ad Title!');
+        document.getElementById('ad-title-input')?.focus();
+        return;
+      }
+
+      const newAd = {
+        id: 'ad-custom-' + Date.now(),
+        type: uploadedAdFileType || 'banner',
+        title: title,
+        description: desc || 'SafarSaathi Featured Offer',
+        src: uploadedAdFileData,
+        ctaText: uploadedAdFileType === 'pdf' ? '📥 Download PDF' : (uploadedAdFileType === 'video' ? '💬 WhatsApp' : '🔗 Learn More'),
+        ctaLink: link ? (link.startsWith('http') ? link : `https://wa.me/91${link}`) : 'https://wa.me/916901027507',
+        downloadName: uploadedAdFileName || 'SafarSaathi_Ad.pdf',
+        createdAt: new Date().toISOString()
+      };
+
+      liveAdsDb.unshift(newAd);
+      localStorage.setItem('ss_live_ads', JSON.stringify(liveAdsDb));
+
+      // Sync to cloud if available
+      if (db) {
+        try {
+          db.collection('ss_ads').doc(newAd.id).set(newAd, { merge: true });
+        } catch(e){}
+      }
+
+      closeCreateAdModal();
+      showToast('🎉 New Ad published live on Home Screen!', '#15803d');
+      switchAdTab(newAd.type);
+    }
+
+
+    // =========================================================================
+    // 🎬 PROFILE HOME VIDEO AD CONTROLLER (UP TO 1.5 MIN WITH SOUND)
+    // =========================================================================
+    let uploadedProfileVideoData = null;
+    let uploadedProfileVideoName = '';
+    let uploadedProfileVideoDuration = 0;
+
+    function initProfileHomeVideoAd() {
+      const savedAd = localStorage.getItem('ss_profile_video_ad');
+      const vidPlayer = document.getElementById('profile-video-player');
+      const titleEl = document.getElementById('profile-video-title');
+
+      if (savedAd) {
+        try {
+          const parsed = JSON.parse(savedAd);
+          if (vidPlayer && parsed.src) vidPlayer.src = parsed.src;
+          if (titleEl && parsed.title) titleEl.innerText = '🚗 ' + parsed.title;
+        } catch(e){}
+      }
+
+      if (vidPlayer) {
+        vidPlayer.volume = 1.0;
+        vidPlayer.muted = false;
+        // Enforce max 1.5 minutes (90 seconds)
+        vidPlayer.ontimeupdate = function() {
+          if (vidPlayer.currentTime >= 90) {
+            vidPlayer.currentTime = 0;
+            vidPlayer.play();
+          }
+        };
+      }
+    }
+
+    function toggleProfileVideoSound() {
+      const vid = document.getElementById('profile-video-player');
+      const btn = document.getElementById('btn-toggle-profile-video-sound');
+      if (!vid) return;
+
+      if (vid.muted || vid.volume === 0) {
+        vid.muted = false;
+        vid.volume = 1.0;
+        vid.play().catch(() => {});
+        if (btn) btn.innerText = '🔊 Sound ON';
+        showToast('🔊 Audio Enabled (Full Sound)', '#15803d');
+      } else {
+        vid.muted = true;
+        if (btn) btn.innerText = '🔇 Mute';
+        showToast('🔇 Video Muted', '#64748b');
+      }
+    }
+
+    function stopProfileHomeVideoAd() {
+      const vid = document.getElementById('profile-video-player');
+      if (vid) {
+        try {
+          vid.pause();
+          vid.currentTime = 0;
+        } catch(e){}
+      }
+      const adBox = document.getElementById('profile-home-video-ad-box');
+      if (adBox) {
+        adBox.style.display = 'none';
+      }
+    }
+
+    function resumeProfileHomeVideoAdIfNeeded() {
+      const user = getActiveUserProfile();
+      const adBox = document.getElementById('profile-home-video-ad-box');
+      if (!user) {
+        if (adBox) adBox.style.display = 'block';
+      } else {
+        stopProfileHomeVideoAd();
+      }
+    }
+
+    function openProfileVideoAdUploadModal() {
+      const modal = document.getElementById('profile-video-upload-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeProfileVideoAdUploadModal() {
+      const modal = document.getElementById('profile-video-upload-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleProfileVideoAdUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      uploadedProfileVideoName = file.name;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedProfileVideoData = e.target.result;
+
+        // Check video duration with temp video element
+        const tempVid = document.createElement('video');
+        tempVid.preload = 'metadata';
+        tempVid.src = uploadedProfileVideoData;
+        tempVid.onloadedmetadata = function() {
+          uploadedProfileVideoDuration = Math.round(tempVid.duration || 0);
+          const badge = document.getElementById('p-video-status-badge');
+          const label = document.getElementById('p-video-file-label');
+
+          if (badge) {
+            badge.style.display = 'block';
+            if (uploadedProfileVideoDuration > 95) {
+              badge.innerText = `⚠️ Duration: ${uploadedProfileVideoDuration}s (Will play first 1.5 minutes)`;
+              badge.style.color = '#f59e0b';
+            } else {
+              badge.innerText = `✓ Valid Video: ${uploadedProfileVideoDuration}s with Sound!`;
+              badge.style.color = '#15803d';
+            }
+          }
+          if (label) {
+            label.innerText = '✓ Change Video (' + uploadedProfileVideoDuration + 's)';
+            label.style.background = '#15803d';
+          }
+        };
+
+        showToast('✓ Video file loaded! Ready to save.', '#15803d');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function submitProfileVideoAd() {
+      const title = (document.getElementById('p-video-title-input')?.value || '').trim();
+      if (!uploadedProfileVideoData) {
+        alert('Please choose a video file (MP4/WebM) up to 1.5 minutes!');
+        return;
+      }
+
+      const adObj = {
+        src: uploadedProfileVideoData,
+        title: title || 'Featured Video Ad',
+        duration: uploadedProfileVideoDuration,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        localStorage.setItem('ss_profile_video_ad', JSON.stringify(adObj));
+      } catch(e) {
+        console.warn('Storage limit reached, keeping in active session');
+      }
+
+      const vidPlayer = document.getElementById('profile-video-player');
+      const titleEl = document.getElementById('profile-video-title');
+      if (vidPlayer) {
+        vidPlayer.src = uploadedProfileVideoData;
+        vidPlayer.muted = false;
+        vidPlayer.volume = 1.0;
+        vidPlayer.play().catch(() => {});
+      }
+      if (titleEl) {
+        titleEl.innerText = '🚗 ' + (title || 'Featured Video Ad');
+      }
+
+      closeProfileVideoAdUploadModal();
+      showToast('🎉 Video Ad published with Sound (Up to 1.5 Min)!', '#15803d');
+    }
+
+</script>
+  <!-- ➕ CREATE / POST AD MODAL (UPLOAD ANY VIDEO, IMAGE, OR PDF FILE) -->
+  <div class="modal-backdrop" id="create-ad-modal" style="display: none; z-index: 10001;" onclick="if(event.target===this) closeCreateAdModal();">
+    <div class="modal-card" style="background: #ffffff; color: #000000; border: 2px solid #16a34a; border-radius: 16px; max-width: 440px; width: 92vw; padding: 1.1rem; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem;">
+        <h3 style="font-size: 1rem; font-weight: 900; color: #15803d; margin: 0; display: flex; align-items: center; gap: 6px;">
+          <span>📢</span> <span>Post Ad (Video, Image ya PDF)</span>
+        </h3>
+        <button type="button" class="btn btn-secondary" onclick="closeCreateAdModal()" style="padding: 2px 7px; font-size: 0.8rem; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">✕</button>
+      </div>
+
+      <div style="font-size: 0.72rem; color: #475569; margin-bottom: 0.65rem;">
+        Koi bhi file (Video MP4, Image Banner, ya PDF Document) upload karein, ye turant live ad ban jayega:
+      </div>
+
+      <!-- File Chooser -->
+      <div style="background: #f0fdf4; border: 2px dashed #16a34a; border-radius: 10px; padding: 0.75rem; text-align: center; margin-bottom: 0.65rem;">
+        <strong style="display: block; font-size: 0.78rem; color: #000000; margin-bottom: 0.25rem; font-weight: 900;">
+          📁 Choose File (Video, Image ya PDF)*
+        </strong>
+        <label for="ad-file-input" id="ad-file-picker-label" style="display: inline-block; background: #16a34a; color: #ffffff; font-size: 0.75rem; font-weight: 800; padding: 6px 14px; border-radius: 8px; cursor: pointer; margin-top: 2px;">
+          📂 Select File from Phone
+        </label>
+        <input type="file" id="ad-file-input" accept="video/*,image/*,.pdf" style="display: none;" onchange="handleAdFileUpload(event)">
+        <div id="ad-file-status-badge" style="display: none; font-size: 0.7rem; font-weight: 900; color: #15803d; margin-top: 4px;"></div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.45rem;">
+        <label style="font-size: 0.7rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Ad Title (विज्ञापन शीर्षक)*</label>
+        <input type="text" id="ad-title-input" class="form-control" placeholder="e.g. Kaziranga Carpool Special Offer" style="height: 34px !important; font-size: 0.82rem;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.45rem;">
+        <label style="font-size: 0.7rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Description / Offer Details*</label>
+        <input type="text" id="ad-desc-input" class="form-control" placeholder="e.g. Flat 15% discount on empty seats this weekend!" style="height: 34px !important; font-size: 0.82rem;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.65rem;">
+        <label style="font-size: 0.7rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Action Link or WhatsApp Number</label>
+        <input type="text" id="ad-link-input" class="form-control" placeholder="e.g. 9435012345 or https://wa.me/91..." style="height: 34px !important; font-size: 0.82rem;">
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitNewAd()" style="width: 100%; padding: 0.65rem; font-size: 0.88rem; font-weight: 900; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 8px;">
+        🚀 Publish Live Ad ➔
+      </button>
+    </div>
+  </div>
+
 </body>
 </html>

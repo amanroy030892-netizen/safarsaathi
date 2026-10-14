@@ -274,6 +274,66 @@
         </div>
       </div>
     </div>
+        <!-- 🎬 HOME SCREEN SPONSOR VIDEO AD MANAGER (ADMIN ONLY • UP TO 1.5 MIN WITH SOUND) -->
+      <div class="card" style="margin-top: 1.5rem; border: 2px solid #16a34a;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 8px;">
+              <span>🎬</span> <span>Home Screen Sponsor Video Ad Manager</span>
+            </h3>
+            <span style="font-size: 0.74rem; color: #86efac;">Upload & publish official video ads (up to 1.5 minutes with sound) to all customer Home screens:</span>
+          </div>
+          <span style="background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid #22c55e; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
+            🔒 Admin Exclusive Control
+          </span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start;">
+          <!-- Left: Upload Form -->
+          <div>
+            <div style="background: rgba(15,23,42,0.8); border: 2px dashed #16a34a; border-radius: 12px; padding: 1rem; text-align: center; margin-bottom: 0.75rem;">
+              <strong style="display: block; font-size: 0.85rem; color: white; margin-bottom: 0.35rem; font-weight: 900;">
+                📹 Select Video Ad File (MP4 / WebM • Max 1.5 Min)*
+              </strong>
+              <label for="adm-video-file-input" id="adm-video-file-label" style="display: inline-block; background: #16a34a; color: #ffffff; font-size: 0.78rem; font-weight: 800; padding: 7px 16px; border-radius: 8px; cursor: pointer; margin-top: 4px;">
+                📂 Choose Video from Phone / PC
+              </label>
+              <input type="file" id="adm-video-file-input" accept="video/mp4,video/webm,video/*" style="display: none;" onchange="handleAdminVideoAdUpload(event)">
+              <div id="adm-video-status-badge" style="display: none; font-size: 0.72rem; font-weight: 800; margin-top: 6px;"></div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.6rem;">
+              <label style="font-size: 0.74rem; font-weight: 800; color: #cbd5e1;">Ad Title (विज्ञापन शीर्षक)*</label>
+              <input type="text" id="adm-video-title" class="form-control" value="SafarSaathi Premium Carpool Network" placeholder="e.g. Special Corridor Discount Offer">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.6rem;">
+              <label style="font-size: 0.74rem; font-weight: 800; color: #cbd5e1;">Sponsor WhatsApp Number or Link</label>
+              <input type="text" id="adm-video-link" class="form-control" value="6901027507" placeholder="e.g. 6901027507 or https://wa.me/...">
+            </div>
+
+            <button type="button" class="btn btn-success" onclick="publishAdminVideoAd()" style="width: 100%; padding: 0.75rem; font-size: 0.9rem; font-weight: 900; margin-top: 0.25rem;">
+              🚀 Publish Video Ad to Customer Home Screens ➔
+            </button>
+          </div>
+
+          <!-- Right: Live Admin Preview Player with Sound Test -->
+          <div style="background: rgba(15,23,42,0.8); border: 1.5px solid var(--border-gray); border-radius: 12px; padding: 0.85rem;">
+            <div style="font-size: 0.78rem; font-weight: 900; color: #86efac; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>📺 Live Video Preview (Sound Active)</span>
+              <button type="button" onclick="testAdminVideoSound()" style="background: #ffffff; color: #15803d; border: none; font-size: 0.68rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; cursor: pointer;">
+                🔊 Test Audio
+              </button>
+            </div>
+            <div style="background: #000000; border-radius: 8px; overflow: hidden; max-height: 200px;">
+              <video id="adm-video-preview" src="promo_ad.mp4" controls playsinline style="width: 100%; max-height: 190px; object-fit: contain; display: block;"></video>
+            </div>
+            <div id="adm-video-preview-title" style="font-size: 0.75rem; color: #cbd5e1; margin-top: 6px; font-weight: 700;">
+              Current Video: promo_ad.mp4 (Sound enabled • Up to 1.5 min)
+            </div>
+          </div>
+        </div>
+      </div>
   </main>
 
   <!-- MANUAL ACTIVATE MODAL -->
@@ -1074,6 +1134,101 @@ ET
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       alert('✓ Boarding Pass PDF downloaded successfully!');
+    }
+
+
+    // =========================================================================
+    // 🎬 ADMIN HOME SCREEN SPONSOR VIDEO AD MANAGER
+    // =========================================================================
+    let admUploadedVideoData = null;
+    let admUploadedVideoDuration = 0;
+
+    function handleAdminVideoAdUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        admUploadedVideoData = e.target.result;
+        const tempVid = document.createElement('video');
+        tempVid.preload = 'metadata';
+        tempVid.src = admUploadedVideoData;
+        tempVid.onloadedmetadata = function() {
+          admUploadedVideoDuration = Math.round(tempVid.duration || 0);
+          const badge = document.getElementById('adm-video-status-badge');
+          const label = document.getElementById('adm-video-file-label');
+          const preview = document.getElementById('adm-video-preview');
+
+          if (badge) {
+            badge.style.display = 'block';
+            if (admUploadedVideoDuration > 95) {
+              badge.innerText = `⚠️ Duration: ${admUploadedVideoDuration}s (Will play first 1.5 min)`;
+              badge.style.color = '#f59e0b';
+            } else {
+              badge.innerText = `✓ Valid Video: ${admUploadedVideoDuration}s with Full Audio!`;
+              badge.style.color = '#86efac';
+            }
+          }
+          if (label) {
+            label.innerText = '✓ Video Selected (' + admUploadedVideoDuration + 's)';
+            label.style.background = '#15803d';
+          }
+          if (preview) {
+            preview.src = admUploadedVideoData;
+            preview.play().catch(() => {});
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function testAdminVideoSound() {
+      const vid = document.getElementById('adm-video-preview');
+      if (vid) {
+        vid.muted = false;
+        vid.volume = 1.0;
+        vid.play().catch(() => {});
+        alert('🔊 Sound unmuted! Audio playing at 100% volume.');
+      }
+    }
+
+    function publishAdminVideoAd() {
+      const title = (document.getElementById('adm-video-title')?.value || '').trim();
+      const link = (document.getElementById('adm-video-link')?.value || '').trim();
+
+      const adSrc = admUploadedVideoData || 'promo_ad.mp4';
+      const adObj = {
+        src: adSrc,
+        title: title || 'SafarSaathi Premium Carpool Network',
+        link: link ? (link.startsWith('http') ? link : `https://wa.me/91${link}`) : 'https://wa.me/916901027507',
+        duration: admUploadedVideoDuration || 90,
+        publishedAt: new Date().toISOString()
+      };
+
+      try {
+        localStorage.setItem('ss_profile_video_ad', JSON.stringify(adObj));
+      } catch(e) {
+        console.warn('Storage limit reached locally');
+      }
+
+      // Broadcast to all open customer browser tabs instantly!
+      if (syncBroadcastChannel) {
+        try {
+          syncBroadcastChannel.postMessage({
+            type: 'PROFILE_VIDEO_AD_UPDATED',
+            ad: adObj
+          });
+        } catch(e){}
+      }
+
+      // Sync to Firebase
+      if (adminDb) {
+        try {
+          adminDb.collection('ss_settings').doc('video_ad').set(adObj, { merge: true });
+        } catch(e){}
+      }
+
+      alert('🎉 Video Ad published successfully! All customer Home screens will now display this video ad with sound.');
     }
 
 </script>

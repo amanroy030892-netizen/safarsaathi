@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v39-driving-arrow)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v42-admin-ads-and-driving-pov)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v39-driving-arrow';
+const CACHE_NAME = 'safarsaathi-v42-admin-ads-and-driving-pov';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
