@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v42-admin-ads-and-driving-pov)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v43-clean-video-screen-fit)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v42-admin-ads-and-driving-pov';
+const CACHE_NAME = 'safarsaathi-v43-clean-video-screen-fit';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
