@@ -21,7 +21,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V38_AI_AUTO_SCREEN_FIT';
+        const CURRENT_VERSION = 'SS_PROD_V39_GOOGLE_MAPS_DRIVING_ARROW';
         const lastVer = localStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -3010,6 +3010,40 @@
     let bestGpsAccuracy = 99999;
     let gpsStreamCounter = 0;
 
+    // 🧭 GOOGLE MAPS STYLE DRIVING NAVIGATION MODE STATE & BEARING ENGINE
+    let lastGpsCoords = null;
+    let lastGpsTimestamp = 0;
+    let currentVehicleSpeedKmH = 0;
+    let currentVehicleHeading = 0;
+    let isVehicleDrivingMode = false;
+
+    function calculateBearing(lat1, lon1, lat2, lon2) {
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180);
+      const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+                Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon);
+      let brng = Math.atan2(y, x) * 180 / Math.PI;
+      return Math.round((brng + 360) % 360);
+    }
+
+    function getCompassDirection(deg) {
+      const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+      return directions[Math.round(deg / 45) % 8];
+    }
+
+    // Hardware Compass Orientation Listener (iOS & Android)
+    if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+      try {
+        window.addEventListener('deviceorientation', function(e) {
+          if (e.webkitCompassHeading) {
+            currentVehicleHeading = Math.round(e.webkitCompassHeading);
+          } else if (e.alpha !== null && e.absolute) {
+            currentVehicleHeading = Math.round(360 - e.alpha);
+          }
+        }, true);
+      } catch(e){}
+    }
+
     function centerOnUserLiveGps(zoomToUser = true, forceRefresh = false) {
       if (!('geolocation' in navigator)) {
         const coordsEl = document.getElementById('map-coords-display');
@@ -3076,6 +3110,36 @@
       const rawLat = pos.coords.latitude;
       const rawLng = pos.coords.longitude;
       const rawAccuracy = Math.round(pos.coords.accuracy || 8);
+      const rawSpeed = (pos.coords.speed !== null && !isNaN(pos.coords.speed) && pos.coords.speed >= 0) ? pos.coords.speed : null;
+      const rawHeading = (pos.coords.heading !== null && !isNaN(pos.coords.heading) && pos.coords.heading >= 0) ? pos.coords.heading : null;
+
+      const now = Date.now();
+      let calculatedSpeed = 0;
+      let calculatedHeading = currentVehicleHeading;
+
+      if (lastGpsCoords && lastGpsTimestamp) {
+        const timeDiffSec = (now - lastGpsTimestamp) / 1000;
+        const distM = getHaversineDistanceKm(lastGpsCoords.lat, lastGpsCoords.lng, rawLat, rawLng) * 1000;
+        if (timeDiffSec > 0.4) {
+          calculatedSpeed = Math.round((distM / timeDiffSec) * 3.6);
+          if (distM >= 3) {
+            calculatedHeading = calculateBearing(lastGpsCoords.lat, lastGpsCoords.lng, rawLat, rawLng);
+          }
+        }
+      }
+
+      currentVehicleSpeedKmH = (rawSpeed !== null) ? Math.round(rawSpeed * 3.6) : calculatedSpeed;
+      if (rawHeading !== null && !isNaN(rawHeading)) {
+        currentVehicleHeading = Math.round(rawHeading);
+      } else if (calculatedHeading !== null) {
+        currentVehicleHeading = calculatedHeading;
+      }
+
+      // 🚗 Google Maps Driving Mode Trigger: Active when moving (>5 km/h) or tracking active ride
+      isVehicleDrivingMode = (currentVehicleSpeedKmH >= 6) || (currentTrackingBooking !== null);
+
+      lastGpsCoords = { lat: rawLat, lng: rawLng };
+      lastGpsTimestamp = now;
 
       // AI Smart Road-Snap & Water-Filter Execution
       const aiSnap = aiSnapToNearestRoad(rawLat, rawLng, rawAccuracy);
@@ -3095,6 +3159,9 @@
         accuracy,
         roadName,
         isSnapped: aiSnap.isSnapped,
+        speed: currentVehicleSpeedKmH,
+        heading: currentVehicleHeading,
+        isDriving: isVehicleDrivingMode,
         lastUpdated: new Date().toISOString()
       };
 
@@ -3114,7 +3181,9 @@
       if (!coordsEl) return;
 
       const secPulse = (gpsStreamCounter % 2 === 0) ? '🟢' : '⚡';
-      if (isSnapped) {
+      if (isVehicleDrivingMode) {
+        coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">🚗 Driving Mode:</span> <b style="color:#000000;">${currentVehicleSpeedKmH} km/h</b> • <span style="color:#15803d; font-weight:800;">${roadName}</span> • <span style="font-family:monospace; font-weight:800; color:#15803d;">Heading: ${currentVehicleHeading}° (${getCompassDirection(currentVehicleHeading)})</span>`;
+      } else if (isSnapped) {
         coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">${secPulse} AI Road-Locked:</span> <b style="color:#000000;">${roadName}</b> • <span style="font-family:monospace; font-weight:900; color:#15803d;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</span> <span style="color:#15803d; font-weight:800;">(100% Road Match)</span>`;
       } else {
         coordsEl.innerHTML = `<span style="color:#15803d; font-weight:900;">${secPulse} Live GPS:</span> <span style="font-family:monospace; font-weight:900; color:#000000;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</span> <span style="color:#15803d; font-weight:900;">(±${accuracy}m Live)</span> • <b style="color:#15803d;">1s Stream</b>`;
@@ -3128,25 +3197,57 @@
         googleLiveMap.setView([lat, lng], 16);
       }
 
-      // DIRECT 100% ROAD-LOCKED LIVE PIN (NO DRAGGING, NO TAP REQUIRED)
-      if (!userLiveGpsMarker) {
-        const userGpsIcon = L.divIcon({
-          className: 'user-direct-live-pin',
-          html: `
-            <div style="position:relative; width:38px; height:38px; display:flex; align-items:center; justify-content:center;">
-              <div style="position:absolute; width:36px; height:36px; border-radius:50%; background:rgba(22,163,74,0.38); animation:pulse 1s infinite;"></div>
-              <div style="width:20px; height:20px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 12px rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center;">
-                <div style="width:7px; height:7px; background:#ffffff; border-radius:50%;"></div>
-              </div>
+      // 🧭 GOOGLE MAPS STYLE 3D DRIVING ARROW & LIVE GPS MARKER
+      let markerHtml = '';
+      if (isVehicleDrivingMode) {
+        markerHtml = `
+          <div style="position:relative; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
+            <!-- Directional Radar Wave -->
+            <div style="position:absolute; width:46px; height:46px; border-radius:50%; background:rgba(22,163,74,0.32); animation:pulse 1.2s infinite;"></div>
+            <!-- 3D Navigation Driving Arrow (Rotates in Journey Direction like Google Maps) -->
+            <div style="transform: rotate(${currentVehicleHeading}deg); transition: transform 0.35s cubic-bezier(0.2, 0, 0.2, 1); display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+              <svg viewBox="0 0 40 40" style="width:38px; height:38px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 3L35 34L20 27L5 34L20 3Z" fill="#16a34a" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M20 3L35 34L20 27V3Z" fill="#15803d"/>
+                <circle cx="20" cy="24" r="3.5" fill="#ffffff"/>
+              </svg>
             </div>
-          `,
-          iconSize: [38, 38],
-          iconAnchor: [19, 19]
-        });
+            <!-- Live Speed Pill -->
+            <div style="position:absolute; bottom:-12px; background:#15803d; color:#ffffff; font-size:9px; font-weight:900; padding:1px 5px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.3); border:1px solid #86efac; white-space:nowrap;">
+              ${currentVehicleSpeedKmH > 0 ? currentVehicleSpeedKmH + ' km/h' : 'DRIVING'}
+            </div>
+          </div>
+        `;
+      } else {
+        markerHtml = `
+          <div style="position:relative; width:38px; height:38px; display:flex; align-items:center; justify-content:center;">
+            <div style="position:absolute; width:36px; height:36px; border-radius:50%; background:rgba(22,163,74,0.38); animation:pulse 1s infinite;"></div>
+            <div style="width:20px; height:20px; background:#16a34a; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 12px rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center;">
+              <div style="width:7px; height:7px; background:#ffffff; border-radius:50%;"></div>
+            </div>
+          </div>
+        `;
+      }
 
+      const userGpsIcon = L.divIcon({
+        className: 'user-direct-live-pin',
+        html: markerHtml,
+        iconSize: isVehicleDrivingMode ? [48, 48] : [38, 38],
+        iconAnchor: isVehicleDrivingMode ? [24, 24] : [19, 19]
+      });
+
+      if (!userLiveGpsMarker) {
         userLiveGpsMarker = L.marker([lat, lng], { icon: userGpsIcon, draggable: false }).addTo(googleLiveMap);
       } else {
+        userLiveGpsMarker.setIcon(userGpsIcon);
         userLiveGpsMarker.setLatLng([lat, lng]);
+      }
+
+      // Smooth camera follow in Driving Mode
+      if (isVehicleDrivingMode && googleLiveMap && !shouldZoom) {
+        try {
+          googleLiveMap.panTo([lat, lng], { animate: true, duration: 0.6 });
+        } catch(e){}
       }
 
       userLiveGpsMarker.bindPopup(`<b>📍 ${roadName || 'Your Live Location'}</b><br><span style="color:#15803d; font-weight:800;">🟢 AI 100% Road-Locked Fix</span><br><small style="font-family:monospace;">${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E</small>`);

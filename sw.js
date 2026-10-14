@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v38-ai-auto-screen-fit)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v39-driving-arrow)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v38-ai-auto-screen-fit';
+const CACHE_NAME = 'safarsaathi-v39-driving-arrow';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
