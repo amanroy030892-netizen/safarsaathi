@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v45-admin-video-cloud-sync)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v47-map-banners-profile-large-ad)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v45-admin-video-cloud-sync';
+const CACHE_NAME = 'safarsaathi-v47-map-banners-profile-large-ad';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

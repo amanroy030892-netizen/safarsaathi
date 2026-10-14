@@ -1435,22 +1435,18 @@
           <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.35rem 0.65rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
             <div style="display: flex; align-items: center; gap: 6px;">
               <span style="font-size: 0.88rem;">📢</span>
-              <strong style="font-size: 0.76rem; font-weight: 900; color: #ffffff; white-space: nowrap;">Assam Sponsored Ads</strong>
+              <strong style="font-size: 0.76rem; font-weight: 900; color: #ffffff; white-space: nowrap;">Assam Highway Banners</strong>
               <span id="active-ad-counter-badge" style="font-size: 0.62rem; background: rgba(255,255,255,0.22); color: #ffffff; padding: 1px 6px; border-radius: 9999px; font-weight: 800;">3 Live</span>
             </div>
             
-            <!-- Category Tabs: Video Ads, Banner Ads, PDF Flyer, Add New -->
+            <!-- Category Tabs: Banner Ads, Tariff PDF -->
             <div style="display: flex; gap: 3px; align-items: center;">
-              <button type="button" class="btn-ad-tab active" id="btn-ad-tab-video" onclick="switchAdTab('video')" style="background: #ffffff; color: #15803d; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 900; cursor: pointer;">
-                🎬 Video
+              <button type="button" class="btn-ad-tab active" id="btn-ad-tab-banner" onclick="switchAdTab('banner')" style="background: #ffffff; color: #15803d; border: none; padding: 2px 8px; border-radius: 5px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
+                🖼️ Banners
               </button>
-              <button type="button" class="btn-ad-tab" id="btn-ad-tab-banner" onclick="switchAdTab('banner')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
-                🖼️ Banner
+              <button type="button" class="btn-ad-tab" id="btn-ad-tab-pdf" onclick="switchAdTab('pdf')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 8px; border-radius: 5px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">
+                📄 Tariff PDF
               </button>
-              <button type="button" class="btn-ad-tab" id="btn-ad-tab-pdf" onclick="switchAdTab('pdf')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
-                📄 PDF
-              </button>
-
             </div>
           </div>
 
@@ -1600,14 +1596,14 @@
             </a>
           </div>
 
-          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (CONTINUOUS AUTOPLAY • NO PLAY/PAUSE INTERRUPTIONS • MUTE/UNMUTE ONLY) -->
-          <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(21vh, 130px); max-height: 130px;">
-            <video id="profile-video-player" src="promo_ad.mp4" autoplay loop muted playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
+          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (UNMUTED BY DEFAULT • NO PLAY/PAUSE INTERRUPTIONS • CUSTOMER CAN MUTE) -->
+          <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(30vh, 205px); max-height: 205px;">
+            <video id="profile-video-player" src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
             
-            <!-- 🔊 ONLY MUTE / UNMUTE BUTTON (NO PLAY/PAUSE INTERRUPTIONS) -->
+            <!-- 🔊 AUDIO ACTIVE BY DEFAULT (CUSTOMER CAN MUTE THEMSELVES) -->
             <button type="button" id="btn-video-mute-toggle" onclick="toggleProfileVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
-              <span id="video-mute-icon" style="font-size: 0.85rem;">🔇</span>
-              <span id="video-mute-label">Unmute</span>
+              <span id="video-mute-icon" style="font-size: 0.85rem;">🔊</span>
+              <span id="video-mute-label">Mute</span>
             </button>
           </div>
         </div>
@@ -5118,32 +5114,38 @@ ET
     }
   
     // =========================================================================
-    // 📢 AUTOMATED MULTI-MEDIA ADS & SPONSOR SHOWCASE ENGINE (VIDEO, BANNER, PDF)
+    // 📢 ASSAM HIGHWAY SPONSORED BANNER SHOWCASE ENGINE (PURE BANNER & PDF)
     // =========================================================================
-    let currentAdTab = 'video';
+    let currentAdTab = 'banner';
     let currentAdIndex = 0;
-    let uploadedAdFileData = null;
-    let uploadedAdFileType = null;
-    let uploadedAdFileName = '';
 
     const defaultSponsoredAds = [
       {
-        id: 'ad-video-1',
-        type: 'video',
-        title: 'SafarSaathi Premium Carpool Network',
-        description: 'Verified Assam drivers • Zero commission • Direct UPI fare to driver.',
-        src: 'promo_ad.mp4',
-        ctaText: '💬 WhatsApp Sponsor',
-        ctaLink: 'https://wa.me/916901027507?text=Hi%20SafarSaathi%20Ad%20Promotion'
-      },
-      {
         id: 'ad-banner-1',
         type: 'banner',
-        title: 'Guwahati ➔ Shillong Weekend Special',
-        description: 'Flat ₹250 AC seats available. Verified drivers on GS Road corridor.',
+        title: 'Guwahati ➔ Shillong Highway Express',
+        description: 'Verified AC carpools every 30 mins on GS Road. Flat ₹250 direct UPI fare.',
         src: 'feature-graphic-1024x500.png',
         ctaText: '🔍 Book Route',
         action: 'search_shillong'
+      },
+      {
+        id: 'ad-banner-2',
+        type: 'banner',
+        title: 'Kaziranga Safari & Highway Corridor',
+        description: 'Daily rides along NH-715 Tezpur-Jorhat. Verified driver fleet with live GPS.',
+        src: 'car-bg.jpg',
+        ctaText: '🚙 View Cars',
+        action: 'live-cars'
+      },
+      {
+        id: 'ad-banner-3',
+        type: 'banner',
+        title: 'Upper Assam Express (Jorhat ➔ Dibrugarh)',
+        description: 'Shared corridor rides with verified car owners. Zero commission, direct fare.',
+        src: 'car-bg.png',
+        ctaText: '🚗 Post Ride',
+        action: 'driver'
       },
       {
         id: 'ad-pdf-1',
@@ -5168,7 +5170,7 @@ ET
       currentAdIndex = 0;
 
       // Update Tab button active styles
-      ['video', 'banner', 'pdf'].forEach(t => {
+      ['banner', 'pdf'].forEach(t => {
         const btn = document.getElementById('btn-ad-tab-' + t);
         if (btn) {
           if (t === tab) {
@@ -5197,46 +5199,29 @@ ET
       const paginationEl = document.getElementById('ad-pagination-indicator');
       if (!container) return;
 
-      if (counterEl) counterEl.innerText = liveAdsDb.length + ' Live';
-
       const ads = getFilteredAds();
+      if (counterEl) counterEl.innerText = ads.length + ' Live';
       if (currentAdIndex >= ads.length) currentAdIndex = 0;
       if (currentAdIndex < 0) currentAdIndex = ads.length - 1;
 
       if (paginationEl) {
-        paginationEl.innerText = `Ad ${currentAdIndex + 1} of ${ads.length}`;
+        paginationEl.innerText = `Banner ${currentAdIndex + 1} of ${ads.length}`;
       }
 
       const ad = ads[currentAdIndex];
       if (!ad) return;
 
-      if (ad.type === 'video') {
-        container.innerHTML = `
-          <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-            <div style="width: 130px; height: 85px; border-radius: 8px; overflow: hidden; background: #000000; flex-shrink: 0; position: relative; border: 1.5px solid #16a34a; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-              <video id="ad-video-element" src="${ad.src}" controls playsinline muted loop style="width: 100%; height: 100%; object-fit: cover;"></video>
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <span style="background: #dcfce7; color: #15803d; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px; border: 1px solid #16a34a;">🎬 VIDEO AD</span>
-              <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
-              <p style="font-size: 0.68rem; color: #475569; margin: 0 0 5px 0; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${ad.description}</p>
-              <a href="${ad.ctaLink || 'https://wa.me/916901027507'}" target="_blank" style="background: #16a34a; color: #ffffff; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; display: inline-flex; align-items: center; gap: 3px;">
-                ${ad.ctaText || '💬 WhatsApp Sponsor'}
-              </a>
-            </div>
-          </div>
-        `;
-      } else if (ad.type === 'banner') {
+      if (ad.type === 'banner') {
         container.innerHTML = `
           <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
             <div style="width: 120px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1.5px solid #16a34a; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
-              <img src="${ad.src}" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="${ad.src}" alt="${ad.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
             </div>
             <div style="flex: 1; min-width: 0;">
-              <span style="background: #fef08a; color: #854d0e; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px;">🖼️ BANNER OFFER</span>
+              <span style="background: #fef08a; color: #854d0e; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px;">🖼️ SPONSORED BANNER</span>
               <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
               <p style="font-size: 0.68rem; color: #475569; margin: 0 0 4px 0; line-height: 1.25;">${ad.description}</p>
-              <button type="button" onclick="showSection('passenger')" style="background: #16a34a; color: #ffffff; border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
+              <button type="button" onclick="showSection('${ad.action || 'passenger'}')" style="background: #16a34a; color: #ffffff; border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
                 ${ad.ctaText || '🔍 View Corridor'}
               </button>
             </div>
@@ -5269,101 +5254,19 @@ ET
 
     function cycleNextAd() {
       const ads = getFilteredAds();
-      currentAdIndex = (currentAdIndex + 1) % ads.length;
-      renderActiveAd();
+      if (ads.length > 0) {
+        currentAdIndex = (currentAdIndex + 1) % ads.length;
+        renderActiveAd();
+      }
     }
 
     function cyclePreviousAd() {
       const ads = getFilteredAds();
-      currentAdIndex = (currentAdIndex - 1 + ads.length) % ads.length;
-      renderActiveAd();
-    }
-
-    function openCreateAdModal() {
-      const modal = document.getElementById('create-ad-modal');
-      if (modal) modal.style.display = 'flex';
-    }
-
-    function closeCreateAdModal() {
-      const modal = document.getElementById('create-ad-modal');
-      if (modal) modal.style.display = 'none';
-    }
-
-    function handleAdFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      uploadedAdFileName = file.name;
-      const mime = file.type || '';
-
-      if (mime.startsWith('video/')) {
-        uploadedAdFileType = 'video';
-      } else if (mime === 'application/pdf' || file.name.endsWith('.pdf')) {
-        uploadedAdFileType = 'pdf';
-      } else {
-        uploadedAdFileType = 'banner';
+      if (ads.length > 0) {
+        currentAdIndex = (currentAdIndex - 1 + ads.length) % ads.length;
+        renderActiveAd();
       }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        uploadedAdFileData = e.target.result;
-        const statusEl = document.getElementById('ad-file-status-badge');
-        const pickerLabel = document.getElementById('ad-file-picker-label');
-        if (statusEl) {
-          statusEl.style.display = 'block';
-          statusEl.innerText = `✓ Selected: ${uploadedAdFileName} (${uploadedAdFileType.toUpperCase()} AD READY)`;
-        }
-        if (pickerLabel) {
-          pickerLabel.innerText = '✓ Change File';
-          pickerLabel.style.background = '#15803d';
-        }
-        showToast(`✓ ${uploadedAdFileType.toUpperCase()} file loaded! Set title & publish.`, '#15803d');
-      };
-      reader.readAsDataURL(file);
     }
-
-    function submitNewAd() {
-      const title = (document.getElementById('ad-title-input')?.value || '').trim();
-      const desc = (document.getElementById('ad-desc-input')?.value || '').trim();
-      const link = (document.getElementById('ad-link-input')?.value || '').trim();
-
-      if (!uploadedAdFileData) {
-        alert('Please choose a Video, Image, or PDF file to create an ad!');
-        return;
-      }
-      if (!title) {
-        alert('Please enter an Ad Title!');
-        document.getElementById('ad-title-input')?.focus();
-        return;
-      }
-
-      const newAd = {
-        id: 'ad-custom-' + Date.now(),
-        type: uploadedAdFileType || 'banner',
-        title: title,
-        description: desc || 'SafarSaathi Featured Offer',
-        src: uploadedAdFileData,
-        ctaText: uploadedAdFileType === 'pdf' ? '📥 Download PDF' : (uploadedAdFileType === 'video' ? '💬 WhatsApp' : '🔗 Learn More'),
-        ctaLink: link ? (link.startsWith('http') ? link : `https://wa.me/91${link}`) : 'https://wa.me/916901027507',
-        downloadName: uploadedAdFileName || 'SafarSaathi_Ad.pdf',
-        createdAt: new Date().toISOString()
-      };
-
-      liveAdsDb.unshift(newAd);
-      localStorage.setItem('ss_live_ads', JSON.stringify(liveAdsDb));
-
-      // Sync to cloud if available
-      if (db) {
-        try {
-          db.collection('ss_ads').doc(newAd.id).set(newAd, { merge: true });
-        } catch(e){}
-      }
-
-      closeCreateAdModal();
-      showToast('🎉 New Ad published live on Home Screen!', '#15803d');
-      switchAdTab(newAd.type);
-    }
-
 
     // =========================================================================
     // 💾 LIGHTWEIGHT INDEXEDDB STORAGE (BYPASSES 5MB LOCALSTORAGE LIMIT)
@@ -5416,8 +5319,15 @@ ET
     };
 
     // =========================================================================
-    // 🎬 PROFILE HOME VIDEO AD CONTROLLER (CONTINUOUS AUTOPLAY • MUTE/UNMUTE ONLY)
+    // 🎬 PROFILE HOME VIDEO AD CONTROLLER (UNMUTED BY DEFAULT • CUSTOMER CAN MUTE)
     // =========================================================================
+    function updateVideoMuteUi(isMuted) {
+      const icon = document.getElementById('video-mute-icon');
+      const label = document.getElementById('video-mute-label');
+      if (icon) icon.innerText = isMuted ? '🔇' : '🔊';
+      if (label) label.innerText = isMuted ? 'Unmute' : 'Mute';
+    }
+
     function initProfileHomeVideoAd() {
       const vidPlayer = document.getElementById('profile-video-player');
       if (!vidPlayer) return;
@@ -5447,9 +5357,11 @@ ET
         });
       } catch(e){}
 
-      // 2. Strict settings: Autoplay loop, muted by default (mandatory for browser autoplay), max 90s
-      vidPlayer.muted = true;
+      // 2. Audio Active by Default: Unmuted on load
+      vidPlayer.muted = false;
       vidPlayer.volume = 1.0;
+      updateVideoMuteUi(false);
+
       vidPlayer.ontimeupdate = function() {
         if (vidPlayer.currentTime >= 90) {
           vidPlayer.currentTime = 0;
@@ -5464,15 +5376,29 @@ ET
         }
       };
 
-      // Ensure autoplay starts smoothly
+      // Attempt unmuted autoplay directly
       const p = vidPlayer.play();
       if (p !== undefined) {
-        p.catch(() => {
+        p.then(() => {
+          updateVideoMuteUi(false);
+        }).catch(() => {
+          // If iOS Safari / Chrome restricts unmuted autoplay on cold launch:
+          // Keep video playing and instantly unmute on the very first touch/click/scroll!
           vidPlayer.muted = true;
-          document.addEventListener('touchstart', function playOnce() {
-            vidPlayer.play().catch(()=>{});
-            document.removeEventListener('touchstart', playOnce);
-          }, { once: true, passive: true });
+          vidPlayer.play().catch(()=>{});
+          updateVideoMuteUi(true);
+
+          const unmuteOnFirstTouch = function() {
+            vidPlayer.muted = false;
+            vidPlayer.volume = 1.0;
+            updateVideoMuteUi(false);
+            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
+              document.removeEventListener(evt, unmuteOnFirstTouch);
+            });
+          };
+          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
+            document.addEventListener(evt, unmuteOnFirstTouch, { once: true, passive: true });
+          });
         });
       }
     }
@@ -5483,22 +5409,20 @@ ET
         e.preventDefault();
       }
       const vid = document.getElementById('profile-video-player');
-      const icon = document.getElementById('video-mute-icon');
-      const label = document.getElementById('video-mute-label');
       if (!vid) return;
 
-      if (vid.muted || vid.volume === 0) {
+      if (!vid.muted && vid.volume > 0) {
+        // Customer explicitly mutes
+        vid.muted = true;
+        updateVideoMuteUi(true);
+        showToast('🔇 Video Muted', '#64748b');
+      } else {
+        // Customer unmutes
         vid.muted = false;
         vid.volume = 1.0;
         vid.play().catch(() => {});
-        if (icon) icon.innerText = '🔊';
-        if (label) label.innerText = 'Mute';
-        showToast('🔊 Sound Enabled (Full Audio)', '#15803d');
-      } else {
-        vid.muted = true;
-        if (icon) icon.innerText = '🔇';
-        if (label) label.innerText = 'Unmute';
-        showToast('🔇 Video Muted', '#64748b');
+        updateVideoMuteUi(false);
+        showToast('🔊 Audio Active (Full Sound)', '#15803d');
       }
     }
 
@@ -5523,7 +5447,13 @@ ET
       if (!user) {
         if (adBox) adBox.style.display = 'block';
         if (vid && vid.paused) {
-          vid.play().catch(()=>{});
+          vid.muted = false;
+          vid.volume = 1.0;
+          updateVideoMuteUi(false);
+          vid.play().catch(() => {
+            vid.muted = true;
+            vid.play().catch(()=>{});
+          });
         }
       } else {
         stopProfileHomeVideoAd();
