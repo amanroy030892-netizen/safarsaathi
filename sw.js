@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v47-map-banners-profile-large-ad)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v48-normal-sound-default)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v47-map-banners-profile-large-ad';
+const CACHE_NAME = 'safarsaathi-v48-normal-sound-default';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

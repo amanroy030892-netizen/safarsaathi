@@ -5382,21 +5382,22 @@ ET
         p.then(() => {
           updateVideoMuteUi(false);
         }).catch(() => {
-          // If iOS Safari / Chrome restricts unmuted autoplay on cold launch:
-          // Keep video playing and instantly unmute on the very first touch/click/scroll!
+          // If browser restricts unmuted autoplay on cold launch before first touch:
+          // Video plays continuously, and sound is primed to start at 100% volume on any touch/interaction!
           vidPlayer.muted = true;
           vidPlayer.play().catch(()=>{});
-          updateVideoMuteUi(true);
+          updateVideoMuteUi(false); // ALWAYS keep button as '🔊 Mute' (Sound Active)
 
           const unmuteOnFirstTouch = function() {
             vidPlayer.muted = false;
             vidPlayer.volume = 1.0;
             updateVideoMuteUi(false);
-            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
+            if (vidPlayer.paused) vidPlayer.play().catch(()=>{});
+            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown', 'keydown'].forEach(evt => {
               document.removeEventListener(evt, unmuteOnFirstTouch);
             });
           };
-          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
+          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown', 'keydown'].forEach(evt => {
             document.addEventListener(evt, unmuteOnFirstTouch, { once: true, passive: true });
           });
         });
