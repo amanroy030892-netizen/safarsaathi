@@ -289,13 +289,30 @@
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start;">
-          <!-- Left: Upload Form -->
+          <!-- Left: Dual Mode Video Ad Publisher -->
           <div>
-            <div style="background: rgba(15,23,42,0.8); border: 2px dashed #16a34a; border-radius: 12px; padding: 1rem; text-align: center; margin-bottom: 0.75rem;">
-              <strong style="display: block; font-size: 0.85rem; color: white; margin-bottom: 0.35rem; font-weight: 900;">
-                📹 Select Video Ad File (MP4 / WebM • Max 1.5 Min)*
+            <!-- Mode 1: Cloud Video URL / Direct Link (Multi-Device Auto-Sync) -->
+            <div style="background: rgba(15,23,42,0.8); border: 1.5px solid #16a34a; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.75rem;">
+              <strong style="display: block; font-size: 0.82rem; color: #86efac; margin-bottom: 0.35rem; font-weight: 900;">
+                🌐 Video URL / Cloud Link (Syncs to All Customer Phones)
               </strong>
-              <label for="adm-video-file-input" id="adm-video-file-label" style="display: inline-block; background: #16a34a; color: #ffffff; font-size: 0.78rem; font-weight: 800; padding: 7px 16px; border-radius: 8px; cursor: pointer; margin-top: 4px;">
+              <span style="font-size: 0.72rem; color: #cbd5e1; display: block; margin-bottom: 0.4rem;">
+                Paste direct MP4 link (GitHub, Cloudinary, AWS S3, Google Drive, Netlify, etc.) or use default:
+              </span>
+              <div style="display: flex; gap: 6px;">
+                <input type="text" id="adm-video-url-input" class="form-control" placeholder="e.g. promo_ad.mp4 or https://.../ad.mp4" oninput="handleAdminVideoUrlChange()" value="promo_ad.mp4" style="font-size: 0.82rem; height: 34px;">
+                <button type="button" class="btn btn-secondary" onclick="setAdminDefaultVideoUrl()" style="white-space: nowrap; font-size: 0.72rem; padding: 4px 10px; font-weight: 800; border-radius: 6px;">
+                  Default
+                </button>
+              </div>
+            </div>
+
+            <!-- Mode 2: File Upload with Auto-Size Validation -->
+            <div style="background: rgba(15,23,42,0.8); border: 2px dashed #16a34a; border-radius: 12px; padding: 0.85rem; text-align: center; margin-bottom: 0.75rem;">
+              <strong style="display: block; font-size: 0.82rem; color: white; margin-bottom: 0.35rem; font-weight: 900;">
+                📁 Or Choose Video File from Device (Max 1.5 Min)
+              </strong>
+              <label for="adm-video-file-input" id="adm-video-file-label" style="display: inline-block; background: #16a34a; color: #ffffff; font-size: 0.76rem; font-weight: 800; padding: 6px 14px; border-radius: 8px; cursor: pointer; margin-top: 2px;">
                 📂 Choose Video from Phone / PC
               </label>
               <input type="file" id="adm-video-file-input" accept="video/mp4,video/webm,video/*" style="display: none;" onchange="handleAdminVideoAdUpload(event)">
@@ -312,7 +329,7 @@
               <input type="text" id="adm-video-link" class="form-control" value="6901027507" placeholder="e.g. 6901027507 or https://wa.me/...">
             </div>
 
-            <button type="button" class="btn btn-success" onclick="publishAdminVideoAd()" style="width: 100%; padding: 0.75rem; font-size: 0.9rem; font-weight: 900; margin-top: 0.25rem;">
+            <button type="button" class="btn btn-success" id="btn-adm-publish-video" onclick="publishAdminVideoAd()" style="width: 100%; padding: 0.75rem; font-size: 0.9rem; font-weight: 900; margin-top: 0.25rem;">
               🚀 Publish Video Ad to Customer Home Screens ➔
             </button>
           </div>
@@ -417,6 +434,7 @@
       syncAdminWithCloud();
       renderAdminVehicles();
       renderAdminBookings();
+      loadCurrentPublishedVideoAd();
     }
 
     function logoutAdmin() {
@@ -1138,14 +1156,92 @@ ET
 
 
     // =========================================================================
+    // 💾 LIGHTWEIGHT INDEXEDDB STORAGE (BYPASSES 5MB LOCALSTORAGE LIMIT)
+    // =========================================================================
+    const SafarMediaDB = {
+      dbName: 'SafarMediaDB',
+      storeName: 'mediaStore',
+      getDB: function() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) return reject('IndexedDB not supported');
+          const req = window.indexedDB.open(this.dbName, 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(this.storeName)) {
+              db.createObjectStore(this.storeName);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      },
+      set: async function(key, val) {
+        try {
+          const db = await this.getDB();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(this.storeName, 'readwrite');
+            const store = tx.objectStore(this.storeName);
+            const req = store.put(val, key);
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => reject(req.error);
+          });
+        } catch(e) {
+          return false;
+        }
+      },
+      get: async function(key) {
+        try {
+          const db = await this.getDB();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(this.storeName, 'readonly');
+            const store = tx.objectStore(this.storeName);
+            const req = store.get(key);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          });
+        } catch(e) {
+          return null;
+        }
+      }
+    };
+
+    // =========================================================================
     // 🎬 ADMIN HOME SCREEN SPONSOR VIDEO AD MANAGER
     // =========================================================================
     let admUploadedVideoData = null;
     let admUploadedVideoDuration = 0;
+    let admUploadedFileSize = 0;
+
+    function handleAdminVideoUrlChange() {
+      const urlInput = (document.getElementById('adm-video-url-input')?.value || '').trim();
+      const preview = document.getElementById('adm-video-preview');
+      const badge = document.getElementById('adm-video-status-badge');
+      if (urlInput && preview) {
+        admUploadedVideoData = null; // Clear file upload in favor of direct URL
+        preview.src = urlInput;
+        preview.play().catch(() => {});
+        if (badge) {
+          badge.style.display = 'block';
+          badge.innerText = '✓ Live Cloud Video URL Selected';
+          badge.style.color = '#86efac';
+        }
+      }
+    }
+
+    function setAdminDefaultVideoUrl() {
+      const urlInput = document.getElementById('adm-video-url-input');
+      if (urlInput) {
+        urlInput.value = 'promo_ad.mp4';
+        handleAdminVideoUrlChange();
+      }
+    }
 
     function handleAdminVideoAdUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
+
+      admUploadedFileSize = file.size;
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -1158,19 +1254,22 @@ ET
           const badge = document.getElementById('adm-video-status-badge');
           const label = document.getElementById('adm-video-file-label');
           const preview = document.getElementById('adm-video-preview');
+          const urlInput = document.getElementById('adm-video-url-input');
+
+          if (urlInput) urlInput.value = ''; // Clear URL input when a file is picked
 
           if (badge) {
             badge.style.display = 'block';
-            if (admUploadedVideoDuration > 95) {
-              badge.innerText = `⚠️ Duration: ${admUploadedVideoDuration}s (Will play first 1.5 min)`;
+            if (file.size > 850000) {
+              badge.innerText = `📁 File: ${sizeMB}MB (${admUploadedVideoDuration}s). Stored locally. For instant sync to all customer phones, paste a direct Video URL above.`;
               badge.style.color = '#f59e0b';
             } else {
-              badge.innerText = `✓ Valid Video: ${admUploadedVideoDuration}s with Full Audio!`;
+              badge.innerText = `✓ Valid Video: ${sizeMB}MB (${admUploadedVideoDuration}s) • Cloud Sync Ready!`;
               badge.style.color = '#86efac';
             }
           }
           if (label) {
-            label.innerText = '✓ Video Selected (' + admUploadedVideoDuration + 's)';
+            label.innerText = `✓ Video Selected (${sizeMB}MB • ${admUploadedVideoDuration}s)`;
             label.style.background = '#15803d';
           }
           if (preview) {
@@ -1188,30 +1287,83 @@ ET
         vid.muted = false;
         vid.volume = 1.0;
         vid.play().catch(() => {});
-        alert('🔊 Sound unmuted! Audio playing at 100% volume.');
+        alert('🔊 Audio unmuted! Playing with full sound.');
       }
     }
 
-    function publishAdminVideoAd() {
+    async function loadCurrentPublishedVideoAd() {
+      try {
+        if (!adminDb) return;
+        const doc = await adminDb.collection('ss_settings').doc('video_ad').get();
+        if (doc && doc.exists) {
+          const ad = doc.data();
+          if (ad) {
+            const urlInput = document.getElementById('adm-video-url-input');
+            const titleInput = document.getElementById('adm-video-title');
+            const linkInput = document.getElementById('adm-video-link');
+            const preview = document.getElementById('adm-video-preview');
+            const previewTitle = document.getElementById('adm-video-preview-title');
+
+            if (urlInput && ad.src && !ad.src.startsWith('data:')) {
+              urlInput.value = ad.src;
+            }
+            if (titleInput && ad.title) titleInput.value = ad.title;
+            if (linkInput && ad.link) linkInput.value = ad.link;
+            if (preview && ad.src) {
+              preview.src = ad.src;
+            }
+            if (previewTitle) {
+              previewTitle.innerText = `Published Video: ${ad.title || "SafarSaathi"} (Cloud Synced)`;
+            }
+          }
+        }
+      } catch(e) {
+        console.warn('Could not load cloud video ad:', e);
+      }
+    }
+
+    async function publishAdminVideoAd() {
+      const btn = document.getElementById('btn-adm-publish-video');
       const title = (document.getElementById('adm-video-title')?.value || '').trim();
       const link = (document.getElementById('adm-video-link')?.value || '').trim();
+      const urlInput = (document.getElementById('adm-video-url-input')?.value || '').trim();
 
-      const adSrc = admUploadedVideoData || 'promo_ad.mp4';
+      let finalSrc = urlInput;
+      let isBase64Upload = false;
+
+      if (admUploadedVideoData) {
+        finalSrc = admUploadedVideoData;
+        isBase64Upload = true;
+      } else if (!finalSrc) {
+        finalSrc = 'promo_ad.mp4';
+      }
+
       const adObj = {
-        src: adSrc,
+        src: finalSrc,
         title: title || 'SafarSaathi Premium Carpool Network',
         link: link ? (link.startsWith('http') ? link : `https://wa.me/91${link}`) : 'https://wa.me/916901027507',
         duration: admUploadedVideoDuration || 90,
         publishedAt: new Date().toISOString()
       };
 
-      try {
-        localStorage.setItem('ss_profile_video_ad', JSON.stringify(adObj));
-      } catch(e) {
-        console.warn('Storage limit reached locally');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Publishing to Cloud...';
       }
 
-      // Broadcast to all open customer browser tabs instantly!
+      // 1. Save to local IndexedDB (never fails due to 5MB localStorage quota)
+      try {
+        await SafarMediaDB.set('ss_profile_video_ad', adObj);
+      } catch(e){}
+
+      // 2. Save to localStorage if lightweight
+      try {
+        if (finalSrc.length < 2000000) {
+          localStorage.setItem('ss_profile_video_ad', JSON.stringify(adObj));
+        }
+      } catch(e){}
+
+      // 3. Broadcast to all open customer browser tabs instantly!
       if (syncBroadcastChannel) {
         try {
           syncBroadcastChannel.postMessage({
@@ -1221,14 +1373,37 @@ ET
         } catch(e){}
       }
 
-      // Sync to Firebase
+      // 4. Cloud Sync via Firebase Firestore to ALL Customer Phones Across India
+      let cloudSyncSuccess = false;
+      let cloudSyncErrorMsg = '';
+
       if (adminDb) {
-        try {
-          adminDb.collection('ss_settings').doc('video_ad').set(adObj, { merge: true });
-        } catch(e){}
+        const payloadSize = finalSrc.length;
+        if (isBase64Upload && payloadSize > 850000) {
+          cloudSyncErrorMsg = `⚠️ Note: Uploaded video file is ${(payloadSize / (1024 * 1024)).toFixed(1)}MB, which exceeds Firestore's 1MB single-document limit. It has been saved for this device. For instant sync to ALL other customer phones across India, please enter a direct Video URL (e.g. GitHub raw link, Cloudinary, Imgur, or website link) OR upload a video file under 750KB.`;
+        } else {
+          try {
+            await adminDb.collection('ss_settings').doc('video_ad').set(adObj, { merge: true });
+            cloudSyncSuccess = true;
+          } catch(err) {
+            console.error('Firestore video ad sync error:', err);
+            cloudSyncErrorMsg = 'Cloud sync failed: ' + err.message;
+          }
+        }
       }
 
-      alert('🎉 Video Ad published successfully! All customer Home screens will now display this video ad with sound.');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = '🚀 Publish Video Ad to Customer Home Screens ➔';
+      }
+
+      if (cloudSyncSuccess) {
+        alert(`🎉 Success! Video Ad published to Google Cloud Firestore!\n\nAll customer Home screens across India will now display this video ad in a continuous loop with Mute/Unmute sound controls.`);
+      } else if (cloudSyncErrorMsg) {
+        alert(cloudSyncErrorMsg);
+      } else {
+        alert('✓ Video Ad updated locally.');
+      }
     }
 
 </script>

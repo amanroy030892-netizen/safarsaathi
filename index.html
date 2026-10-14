@@ -1450,9 +1450,7 @@
               <button type="button" class="btn-ad-tab" id="btn-ad-tab-pdf" onclick="switchAdTab('pdf')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
                 📄 PDF
               </button>
-              <button type="button" onclick="openCreateAdModal()" style="background: #fde047; color: #854d0e; border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.66rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-                <span>➕</span> <span>New</span>
-              </button>
+
             </div>
           </div>
 
@@ -1602,9 +1600,15 @@
             </a>
           </div>
 
-          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (ZERO TEXT OVERFLOW • PURE SCREEN FIT) -->
-          <div id="profile-home-video-ad-box" style="margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center;">
-            <video id="profile-video-player" src="promo_ad.mp4" playsinline controls loop style="width: 100%; height: min(21vh, 130px); max-height: 130px; object-fit: cover; display: block; margin: 0 auto;"></video>
+          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (CONTINUOUS AUTOPLAY • NO PLAY/PAUSE INTERRUPTIONS • MUTE/UNMUTE ONLY) -->
+          <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(21vh, 130px); max-height: 130px;">
+            <video id="profile-video-player" src="promo_ad.mp4" autoplay loop muted playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
+            
+            <!-- 🔊 ONLY MUTE / UNMUTE BUTTON (NO PLAY/PAUSE INTERRUPTIONS) -->
+            <button type="button" id="btn-video-mute-toggle" onclick="toggleProfileVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+              <span id="video-mute-icon" style="font-size: 0.85rem;">🔇</span>
+              <span id="video-mute-label">Unmute</span>
+            </button>
           </div>
         </div>
 
@@ -2188,18 +2192,7 @@
             if (event.data.type === 'RIDES_UPDATED') {
               mergeIncomingCloudRides(event.data.rides);
             } else if (event.data.type === 'PROFILE_VIDEO_AD_UPDATED' && event.data.ad) {
-              const ad = event.data.ad;
-              localStorage.setItem('ss_profile_video_ad', JSON.stringify(ad));
-              const vidPlayer = document.getElementById('profile-video-player');
-              const titleEl = document.getElementById('profile-video-title');
-              if (vidPlayer && ad.src) {
-                vidPlayer.src = ad.src;
-                vidPlayer.muted = false;
-                vidPlayer.volume = 1.0;
-                vidPlayer.play().catch(() => {});
-              }
-              if (titleEl && ad.title) titleEl.innerText = '🚗 ' + ad.title;
-              showToast('📢 New Sponsor Video Ad Loaded!', '#15803d');
+              applyIncomingProfileVideoAd(event.data.ad, true);
             }
           }
         };
@@ -5067,6 +5060,20 @@ ET
                 mergeIncomingCloudRides(cloudRides);
               }
             });
+
+            // 🔥 REAL-TIME ADMIN VIDEO AD CLOUD SYNC ACROSS ALL CUSTOMER PHONES
+            try {
+              db.collection('ss_settings').doc('video_ad').onSnapshot((doc) => {
+                if (doc && doc.exists) {
+                  const ad = doc.data();
+                  if (ad && ad.src) {
+                    applyIncomingProfileVideoAd(ad, false);
+                  }
+                }
+              }, (err) => {
+                console.warn('Video ad cloud sync notice:', err);
+              });
+            } catch(e){}
           }
         } catch(e){}
       }
@@ -5359,52 +5366,138 @@ ET
 
 
     // =========================================================================
-    // 🎬 PROFILE HOME VIDEO AD CONTROLLER (UP TO 1.5 MIN WITH SOUND)
+    // 💾 LIGHTWEIGHT INDEXEDDB STORAGE (BYPASSES 5MB LOCALSTORAGE LIMIT)
     // =========================================================================
-    let uploadedProfileVideoData = null;
-    let uploadedProfileVideoName = '';
-    let uploadedProfileVideoDuration = 0;
-
-    function initProfileHomeVideoAd() {
-      const savedAd = localStorage.getItem('ss_profile_video_ad');
-      const vidPlayer = document.getElementById('profile-video-player');
-      const titleEl = document.getElementById('profile-video-title');
-
-      if (savedAd) {
+    const SafarMediaDB = {
+      dbName: 'SafarMediaDB',
+      storeName: 'mediaStore',
+      getDB: function() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) return reject('IndexedDB not supported');
+          const req = window.indexedDB.open(this.dbName, 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(this.storeName)) {
+              db.createObjectStore(this.storeName);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      },
+      set: async function(key, val) {
         try {
-          const parsed = JSON.parse(savedAd);
-          if (vidPlayer && parsed.src) vidPlayer.src = parsed.src;
-          if (titleEl && parsed.title) titleEl.innerText = '🚗 ' + parsed.title;
-        } catch(e){}
+          const db = await this.getDB();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(this.storeName, 'readwrite');
+            const store = tx.objectStore(this.storeName);
+            const req = store.put(val, key);
+            req.onsuccess = () => resolve(true);
+            req.onerror = () => reject(req.error);
+          });
+        } catch(e) {
+          return false;
+        }
+      },
+      get: async function(key) {
+        try {
+          const db = await this.getDB();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(this.storeName, 'readonly');
+            const store = tx.objectStore(this.storeName);
+            const req = store.get(key);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          });
+        } catch(e) {
+          return null;
+        }
       }
+    };
 
-      if (vidPlayer) {
-        vidPlayer.volume = 1.0;
-        vidPlayer.muted = false;
-        // Enforce max 1.5 minutes (90 seconds)
-        vidPlayer.ontimeupdate = function() {
-          if (vidPlayer.currentTime >= 90) {
-            vidPlayer.currentTime = 0;
-            vidPlayer.play();
+    // =========================================================================
+    // 🎬 PROFILE HOME VIDEO AD CONTROLLER (CONTINUOUS AUTOPLAY • MUTE/UNMUTE ONLY)
+    // =========================================================================
+    function initProfileHomeVideoAd() {
+      const vidPlayer = document.getElementById('profile-video-player');
+      if (!vidPlayer) return;
+
+      // 1. Check cached video from IndexedDB or localStorage
+      try {
+        SafarMediaDB.get('ss_profile_video_ad').then((ad) => {
+          if (ad && ad.src) {
+            applyIncomingProfileVideoAd(ad, false);
+          } else {
+            const localAd = localStorage.getItem('ss_profile_video_ad');
+            if (localAd) {
+              try {
+                const parsed = JSON.parse(localAd);
+                if (parsed && parsed.src) applyIncomingProfileVideoAd(parsed, false);
+              } catch(e){}
+            }
           }
-        };
+        }).catch(() => {
+          const localAd = localStorage.getItem('ss_profile_video_ad');
+          if (localAd) {
+            try {
+              const parsed = JSON.parse(localAd);
+              if (parsed && parsed.src) applyIncomingProfileVideoAd(parsed, false);
+            } catch(e){}
+          }
+        });
+      } catch(e){}
+
+      // 2. Strict settings: Autoplay loop, muted by default (mandatory for browser autoplay), max 90s
+      vidPlayer.muted = true;
+      vidPlayer.volume = 1.0;
+      vidPlayer.ontimeupdate = function() {
+        if (vidPlayer.currentTime >= 90) {
+          vidPlayer.currentTime = 0;
+          vidPlayer.play().catch(()=>{});
+        }
+      };
+      vidPlayer.onerror = function() {
+        console.warn('Profile video source error, falling back to promo_ad.mp4');
+        if (vidPlayer.src && !vidPlayer.src.endsWith('promo_ad.mp4')) {
+          vidPlayer.src = 'promo_ad.mp4';
+          vidPlayer.play().catch(()=>{});
+        }
+      };
+
+      // Ensure autoplay starts smoothly
+      const p = vidPlayer.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          vidPlayer.muted = true;
+          document.addEventListener('touchstart', function playOnce() {
+            vidPlayer.play().catch(()=>{});
+            document.removeEventListener('touchstart', playOnce);
+          }, { once: true, passive: true });
+        });
       }
     }
 
-    function toggleProfileVideoSound() {
+    function toggleProfileVideoMuteOnly(e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
       const vid = document.getElementById('profile-video-player');
-      const btn = document.getElementById('btn-toggle-profile-video-sound');
+      const icon = document.getElementById('video-mute-icon');
+      const label = document.getElementById('video-mute-label');
       if (!vid) return;
 
       if (vid.muted || vid.volume === 0) {
         vid.muted = false;
         vid.volume = 1.0;
         vid.play().catch(() => {});
-        if (btn) btn.innerText = '🔊 Sound ON';
-        showToast('🔊 Audio Enabled (Full Sound)', '#15803d');
+        if (icon) icon.innerText = '🔊';
+        if (label) label.innerText = 'Mute';
+        showToast('🔊 Sound Enabled (Full Audio)', '#15803d');
       } else {
         vid.muted = true;
-        if (btn) btn.innerText = '🔇 Mute';
+        if (icon) icon.innerText = '🔇';
+        if (label) label.innerText = 'Unmute';
         showToast('🔇 Video Muted', '#64748b');
       }
     }
@@ -5426,98 +5519,45 @@ ET
     function resumeProfileHomeVideoAdIfNeeded() {
       const user = getActiveUserProfile();
       const adBox = document.getElementById('profile-home-video-ad-box');
+      const vid = document.getElementById('profile-video-player');
       if (!user) {
         if (adBox) adBox.style.display = 'block';
+        if (vid && vid.paused) {
+          vid.play().catch(()=>{});
+        }
       } else {
         stopProfileHomeVideoAd();
       }
     }
 
-    function openProfileVideoAdUploadModal() {
-      const modal = document.getElementById('profile-video-upload-modal');
-      if (modal) modal.style.display = 'flex';
-    }
-
-    function closeProfileVideoAdUploadModal() {
-      const modal = document.getElementById('profile-video-upload-modal');
-      if (modal) modal.style.display = 'none';
-    }
-
-    function handleProfileVideoAdUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      uploadedProfileVideoName = file.name;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        uploadedProfileVideoData = e.target.result;
-
-        // Check video duration with temp video element
-        const tempVid = document.createElement('video');
-        tempVid.preload = 'metadata';
-        tempVid.src = uploadedProfileVideoData;
-        tempVid.onloadedmetadata = function() {
-          uploadedProfileVideoDuration = Math.round(tempVid.duration || 0);
-          const badge = document.getElementById('p-video-status-badge');
-          const label = document.getElementById('p-video-file-label');
-
-          if (badge) {
-            badge.style.display = 'block';
-            if (uploadedProfileVideoDuration > 95) {
-              badge.innerText = `⚠️ Duration: ${uploadedProfileVideoDuration}s (Will play first 1.5 minutes)`;
-              badge.style.color = '#f59e0b';
-            } else {
-              badge.innerText = `✓ Valid Video: ${uploadedProfileVideoDuration}s with Sound!`;
-              badge.style.color = '#15803d';
-            }
-          }
-          if (label) {
-            label.innerText = '✓ Change Video (' + uploadedProfileVideoDuration + 's)';
-            label.style.background = '#15803d';
-          }
-        };
-
-        showToast('✓ Video file loaded! Ready to save.', '#15803d');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function submitProfileVideoAd() {
-      const title = (document.getElementById('p-video-title-input')?.value || '').trim();
-      if (!uploadedProfileVideoData) {
-        alert('Please choose a video file (MP4/WebM) up to 1.5 minutes!');
-        return;
-      }
-
-      const adObj = {
-        src: uploadedProfileVideoData,
-        title: title || 'Featured Video Ad',
-        duration: uploadedProfileVideoDuration,
-        timestamp: new Date().toISOString()
-      };
-
-      try {
-        localStorage.setItem('ss_profile_video_ad', JSON.stringify(adObj));
-      } catch(e) {
-        console.warn('Storage limit reached, keeping in active session');
-      }
-
+    function applyIncomingProfileVideoAd(ad, notify = false) {
+      if (!ad || !ad.src) return;
       const vidPlayer = document.getElementById('profile-video-player');
-      const titleEl = document.getElementById('profile-video-title');
       if (vidPlayer) {
-        vidPlayer.src = uploadedProfileVideoData;
-        vidPlayer.muted = false;
-        vidPlayer.volume = 1.0;
-        vidPlayer.play().catch(() => {});
-      }
-      if (titleEl) {
-        titleEl.innerText = '🚗 ' + (title || 'Featured Video Ad');
+        const cur = vidPlayer.currentSrc || vidPlayer.src || '';
+        if (!cur.includes(ad.src)) {
+          vidPlayer.src = ad.src;
+          vidPlayer.load();
+          vidPlayer.play().catch(()=>{});
+        }
       }
 
-      closeProfileVideoAdUploadModal();
-      showToast('🎉 Video Ad published with Sound (Up to 1.5 Min)!', '#15803d');
+      // Persist to IndexedDB
+      try {
+        SafarMediaDB.set('ss_profile_video_ad', ad);
+      } catch(e){}
+
+      // Persist to localStorage if lightweight (< 2MB)
+      try {
+        if (ad.src.length < 2000000) {
+          localStorage.setItem('ss_profile_video_ad', JSON.stringify(ad));
+        }
+      } catch(e){}
+
+      if (notify) {
+        showToast('📢 New Sponsor Video Ad Loaded!', '#15803d');
+      }
     }
-
 </script>
   <!-- ➕ CREATE / POST AD MODAL (UPLOAD ANY VIDEO, IMAGE, OR PDF FILE) -->
   <div class="modal-backdrop" id="create-ad-modal" style="display: none; z-index: 10001;" onclick="if(event.target===this) closeCreateAdModal();">

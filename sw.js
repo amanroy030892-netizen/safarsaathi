@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v43-clean-video-screen-fit)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v45-admin-video-cloud-sync)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v43-clean-video-screen-fit';
+const CACHE_NAME = 'safarsaathi-v45-admin-video-cloud-sync';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
