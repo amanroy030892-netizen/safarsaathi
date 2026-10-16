@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafarSaathi - Register Account</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #ffffff; color: #000000; font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 1rem; margin: 0; }
+    .card { background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; padding: 1rem; max-width: 440px; margin: 0 auto; box-shadow: 0 4px 16px rgba(22,163,74,0.12); }
+    .btn-green { background: linear-gradient(135deg, #15803d, #16a34a); color: #fff; border: none; padding: 0.65rem; border-radius: 8px; font-weight: 900; width: 100%; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="text-align: center; margin-bottom: 0.75rem;">
+      <h2 style="color: #15803d; margin: 0; font-size: 1.3rem;">🚗 SafarSaathi</h2>
+      <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Register Free Account • Aadhaar AI Verified</p>
+    </div>
+
+    <form onsubmit="event.preventDefault(); window.location.href='index.html';">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem;">
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Mobile (User ID)*</label>
+          <input type="tel" required maxlength="10" placeholder="9864012345" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Full Name*</label>
+          <input type="text" required placeholder="Aapka Naam" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem;">
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Password*</label>
+          <input type="password" required placeholder="Password" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Confirm Password*</label>
+          <input type="password" required placeholder="Re-enter" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.75rem;">
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Address in Assam*</label>
+          <input type="text" required placeholder="Paltan Bazar, Ghy" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Aadhaar Photo*</label>
+          <input type="file" required accept="image/*" style="width: 100%; font-size: 0.65rem;">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-green">✨ Register & Verify Aadhaar AI ➔</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 0.75rem; font-size: 0.75rem;">
+      Already have an account? <a href="login.html" style="color: #15803d; font-weight: 900;">User Login</a>
+    </div>
+
+    <!-- 🎬 VIDEO AD BOX (HOME LANDING SCREEN • UP TO 1.5 MIN WITH SOUND) -->
+    <div style="margin-top: 1rem; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 5px 10px; color: #fff; font-size: 0.75rem; font-weight: 900; display: flex; justify-content: space-between;">
+        <span>🎬 Sponsored Video Ad</span>
+        <span>🔊 Sound Enabled (Max 1.5 Min)</span>
+      </div>
+      <div style="background: #000; text-align: center;">
+        <video id="register-video" src="promo_ad.mp4" controls playsinline loop style="width: 100%; max-height: 180px; display: block;"></video>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

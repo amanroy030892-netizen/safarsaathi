@@ -1,0 +1,797 @@
+:root {
+      --app-visible-height: 100dvh;
+      --app-top-bar-height: 135px;
+      --app-usable-height: calc(100dvh - 135px);
+      --auto-map-height: 260px;
+      --auto-chat-height: 190px;
+      --primary: #16a34a;
+      --primary-dark: #15803d;
+      --accent: #22c55e;
+      --success: #16a34a;
+      --dark-bg: #f4fbf7;
+      --card-bg: #ffffff;
+      --card-elevated: #f8fafc;
+      --border-subtle: #e2e8f0;
+      --border-accent: rgba(22, 163, 74, 0.35);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --brand-green: #16a34a;
+      --brand-green-dark: #15803d;
+      --brand-mint: #dcfce7;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* STRICT ZERO-SCROLL NATIVE APP LOCK & SCREEN-FITTING ARCHITECTURE */
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background: #ffffff;
+      color: #000000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    #app-shell {
+      height: var(--app-visible-height, 100dvh);
+      max-height: var(--app-visible-height, 100dvh);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+
+    /* Pinned Top Navigation Bar (Header + 6 Nav Buttons Locked at Top) */
+    .app-top-header {
+      flex: 0 0 auto;
+      width: 100%;
+      background: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+
+    /* Screen-Fitting Compact Main Area */
+    main {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0.35rem 0.65rem 1.25rem 0.65rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+    }
+
+    /* Instant Touch & Flip Animation */
+    .app-section {
+      display: none;
+      width: 100%;
+      animation: flipSection 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .app-section.active {
+      display: block;
+    }
+    @keyframes flipSection {
+      from { opacity: 0; transform: scale(0.985); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Screen-Fitting Compact App Cards */
+    .app-card {
+      background: #ffffff !important;
+      border: 1.5px solid #16a34a !important;
+      border-radius: 16px !important;
+      padding: 0.75rem 0.85rem !important;
+      margin-bottom: 0.45rem !important;
+      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08) !important;
+      box-sizing: border-box !important;
+    }
+
+    .form-group {
+      margin-bottom: 0.45rem !important;
+    }
+    .form-control {
+      height: 38px !important;
+      padding: 0.45rem 0.75rem !important;
+      font-size: 0.88rem !important;
+    }
+
+    /* Clean Company Details Footer inside scroll area */
+    footer {
+      display: block !important;
+    }
+
+    /* Modern Sticky Mobile Header with Full Safe-Area Clearance */
+    .app-header {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      box-shadow: 0 2px 8px rgba(21, 128, 61, 0.25);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: max(env(safe-area-inset-top, 0px), 12px);
+      padding-bottom: 0.55rem;
+      padding-left: calc(0.85rem + env(safe-area-inset-left, 0px));
+      padding-right: calc(0.85rem + env(safe-area-inset-right, 0px));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      min-height: 52px;
+      box-sizing: border-box;
+    }
+
+    /* 📱 IPHONE HOME SCREEN STANDALONE APP & NOTCH/DYNAMIC ISLAND CLEARANCE (48px) */
+    .ios-standalone .app-header {
+      padding-top: max(env(safe-area-inset-top, 0px), 48px) !important;
+    }
+
+    @supports (-webkit-touch-callout: none) {
+      @media (display-mode: standalone) {
+        .app-header {
+          padding-top: max(env(safe-area-inset-top, 0px), 48px) !important;
+        }
+      }
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .brand-logo .brand-highlight {
+      background: linear-gradient(135deg, #dcfce7, #86efac);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .live-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #86efac;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .header-action-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* 6-Button Navigation Grid (Strict 3x2 Matrix - Never Stacks Vertically!) */
+    .nav-grid-wrapper {
+      max-width: 900px;
+      margin: 0.4rem auto 0.45rem auto;
+      padding: 0 0.75rem;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .nav-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+
+    @media (max-width: 480px) {
+      .nav-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+      .nav-btn {
+        padding: 0.4rem 0.1rem !important;
+        font-size: 0.68rem !important;
+        min-height: 46px !important;
+      }
+    }
+
+    .nav-btn {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 0.45rem 0.2rem;
+      color: #334155;
+      font-weight: 900;
+      font-size: 0.74rem;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      width: 100%;
+      outline: none;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      border-color: #15803d;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+    }
+
+    .nav-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Main Container & Sections */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 0.75rem;
+    }
+
+    .app-section {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .app-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .app-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 1.15rem;
+      box-shadow: 0 4px 20px rgba(22, 163, 74, 0.08);
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      color: #0f172a;
+    }
+
+    /* Universal Form Control Protection */
+    .form-group {
+      margin-bottom: 0.85rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .form-control,
+    input,
+    select,
+    textarea {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    .form-control {
+      width: 100%;
+      display: block;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+      color: #0f172a;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .form-control:focus {
+      border-color: #16a34a;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.16);
+    }
+
+    /* iOS WebKit Native Date & Time Input Overflow Prevention */
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      height: 46px;
+      line-height: normal;
+    }
+
+    input[type="date"]::-webkit-date-and-time-value,
+    input[type="time"]::-webkit-date-and-time-value {
+      text-align: left;
+      min-height: 1.2em;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+      opacity: 0.75;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Responsive Form 2-Column Grid (Zero-Overflow) */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+      gap: 0.6rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 0.65rem;
+    }
+
+    .form-grid-2 > div {
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Route Chips Wrapper (Auto-Wrap - No Hidden Options) */
+    .route-chips-wrap {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .route-chip {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .route-chip.active {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      border-color: #15803d;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(22, 163, 74, 0.28);
+    }
+
+    @media (max-width: 480px) {
+      .app-card {
+        padding: 0.95rem 0.8rem;
+        border-radius: 16px;
+      }
+      .form-control {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.88rem;
+      }
+      input[type="date"],
+      input[type="time"],
+      input[type="datetime-local"] {
+        height: 42px;
+      }
+      .form-grid-2 {
+        gap: 0.45rem;
+      }
+      .btn {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.88rem;
+      }
+      .nav-btn {
+        font-size: 0.72rem;
+        padding: 0.55rem 0.15rem;
+      }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      font-size: 0.92rem;
+      font-weight: 800;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      gap: 6px;
+      outline: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.32);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #1e293b;
+      border: 1.5px solid #cbd5e1;
+    }
+
+    .btn-danger {
+      background: rgba(220, 38, 38, 0.12);
+      color: #dc2626;
+      border: 1.5px solid rgba(220, 38, 38, 0.3);
+    }
+
+    /* Live Car Card (White & Emerald Green Theme) */
+    .live-car-card {
+      background: #ffffff;
+      border: 1.5px solid rgba(22, 163, 74, 0.28);
+      border-radius: 16px;
+      padding: 1rem 1.15rem;
+      box-shadow: 0 4px 18px rgba(22, 163, 74, 0.1);
+      margin-bottom: 0.85rem;
+      color: #0f172a;
+    }
+
+    .rc-hsrp-badge {
+      background: #ffffff;
+      color: #000000;
+      font-family: monospace, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid #000000;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .rc-verified-shield {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid #22c55e;
+      color: #86efac;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      color: #000000;
+      border: 2px solid #16a34a;
+      border-radius: 18px;
+      padding: 1.25rem;
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast-banner {
+      position: fixed;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      background: #15803d;
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      display: none;
+      white-space: nowrap;
+      animation: fadeIn 0.2s ease;
+    }
+  
+    /* =========================================================================
+       ✨ GEMINI AI 1.5 PRO SUITE STYLES (Sleek, Non-Intrusive, Modern Dark)
+       ========================================================================= */
+    :root {
+      --gemini-gradient: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+      --gemini-glow: rgba(139, 92, 246, 0.45);
+      --gemini-card: #0c1222;
+      --gemini-border: rgba(167, 139, 250, 0.4);
+    }
+
+    /* Floating Action Button (FAB) */
+    .gemini-fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      background: var(--gemini-gradient);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px var(--gemini-glow), 0 0 0 1px rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.85rem;
+      border: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      touch-action: manipulation;
+    }
+    .gemini-fab:hover, .gemini-fab:active {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 26px rgba(139, 92, 246, 0.65), 0 0 0 2px rgba(255, 255, 255, 0.35);
+    }
+    .gemini-fab-sparkle {
+      font-size: 1.15rem;
+      animation: geminiPulse 2s infinite ease-in-out;
+    }
+    .gemini-fab-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+    @keyframes geminiPulse {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(15deg); }
+    }
+
+    /* Gemini Modal & Chat Styling (Strict Green, White & Black) */
+    .gemini-modal-card {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid #16a34a !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
+      max-width: 520px !important;
+      max-height: 90vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    .gemini-modal-header {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      color: #ffffff;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .gemini-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #15803d;
+      border: 2px solid #86efac;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .gemini-quick-chips {
+      display: flex;
+      gap: 6px;
+      padding: 0.65rem 1rem;
+      background: #f8fafc;
+      border-bottom: 1.5px solid #e2e8f0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .gemini-quick-chips::-webkit-scrollbar { display: none; }
+    .gemini-chip {
+      background: #ffffff;
+      color: #15803d;
+      border: 1.5px solid #16a34a;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .gemini-chip:hover {
+      background: #16a34a;
+      color: #ffffff;
+    }
+    .gemini-chat-history {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 400px;
+      min-height: 240px;
+      background: #ffffff;
+    }
+    .gemini-msg {
+      display: flex;
+      gap: 8px;
+      max-width: 88%;
+    }
+    .gemini-msg-user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .gemini-msg-ai {
+      align-self: flex-start;
+    }
+    .gemini-msg-bubble {
+      padding: 0.75rem 0.95rem;
+      border-radius: 14px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .gemini-msg-user .gemini-msg-bubble {
+      background: #16a34a;
+      color: #ffffff;
+      border-bottom-right-radius: 3px;
+      font-weight: 700;
+    }
+    .gemini-msg-ai .gemini-msg-bubble {
+      background: #f0fdf4;
+      color: #000000;
+      border: 1.5px solid #16a34a;
+      border-bottom-left-radius: 3px;
+    }
+    .gemini-input-bar {
+      padding: 0.75rem 1rem;
+      background: #ffffff;
+      border-top: 1.5px solid #e2e8f0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn-gemini-send {
+      background: var(--gemini-gradient) !important;
+      color: white !important;
+      border: none !important;
+      font-weight: 800 !important;
+      padding: 0.6rem 1.15rem !important;
+      border-radius: 10px !important;
+      white-space: nowrap !important;
+      cursor: pointer !important;
+      box-shadow: 0 2px 10px var(--gemini-glow) !important;
+    }
+
+    /* In-line Gemini AI Badges across sections */
+    .gemini-ai-card-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(139, 92, 246, 0.18);
+      border: 1px solid rgba(167, 139, 250, 0.4);
+      color: #dcfce7;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 9999px;
+    }
+    .gemini-live-telemetry {
+      background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      border-radius: 12px;
+      padding: 0.75rem 0.9rem;
+      margin-top: 0.65rem;
+      font-size: 0.78rem;
+    }

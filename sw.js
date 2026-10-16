@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v48-normal-sound-default)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v50-map-video-and-profile-video)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v48-normal-sound-default';
+const CACHE_NAME = 'safarsaathi-v50-map-video-and-profile-video';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

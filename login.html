@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafarSaathi - User Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #ffffff; color: #000000; font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 1rem; margin: 0; }
+    .card { background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; padding: 1rem; max-width: 440px; margin: 0 auto; box-shadow: 0 4px 16px rgba(22,163,74,0.12); }
+    .btn-green { background: linear-gradient(135deg, #15803d, #16a34a); color: #fff; border: none; padding: 0.65rem; border-radius: 8px; font-weight: 900; width: 100%; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="text-align: center; margin-bottom: 0.75rem;">
+      <h2 style="color: #15803d; margin: 0; font-size: 1.3rem;">🚗 SafarSaathi</h2>
+      <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">User ID Login • Assam Carpooling Network</p>
+    </div>
+
+    <form onsubmit="event.preventDefault(); window.location.href='index.html';">
+      <div style="margin-bottom: 0.65rem;">
+        <label style="font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 3px;">10-Digit Mobile (User ID)*</label>
+        <input type="tel" required maxlength="10" placeholder="e.g. 9864012345" style="width: 100%; height: 36px; padding: 6px 10px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+      </div>
+      <div style="margin-bottom: 0.85rem;">
+        <label style="font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 3px;">Password*</label>
+        <input type="password" required placeholder="Enter password" style="width: 100%; height: 36px; padding: 6px 10px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+      </div>
+      <button type="submit" class="btn-green">🚀 Log In to Profile ➔</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 0.85rem; font-size: 0.75rem;">
+      Don't have an account? <a href="register.html" style="color: #15803d; font-weight: 900;">Register Account</a>
+    </div>
+
+    <!-- 🎬 VIDEO AD BOX (HOME LANDING SCREEN • UP TO 1.5 MIN WITH SOUND) -->
+    <div style="margin-top: 1rem; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 5px 10px; color: #fff; font-size: 0.75rem; font-weight: 900; display: flex; justify-content: space-between;">
+        <span>🎬 Sponsored Video Ad</span>
+        <span>🔊 Sound Enabled (Max 1.5 Min)</span>
+      </div>
+      <div style="background: #000; text-align: center;">
+        <video id="login-video" src="promo_ad.mp4" controls playsinline loop style="width: 100%; max-height: 180px; display: block;"></video>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

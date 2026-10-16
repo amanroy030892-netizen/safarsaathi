@@ -1428,44 +1428,16 @@
           </div>
         </div><!-- /#route-map-card -->
 
-        <!-- 📢 AUTOMATED MULTI-MEDIA ADS & SPONSORS SHOWCASE BOX (VIDEO, BANNER, PDF & FILE ADS) -->
-        <div id="live-ads-showcase-box" style="margin-top: 0.45rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; overflow: hidden; box-shadow: 0 3px 14px rgba(22, 163, 74, 0.12); box-sizing: border-box;">
+        <!-- 🎬 MAP CORRIDOR VIDEO PLAYER (NEW 10S VIDEO AD • ZERO BANNERS • CONTINUOUS PLAY WITH SOUND) -->
+        <div id="map-video-ad-box" style="position: relative; margin-top: 0.45rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(22vh, 145px); max-height: 145px;">
+          <video id="map-video-player" src="map_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 10px;"></video>
           
-          <!-- Ad Box Header with Dynamic Category Switcher -->
-          <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.35rem 0.65rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 0.88rem;">📢</span>
-              <strong style="font-size: 0.76rem; font-weight: 900; color: #ffffff; white-space: nowrap;">Assam Highway Banners</strong>
-              <span id="active-ad-counter-badge" style="font-size: 0.62rem; background: rgba(255,255,255,0.22); color: #ffffff; padding: 1px 6px; border-radius: 9999px; font-weight: 800;">3 Live</span>
-            </div>
-            
-            <!-- Category Tabs: Banner Ads, Tariff PDF -->
-            <div style="display: flex; gap: 3px; align-items: center;">
-              <button type="button" class="btn-ad-tab active" id="btn-ad-tab-banner" onclick="switchAdTab('banner')" style="background: #ffffff; color: #15803d; border: none; padding: 2px 8px; border-radius: 5px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
-                🖼️ Banners
-              </button>
-              <button type="button" class="btn-ad-tab" id="btn-ad-tab-pdf" onclick="switchAdTab('pdf')" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 2px 8px; border-radius: 5px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">
-                📄 Tariff PDF
-              </button>
-            </div>
-          </div>
-
-          <!-- Dynamic Screen-Fitting Ad Body -->
-          <div id="ad-content-viewport" style="padding: 0.45rem 0.65rem; min-height: 95px; box-sizing: border-box; background: #ffffff;">
-            <!-- Injected dynamically via renderActiveAd() -->
-          </div>
-
-          <!-- Ad Box Navigation & Action Footer -->
-          <div id="ad-action-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 3px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem;">
-            <div id="ad-pagination-indicator" style="color: #64748b; font-weight: 800; font-size: 0.65rem;">
-              Showing 1 of 3 Ads
-            </div>
-            <div style="display: flex; gap: 4px;">
-              <button type="button" onclick="cyclePreviousAd()" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer;">◀ Prev</button>
-              <button type="button" onclick="cycleNextAd()" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer;">Next ▶</button>
-            </div>
-          </div>
-        </div><!-- /#live-ads-showcase-box -->
+          <!-- 🔊 MAP VIDEO MUTE / UNMUTE BUTTON (SOUND ACTIVE BY DEFAULT) -->
+          <button type="button" id="btn-map-video-mute-toggle" onclick="toggleMapVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+            <span id="map-video-mute-icon" style="font-size: 0.85rem;">🔊</span>
+            <span id="map-video-mute-label">Mute</span>
+          </button>
+        </div>
 
       </div><!-- /#top-map-container -->
     </section>
@@ -2400,6 +2372,13 @@
         stopProfileHomeVideoAd();
       } else {
         resumeProfileHomeVideoAdIfNeeded();
+      }
+
+      // Play Map Video Ad when on map tab, stop when leaving map
+      if (tab === 'map') {
+        initMapVideoAd();
+      } else {
+        stopMapVideoAd();
       }
 
       // 1. Strict Flip System: ONLY target section is displayed, other sections are 100% hidden!
@@ -5114,157 +5093,76 @@ ET
     }
   
     // =========================================================================
-    // 📢 ASSAM HIGHWAY SPONSORED BANNER SHOWCASE ENGINE (PURE BANNER & PDF)
+    // 🎬 MAP CORRIDOR VIDEO AD CONTROLLER (NEW 10S VIDEO UNDER MAP)
     // =========================================================================
-    let currentAdTab = 'banner';
-    let currentAdIndex = 0;
-
-    const defaultSponsoredAds = [
-      {
-        id: 'ad-banner-1',
-        type: 'banner',
-        title: 'Guwahati ➔ Shillong Highway Express',
-        description: 'Verified AC carpools every 30 mins on GS Road. Flat ₹250 direct UPI fare.',
-        src: 'feature-graphic-1024x500.png',
-        ctaText: '🔍 Book Route',
-        action: 'search_shillong'
-      },
-      {
-        id: 'ad-banner-2',
-        type: 'banner',
-        title: 'Kaziranga Safari & Highway Corridor',
-        description: 'Daily rides along NH-715 Tezpur-Jorhat. Verified driver fleet with live GPS.',
-        src: 'car-bg.jpg',
-        ctaText: '🚙 View Cars',
-        action: 'live-cars'
-      },
-      {
-        id: 'ad-banner-3',
-        type: 'banner',
-        title: 'Upper Assam Express (Jorhat ➔ Dibrugarh)',
-        description: 'Shared corridor rides with verified car owners. Zero commission, direct fare.',
-        src: 'car-bg.png',
-        ctaText: '🚗 Post Ride',
-        action: 'driver'
-      },
-      {
-        id: 'ad-pdf-1',
-        type: 'pdf',
-        title: 'Official SafarSaathi Safety & Tariff Guide (PDF)',
-        description: 'Official route tariff table, passenger security rules & Aadhaar KYC guide.',
-        src: 'safarsaathi_guide.pdf',
-        ctaText: '📥 Download PDF',
-        downloadName: 'SafarSaathi_Official_Guide.pdf'
-      }
-    ];
-
-    let liveAdsDb = [];
-    try {
-      liveAdsDb = JSON.parse(localStorage.getItem('ss_live_ads')) || defaultSponsoredAds;
-    } catch(e) {
-      liveAdsDb = defaultSponsoredAds;
+    function updateMapVideoMuteUi(isMuted) {
+      const icon = document.getElementById('map-video-mute-icon');
+      const label = document.getElementById('map-video-mute-label');
+      if (icon) icon.innerText = isMuted ? '🔇' : '🔊';
+      if (label) label.innerText = isMuted ? 'Unmute' : 'Mute';
     }
 
-    function switchAdTab(tab) {
-      currentAdTab = tab;
-      currentAdIndex = 0;
+    function initMapVideoAd() {
+      const mapVid = document.getElementById('map-video-player');
+      if (!mapVid) return;
 
-      // Update Tab button active styles
-      ['banner', 'pdf'].forEach(t => {
-        const btn = document.getElementById('btn-ad-tab-' + t);
-        if (btn) {
-          if (t === tab) {
-            btn.style.background = '#ffffff';
-            btn.style.color = '#15803d';
-            btn.style.fontWeight = '900';
-          } else {
-            btn.style.background = 'rgba(255,255,255,0.2)';
-            btn.style.color = '#ffffff';
-            btn.style.fontWeight = '800';
-          }
-        }
-      });
+      mapVid.muted = false;
+      mapVid.volume = 1.0;
+      updateMapVideoMuteUi(false);
 
-      renderActiveAd();
-    }
+      const p = mapVid.play();
+      if (p !== undefined) {
+        p.then(() => {
+          updateMapVideoMuteUi(false);
+        }).catch(() => {
+          mapVid.muted = true;
+          mapVid.play().catch(()=>{});
+          updateMapVideoMuteUi(false);
 
-    function getFilteredAds() {
-      const filtered = liveAdsDb.filter(ad => ad.type === currentAdTab);
-      return filtered.length > 0 ? filtered : defaultSponsoredAds.filter(ad => ad.type === currentAdTab);
-    }
-
-    function renderActiveAd() {
-      const container = document.getElementById('ad-content-viewport');
-      const counterEl = document.getElementById('active-ad-counter-badge');
-      const paginationEl = document.getElementById('ad-pagination-indicator');
-      if (!container) return;
-
-      const ads = getFilteredAds();
-      if (counterEl) counterEl.innerText = ads.length + ' Live';
-      if (currentAdIndex >= ads.length) currentAdIndex = 0;
-      if (currentAdIndex < 0) currentAdIndex = ads.length - 1;
-
-      if (paginationEl) {
-        paginationEl.innerText = `Banner ${currentAdIndex + 1} of ${ads.length}`;
-      }
-
-      const ad = ads[currentAdIndex];
-      if (!ad) return;
-
-      if (ad.type === 'banner') {
-        container.innerHTML = `
-          <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-            <div style="width: 120px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1.5px solid #16a34a; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
-              <img src="${ad.src}" alt="${ad.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <span style="background: #fef08a; color: #854d0e; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px;">🖼️ SPONSORED BANNER</span>
-              <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
-              <p style="font-size: 0.68rem; color: #475569; margin: 0 0 4px 0; line-height: 1.25;">${ad.description}</p>
-              <button type="button" onclick="showSection('${ad.action || 'passenger'}')" style="background: #16a34a; color: #ffffff; border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; cursor: pointer;">
-                ${ad.ctaText || '🔍 View Corridor'}
-              </button>
-            </div>
-          </div>
-        `;
-      } else if (ad.type === 'pdf') {
-        container.innerHTML = `
-          <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-            <div style="width: 52px; height: 62px; background: #fef2f2; border: 1.5px solid #ef4444; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(239,68,68,0.15);">
-              <span style="font-size: 1.3rem;">📄</span>
-              <span style="font-size: 0.58rem; font-weight: 900; color: #ef4444;">PDF DOC</span>
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <span style="background: #fee2e2; color: #991b1b; font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 4px;">OFFICIAL BROCHURE</span>
-              <h4 style="font-size: 0.8rem; font-weight: 900; color: #000000; margin: 2px 0 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ad.title}</h4>
-              <p style="font-size: 0.68rem; color: #475569; margin: 0 0 4px 0; line-height: 1.25;">${ad.description}</p>
-              <div style="display: flex; gap: 4px;">
-                <a href="${ad.src}" download="${ad.downloadName || 'SafarSaathi_Brochure.pdf'}" style="background: #15803d; color: #ffffff; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; display: inline-flex; align-items: center; gap: 2px;">
-                  📥 Download PDF
-                </a>
-                <a href="${ad.src}" target="_blank" style="background: #ffffff; color: #15803d; border: 1px solid #16a34a; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 0.66rem; font-weight: 800; display: inline-flex; align-items: center; gap: 2px;">
-                  👁️ View
-                </a>
-              </div>
-            </div>
-          </div>
-        `;
+          const unmuteOnMapTouch = function() {
+            mapVid.muted = false;
+            mapVid.volume = 1.0;
+            updateMapVideoMuteUi(false);
+            if (mapVid.paused) mapVid.play().catch(()=>{});
+            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
+              document.removeEventListener(evt, unmuteOnMapTouch);
+            });
+          };
+          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
+            document.addEventListener(evt, unmuteOnMapTouch, { once: true, passive: true });
+          });
+        });
       }
     }
 
-    function cycleNextAd() {
-      const ads = getFilteredAds();
-      if (ads.length > 0) {
-        currentAdIndex = (currentAdIndex + 1) % ads.length;
-        renderActiveAd();
+    function toggleMapVideoMuteOnly(e) {
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+      const mapVid = document.getElementById('map-video-player');
+      if (!mapVid) return;
+
+      if (!mapVid.muted && mapVid.volume > 0) {
+        mapVid.muted = true;
+        updateMapVideoMuteUi(true);
+        showToast('🔇 Map Video Muted', '#64748b');
+      } else {
+        mapVid.muted = false;
+        mapVid.volume = 1.0;
+        mapVid.play().catch(() => {});
+        updateMapVideoMuteUi(false);
+        showToast('🔊 Audio Active', '#15803d');
       }
     }
 
-    function cyclePreviousAd() {
-      const ads = getFilteredAds();
-      if (ads.length > 0) {
-        currentAdIndex = (currentAdIndex - 1 + ads.length) % ads.length;
-        renderActiveAd();
+    function stopMapVideoAd() {
+      const mapVid = document.getElementById('map-video-player');
+      if (mapVid) {
+        try {
+          mapVid.pause();
+          mapVid.currentTime = 0;
+        } catch(e){}
       }
     }
 
