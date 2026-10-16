@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v50-map-video-and-profile-video)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v51-map-zero-scroll-fit)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v50-map-video-and-profile-video';
+const CACHE_NAME = 'safarsaathi-v51-map-zero-scroll-fit';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

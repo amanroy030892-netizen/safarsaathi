@@ -73,11 +73,9 @@
           const usableH = Math.max(winHeight - topBarH - 12, 180);
           document.documentElement.style.setProperty('--app-usable-height', `${usableH}px`);
 
-          // Auto-scale map & chat dynamically based on exact screen height
-          let autoMapH = Math.round(usableH * 0.58);
+          // Auto-scale map: Shared with the video ad below it for 100% ZERO-SCROLL screen fit!
+          let autoMapH = Math.max(135, Math.min(Math.round(usableH * 0.36), 170));
           let autoChatH = Math.round(usableH * 0.48);
-
-          autoMapH = Math.max(190, Math.min(autoMapH, 310));
           autoChatH = Math.max(140, Math.min(autoChatH, 250));
 
           document.documentElement.style.setProperty('--auto-map-height', `${autoMapH}px`);
@@ -1299,7 +1297,7 @@
           </div>
 
                     <!-- Screen-Fitting Compact Live Google Maps Viewport (Zero-Scroll Lock) -->
-          <div id="google-live-map-div" style="height: var(--auto-map-height, min(44vh, 280px)); min-height: 190px; width: 100%; position: relative; background: #e8f5e9; overflow: hidden;">
+          <div id="google-live-map-div" style="height: var(--auto-map-height, 160px); min-height: 135px; max-height: 175px; width: 100%; position: relative; background: #e8f5e9; overflow: hidden;">
             <!-- Interactive Vector Route Map of Assam (Always renders, even offline!) -->
             <svg id="assam-vector-map" viewBox="0 0 600 280" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; display: block; position: absolute; top:0; left:0;">
               <!-- Background Terrain -->
@@ -1429,7 +1427,7 @@
         </div><!-- /#route-map-card -->
 
         <!-- 🎬 MAP CORRIDOR VIDEO PLAYER (NEW 10S VIDEO AD • ZERO BANNERS • CONTINUOUS PLAY WITH SOUND) -->
-        <div id="map-video-ad-box" style="position: relative; margin-top: 0.45rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(22vh, 145px); max-height: 145px;">
+        <div id="map-video-ad-box" style="position: relative; margin-top: 0.3rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(18vh, 120px); max-height: 120px;">
           <video id="map-video-player" src="map_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 10px;"></video>
           
           <!-- 🔊 MAP VIDEO MUTE / UNMUTE BUTTON (SOUND ACTIVE BY DEFAULT) -->
