@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    match /ss_rides/{rideId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+                    && request.resource.data.seatsAvailable is int
+                    && request.resource.data.seatsAvailable >= 0
+                    && request.resource.data.farePerSeat is int
+                    && request.resource.data.farePerSeat > 0;
+      allow update, delete: if isAuthenticated() && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
+    }
+    match /ss_bookings/{bookingId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.passengerId || request.auth.uid == resource.data.driverId || request.auth.token.admin == true);
+      allow create: if isAuthenticated() && request.resource.data.seatsBooked is int && request.resource.data.seatsBooked > 0;
+      allow update: if isAuthenticated() && (request.auth.uid == resource.data.passengerId || request.auth.uid == resource.data.driverId || request.auth.token.admin == true);
+      allow delete: if isAuthenticated() && request.auth.token.admin == true;
+    }
+    match /ss_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.token.admin == true;
+    }
+    match /ss_users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

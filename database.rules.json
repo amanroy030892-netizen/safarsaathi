@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "ss_rides": {
+      ".read": true,
+      ".write": "auth != null",
+      "": {
+        ".validate": "newData.hasChildren(['origin', 'destination', 'farePerSeat', 'seatsAvailable']) && newData.child('seatsAvailable').isNumber()"
+      }
+    },
+    "ss_bookings": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "": {
+        ".validate": "newData.hasChildren(['rideId', 'passengerPhone', 'seatsBooked', 'passengerUtr']) && newData.child('passengerUtr').val().matches(/^[0-9]{12}$/)"
+      }
+    },
+    "ss_telemetry": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "": {
+        ".validate": "newData.hasChildren(['lat', 'lng']) && newData.child('lat').isNumber() && newData.child('lng').isNumber()"
+      }
+    },
+    "ss_settings": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin === true"
+    }
+  }
+}

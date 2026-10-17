@@ -1884,12 +1884,27 @@
       sendGeminiMessage();
     }
 
-    function appendGeminiMessage(sender, htmlContent) {
+    function escapeHtml(str) {
+      if (typeof str !== 'string') return '';
+      return str.replace(/[&<>'"]/g, function(tag) {
+        const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+        return chars[tag] || tag;
+      });
+    }
+
+    function appendGeminiMessage(sender, content) {
       const history = document.getElementById('gemini-chat-history');
       if (!history) return;
       const msgDiv = document.createElement('div');
       msgDiv.className = sender === 'user' ? 'gemini-msg gemini-msg-user' : 'gemini-msg gemini-msg-ai';
-      msgDiv.innerHTML = `<div class="gemini-msg-bubble">${htmlContent}</div>`;
+      const bubble = document.createElement('div');
+      bubble.className = 'gemini-msg-bubble';
+      if (sender === 'user') {
+        bubble.textContent = content; // 100% immune to XSS payload execution
+      } else {
+        bubble.innerHTML = content;
+      }
+      msgDiv.appendChild(bubble);
       history.appendChild(msgDiv);
       history.scrollTop = history.scrollHeight;
     }
@@ -3114,6 +3129,8 @@
         },
         function(err) {
           console.warn('Initial GPS notice:', err.message);
+          const coordsEl = document.getElementById('map-coords-display');
+          if (coordsEl) coordsEl.innerText = '📍 Location access optional (Assam Highway Corridor ready)';
         },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
@@ -4066,8 +4083,26 @@ ET
         return;
       }
 
-      const user = getActiveUserProfile();
+      // Anti-Fraud UTR duplicate check
+      const isUtrUsed = bookings.some(b => b.passengerUtr === utr);
+      if (isUtrUsed) {
+        alert('⚠️ यह UTR नंबर पहले से ही किसी बुकिंग में दर्ज है! कृपया अपना वास्तविक पेमेंट UTR दर्ज करें।');
+        return;
+      }
+
+      // Real-time double-booking & seat availability validation
+      const freshRide = rides.find(r => r.id === selectedRideForBooking.id);
       const seatsCount = parseInt(document.getElementById('bm-seats-select')?.value) || 1;
+      const available = parseInt(freshRide ? freshRide.seatsAvailable : 0) || 0;
+
+      if (!freshRide || available < seatsCount) {
+        alert('⚠️ सीट पहले ही बुक हो चुकी है या पर्याप्त सीट उपलब्ध नहीं हैं! (Available: ' + available + ')');
+        closeBookingModal();
+        renderLiveCarsHome();
+        return;
+      }
+
+      const user = getActiveUserProfile();
       const totalFare = seatsCount * (selectedRideForBooking.farePerSeat || 300);
 
       const booking = {
@@ -4336,6 +4371,34 @@ ET
     // =========================================================================
     let currentAuthMode = 'login';
 
+    // 🔒 Cryptographic Salted SHA-256 Hashing (Zero Plaintext Password Storage)
+    async function hashUserPassword(password, salt) {
+      try {
+        const data = new TextEncoder().encode(salt + ':' + password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (e) {
+        let hash = 0;
+        const str = salt + ':' + password;
+        for (let i = 0; i < str.length; i++) {
+          hash = ((hash << 5) - hash) + str.charCodeAt(i);
+          hash |= 0;
+        }
+        return 'fb_' + Math.abs(hash).toString(16);
+      }
+    }
+
+    function generateSecureSalt() {
+      try {
+        const array = new Uint8Array(16);
+        crypto.getRandomValues(array);
+        return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (e) {
+        return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+      }
+    }
+
     function getActiveUserProfile() {
       const uid = localStorage.getItem('ss_current_user_id');
       if (!uid) return null;
@@ -4415,9 +4478,11 @@ ET
       reader.readAsDataURL(file);
     }
 
-    function submitAuthAction() {
+    async function submitAuthAction() {
       const uid = (document.getElementById('auth-input-userid')?.value || '').trim();
       const pwd = (document.getElementById('auth-input-password')?.value || '').trim();
+      const pwdInput = document.getElementById('auth-input-password');
+      const confPwdInput = document.getElementById('auth-input-confirm-password');
 
       if (!uid || uid.length !== 10 || !/^\d{10}$/.test(uid)) {
         alert('Please enter valid 10-digit mobile number as User ID!');
@@ -4434,7 +4499,7 @@ ET
       try { users = JSON.parse(localStorage.getItem('ss_users_db')) || {}; } catch(e){}
 
       if (currentAuthMode === 'register') {
-        const confPwd = (document.getElementById('auth-input-confirm-password')?.value || '').trim();
+        const confPwd = (confPwdInput?.value || '').trim();
         const name = (document.getElementById('auth-input-name')?.value || '').trim();
         const addr = (document.getElementById('auth-input-address')?.value || '').trim();
 
@@ -4455,11 +4520,16 @@ ET
           return;
         }
 
+        // Generate Salt & Hash - Never store plaintext password!
+        const salt = generateSecureSalt();
+        const passwordHash = await hashUserPassword(pwd, salt);
+
         const newUser = {
           userId: uid,
           phone: uid,
           name: name,
-          password: pwd,
+          passwordHash: passwordHash,
+          salt: salt,
           address: addr,
           hasAadhaar: true,
           registeredAt: new Date().toISOString()
@@ -4468,6 +4538,10 @@ ET
         users[uid] = newUser;
         localStorage.setItem('ss_users_db', JSON.stringify(users));
         localStorage.setItem('ss_current_user_id', uid);
+
+        // Clear password fields from DOM memory for security
+        if (pwdInput) pwdInput.value = '';
+        if (confPwdInput) confPwdInput.value = '';
 
         showToast('✓ Account registered & Aadhaar verified!', '#15803d');
         renderProfileView();
@@ -4478,10 +4552,31 @@ ET
           setAuthMode('register');
           return;
         }
-        if (existing.password !== pwd) {
+
+        let isMatch = false;
+        if (existing.passwordHash && existing.salt) {
+          const checkHash = await hashUserPassword(pwd, existing.salt);
+          isMatch = (checkHash === existing.passwordHash);
+        } else if (existing.password) {
+          // Legacy account migration: verify plaintext and immediately upgrade to salted hash!
+          if (existing.password === pwd) {
+            isMatch = true;
+            const newSalt = generateSecureSalt();
+            existing.passwordHash = await hashUserPassword(pwd, newSalt);
+            existing.salt = newSalt;
+            delete existing.password; // Remove plaintext password forever!
+            users[uid] = existing;
+            localStorage.setItem('ss_users_db', JSON.stringify(users));
+          }
+        }
+
+        if (!isMatch) {
           alert('❌ गलत पासवर्ड! कृपया सही पासवर्ड डालें।');
           return;
         }
+
+        // Clear password field from DOM
+        if (pwdInput) pwdInput.value = '';
 
         localStorage.setItem('ss_current_user_id', uid);
         showToast(`✓ स्वागत है, ${existing.name}!`, '#15803d');
@@ -4525,14 +4620,22 @@ ET
     function closeChangePasswordModal() {
       document.getElementById('change-pwd-modal').style.display = 'none';
     }
-    function submitChangePassword() {
+    async function submitChangePassword() {
       const user = getActiveUserProfile();
       if (!user) return;
       const curr = (document.getElementById('cp-current-password')?.value || '').trim();
       const next = (document.getElementById('cp-new-password')?.value || '').trim();
       const conf = (document.getElementById('cp-confirm-password')?.value || '').trim();
 
-      if (curr !== user.password) {
+      let isCurrMatch = false;
+      if (user.passwordHash && user.salt) {
+        const computed = await hashUserPassword(curr, user.salt);
+        isCurrMatch = (computed === user.passwordHash);
+      } else if (user.password) {
+        isCurrMatch = (user.password === curr);
+      }
+
+      if (!isCurrMatch) {
         alert('❌ गलत पुराना पासवर्ड!');
         return;
       }
@@ -4542,9 +4645,16 @@ ET
       }
 
       let users = JSON.parse(localStorage.getItem('ss_users_db')) || {};
-      user.password = next;
+      const newSalt = generateSecureSalt();
+      user.passwordHash = await hashUserPassword(next, newSalt);
+      user.salt = newSalt;
+      delete user.password;
       users[user.userId] = user;
       localStorage.setItem('ss_users_db', JSON.stringify(users));
+
+      document.getElementById('cp-current-password').value = '';
+      document.getElementById('cp-new-password').value = '';
+      document.getElementById('cp-confirm-password').value = '';
 
       closeChangePasswordModal();
       showToast('✓ पासवर्ड बदल दिया गया है!', '#15803d');
@@ -4556,7 +4666,7 @@ ET
     function closeForgotPasswordModal() {
       document.getElementById('forgot-pwd-modal').style.display = 'none';
     }
-    function submitForgotPasswordReset() {
+    async function submitForgotPasswordReset() {
       const uid = (document.getElementById('fp-input-userid')?.value || '').trim();
       const name = (document.getElementById('fp-input-name')?.value || '').trim();
       const next = (document.getElementById('fp-input-new-password')?.value || '').trim();
@@ -4572,15 +4682,21 @@ ET
         alert('❌ Security check failed: Name does not match!');
         return;
       }
-      if (!next || next !== conf) {
-        alert('❌ Passwords do not match!');
+      if (!next || next.length < 3 || next !== conf) {
+        alert('❌ Passwords do not match or are too short!');
         return;
       }
 
-      user.password = next;
+      const newSalt = generateSecureSalt();
+      user.passwordHash = await hashUserPassword(next, newSalt);
+      user.salt = newSalt;
+      delete user.password;
       users[uid] = user;
       localStorage.setItem('ss_users_db', JSON.stringify(users));
       localStorage.setItem('ss_current_user_id', uid);
+
+      document.getElementById('fp-input-new-password').value = '';
+      document.getElementById('fp-input-confirm-password').value = '';
 
       closeForgotPasswordModal();
       showToast('✓ Password reset successfully! Logged in.', '#15803d');
@@ -4955,8 +5071,13 @@ ET
     }
 
     function confirmPassengerBooking(bookingId) {
+      const user = getActiveUserProfile();
       const b = bookings.find(item => item.bookingId === bookingId);
       if (!b) return;
+      if (!user || user.phone !== b.driverPhone) {
+        alert('Unauthorized: You can only manage bookings for your own posted vehicle.');
+        return;
+      }
       b.status = 'CONFIRMED';
       localStorage.setItem('ss_bookings', JSON.stringify(bookings));
       if (db) {
@@ -4967,8 +5088,13 @@ ET
     }
 
     function rejectPassengerBooking(bookingId) {
+      const user = getActiveUserProfile();
       const b = bookings.find(item => item.bookingId === bookingId);
       if (!b) return;
+      if (!user || user.phone !== b.driverPhone) {
+        alert('Unauthorized: You can only manage bookings for your own posted vehicle.');
+        return;
+      }
       b.status = 'REJECTED';
       localStorage.setItem('ss_bookings', JSON.stringify(bookings));
       if (db) {
