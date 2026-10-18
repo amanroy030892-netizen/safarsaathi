@@ -1496,12 +1496,12 @@
       <div class="app-card">
         <!-- Not Logged In View -->
         <div id="prof-auth-view">
-          <!-- Mode Switcher Buttons -->
-          <div style="display: flex; justify-content: center; gap: 6px; margin-bottom: 0.4rem;">
-            <button type="button" class="btn btn-primary" id="btn-auth-mode-login" onclick="setAuthMode('login')" style="flex: 1; padding: 0.4rem; font-size: 0.8rem; font-weight: 800; border-radius: 8px;">
+          <!-- Mode Switcher Buttons (Clean 2-Tab Screen-Fitting Grid) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.4rem;">
+            <button type="button" class="btn btn-primary" id="btn-auth-mode-login" onclick="setAuthMode('login')" style="padding: 0.4rem; font-size: 0.8rem; font-weight: 800; border-radius: 8px;">
               🔑 User ID Login
             </button>
-            <button type="button" class="btn btn-secondary" id="btn-auth-mode-reg" onclick="setAuthMode('register')" style="flex: 1; padding: 0.4rem; font-size: 0.8rem; font-weight: 800; border-radius: 8px;">
+            <button type="button" class="btn btn-secondary" id="btn-auth-mode-reg" onclick="setAuthMode('register')" style="padding: 0.4rem; font-size: 0.8rem; font-weight: 800; border-radius: 8px;">
               ✨ Register Account
             </button>
           </div>
@@ -1525,7 +1525,7 @@
               </div>
             </div>
 
-            <!-- Row 2: Password & Confirm Password -->
+            <!-- Row 2: Password & Confirm Password (for password and register modes) -->
             <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 0.3rem;" id="auth-row-2">
               <div class="form-group" style="margin: 0;" id="auth-pwd-group">
                 <label style="font-size: 0.68rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Password (पासवर्ड)*</label>
@@ -1536,6 +1536,7 @@
                 <input type="password" id="auth-input-confirm-password" class="form-control" placeholder="Re-enter password" style="height: 32px !important; font-size: 0.82rem; padding: 3px 8px;">
               </div>
             </div>
+
 
             <!-- Row 3: Address & Compact 1-Tap Aadhaar Upload (Registration Only) -->
             <div style="display: none; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.4rem;" id="reg-extra-row">
@@ -4417,6 +4418,7 @@ ET
       return !!(u && u.phone && u.hasAadhaar);
     }
 
+
     function setAuthMode(mode) {
       currentAuthMode = mode;
       const btnLog = document.getElementById('btn-auth-mode-login');
@@ -4438,6 +4440,7 @@ ET
         if (confPwdGroup) confPwdGroup.style.display = 'none';
         if (extraRow) extraRow.style.display = 'none';
         if (row1) row1.style.gridTemplateColumns = '1fr';
+        if (row2) row2.style.display = 'grid';
         if (row2) row2.style.gridTemplateColumns = '1fr';
         if (title) title.innerText = 'User ID Login';
         if (sub) sub.innerText = 'Enter 10-digit mobile & secret password';
@@ -4450,6 +4453,7 @@ ET
         if (confPwdGroup) confPwdGroup.style.display = 'block';
         if (extraRow) extraRow.style.display = 'grid';
         if (row1) row1.style.gridTemplateColumns = '1fr 1fr';
+        if (row2) row2.style.display = 'grid';
         if (row2) row2.style.gridTemplateColumns = '1fr 1fr';
         if (title) title.innerText = 'Register Free Account';
         if (sub) sub.innerText = 'Aadhaar AI 100% Free Verification';
@@ -4457,6 +4461,7 @@ ET
         if (fpLink) fpLink.style.display = 'none';
       }
     }
+
 
     function handleAuthAadhaarScan(event) {
       const file = event.target.files[0];
@@ -4489,6 +4494,8 @@ ET
         document.getElementById('auth-input-userid')?.focus();
         return;
       }
+
+
       if (!pwd || pwd.length < 3) {
         alert('Please enter password of at least 3 characters!');
         document.getElementById('auth-input-password')?.focus();

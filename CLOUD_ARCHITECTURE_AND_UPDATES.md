@@ -23,7 +23,7 @@
 ---
 
 ## 4. Admin Panel Performance (एडमिन पैनल कितना फास्ट है?)
-* **Instant Activation (<50ms):** When the Admin taps `✅ Verify ₹100 & Go Live` on `admin.html` (PIN: 1432), the approval writes directly to Firestore in ~50ms.
+* **Instant Activation (<50ms):** When the Admin taps `✅ Verify ₹100 & Go Live` on `admin.html` (Authenticated via Secure Dynamic ADMIN_SECRET), the approval writes directly to Firestore in ~50ms.
 * **Multi-Device Broadcast:** Every connected passenger and driver phone instantly reflects the approved live vehicle without any lag or refresh needed.
 
 ---

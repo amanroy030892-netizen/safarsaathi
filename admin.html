@@ -445,29 +445,19 @@
           sessionStorage.setItem('ss_admin_token', resData.token);
           authSuccessful = true;
         } else if (resp.status === 429) {
-          alert('❌ ' + (resData.error || 'Too many attempts. Please wait 15 minutes.'));
+          alert('❌ ' + (resData.error || 'Too many login attempts. Please wait 15 minutes.'));
+          if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = '🔓 Authenticate & Log In ➔'; }
+          return;
+        } else {
+          alert('❌ ' + (resData.error || 'Invalid Admin Secret Key. Access Denied.'));
           if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = '🔓 Authenticate & Log In ➔'; }
           return;
         }
       } catch (err) {
-        console.warn('Backend server not reachable directly, checking cryptographic hash fallback');
-      }
-
-      if (!authSuccessful) {
-        try {
-          const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('safarsaathi_salt_' + pin));
-          const hashArray = Array.from(new Uint8Array(hashBuffer));
-          const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-          const validHashes = [
-            '5fecb43e8a49c95cb38b29d4791fe9cf0c9523277cb707bbdcf8fa5c26ca0d9b',
-            'e0dfdd7a810f63aeebead66219808381bf482d3bc9199a0d8ff0463bf903d7df'
-          ];
-          if (validHashes.includes(hashHex)) {
-            sessionStorage.setItem('ss_admin_authed', 'true');
-            sessionStorage.setItem('ss_admin_token', 'offline_auth_' + Date.now());
-            authSuccessful = true;
-          }
-        } catch(e){}
+        console.error('Admin auth server connection failed:', err);
+        alert('⚠️ सुरक्षा त्रुटि: एडमिन ऑथेंटिकेशन केवल सुरक्षित सर्वर (/api/admin/login) से सत्यापित किया जाता है। कृपया बैकएंड सर्वर (node server.js) चालू होने की पुष्टि करें।');
+        if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = '🔓 Authenticate & Log In ➔'; }
+        return;
       }
 
       if (loginBtn) {

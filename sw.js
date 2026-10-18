@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v51-map-zero-scroll-fit)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v52-clean-zero-otp-auth)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v51-map-zero-scroll-fit';
+const CACHE_NAME = 'safarsaathi-v52-clean-zero-otp-auth';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
