@@ -1282,7 +1282,7 @@
                 <strong style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">SafarSaathi Supercar Race</strong>
               </div>
               <div style="font-size: 0.72rem; color: #dcfce7; font-weight: 700; margin-top: 2px;">
-                ⚡ 3-Car Showdown • Lowest Total Bet Car WINS! • 3x Winnings
+                ⚡ 3-Car Showdown • Lowest Total Bet Car WINS! • 2x Winnings (Double Payout)
               </div>
             </div>
 
@@ -1302,10 +1302,10 @@
                 <span>Buy Coins</span>
               </button>
 
-              <!-- Daily Bonus Button -->
-              <button type="button" onclick="claimDailyBonus()" style="background: #fef08a; color: #854d0e; border: 1.5px solid #eab308; padding: 6px 9px; border-radius: 20px; font-weight: 900; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; gap: 3px; white-space: nowrap;" title="Claim 20 Free Coins Daily">
-                <span>🎁</span>
-                <span>Bonus</span>
+              <!-- Withdraw Winnings Button -->
+              <button type="button" onclick="openWithdrawCoinsModal()" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); white-space: nowrap;">
+                <span>💸</span>
+                <span>Withdraw</span>
               </button>
             </div>
           </div>
@@ -1314,7 +1314,7 @@
           <div style="background: #f0fdf4; border-bottom: 1.5px solid #86efac; padding: 0.5rem 0.85rem; font-size: 0.75rem; color: #14532d; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
             <div style="display: flex; align-items: center; gap: 6px;">
               <span style="font-size: 0.95rem;">🎯</span>
-              <span><strong>Winning Rule:</strong> जिस कार पर <b>सबसे कम बेट (Lowest Bet)</b> लगेगा, वही रेस जीतेगी! अगर आपकी कार जीती, तो आपको <b>3x (300%)</b> कॉइन्स मिलेंगे!</span>
+              <span><strong>Winning Rule:</strong> जिस कार पर <b>सबसे कम बेट (Lowest Bet)</b> लगेगा, वही रेस जीतेगी! अगर आपकी कार जीती, तो आपको <b>2x (200%)</b> कॉइन्स मिलेंगे! (जैसे 🪙 50 लगाने पर 🪙 100 मिलेंगे)</span>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
               <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: #ffffff; border: 1px solid #16a34a; color: #15803d; border-radius: 6px; padding: 2px 8px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">
@@ -5733,7 +5733,7 @@ ET
       isRaceRunning = false;
       const winnerCar = currentRaceCars[winningIndex];
       const playerBetOnWinner = currentPlayerBets[winningIndex];
-      const winPayout = playerBetOnWinner * 3;
+      const winPayout = playerBetOnWinner * 2;
 
       // Sound
       playWinFanfare();
@@ -5800,18 +5800,191 @@ ET
       }
     }
 
-    // Daily Bonus: 20 Coins Free Every Day
-    function claimDailyBonus() {
-      const today = new Date().toISOString().split('T')[0];
-      const lastClaim = localStorage.getItem('ss_last_daily_bonus');
-      if (lastClaim === today) {
-        alert('🎁 Aapne aaj ka Daily Bonus pehle hi le liya hai! Kal wapas aaiye.');
+    // =========================================================================
+    // 💸 WITHDRAW COINS CONTROLLER (1 COIN = ₹1 VIA DIRECT UPI TRANSFER)
+    // =========================================================================
+    let selectedWithdrawCoinPack = 100;
+
+    function openWithdrawCoinsModal() {
+      const balance = getGameCoins();
+      const balEl = document.getElementById('wd-balance-display');
+      const valEl = document.getElementById('wd-balance-val');
+      if (balEl) balEl.innerText = balance;
+      if (valEl) valEl.innerText = balance;
+
+      // Auto-populate user details if logged in
+      const user = getActiveUserProfile();
+      const nameInp = document.getElementById('wd-name-input');
+      const phoneInp = document.getElementById('wd-phone-input');
+      const upiInp = document.getElementById('wd-upi-input');
+      if (user) {
+        if (nameInp && !nameInp.value) nameInp.value = user.name || '';
+        if (phoneInp && !phoneInp.value) phoneInp.value = user.phone || '';
+        if (upiInp && !upiInp.value) upiInp.value = user.phone ? (user.phone + '@upi') : '';
+      }
+
+      // Default amount
+      selectWithdrawCoins(Math.min(balance, 100) || 50);
+      renderWithdrawalHistory();
+
+      const modal = document.getElementById('withdraw-coins-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeWithdrawCoinsModal() {
+      const modal = document.getElementById('withdraw-coins-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function selectWithdrawCoins(coins) {
+      const currentBal = getGameCoins();
+      let targetCoins = coins;
+      if (coins === 'max') {
+        targetCoins = Math.max(50, currentBal);
+      }
+      targetCoins = parseInt(targetCoins) || 50;
+      selectedWithdrawCoinPack = targetCoins;
+
+      const coinsInp = document.getElementById('wd-coins-input');
+      if (coinsInp) coinsInp.value = targetCoins;
+
+      [50, 100, 200, 500].forEach(c => {
+        const btn = document.getElementById('wd-chip-' + c);
+        if (btn) {
+          const match = (c === targetCoins);
+          btn.style.background = match ? '#16a34a' : '#ffffff';
+          btn.style.color = match ? '#ffffff' : '#15803d';
+          btn.style.borderColor = match ? '#15803d' : '#16a34a';
+        }
+      });
+      const maxBtn = document.getElementById('wd-chip-max');
+      if (maxBtn) {
+        const isMax = (coins === 'max' || targetCoins === currentBal);
+        maxBtn.style.background = isMax ? '#16a34a' : '#ffffff';
+        maxBtn.style.color = isMax ? '#ffffff' : '#15803d';
+        maxBtn.style.borderColor = isMax ? '#15803d' : '#16a34a';
+      }
+
+      updateWithdrawAmountDisplay();
+    }
+
+    function updateWithdrawAmountDisplay() {
+      const coinsInp = document.getElementById('wd-coins-input');
+      const val = parseInt(coinsInp ? coinsInp.value : 0) || 0;
+      const textEl = document.getElementById('wd-payout-text');
+      if (textEl) textEl.innerText = val.toString();
+    }
+
+    function submitWithdrawCoins() {
+      const balance = getGameCoins();
+      const coinsInp = document.getElementById('wd-coins-input');
+      const withdrawCoins = parseInt(coinsInp ? coinsInp.value : 0) || 0;
+
+      if (withdrawCoins < 50) {
+        alert('⚠️ न्यूनतम विड्रॉल 50 कॉइन्स (₹50) है!');
+        if (coinsInp) coinsInp.focus();
         return;
       }
-      localStorage.setItem('ss_last_daily_bonus', today);
-      setGameCoins(getGameCoins() + 20);
+
+      if (withdrawCoins > balance) {
+        alert('⚠️ आपके वॉलेट में केवल 🪙 ' + balance + ' कॉइन्स उपलब्ध हैं!\nआप 🪙 ' + withdrawCoins + ' कॉइन्स नहीं निकाल सकते।');
+        return;
+      }
+
+      const upiInp = document.getElementById('wd-upi-input');
+      const upi = (upiInp ? upiInp.value : '').trim();
+      if (!upi || !upi.includes('@')) {
+        alert('कृपया अपना सही और वैध UPI ID दर्ज करें (उदा. 9864012345@upi या name@okhdfcbank)!');
+        if (upiInp) upiInp.focus();
+        return;
+      }
+
+      const nameInp = document.getElementById('wd-name-input');
+      const name = (nameInp ? nameInp.value : '').trim() || 'SafarSaathi Player';
+
+      const phoneInp = document.getElementById('wd-phone-input');
+      const phone = (phoneInp ? phoneInp.value : '').trim() || (getActiveUserProfile()?.phone || '');
+
+      // Deduct coins immediately
+      const newBal = setGameCoins(balance - withdrawCoins);
+
+      // Create withdrawal record
+      const reqId = 'SS-WD-' + Math.floor(10000 + Math.random() * 90000);
+      const reqTime = new Date().toISOString();
+      const withdrawalRecord = {
+        id: reqId,
+        coins: withdrawCoins,
+        amount: withdrawCoins,
+        upiId: upi,
+        name: name,
+        phone: phone,
+        status: 'PENDING',
+        timestamp: reqTime
+      };
+
+      let history = JSON.parse(localStorage.getItem('ss_withdrawals')) || [];
+      history.unshift(withdrawalRecord);
+      localStorage.setItem('ss_withdrawals', JSON.stringify(history));
+
+      // Push to Firestore if online
+      if (typeof db !== 'undefined' && db) {
+        try {
+          db.collection('ss_withdrawals').doc(reqId).set(withdrawalRecord, { merge: true });
+        } catch(e){}
+      }
+
+      // Update UI in modal
+      const balEl = document.getElementById('wd-balance-display');
+      const valEl = document.getElementById('wd-balance-val');
+      if (balEl) balEl.innerText = newBal;
+      if (valEl) valEl.innerText = newBal;
+      renderWithdrawalHistory();
+
+      // Sound & Toast
       playCoinSound();
-      showToast('🎁 Daily Bonus: +20 Free Coins added to your wallet!', '#15803d');
+      showToast('✓ Withdrawal Request ' + reqId + ' Submitted (₹' + withdrawCoins + ')!', '#15803d');
+
+      // WhatsApp Alert to Admin for instant payout verification
+      const waMsg = '*SAFARSAATHI GAME COIN WITHDRAWAL REQUEST*%0A%0A' +
+        '🆔 *Request ID:* ' + reqId + '%0A' +
+        '🪙 *Coins Redeemed:* ' + withdrawCoins + ' Coins%0A' +
+        '💰 *Payout Amount:* Rs. ' + withdrawCoins + '%0A' +
+        '📲 *Send Money to UPI:* ' + upi + '%0A' +
+        '👤 *Player Name:* ' + encodeURIComponent(name) + '%0A' +
+        '📞 *Mobile:* ' + phone + '%0A' +
+        '📅 *Time:* ' + encodeURIComponent(new Date().toLocaleString()) + '%0A%0A' +
+        'Please credit Rs. ' + withdrawCoins + ' to ' + upi + ' via UPI.';
+
+      setTimeout(() => {
+        if (confirm('🎉 विड्रॉल रिक्वेस्ट ' + reqId + ' सफल रही!\n\nराशि: ₹' + withdrawCoins + '\nUPI: ' + upi + '\n\nक्या आप एडमिन को तुरंत WhatsApp पर विड्रॉल नोटिफिकेशन भेजना चाहते हैं ताकि तुरंत पेमेंट हो सके?')) {
+          window.open('https://wa.me/916901027507?text=' + waMsg, '_blank');
+        }
+      }, 300);
+    }
+
+    function renderWithdrawalHistory() {
+      const histEl = document.getElementById('wd-history-list');
+      if (!histEl) return;
+      let history = JSON.parse(localStorage.getItem('ss_withdrawals')) || [];
+      if (history.length === 0) {
+        histEl.innerHTML = '<span style="font-size: 0.68rem; color: #94a3b8; font-style: italic;">No withdrawal requests yet.</span>';
+        return;
+      }
+      histEl.innerHTML = history.slice(0, 5).map(item => {
+        const isPaid = (item.status === 'PAID' || item.status === 'COMPLETED');
+        const badgeColor = isPaid ? '#15803d' : '#d97706';
+        const badgeBg = isPaid ? '#dcfce7' : '#fef3c7';
+        const badgeText = isPaid ? '🟢 Paid' : '⏳ Processing';
+        return `
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem;">
+            <div>
+              <strong style="color: #0f172a; font-family: monospace;">${item.id}</strong>
+              <span style="color: #64748b; margin-left: 4px;">• ₹${item.amount} ➔ ${item.upiId}</span>
+            </div>
+            <span style="background: ${badgeBg}; color: ${badgeColor}; font-weight: 800; font-size: 0.65rem; padding: 1px 6px; border-radius: 4px;">${badgeText}</span>
+          </div>
+        `;
+      }).join('');
     }
 
     // =========================================================================
@@ -6349,5 +6522,96 @@ ET
 
     </div>
   </div>
+
+  <!-- ==================== 💸 WITHDRAW COINS / CASH OUT MODAL (1 COIN = ₹1) ==================== -->
+  <div class="modal-backdrop" id="withdraw-coins-modal" style="display: none; z-index: 10003;" onclick="if(event.target===this) closeWithdrawCoinsModal();">
+    <div class="modal-card" style="background: #ffffff; color: #000000; border: 2px solid #16a34a; border-radius: 18px; max-width: 440px; width: 92vw; padding: 1.2rem; box-sizing: border-box; text-align: center;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.45rem;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 1.25rem;">💸</span>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #15803d; margin: 0;">Withdraw Coins (पैसे निकालें)</h3>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="closeWithdrawCoinsModal()" style="padding: 2px 7px; font-size: 0.8rem; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">✕</button>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 6px 10px; margin-bottom: 0.75rem; font-size: 0.76rem; color: #166534; font-weight: 800;">
+        ⚡ Instant UPI Payout: <b>1 Coin = ₹1</b> • Minimum विड्रॉल: <b>50 कॉइन्स (₹50)</b>
+      </div>
+
+      <!-- Wallet Balance Available to Withdraw -->
+      <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0.65rem 0.85rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.78rem; font-weight: 800; color: #475569;">Aapka Balance:</span>
+        <div style="text-align: right;">
+          <span style="font-size: 1.2rem; font-weight: 900; color: #15803d; font-family: monospace;">🪙 <span id="wd-balance-display">100</span></span>
+          <span style="font-size: 0.68rem; color: #64748b; font-weight: 700; display: block;">(Value: ₹<span id="wd-balance-val">100</span>)</span>
+        </div>
+      </div>
+
+      <!-- Quick Amount Selection Chips -->
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 0.75rem;">
+        <button type="button" onclick="selectWithdrawCoins(50)" id="wd-chip-50" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px 2px; cursor: pointer; font-size: 0.72rem; font-weight: 900; color: #15803d;">
+          ₹50
+        </button>
+        <button type="button" onclick="selectWithdrawCoins(100)" id="wd-chip-100" style="background: #16a34a; color: #ffffff; border: 1.5px solid #15803d; border-radius: 8px; padding: 5px 2px; cursor: pointer; font-size: 0.72rem; font-weight: 900;">
+          ₹100
+        </button>
+        <button type="button" onclick="selectWithdrawCoins(200)" id="wd-chip-200" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px 2px; cursor: pointer; font-size: 0.72rem; font-weight: 900; color: #15803d;">
+          ₹200
+        </button>
+        <button type="button" onclick="selectWithdrawCoins(500)" id="wd-chip-500" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px 2px; cursor: pointer; font-size: 0.72rem; font-weight: 900; color: #15803d;">
+          ₹500
+        </button>
+        <button type="button" onclick="selectWithdrawCoins('max')" id="wd-chip-max" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px 2px; cursor: pointer; font-size: 0.72rem; font-weight: 900; color: #15803d;">
+          All Max
+        </button>
+      </div>
+
+      <!-- Coins to Withdraw Input -->
+      <div class="form-group" style="margin-bottom: 0.6rem; text-align: left;">
+        <label style="font-size: 0.72rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Coins to Withdraw (पैसे निकालने के लिए कॉइन्स)*</label>
+        <div style="display: flex; align-items: center; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden;">
+          <span style="padding: 0.45rem 0.75rem; background: #f0fdf4; color: #15803d; font-weight: 900; font-size: 0.95rem; border-right: 1.5px solid #16a34a;">🪙</span>
+          <input type="number" id="wd-coins-input" min="50" class="form-control" value="100" oninput="updateWithdrawAmountDisplay()" style="border: none !important; font-size: 1.05rem; font-weight: 900; color: #000000; padding: 6px 10px;">
+        </div>
+      </div>
+
+      <!-- Customer UPI ID for direct payout -->
+      <div class="form-group" style="margin-bottom: 0.6rem; text-align: left;">
+        <label style="font-size: 0.72rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Your Receiving UPI ID (जिसमें पैसे चाहिए)*</label>
+        <input type="text" id="wd-upi-input" class="form-control" placeholder="e.g. 9864012345@upi ya name@okhdfcbank" style="font-size: 0.88rem; font-weight: 800; border: 1.5px solid #16a34a;">
+        <span style="font-size: 0.65rem; color: #64748b; font-weight: 700; margin-top: 2px; display: block;">PhonePe, Google Pay, Paytm ya Bank UPI ID</span>
+      </div>
+
+      <!-- Customer Mobile / Name -->
+      <div class="form-grid-2" style="margin-bottom: 0.65rem; text-align: left;">
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 0.68rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Name (नाम)*</label>
+          <input type="text" id="wd-name-input" class="form-control" placeholder="Aapka Naam" style="height: 34px !important; font-size: 0.8rem;">
+        </div>
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 0.68rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Mobile No.*</label>
+          <input type="tel" id="wd-phone-input" class="form-control" maxlength="10" placeholder="10-digit Mobile" style="height: 34px !important; font-size: 0.8rem;">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitWithdrawCoins()" style="width: 100%; padding: 0.75rem; font-weight: 900; font-size: 0.92rem; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 10px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35); margin-bottom: 0.65rem;">
+        💸 Submit Withdrawal Request (₹<span id="wd-payout-text">100</span>) ➔
+      </button>
+
+      <!-- Customer Recent Withdrawals Section -->
+      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 0.65rem; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span style="font-size: 0.72rem; font-weight: 900; color: #000000;">📜 Recent Withdrawal Requests:</span>
+          <span style="font-size: 0.65rem; color: #15803d; font-weight: 800;">1 Coin = ₹1</span>
+        </div>
+        <div id="wd-history-list" style="max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>

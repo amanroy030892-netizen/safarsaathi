@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v53-car-racing-gaming-zone)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v54-gaming-2x-withdraw-cashout)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v53-car-racing-gaming-zone';
+const CACHE_NAME = 'safarsaathi-v54-gaming-2x-withdraw-cashout';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
