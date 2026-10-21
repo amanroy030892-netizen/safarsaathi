@@ -273,26 +273,6 @@
           <!-- Bookings list populated dynamically -->
         </div>
       </div>
-
-      <!-- 🪙 GAMING ZONE COIN WITHDRAWAL REQUESTS CARD -->
-      <div class="card" style="margin-top: 1.5rem; border: 2px solid #16a34a;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-          <div>
-            <h3 style="font-size: 1.1rem; font-weight: 900; color: white; display: flex; align-items: center; gap: 8px;">
-              <span>🪙</span> <span>Gaming Zone Coin Withdrawals (कस्टमर विड्रॉल रिक्वेस्ट्स)</span>
-            </h3>
-            <span style="font-size: 0.74rem; color: #86efac;">1 Coin = ₹1 • Send UPI payouts to winning customers and mark as paid:</span>
-          </div>
-          <button type="button" class="btn btn-secondary" onclick="renderAdminWithdrawals()">
-            🔄 Refresh Withdrawals
-          </button>
-        </div>
-
-        <div id="adm-withdrawals-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
-          <!-- Withdrawals populated dynamically -->
-        </div>
-      </div>
-
     </div>
         <!-- 🎬 HOME SCREEN SPONSOR VIDEO AD MANAGER (ADMIN ONLY • UP TO 1.5 MIN WITH SOUND) -->
       <div class="card" style="margin-top: 1.5rem; border: 2px solid #16a34a;">
@@ -500,7 +480,6 @@
       syncAdminWithCloud();
       renderAdminVehicles();
       renderAdminBookings();
-      renderAdminWithdrawals();
       loadCurrentPublishedVideoAd();
     }
 
@@ -1521,120 +1500,6 @@ ET
         alert(cloudSyncErrorMsg);
       } else {
         alert('✓ Video Ad updated locally.');
-      }
-    }
-
-
-
-    // =========================================================================
-    // 🪙 GAMING ZONE COIN WITHDRAWALS MANAGEMENT
-    // =========================================================================
-    let withdrawals = JSON.parse(localStorage.getItem('ss_withdrawals')) || [];
-
-    function renderAdminWithdrawals() {
-      withdrawals = JSON.parse(localStorage.getItem('ss_withdrawals')) || [];
-      const container = document.getElementById('adm-withdrawals-list');
-      if (!container) return;
-
-      if (withdrawals.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; color: var(--text-muted); padding: 1.5rem 1rem; background: rgba(15,23,42,0.6); border: 1.5px dashed var(--border-gray); border-radius: 12px; font-size: 0.85rem;">
-            No customer coin withdrawal requests yet.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = withdrawals.map(w => {
-        const isPaid = (w.status === 'PAID' || w.status === 'COMPLETED');
-        const badgeBg = isPaid ? 'rgba(34,197,94,0.2)' : 'rgba(234,179,8,0.2)';
-        const badgeColor = isPaid ? '#4ade80' : '#fef08a';
-        const badgeBorder = isPaid ? '#16a34a' : '#ca8a04';
-        const statusText = isPaid ? '✅ Paid via UPI' : '⏳ Pending Payment';
-
-        const upiPayLink = 'upi://pay?pa=' + encodeURIComponent(w.upiId) + '&pn=' + encodeURIComponent(w.name || 'Winner') + '&am=' + w.amount + '&cu=INR&tn=' + encodeURIComponent('SafarSaathi Game Winnings Payout');
-
-        const waReceipt = encodeURIComponent(
-          '*SAFARSAATHI GAME WINNINGS PAYOUT CONFIRMATION*\n\n' +
-          '🎉 Namaste ' + (w.name || 'Player') + '!\n' +
-          'Aapka SafarSaathi Game Zone ka withdrawal successfully transfer kar diya gaya hai.\n\n' +
-          '🆔 *Request ID:* ' + w.id + '\n' +
-          '🪙 *Coins Redeemed:* ' + (w.coins || w.amount) + ' Coins\n' +
-          '💰 *Amount Paid:* ₹' + w.amount + '\n' +
-          '📲 *Credited to UPI:* ' + w.upiId + '\n' +
-          '📅 *Date:* ' + new Date(w.timestamp || Date.now()).toLocaleString() + '\n\n' +
-          'Thank you for playing on SafarSaathi Supercar Race!'
-        );
-
-        return `
-          <div style="background: rgba(15,23,42,0.85); border: 1.5px solid ${isPaid ? '#16a34a' : '#eab308'}; border-radius: 14px; padding: 1rem; color: #ffffff;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 6px;">
-              <div>
-                <strong style="color: #fef08a; font-size: 1.05rem;">₹${w.amount} (🪙 ${w.coins || w.amount} Coins)</strong>
-                <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">
-                  Ref: <b style="color: #ffffff; font-family: monospace;">${w.id}</b> • 📅 ${new Date(w.timestamp || Date.now()).toLocaleString()}
-                </div>
-              </div>
-              <span style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder}; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 6px;">
-                ${statusText}
-              </span>
-            </div>
-
-            <div style="font-size: 0.8rem; color: #e2e8f0; line-height: 1.6; margin-bottom: 0.75rem;">
-              <div>👤 <b>Player:</b> ${w.name || 'Player'} (📱 +91 ${w.phone || 'N/A'})</div>
-              <div>📲 <b>Receiving UPI ID:</b> <span style="font-family: monospace; font-weight: 900; color: #86efac; background: #0f172a; padding: 2px 6px; border-radius: 4px; border: 1px solid #16a34a;">${w.upiId}</span></div>
-            </div>
-
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <a href="${upiPayLink}" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.76rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                <span>💸 Pay ₹${w.amount} via UPI App</span>
-              </a>
-              ${!isPaid ? `
-                <button type="button" class="btn btn-success" onclick="markAdminWithdrawalPaid('${w.id}')" style="padding: 0.45rem 0.85rem; font-size: 0.76rem;">
-                  ✅ Mark Paid & Send WhatsApp
-                </button>
-              ` : `
-                <a href="https://wa.me/91${w.phone}?text=${waReceipt}" target="_blank" class="btn btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.76rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                  <span>💬 Re-send WhatsApp Receipt</span>
-                </a>
-              `}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function markAdminWithdrawalPaid(withdrawId) {
-      withdrawals = JSON.parse(localStorage.getItem('ss_withdrawals')) || [];
-      const item = withdrawals.find(w => w.id === withdrawId);
-      if (!item) return;
-
-      item.status = 'PAID';
-      item.paidAt = new Date().toISOString();
-      localStorage.setItem('ss_withdrawals', JSON.stringify(withdrawals));
-
-      if (typeof adminDb !== 'undefined' && adminDb) {
-        try {
-          adminDb.collection('ss_withdrawals').doc(withdrawId).update({ status: 'PAID', paidAt: item.paidAt });
-        } catch(e){}
-      }
-
-      renderAdminWithdrawals();
-      showToast('✓ Withdrawal marked as PAID!', '#16a34a');
-
-      if (item.phone) {
-        const waReceipt = encodeURIComponent(
-          '*SAFARSAATHI GAME WINNINGS PAYOUT CONFIRMATION*\n\n' +
-          '🎉 Namaste ' + (item.name || 'Player') + '!\n' +
-          'Aapka SafarSaathi Game Zone ka withdrawal successfully transfer kar diya gaya hai.\n\n' +
-          '🆔 *Request ID:* ' + item.id + '\n' +
-          '🪙 *Coins Redeemed:* ' + (item.coins || item.amount) + ' Coins\n' +
-          '💰 *Amount Paid:* ₹' + item.amount + '\n' +
-          '📲 *Credited to UPI:* ' + item.upiId + '\n' +
-          '📅 *Date:* ' + new Date(item.paidAt).toLocaleString() + '\n\n' +
-          'Thank you for playing on SafarSaathi Supercar Race!'
-        );
-        window.open('https://wa.me/91' + item.phone + '?text=' + waReceipt, '_blank');
       }
     }
 

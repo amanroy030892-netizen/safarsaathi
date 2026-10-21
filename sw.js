@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v54-gaming-2x-withdraw-cashout)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v54-chamet-race-and-live-map)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v54-gaming-2x-withdraw-cashout';
+const CACHE_NAME = 'safarsaathi-v54-chamet-race-and-live-map';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
