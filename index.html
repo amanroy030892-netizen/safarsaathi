@@ -1377,7 +1377,7 @@
       </div>
     </section>
 
-        <!-- ==================== 4B. 🎮 REALISTIC 24/7 ENDLESS ROAD RACING GAME (30s BET / 60s RACE) ==================== -->
+            <!-- ==================== 4B. 🎮 100% ORIGINAL VIDEO CAR RACING GAME (30s BET / 60s LIVE OVERTAKE RACE) ==================== -->
     <section id="section-gaming" class="app-section" style="display: none;">
       <style>
         @keyframes chametFlipIn {
@@ -1387,62 +1387,44 @@
         .chamet-flip-active {
           animation: chametFlipIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes roadScrollLeft {
-          0% { background-position-x: 0px; }
-          100% { background-position-x: -480px; }
-        }
-        @keyframes curbScrollLeft {
-          0% { background-position-x: 0px; }
-          100% { background-position-x: -48px; }
-        }
-        @keyframes sceneryScrollLeft {
-          0% { transform: translateX(0px); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes wheelSpin {
+        @keyframes wheelSpinFast {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
-        @keyframes carSuspensionBounce {
+        @keyframes carChassisVibe {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-1.8px); }
+          50% { transform: translateY(-1.5px); }
         }
-        @keyframes dustPuff {
-          0% { opacity: 0.75; transform: translateX(0px) scale(0.6); }
-          100% { opacity: 0; transform: translateX(-26px) scale(1.6); }
-        }
-        .road-scrolling-active {
-          animation: roadScrollLeft 0.65s linear infinite !important;
-        }
-        .curb-scrolling-active {
-          animation: curbScrollLeft 0.22s linear infinite !important;
-        }
-        .scenery-scrolling-active {
-          animation: sceneryScrollLeft 4.5s linear infinite !important;
+        @keyframes nitroPulse {
+          0%, 100% { transform: scaleX(1) scaleY(1); opacity: 0.95; }
+          50% { transform: scaleX(1.35) scaleY(1.15); opacity: 1; }
         }
         .wheel-spinning-active .wheel-rotor {
           transform-box: fill-box;
           transform-origin: center;
-          animation: wheelSpin 0.18s linear infinite;
+          animation: wheelSpinFast 0.14s linear infinite;
         }
         .car-running-bounce {
-          animation: carSuspensionBounce 0.24s ease-in-out infinite;
+          animation: carChassisVibe 0.2s ease-in-out infinite;
+        }
+        .nitro-boost-flame {
+          animation: nitroPulse 0.12s ease-in-out infinite;
         }
       </style>
       <div id="gaming-zone-container" style="max-width: 520px; margin: 0 auto; padding: 0;">
-        <div id="chamet-main-card" style="background: linear-gradient(180deg, #161f33 0%, #1c2842 52%, #0f172a 100%); border: 2px solid #eab308; border-radius: 18px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); overflow: hidden; padding: 0; color: #ffffff;">
+        <div id="chamet-main-card" style="background: linear-gradient(180deg, #0b1120 0%, #111827 52%, #090d16 100%); border: 2px solid #eab308; border-radius: 18px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65); overflow: hidden; padding: 0; color: #ffffff;">
 
           <!-- ORIGINAL RACING HEADER & WALLET BAR -->
-          <div style="background: linear-gradient(90deg, #0f172a, #1e293b, #0f172a); padding: 0.45rem 0.65rem; border-bottom: 1.5px solid #eab308; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
+          <div style="background: linear-gradient(90deg, #090d16, #1e293b, #090d16); padding: 0.45rem 0.65rem; border-bottom: 1.5px solid #eab308; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
             <div style="display: flex; align-items: center; gap: 7px;">
               <span style="width: 28px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #fde047 0%, #ca8a04 100%); color: #422006; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.45);">🏁</span>
               <div>
                 <div style="font-size: 0.96rem; font-weight: 900; letter-spacing: 0.5px; color: #ffffff; line-height: 1.05; display: flex; align-items: center; gap: 5px;">
-                  <span>REAL SPEED RACE</span>
-                  <span style="font-size: 0.62rem; background: #16a34a; color: #ffffff; padding: 1px 6px; border-radius: 999px; font-weight: 900;">LIVE</span>
+                  <span>TURBO GP RACING</span>
+                  <span style="font-size: 0.6rem; background: #dc2626; color: #ffffff; padding: 1px 6px; border-radius: 999px; font-weight: 900;">LIVE HD</span>
                 </div>
                 <div style="font-size: 0.6rem; color: #94a3b8; font-weight: 700; margin-top: 1px;">
-                  👥 <span id="race-live-players">1,842</span> Online • Round #<span id="race-round-number">101</span>
+                  👥 <span id="race-live-players">1,842</span> Watching • Round #<span id="race-round-number">101</span>
                 </div>
               </div>
             </div>
@@ -1467,12 +1449,15 @@
 
           <!-- LIVE TIMER & PHASE STATUS BAR (30s BETTING / 60s RACING) -->
           <div style="padding: 0.4rem 0.65rem 0.25rem 0.65rem;">
-            <div style="background: rgba(9, 13, 22, 0.9); border: 1.5px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 5px 8px;">
+            <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(234, 179, 8, 0.45); border-radius: 10px; padding: 5px 8px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <span id="race-status-badge" style="background: #16a34a; color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 900;">
-                  🟢 SELECT VEHICLE (30s)
+                  🟢 SELECT CAR A / B / C (30s)
                 </span>
                 <div style="display: flex; align-items: center; gap: 6px;">
+                  <span id="race-live-order-pill" style="display: none; background: #1e293b; color: #fde047; border: 1px solid #eab308; padding: 2px 8px; border-radius: 999px; font-size: 0.64rem; font-weight: 900; font-family: monospace;">
+                    🥇A 🥈B 🥉C
+                  </span>
                   <span id="race-timer-pill" style="background: #dc2626; color: #ffffff; border: 1px solid #fca5a5; padding: 2px 10px; border-radius: 999px; font-size: 0.74rem; font-weight: 900; font-family: monospace;">
                     ⏱️ 30s
                   </span>
@@ -1490,91 +1475,91 @@
           <!-- =================================================================== -->
           <div id="chamet-betting-page" class="chamet-flip-active" style="padding: 0.2rem 0.65rem 0.55rem 0.65rem;">
 
-            <!-- Road Preview Strip on Betting Page -->
-            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; padding: 5px 7px; margin-bottom: 0.45rem;">
+            <!-- Live Video Preview Strip on Betting Page -->
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; padding: 5px 7px; margin-bottom: 0.45rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                <span style="font-size: 0.62rem; color: #fde047; font-weight: 800;">🛣️ 1-Min Live Scrolling RoadStages:</span>
-                <span style="font-size: 0.6rem; color: #38bdf8; font-weight: 900;">🔒 Mystery Conditions</span>
+                <span style="font-size: 0.62rem; color: #fde047; font-weight: 800;">🎬 1-Min Live Overtake Highway Video:</span>
+                <span style="font-size: 0.6rem; color: #38bdf8; font-weight: 900;">⚡ A vs B vs C</span>
               </div>
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; text-align: center;">
                 <div style="background: linear-gradient(135deg, #334155, #1e293b); color: #f8fafc; font-weight: 900; font-size: 0.64rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #64748b;">
-                  🛣️ Highway &gt;
+                  🛣️ Sector 1 &gt;
                 </div>
                 <div style="background: linear-gradient(135deg, #475569, #1e293b); color: #fde047; font-weight: 900; font-size: 0.66rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #eab308; letter-spacing: 1px;">
-                  ???
+                  ⚡ Overtake Zone
                 </div>
                 <div style="background: linear-gradient(135deg, #475569, #1e293b); color: #fde047; font-weight: 900; font-size: 0.66rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #eab308; letter-spacing: 1px;">
-                  ???
+                  🏁 Photo Finish
                 </div>
               </div>
             </div>
 
-            <!-- 3 VEHICLE CARDS (ONLY FAKE DETAILS SHOWN ON ALL 3 — REAL RUPEE BET IS 100% HIDDEN) -->
+            <!-- 3 VEHICLE CARDS (A, B, C — ONLY FAKE DETAILS SHOWN ON ALL 3 — REAL RUPEE BET IS 100% HIDDEN) -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 0.5rem;">
 
-              <!-- Lane 1 Card -->
+              <!-- Car A Card -->
               <div id="bet-card-0" onclick="placeBetOnCar(0)" style="background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border: 2px solid #475569; border-radius: 14px; padding: 0.5rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: transform 0.12s, border-color 0.15s;">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.6rem; font-weight: 900; background: #eab308; color: #0f172a; padding: 1px 6px; border-radius: 999px;">3.0x</span>
+                    <span style="font-size: 0.62rem; font-weight: 900; background: #ef4444; color: #ffffff; padding: 1px 6px; border-radius: 999px;">CAR A • 3x</span>
                     <span style="font-size: 0.58rem; color: #cbd5e1; font-weight: 800;">👥 <span id="car-fake-riders-0">412</span></span>
                   </div>
                   <div id="car-preview-svg-0" style="margin: 5px auto; width: 100%; height: 44px;"></div>
-                  <strong id="car-name-0" style="font-size: 0.74rem; font-weight: 900; color: #f8fafc; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Supercar</strong>
+                  <strong id="car-name-0" style="font-size: 0.74rem; font-weight: 900; color: #f8fafc; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ferrari GT</strong>
                   <!-- Simulated Fake Crowd Details (Never shows real money) -->
-                  <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 3px 4px; margin-top: 4px;">
-                    <div style="font-size: 0.54rem; color: #94a3b8; font-weight: 700;">🔥 Speed Rating: <span id="car-fake-speed-0" style="color:#38bdf8;">98%</span></div>
+                  <div style="background: rgba(9, 13, 22, 0.9); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 3px 4px; margin-top: 4px;">
+                    <div style="font-size: 0.54rem; color: #94a3b8; font-weight: 700;">🔥 Top Speed: <span id="car-fake-speed-0" style="color:#38bdf8;">318</span> km/h</div>
                     <div style="font-size: 0.72rem; font-weight: 900; color: #fde047; font-family: monospace;">
                       ⚡ <span id="car-total-bet-0">3,001</span>
                     </div>
                   </div>
                 </div>
                 <div id="bet-btn-pill-0" style="margin-top: 6px; background: linear-gradient(90deg, #16a34a, #15803d); color: #ffffff; border-radius: 999px; padding: 4px 6px; font-size: 0.66rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 0 2px 6px rgba(22,163,74,0.35);">
-                  <span id="car-player-bet-0">🎯 Select</span>
+                  <span id="car-player-bet-0">🎯 Select A</span>
                 </div>
               </div>
 
-              <!-- Lane 2 Card -->
+              <!-- Car B Card -->
               <div id="bet-card-1" onclick="placeBetOnCar(1)" style="background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border: 2px solid #475569; border-radius: 14px; padding: 0.5rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: transform 0.12s, border-color 0.15s;">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.6rem; font-weight: 900; background: #eab308; color: #0f172a; padding: 1px 6px; border-radius: 999px;">3.0x</span>
+                    <span style="font-size: 0.62rem; font-weight: 900; background: #2563eb; color: #ffffff; padding: 1px 6px; border-radius: 999px;">CAR B • 3x</span>
                     <span style="font-size: 0.58rem; color: #cbd5e1; font-weight: 800;">👥 <span id="car-fake-riders-1">538</span></span>
                   </div>
                   <div id="car-preview-svg-1" style="margin: 5px auto; width: 100%; height: 44px;"></div>
-                  <strong id="car-name-1" style="font-size: 0.74rem; font-weight: 900; color: #f8fafc; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Superbike</strong>
+                  <strong id="car-name-1" style="font-size: 0.74rem; font-weight: 900; color: #f8fafc; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bugatti V12</strong>
                   <!-- Simulated Fake Crowd Details (Never shows real money) -->
-                  <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 3px 4px; margin-top: 4px;">
-                    <div style="font-size: 0.54rem; color: #94a3b8; font-weight: 700;">🔥 Speed Rating: <span id="car-fake-speed-1" style="color:#38bdf8;">97%</span></div>
+                  <div style="background: rgba(9, 13, 22, 0.9); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 3px 4px; margin-top: 4px;">
+                    <div style="font-size: 0.54rem; color: #94a3b8; font-weight: 700;">🔥 Top Speed: <span id="car-fake-speed-1" style="color:#38bdf8;">322</span> km/h</div>
                     <div style="font-size: 0.72rem; font-weight: 900; color: #fde047; font-family: monospace;">
                       ⚡ <span id="car-total-bet-1">3,002</span>
                     </div>
                   </div>
                 </div>
                 <div id="bet-btn-pill-1" style="margin-top: 6px; background: linear-gradient(90deg, #16a34a, #15803d); color: #ffffff; border-radius: 999px; padding: 4px 6px; font-size: 0.66rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 0 2px 6px rgba(22,163,74,0.35);">
-                  <span id="car-player-bet-1">🎯 Select</span>
+                  <span id="car-player-bet-1">🎯 Select B</span>
                 </div>
               </div>
 
-              <!-- Lane 3 Card -->
+              <!-- Car C Card -->
               <div id="bet-card-2" onclick="placeBetOnCar(2)" style="background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border: 2px solid #475569; border-radius: 14px; padding: 0.5rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.4); transition: transform 0.12s, border-color 0.15s;">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.6rem; font-weight: 900; background: #eab308; color: #0f172a; padding: 1px 6px; border-radius: 999px;">3.0x</span>
+                    <span style="font-size: 0.62rem; font-weight: 900; background: #eab308; color: #0f172a; padding: 1px 6px; border-radius: 999px;">CAR C • 3x</span>
                     <span style="font-size: 0.58rem; color: #cbd5e1; font-weight: 800;">👥 <span id="car-fake-riders-2">489</span></span>
                   </div>
                   <div id="car-preview-svg-2" style="margin: 5px auto; width: 100%; height: 44px;"></div>
-                  <strong id="car-name-2" style="font-size: 0.74rem; font-weight: 900; color: #f8fafc; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Monster 4x4</strong>
+                  <strong id="car-name-2" style="font-size: 0.74rem; font-weight: 900; color: #f8fafc; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Lamborghini</strong>
                   <!-- Simulated Fake Crowd Details (Never shows real money) -->
-                  <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 3px 4px; margin-top: 4px;">
-                    <div style="font-size: 0.54rem; color: #94a3b8; font-weight: 700;">🔥 Speed Rating: <span id="car-fake-speed-2" style="color:#38bdf8;">99%</span></div>
+                  <div style="background: rgba(9, 13, 22, 0.9); border: 1px solid rgba(234, 179, 8, 0.35); border-radius: 6px; padding: 3px 4px; margin-top: 4px;">
+                    <div style="font-size: 0.54rem; color: #94a3b8; font-weight: 700;">🔥 Top Speed: <span id="car-fake-speed-2" style="color:#38bdf8;">320</span> km/h</div>
                     <div style="font-size: 0.72rem; font-weight: 900; color: #fde047; font-family: monospace;">
                       ⚡ <span id="car-total-bet-2">3,003</span>
                     </div>
                   </div>
                 </div>
                 <div id="bet-btn-pill-2" style="margin-top: 6px; background: linear-gradient(90deg, #16a34a, #15803d); color: #ffffff; border-radius: 999px; padding: 4px 6px; font-size: 0.66rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 0 2px 6px rgba(22,163,74,0.35);">
-                  <span id="car-player-bet-2">🎯 Select</span>
+                  <span id="car-player-bet-2">🎯 Select C</span>
                 </div>
               </div>
 
@@ -1602,127 +1587,111 @@
           </div>
 
           <!-- =================================================================== -->
-          <!-- PAGE 2: 🏎️ 1-MINUTE REALISTIC ENDLESS SCROLLING ROAD RACE PAGE      -->
+          <!-- PAGE 2: 🏎️ 1-MINUTE ORIGINAL VIDEO RACING & BACK-AND-FORTH OVERTAKES -->
           <!-- =================================================================== -->
           <div id="chamet-track-page" style="display: none; padding: 0.2rem 0.65rem 0.65rem 0.65rem;">
 
-            <!-- ROAD STAGE PROGRESS BAR (Highway -> Bumpy Pothole -> Off-Road Finish) -->
-            <div style="background: rgba(9, 13, 22, 0.9); border: 1.5px solid rgba(234, 179, 8, 0.45); border-radius: 10px; padding: 5px 8px; margin-bottom: 0.4rem;">
+            <!-- LIVE DISTANCE & SECTOR TELEMETRY BAR -->
+            <div style="background: rgba(9, 13, 22, 0.92); border: 1.5px solid rgba(234, 179, 8, 0.45); border-radius: 10px; padding: 5px 8px; margin-bottom: 0.4rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-size: 0.62rem; color: #fde047; font-weight: 900;">🛣️ Live Road Distance: <span id="race-distance-meter" style="color:#38bdf8; font-family:monospace;">0m / 1800m</span></span>
+                <span style="font-size: 0.62rem; color: #fde047; font-weight: 900;">🎬 Live Camera Distance: <span id="race-distance-meter" style="color:#38bdf8; font-family:monospace;">0m / 3000m</span></span>
                 <button type="button" id="btn-toggle-road-hide" onclick="toggleRoadTrackVisibility()" style="background: rgba(234, 179, 8, 0.18); color: #fde047; border: 1px solid #eab308; border-radius: 999px; padding: 1px 7px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">
-                  <span id="road-hide-icon">🙈</span> <span id="road-hide-text">Hide Track</span>
+                  <span id="road-hide-icon">🙈</span> <span id="road-hide-text">Hide Video</span>
                 </button>
               </div>
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; text-align: center;">
-                <div id="road-seg-0" style="background: #eab308; color: #0f172a; font-weight: 900; font-size: 0.63rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fef08a;">
-                  🛣️ Highway &gt;
+                <div id="road-seg-0" style="background: #eab308; color: #0f172a; font-weight: 900; font-size: 0.62rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fef08a;">
+                  🛣️ Launch &amp; Draft &gt;
                 </div>
-                <div id="road-seg-1" style="background: #1e293b; color: #94a3b8; font-weight: 900; font-size: 0.63rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #475569;">
-                  🚧 Bumpy Road &gt;
+                <div id="road-seg-1" style="background: #1e293b; color: #94a3b8; font-weight: 900; font-size: 0.62rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #475569;">
+                  ⚡ Cross Overtakes &gt;
                 </div>
-                <div id="road-seg-2" style="background: #1e293b; color: #94a3b8; font-weight: 900; font-size: 0.63rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #475569;">
-                  🪨 Off-Road &gt;
+                <div id="road-seg-2" style="background: #1e293b; color: #94a3b8; font-weight: 900; font-size: 0.62rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #475569;">
+                  🏁 Final Sprint &gt;
                 </div>
               </div>
             </div>
 
-            <!-- REALISTIC ENDLESS SCROLLING 3-LANE HIGHWAY & TERRAIN ARENA -->
+            <!-- REAL MP4 RACING TRACK VIDEO + 3-LANE OVERTAKING ARENA -->
             <div id="chamet-track-wrapper">
-              <!-- Scrolling Roadside Scenery Horizon (Sky, Mountains, Moving Trees & Guardrail) -->
-              <div style="height: 36px; background: linear-gradient(180deg, #0284c7 0%, #38bdf8 55%, #15803d 55%, #166534 100%); border-radius: 10px 10px 0 0; border: 2px solid #eab308; border-bottom: none; position: relative; overflow: hidden;">
-                <!-- Distant Mountains -->
-                <svg viewBox="0 0 600 22" preserveAspectRatio="none" style="position:absolute; top:4px; left:0; width:100%; height:17px; opacity:0.55;">
-                  <polygon points="0,22 45,4 95,22 160,2 230,22 310,6 390,22 465,3 540,22 600,8 600,22" fill="#0f172a"/>
-                </svg>
-                <!-- Endless Scrolling Trees & Highway Lamps Strip -->
-                <div id="scenery-scroll-strip" class="scenery-scrolling-active" style="position: absolute; bottom: 2px; left: 0; width: 200%; height: 20px; display: flex; align-items: flex-end; justify-content: space-around; font-size: 0.85rem; pointer-events: none; user-select: none;">
-                  <span>🌲</span><span>🌳</span><span>🌴</span><span>🌲</span><span>🌳</span><span>🌲</span><span>🌴</span><span>🌳</span><span>🌲</span><span>🌳</span>
-                  <span>🌲</span><span>🌳</span><span>🌴</span><span>🌲</span><span>🌳</span><span>🌲</span><span>🌴</span><span>🌳</span><span>🌲</span><span>🌳</span>
-                </div>
-              </div>
+              <div id="racetrack-arena" style="height: 228px; border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #eab308; box-shadow: inset 0 4px 18px rgba(0,0,0,0.85); background: #1e2430;">
 
-              <!-- Main 3-Lane Endless Scrolling Road Arena -->
-              <div id="racetrack-arena" style="height: 186px; background-color: #272a33; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 40px, rgba(0,0,0,0.06) 40px, rgba(0,0,0,0.06) 80px); border-radius: 0 0 10px 10px; position: relative; overflow: hidden; border: 2px solid #eab308; box-shadow: inset 0 4px 16px rgba(0,0,0,0.75); transition: background-color 0.8s ease;">
+                <!-- 🎬 EMBEDDED 100% ORIGINAL CAR RACING HIGHWAY MP4 VIDEO LOOP -->
+                <video id="race-bg-video-player" src="data:video/mp4;base64,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399X9/f31fk9tsn/v7+/v7+/vq/v7+/v7+/viHWAgYoIKqrVV1hQSqqqqsXF1VarLv7+17+/v7Xv7+/v7+/v7+/te/v7+/v7+/v7+/v7++JNz/+9iSa3HJKSnST7bn+i+LHDqqLi9sT7NGF3UXf3933ff39/f39/f39/f39/f39/eTmb2/eTyv39/f39/d95OTxHJQVw1J40RRjp3ZD2GzzF8NNcLjCV40s5rt5eHpSmmdlzYJPf3Xf39/f39/f39r39/f39/f39/f39/f4B//vG0AMTEhElK1AIm7t98fEySwPERJb4j9/fV/f399X9/f31f39/fV/f399X+8csAUD6v7+/v7+/v7+17+/v7+/v7+/t+/v7/AEA/AEA4REff39/f39/f39/f39/a9/f39+IiGt/fClAD8/9398l/fJfNfCar8R/wTV4hBXAAAACCUGbYEfgUPQOPYHj19/f39/f39/f11gUP////////YFHeBQ////9AEQiwSu+7+//sDD7xd33f34UUD/a/7be238ChQLNZf8IwKMMB/AvnACwHiQHAUnLFQilhHrB24O/FF/mv7+/v7+/v/isCh8Ch/nsDD79teCQKYGKctt3+AsdjYZLBjsi+gQfj7AVGGfgn8WaAhWhPWrrzGpC55e/vwFhxC9fYArD3+DD19gCsPf39fYArD39/X2AKw9/f39/f39/f39/X2AKw9/f19gCsPf39e1CPeBeR6X4Cw+DD19gBVH/LgIDBBgIDmxPEPrBQ+rp6mrqP+8npPidefT77HRlGOMhedz/ydlFa0/wTGMElEc5V3Lzx0HmQ0bnafY2c32EGMqslJfLCL3mlT/CnYrmTXdwkZPEj2WIJFaHZljT+pY7HDxeNb9l7/4Uy4SqAjwsKwBFJgYrHVq8JZGMjkDHLtc8qIuJUADD6a2WmHI+bMdVTPABF+nI00eD9EiFEQz9QEd/BL1mt6If9MWTNqqody6nOO89LdDOpPzbT2jyjtRZ3+CXJ6xkepPw/uyDVHxu4rm+nNrxS7dvycm3L12oXf/BHvXhI1p0pOnzf4t4YT8v3zdADjYc89k21lx3hb6TUclvXaa/QDmwTUAMB9f8EFd4jdV1/wT195Bzu8TicOqv2//wTV9+AAACd0GbgCf0AsPgWfYCo/9/f3/9/f39ff39/9YFj2AqP/f39/X39/f3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" autoplay loop muted playsinline webkit-playsinline style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: 1; pointer-events: none;"></video>
 
-                <!-- Top & Bottom Scrolling Red/White Racing Curbs -->
-                <div id="curb-top" class="curb-scrolling-active" style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: repeating-linear-gradient(90deg, #dc2626 0px, #dc2626 12px, #f8fafc 12px, #f8fafc 24px); z-index: 6;"></div>
-                <div id="curb-bottom" class="curb-scrolling-active" style="position: absolute; bottom: 0; left: 0; right: 0; height: 6px; background: repeating-linear-gradient(90deg, #dc2626 0px, #dc2626 12px, #f8fafc 12px, #f8fafc 24px); z-index: 6;"></div>
+                <!-- Dynamic Scrolling Checkered Finish Line (Scrolls in from right at 57s-60s) -->
+                <div id="scrolling-finish-line" style="position: absolute; right: -40px; top: 66px; bottom: 8px; width: 16px; background: repeating-linear-gradient(180deg, #ffffff 0px, #ffffff 7px, #000000 7px, #000000 14px); z-index: 6; box-shadow: 0 0 14px rgba(255,255,255,0.85); display: none;"></div>
 
-                <!-- Dynamic Scrolling Finish Line (Scrolls in from right at the end of the 60s race) -->
-                <div id="scrolling-finish-line" style="position: absolute; right: -40px; top: 6px; bottom: 6px; width: 14px; background: repeating-linear-gradient(180deg, #ffffff 0px, #ffffff 6px, #000000 6px, #000000 12px); z-index: 5; box-shadow: 0 0 12px rgba(255,255,255,0.7); display: none;"></div>
+                <!-- Lane 1 (CAR A) -->
+                <div class="race-lane" id="race-lane-0" style="position: absolute; top: 66px; left: 0; right: 0; height: 50px; display: flex; align-items: center; z-index: 7;">
+                  <span style="position: absolute; left: 6px; top: 3px; background: rgba(239,68,68,0.88); color: #ffffff; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 4px; z-index: 5;">CAR A</span>
 
-                <!-- Lane 1 (Top) -->
-                <div class="race-lane" id="race-lane-0" style="position: absolute; top: 6px; left: 0; right: 0; height: 58px; display: flex; align-items: center; overflow: hidden;">
-                  <!-- Endless Scrolling Center Road Dashes -->
-                  <div id="lane-dashes-0" class="road-scrolling-active" style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: repeating-linear-gradient(90deg, rgba(254,240,138,0.65) 0px, rgba(254,240,138,0.65) 28px, transparent 28px, transparent 56px);"></div>
-                  <span style="position: absolute; left: 6px; top: 4px; background: rgba(0,0,0,0.6); color: #94a3b8; font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 3px; z-index: 5;">LANE 1</span>
-
-                  <!-- Oncoming Scrolling Pothole / Mud Obstacle (Comes from right and passes out to left) -->
-                  <div id="lane-pothole-0" style="display: none; position: absolute; left: 105%; top: 14px; z-index: 6; align-items: center;">
-                    <div style="width: 42px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #3f2305 78%, #78350f 100%); border: 2px dashed #a16207; box-shadow: inset 0 4px 8px #000000;"></div>
+                  <!-- Oncoming Scrolling Road Hazard (Appears in final seconds for losing lanes) -->
+                  <div id="lane-pothole-0" style="display: none; position: absolute; left: 105%; top: 12px; z-index: 6; align-items: center;">
+                    <div style="width: 38px; height: 24px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #3f2305 78%, #78350f 100%); border: 2px dashed #eab308; box-shadow: inset 0 4px 8px #000000;"></div>
                   </div>
 
-                  <!-- Vehicle Runner 1 -->
-                  <div id="runner-car-0" class="wheel-spinning-active car-running-bounce" style="position: absolute; left: 24px; top: 11px; display: flex; align-items: center; z-index: 8; will-change: left, transform;">
-                    <span id="nitro-flame-0" style="display: none; font-size: 1rem; margin-right: -8px; filter: drop-shadow(0 0 8px #f97316);">🔥</span>
-                    <div id="runner-svg-0" style="width: 78px; height: 36px;"></div>
-                    <span id="win-crown-0" style="display: none; position: absolute; top: -11px; right: -6px; background: #eab308; color: #0f172a; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">🏆 1st</span>
+                  <!-- Vehicle Runner A -->
+                  <div id="runner-car-0" class="wheel-spinning-active car-running-bounce" style="position: absolute; left: 18px; top: 6px; display: flex; align-items: center; z-index: 9; will-change: left, top, transform;">
+                    <div id="nitro-flame-0" class="nitro-boost-flame" style="display: none; width: 28px; height: 14px; margin-right: -10px; background: radial-gradient(ellipse at right, #ffffff 0%, #38bdf8 45%, #f97316 80%, transparent 100%); border-radius: 50%; filter: blur(0.5px) drop-shadow(0 0 8px #38bdf8);"></div>
+                    <div id="runner-svg-0" style="width: 88px; height: 38px;"></div>
+                    <span id="pos-tag-0" style="position: absolute; top: -9px; left: 26px; background: rgba(15,23,42,0.92); color: #fde047; border: 1px solid #eab308; font-size: 8px; font-weight: 900; padding: 0px 5px; border-radius: 999px;">A • 1st</span>
+                    <span id="win-crown-0" style="display: none; position: absolute; top: -12px; right: -6px; background: #eab308; color: #0f172a; font-size: 9.5px; font-weight: 900; padding: 1px 6px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.6);">🏆 1st</span>
                   </div>
                 </div>
 
-                <!-- Lane 2 (Middle) -->
-                <div class="race-lane" id="race-lane-1" style="position: absolute; top: 64px; left: 0; right: 0; height: 58px; display: flex; align-items: center; overflow: hidden;">
-                  <!-- Endless Scrolling Center Road Dashes -->
-                  <div id="lane-dashes-1" class="road-scrolling-active" style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: repeating-linear-gradient(90deg, rgba(254,240,138,0.65) 0px, rgba(254,240,138,0.65) 28px, transparent 28px, transparent 56px);"></div>
-                  <span style="position: absolute; left: 6px; top: 4px; background: rgba(0,0,0,0.6); color: #94a3b8; font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 3px; z-index: 5;">LANE 2</span>
+                <!-- Lane 2 (CAR B) -->
+                <div class="race-lane" id="race-lane-1" style="position: absolute; top: 118px; left: 0; right: 0; height: 50px; display: flex; align-items: center; z-index: 8;">
+                  <span style="position: absolute; left: 6px; top: 3px; background: rgba(37,99,235,0.88); color: #ffffff; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 4px; z-index: 5;">CAR B</span>
 
-                  <!-- Oncoming Scrolling Pothole / Mud Obstacle -->
-                  <div id="lane-pothole-1" style="display: none; position: absolute; left: 105%; top: 14px; z-index: 6; align-items: center;">
-                    <div style="width: 42px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #3f2305 78%, #78350f 100%); border: 2px dashed #a16207; box-shadow: inset 0 4px 8px #000000;"></div>
+                  <!-- Oncoming Scrolling Road Hazard -->
+                  <div id="lane-pothole-1" style="display: none; position: absolute; left: 105%; top: 12px; z-index: 6; align-items: center;">
+                    <div style="width: 38px; height: 24px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #3f2305 78%, #78350f 100%); border: 2px dashed #eab308; box-shadow: inset 0 4px 8px #000000;"></div>
                   </div>
 
-                  <!-- Vehicle Runner 2 -->
-                  <div id="runner-car-1" class="wheel-spinning-active car-running-bounce" style="position: absolute; left: 24px; top: 11px; display: flex; align-items: center; z-index: 8; will-change: left, transform;">
-                    <span id="nitro-flame-1" style="display: none; font-size: 1rem; margin-right: -8px; filter: drop-shadow(0 0 8px #f97316);">🔥</span>
-                    <div id="runner-svg-1" style="width: 78px; height: 36px;"></div>
-                    <span id="win-crown-1" style="display: none; position: absolute; top: -11px; right: -6px; background: #eab308; color: #0f172a; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">🏆 1st</span>
+                  <!-- Vehicle Runner B -->
+                  <div id="runner-car-1" class="wheel-spinning-active car-running-bounce" style="position: absolute; left: 18px; top: 6px; display: flex; align-items: center; z-index: 10; will-change: left, top, transform;">
+                    <div id="nitro-flame-1" class="nitro-boost-flame" style="display: none; width: 28px; height: 14px; margin-right: -10px; background: radial-gradient(ellipse at right, #ffffff 0%, #38bdf8 45%, #f97316 80%, transparent 100%); border-radius: 50%; filter: blur(0.5px) drop-shadow(0 0 8px #38bdf8);"></div>
+                    <div id="runner-svg-1" style="width: 88px; height: 38px;"></div>
+                    <span id="pos-tag-1" style="position: absolute; top: -9px; left: 26px; background: rgba(15,23,42,0.92); color: #fde047; border: 1px solid #eab308; font-size: 8px; font-weight: 900; padding: 0px 5px; border-radius: 999px;">B • 2nd</span>
+                    <span id="win-crown-1" style="display: none; position: absolute; top: -12px; right: -6px; background: #eab308; color: #0f172a; font-size: 9.5px; font-weight: 900; padding: 1px 6px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.6);">🏆 1st</span>
                   </div>
                 </div>
 
-                <!-- Lane 3 (Bottom) -->
-                <div class="race-lane" id="race-lane-2" style="position: absolute; top: 122px; left: 0; right: 0; height: 58px; display: flex; align-items: center; overflow: hidden;">
-                  <span style="position: absolute; left: 6px; top: 4px; background: rgba(0,0,0,0.6); color: #94a3b8; font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 3px; z-index: 5;">LANE 3</span>
+                <!-- Lane 3 (CAR C) -->
+                <div class="race-lane" id="race-lane-2" style="position: absolute; top: 170px; left: 0; right: 0; height: 50px; display: flex; align-items: center; z-index: 9;">
+                  <span style="position: absolute; left: 6px; top: 3px; background: rgba(234,179,8,0.92); color: #0f172a; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 4px; z-index: 5;">CAR C</span>
 
-                  <!-- Oncoming Scrolling Pothole / Mud Obstacle -->
-                  <div id="lane-pothole-2" style="display: none; position: absolute; left: 105%; top: 14px; z-index: 6; align-items: center;">
-                    <div style="width: 42px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #3f2305 78%, #78350f 100%); border: 2px dashed #a16207; box-shadow: inset 0 4px 8px #000000;"></div>
+                  <!-- Oncoming Scrolling Road Hazard -->
+                  <div id="lane-pothole-2" style="display: none; position: absolute; left: 105%; top: 12px; z-index: 6; align-items: center;">
+                    <div style="width: 38px; height: 24px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #3f2305 78%, #78350f 100%); border: 2px dashed #eab308; box-shadow: inset 0 4px 8px #000000;"></div>
                   </div>
 
-                  <!-- Vehicle Runner 3 -->
-                  <div id="runner-car-2" class="wheel-spinning-active car-running-bounce" style="position: absolute; left: 24px; top: 11px; display: flex; align-items: center; z-index: 8; will-change: left, transform;">
-                    <span id="nitro-flame-2" style="display: none; font-size: 1rem; margin-right: -8px; filter: drop-shadow(0 0 8px #f97316);">🔥</span>
-                    <div id="runner-svg-2" style="width: 78px; height: 36px;"></div>
-                    <span id="win-crown-2" style="display: none; position: absolute; top: -11px; right: -6px; background: #eab308; color: #0f172a; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">🏆 1st</span>
+                  <!-- Vehicle Runner C -->
+                  <div id="runner-car-2" class="wheel-spinning-active car-running-bounce" style="position: absolute; left: 18px; top: 6px; display: flex; align-items: center; z-index: 11; will-change: left, top, transform;">
+                    <div id="nitro-flame-2" class="nitro-boost-flame" style="display: none; width: 28px; height: 14px; margin-right: -10px; background: radial-gradient(ellipse at right, #ffffff 0%, #38bdf8 45%, #f97316 80%, transparent 100%); border-radius: 50%; filter: blur(0.5px) drop-shadow(0 0 8px #38bdf8);"></div>
+                    <div id="runner-svg-2" style="width: 88px; height: 38px;"></div>
+                    <span id="pos-tag-2" style="position: absolute; top: -9px; left: 26px; background: rgba(15,23,42,0.92); color: #fde047; border: 1px solid #eab308; font-size: 8px; font-weight: 900; padding: 0px 5px; border-radius: 999px;">C • 3rd</span>
+                    <span id="win-crown-2" style="display: none; position: absolute; top: -12px; right: -6px; background: #eab308; color: #0f172a; font-size: 9.5px; font-weight: 900; padding: 1px 6px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.6);">🏆 1st</span>
                   </div>
                 </div>
 
               </div>
             </div>
 
-            <!-- Clean Live Speedometer Strip During 1-Min Race (No Real Bet Rupee Amounts or Winner Names!) -->
+            <!-- Live Speedometer & Position Telemetry Strip (No Real Bet Rupee Amounts or Winner Names!) -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 0.45rem; text-align: center;">
-              <div id="lane-telemetry-box-0" style="background: rgba(15,23,42,0.9); border: 1px solid #334155; border-radius: 8px; padding: 5px;">
-                <div id="track-car-title-0" style="font-size: 0.66rem; font-weight: 900; color: #f8fafc;">Lane 1</div>
-                <div style="font-size: 0.62rem; color: #38bdf8; font-family: monospace; font-weight: 800;">⚡ <span id="lane-speed-0">142</span> km/h</div>
+              <div id="lane-telemetry-box-0" style="background: rgba(15,23,42,0.92); border: 1.5px solid #334155; border-radius: 8px; padding: 5px;">
+                <div id="track-car-title-0" style="font-size: 0.66rem; font-weight: 900; color: #f8fafc;">CAR A</div>
+                <div style="font-size: 0.62rem; color: #38bdf8; font-family: monospace; font-weight: 800;">⚡ <span id="lane-speed-0">242</span> km/h</div>
               </div>
-              <div id="lane-telemetry-box-1" style="background: rgba(15,23,42,0.9); border: 1px solid #334155; border-radius: 8px; padding: 5px;">
-                <div id="track-car-title-1" style="font-size: 0.66rem; font-weight: 900; color: #f8fafc;">Lane 2</div>
-                <div style="font-size: 0.62rem; color: #38bdf8; font-family: monospace; font-weight: 800;">⚡ <span id="lane-speed-1">145</span> km/h</div>
+              <div id="lane-telemetry-box-1" style="background: rgba(15,23,42,0.92); border: 1.5px solid #334155; border-radius: 8px; padding: 5px;">
+                <div id="track-car-title-1" style="font-size: 0.66rem; font-weight: 900; color: #f8fafc;">CAR B</div>
+                <div style="font-size: 0.62rem; color: #38bdf8; font-family: monospace; font-weight: 800;">⚡ <span id="lane-speed-1">245</span> km/h</div>
               </div>
-              <div id="lane-telemetry-box-2" style="background: rgba(15,23,42,0.9); border: 1px solid #334155; border-radius: 8px; padding: 5px;">
-                <div id="track-car-title-2" style="font-size: 0.66rem; font-weight: 900; color: #f8fafc;">Lane 3</div>
-                <div style="font-size: 0.62rem; color: #38bdf8; font-family: monospace; font-weight: 800;">⚡ <span id="lane-speed-2">140</span> km/h</div>
+              <div id="lane-telemetry-box-2" style="background: rgba(15,23,42,0.92); border: 1.5px solid #334155; border-radius: 8px; padding: 5px;">
+                <div id="track-car-title-2" style="font-size: 0.66rem; font-weight: 900; color: #f8fafc;">CAR C</div>
+                <div style="font-size: 0.62rem; color: #38bdf8; font-family: monospace; font-weight: 800;">⚡ <span id="lane-speed-2">240</span> km/h</div>
               </div>
             </div>
 
@@ -5487,10 +5456,10 @@ ET
     }
 
 
-        // =========================================================================
-    // 🎮 REALISTIC 24/7 ENDLESS SCROLLING ROAD RACING ENGINE
-    // ⏱️ 30s Betting Time • 60s (1-Minute) Endless Road Race
-    // 🔒 Real Bet Rupees 100% Hidden • Simulated Fake Details on All 3 • Lowest Real Bet Wins
+            // =========================================================================
+    // 🎮 100% ORIGINAL VIDEO CAR RACING ENGINE (A vs B vs C LIVE OVERTAKES)
+    // ⏱️ 30s Betting Time • 60s (1-Minute) Video Highway Race with Continuous Overtaking
+    // 🔒 Real Bet Rupees 100% Hidden • Fake Crowd Details on All 3 • Lowest Real Bet Wins
     // =========================================================================
     function toggleGamingZone() {
       const secGaming = document.getElementById('section-gaming');
@@ -5503,23 +5472,23 @@ ET
     }
 
     const CAR_MODELS_POOL = [
-      { id: 'red_ferrari', type: 'car', name: 'GT Red', color1: '#dc2626', color2: '#7f1d1d', accent: '#fde047' },
-      { id: 'green_ninja', type: 'bike', name: 'ZX-10R', color1: '#16a34a', color2: '#14532d', accent: '#bef264' },
-      { id: 'monster_4x4', type: 'monster', name: 'Monster 4x4', color1: '#2563eb', color2: '#1e3a8a', accent: '#facc15' },
-      { id: 'desert_atv', type: 'atv', name: 'Quad 4x4', color1: '#ea580c', color2: '#7c2d12', accent: '#fde047' },
-      { id: 'black_suv', type: 'suv', name: 'Armored SUV', color1: '#334155', color2: '#0f172a', accent: '#38bdf8' },
-      { id: 'gold_hayabusa', type: 'bike', name: 'Turbo Bike', color1: '#d97706', color2: '#78350f', accent: '#fef08a' },
-      { id: 'emerald_monster', type: 'monster', name: 'Titan Truck', color1: '#059669', color2: '#064e3b', accent: '#fde047' },
-      { id: 'crimson_atv', type: 'atv', name: 'Raptor ATV', color1: '#e11d48', color2: '#881337', accent: '#fde047' },
-      { id: 'blue_bugatti', type: 'car', name: 'Apex V12', color1: '#0284c7', color2: '#0c4a6e', accent: '#38bdf8' }
+      { id: 'car_a_red', label: 'A', name: 'Ferrari GT', color1: '#ef4444', color2: '#991b1b', accent: '#fde047' },
+      { id: 'car_b_blue', label: 'B', name: 'Bugatti V12', color1: '#2563eb', color2: '#1e3a8a', accent: '#38bdf8' },
+      { id: 'car_c_gold', label: 'C', name: 'Lambo Huracan', color1: '#eab308', color2: '#a16207', accent: '#fef08a' },
+      { id: 'car_d_green', label: 'A', name: 'Aston Vantage', color1: '#10b981', color2: '#065f46', accent: '#a7f3d0' },
+      { id: 'car_e_orange', label: 'B', name: 'McLaren 720S', color1: '#f97316', color2: '#9a3412', accent: '#fde047' },
+      { id: 'car_f_purple', label: 'C', name: 'Porsche GT3', color1: '#8b5cf6', color2: '#4c1d95', accent: '#ddd6fe' }
     ];
 
+    const CAR_LETTERS = ['A', 'B', 'C'];
     let currentRaceCars = [];
     let currentRaceRound = 101;
-    // Fake display numbers shown on the 3 cards (completely decoupled from real bets)
+
+    // Fake display numbers shown on the 3 cards (completely decoupled from real rupee bets)
     let fakeDisplayScores = [3001, 3002, 3003];
     let fakeDisplayRiders = [412, 538, 489];
-    let fakeDisplaySpeeds = [98, 97, 99];
+    let fakeDisplaySpeeds = [318, 322, 320];
+
     // Hidden internal real bets (NEVER displayed as rupee amounts anywhere on screen)
     let hiddenRealBaseTieBreaker = [3001, 3002, 3003];
     let currentPlayerBets = [0, 0, 0];
@@ -5579,6 +5548,25 @@ ET
       setTimeout(() => playTone(1318, 'triangle', 0.15, 0.22), 55);
     }
 
+    function playOvertakeWhooshSound() {
+      if (!gameSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(360, ctx.currentTime + 0.24);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + 0.24);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.24);
+      } catch(e){}
+    }
+
     function playPotholeBumpSound() {
       if (!gameSoundEnabled) return;
       try {
@@ -5589,7 +5577,7 @@ ET
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(130, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(48, ctx.currentTime + 0.32);
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.32);
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -5606,14 +5594,14 @@ ET
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(160, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.5);
+        osc.frequency.setValueAtTime(170, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(540, ctx.currentTime + 0.48);
         gain.gain.setValueAtTime(0.16, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.48);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.5);
+        osc.stop(ctx.currentTime + 0.48);
       } catch(e){}
     }
 
@@ -5639,7 +5627,7 @@ ET
 
       if (trackWrap) trackWrap.style.display = isRoadTrackHiddenByUser ? 'none' : 'block';
       if (iconEl) iconEl.innerText = isRoadTrackHiddenByUser ? '👁️' : '🙈';
-      if (textEl) textEl.innerText = isRoadTrackHiddenByUser ? 'Show Track' : 'Hide Track';
+      if (textEl) textEl.innerText = isRoadTrackHiddenByUser ? 'Show Video' : 'Hide Video';
     }
 
     function getGameCoins() {
@@ -5666,103 +5654,59 @@ ET
       if (gameDisp) gameDisp.innerText = coins;
     }
 
-    // Realistic Vehicle SVG Graphics with Spinning Alloy Wheel Spokes (.wheel-rotor)
-    function generateCarGraphicSvg(color1, color2, accent, number, vType) {
-      if (vType === 'bike') {
-        return `
-          <svg viewBox="0 0 130 56" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 5px rgba(0,0,0,0.55));">
-            <!-- Headlight Beam -->
-            <polygon points="108,26 130,20 130,34" fill="rgba(254,240,138,0.35)" />
-            <!-- Rear & Front Bike Tires with Spinning Spokes -->
-            <g class="wheel-rotor">
-              <circle cx="30" cy="40" r="12" fill="#090d16" stroke="#94a3b8" stroke-width="2.2" />
-              <line x1="20" y1="40" x2="40" y2="40" stroke="${accent}" stroke-width="2" />
-              <line x1="30" y1="30" x2="30" y2="50" stroke="${accent}" stroke-width="2" />
-              <circle cx="30" cy="40" r="4" fill="#e2e8f0" />
-            </g>
-            <g class="wheel-rotor">
-              <circle cx="100" cy="40" r="12" fill="#090d16" stroke="#94a3b8" stroke-width="2.2" />
-              <line x1="90" y1="40" x2="110" y2="40" stroke="${accent}" stroke-width="2" />
-              <line x1="100" y1="30" x2="100" y2="50" stroke="${accent}" stroke-width="2" />
-              <circle cx="100" cy="40" r="4" fill="#e2e8f0" />
-            </g>
-            <!-- Bike Frame & Aerodynamic Fairing -->
-            <path d="M 26,38 L 48,19 L 82,17 L 102,26 L 84,36 L 46,38 Z" fill="${color1}" stroke="#0f172a" stroke-width="1.5" />
-            <!-- Rider & Helmet -->
-            <path d="M 48,20 L 62,8 L 75,10 L 68,22 Z" fill="#1e293b" stroke="${accent}" stroke-width="1.2" />
-            <circle cx="70" cy="9" r="5.5" fill="${accent}" stroke="#0f172a" stroke-width="1.2" />
-            <line x1="84" y1="20" x2="100" y2="40" stroke="#cbd5e1" stroke-width="3" />
-            <circle cx="66" cy="27" r="5.5" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
-            <text x="66" y="30" font-size="7.5" font-weight="900" text-anchor="middle" fill="#0f172a">${number}</text>
-          </svg>
-        `;
-      } else if (vType === 'monster') {
-        return `
-          <svg viewBox="0 0 130 58" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));">
-            <polygon points="114,22 130,16 130,30" fill="rgba(254,240,138,0.35)" />
-            <rect x="28" y="26" width="74" height="6" fill="#64748b" rx="2" />
-            <path d="M 16,28 L 20,9 L 76,9 L 90,18 L 114,20 L 116,30 L 16,30 Z" fill="${color1}" stroke="#0f172a" stroke-width="1.6" />
-            <path d="M 42,11 L 72,11 L 83,18 L 42,18 Z" fill="#0f172a" stroke="#7dd3fc" stroke-width="1.2" />
-            <rect x="18" y="22" width="94" height="3.5" fill="${accent}" rx="1.5" />
-            <circle cx="60" cy="23" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-            <text x="60" y="26" font-size="7.5" font-weight="900" text-anchor="middle" fill="#0f172a">${number}</text>
-            <g class="wheel-rotor">
-              <circle cx="34" cy="41" r="14" fill="#090d16" stroke="#eab308" stroke-width="2.4" stroke-dasharray="5,3" />
-              <line x1="23" y1="41" x2="45" y2="41" stroke="${accent}" stroke-width="2.2" />
-              <line x1="34" y1="30" x2="34" y2="52" stroke="${accent}" stroke-width="2.2" />
-              <circle cx="34" cy="41" r="5" fill="#e2e8f0" />
-            </g>
-            <g class="wheel-rotor">
-              <circle cx="96" cy="41" r="14" fill="#090d16" stroke="#eab308" stroke-width="2.4" stroke-dasharray="5,3" />
-              <line x1="85" y1="41" x2="107" y2="41" stroke="${accent}" stroke-width="2.2" />
-              <line x1="96" y1="30" x2="96" y2="52" stroke="${accent}" stroke-width="2.2" />
-              <circle cx="96" cy="41" r="5" fill="#e2e8f0" />
-            </g>
-          </svg>
-        `;
-      } else if (vType === 'atv') {
-        return `
-          <svg viewBox="0 0 130 56" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 5px rgba(0,0,0,0.55));">
-            <polygon points="108,26 130,20 130,33" fill="rgba(254,240,138,0.35)" />
-            <path d="M 22,32 L 32,16 L 82,16 L 106,24 L 110,34 L 22,34 Z" fill="${color1}" stroke="#0f172a" stroke-width="1.6" />
-            <path d="M 46,16 L 56,6 L 68,6 L 64,16 Z" fill="#1e293b" stroke="${accent}" stroke-width="1.2" />
-            <rect x="26" y="24" width="78" height="3.5" fill="${accent}" rx="1.5" />
-            <circle cx="64" cy="26" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-            <text x="64" y="29" font-size="7.5" font-weight="900" text-anchor="middle" fill="#0f172a">${number}</text>
-            <g class="wheel-rotor">
-              <circle cx="34" cy="40" r="11.5" fill="#090d16" stroke="#94a3b8" stroke-width="2" />
-              <line x1="25" y1="40" x2="43" y2="40" stroke="${accent}" stroke-width="2" />
-              <line x1="34" y1="31" x2="34" y2="49" stroke="${accent}" stroke-width="2" />
-            </g>
-            <g class="wheel-rotor">
-              <circle cx="96" cy="40" r="11.5" fill="#090d16" stroke="#94a3b8" stroke-width="2" />
-              <line x1="87" y1="40" x2="105" y2="40" stroke="${accent}" stroke-width="2" />
-              <line x1="96" y1="31" x2="96" y2="49" stroke="${accent}" stroke-width="2" />
-            </g>
-          </svg>
-        `;
-      }
-      // Realistic Sports Car / SUV
+    // Photorealistic 3D-Shaded Supercar SVG with Metallic Gradients, Headlight Beams & Spinning Alloy Wheels
+    function generateCarGraphicSvg(color1, color2, accent, letterIdx) {
+      const letter = CAR_LETTERS[letterIdx] || 'A';
+      const gradId = 'carGrad_' + letter + '_' + Math.floor(Math.random() * 9999);
+      const glassId = 'glassGrad_' + letter + '_' + Math.floor(Math.random() * 9999);
       return `
-        <svg viewBox="0 0 130 52" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 5px rgba(0,0,0,0.55));">
-          <polygon points="120,27 130,21 130,34" fill="rgba(254,240,138,0.4)" />
-          <polygon points="8,14 24,15 22,20 7,18" fill="#0f172a" stroke="${accent}" stroke-width="1.2" />
-          <path d="M 10,35 L 15,22 L 34,15 L 58,9 L 86,9 L 106,18 L 122,25 L 124,35 L 118,39 L 14,39 Z" fill="${color1}" stroke="#0f172a" stroke-width="1.6" />
-          <path d="M 40,17 L 57,11 L 83,11 L 98,17 L 93,24 L 44,24 Z" fill="#0f172a" stroke="#7dd3fc" stroke-width="1.2" />
-          <rect x="14" y="25" width="106" height="3.5" fill="${accent}" opacity="0.95" rx="1.5" />
-          <circle cx="68" cy="30" r="6.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
-          <text x="68" y="33" font-size="8" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="#0f172a">${number}</text>
+        <svg viewBox="0 0 145 54" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 5px 6px rgba(0,0,0,0.7));">
+          <defs>
+            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
+              <stop offset="22%" stop-color="${color1}" stop-opacity="1"/>
+              <stop offset="75%" stop-color="${color2}" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#090d16" stop-opacity="1"/>
+            </linearGradient>
+            <linearGradient id="${glassId}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#e0f2fe"/>
+              <stop offset="45%" stop-color="#0284c7"/>
+              <stop offset="100%" stop-color="#0f172a"/>
+            </linearGradient>
+          </defs>
+          <!-- Xenon Headlight Beam -->
+          <polygon points="126,26 145,18 145,36" fill="rgba(254,240,138,0.48)" />
+          <!-- Ground Underglow Shadow -->
+          <ellipse cx="70" cy="46" rx="56" ry="4.5" fill="rgba(0,0,0,0.65)" />
+          <!-- Rear Carbon Wing Spoiler -->
+          <polygon points="8,13 24,15 22,22 6,18" fill="#0f172a" stroke="${accent}" stroke-width="1.3" />
+          <!-- Aerodynamic Supercar Body -->
+          <path d="M 10,36 L 14,22 L 36,15 L 62,8 L 92,8 L 114,18 L 132,25 L 134,36 L 126,40 L 14,40 Z" fill="url(#${gradId})" stroke="#0f172a" stroke-width="1.5" />
+          <!-- Metallic Side Skirt & Racing Stripe -->
+          <path d="M 16,27 L 126,27 L 123,31 L 16,31 Z" fill="${accent}" opacity="0.92" />
+          <!-- Tinted Cockpit Canopy & Windshield -->
+          <path d="M 42,17 L 61,10 L 89,10 L 107,18 L 101,24 L 46,24 Z" fill="url(#${glassId})" stroke="#bae6fd" stroke-width="1.1" />
+          <!-- Red LED Taillight & White Xenon Headlight -->
+          <rect x="10" y="23" width="5" height="6" rx="1.5" fill="#ef4444" />
+          <polygon points="126,24 133,27 126,31" fill="#fef08a" />
+          <!-- Racing Door Badge (A / B / C) -->
+          <circle cx="72" cy="29" r="7.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+          <text x="72" y="32.5" font-size="9.5" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="#0f172a">${letter}</text>
+          <!-- Rear Alloy Wheel with Spinning Rotor -->
           <g class="wheel-rotor">
-            <circle cx="33" cy="38" r="10" fill="#090d16" stroke="#cbd5e1" stroke-width="1.8" />
-            <line x1="25" y1="38" x2="41" y2="38" stroke="${accent}" stroke-width="1.8" />
-            <line x1="33" y1="30" x2="33" y2="46" stroke="${accent}" stroke-width="1.8" />
-            <circle cx="33" cy="38" r="3.5" fill="#ffffff" />
+            <circle cx="35" cy="39" r="10.5" fill="#090d16" stroke="#cbd5e1" stroke-width="2" />
+            <circle cx="35" cy="39" r="7" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="6,4" />
+            <line x1="26" y1="39" x2="44" y2="39" stroke="${accent}" stroke-width="1.8" />
+            <line x1="35" y1="30" x2="35" y2="48" stroke="${accent}" stroke-width="1.8" />
+            <circle cx="35" cy="39" r="3.2" fill="#f8fafc" />
           </g>
+          <!-- Front Alloy Wheel with Spinning Rotor -->
           <g class="wheel-rotor">
-            <circle cx="102" cy="38" r="10" fill="#090d16" stroke="#cbd5e1" stroke-width="1.8" />
-            <line x1="94" y1="38" x2="110" y2="38" stroke="${accent}" stroke-width="1.8" />
-            <line x1="102" y1="30" x2="102" y2="46" stroke="${accent}" stroke-width="1.8" />
-            <circle cx="102" cy="38" r="3.5" fill="#ffffff" />
+            <circle cx="108" cy="39" r="10.5" fill="#090d16" stroke="#cbd5e1" stroke-width="2" />
+            <circle cx="108" cy="39" r="7" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="6,4" />
+            <line x1="99" y1="39" x2="117" y2="39" stroke="${accent}" stroke-width="1.8" />
+            <line x1="108" y1="30" x2="108" y2="48" stroke="${accent}" stroke-width="1.8" />
+            <circle cx="108" cy="39" r="3.2" fill="#f8fafc" />
           </g>
         </svg>
       `;
@@ -5771,20 +5715,29 @@ ET
     function switchChametGameView(mode) {
       const bettingPage = document.getElementById('chamet-betting-page');
       const trackPage = document.getElementById('chamet-track-page');
+      const orderPill = document.getElementById('race-live-order-pill');
       if (!bettingPage || !trackPage) return;
 
       if (mode === 'betting') {
         trackPage.style.display = 'none';
         bettingPage.style.display = 'block';
+        if (orderPill) orderPill.style.display = 'none';
         bettingPage.classList.remove('chamet-flip-active');
         void bettingPage.offsetWidth;
         bettingPage.classList.add('chamet-flip-active');
       } else {
         bettingPage.style.display = 'none';
         trackPage.style.display = 'block';
+        if (orderPill) orderPill.style.display = 'inline-block';
         trackPage.classList.remove('chamet-flip-active');
         void trackPage.offsetWidth;
         trackPage.classList.add('chamet-flip-active');
+
+        const bgVid = document.getElementById('race-bg-video-player');
+        if (bgVid) {
+          bgVid.playbackRate = 1.15;
+          bgVid.play().catch(() => {});
+        }
       }
     }
 
@@ -5802,21 +5755,21 @@ ET
 
       switchChametGameView('betting');
 
-      // Pick 3 unique vehicles
-      const shuffled = [...CAR_MODELS_POOL].sort(() => 0.5 - Math.random());
-      currentRaceCars = shuffled.slice(0, 3);
+      // Select 3 distinct supercars for A, B, C
+      const setIdx = (currentRaceRound % 2 === 0) ? [0, 1, 2] : [3, 4, 5];
+      currentRaceCars = setIdx.map(idx => CAR_MODELS_POOL[idx]);
 
       // Reset Fake Display Stats on all 3 (3,001 / 3,002 / 3,003 + simulated live activity)
       fakeDisplayScores = [3001, 3002, 3003];
       fakeDisplayRiders = [
-        380 + Math.floor(Math.random() * 190),
-        410 + Math.floor(Math.random() * 210),
-        395 + Math.floor(Math.random() * 195)
+        410 + Math.floor(Math.random() * 180),
+        440 + Math.floor(Math.random() * 190),
+        425 + Math.floor(Math.random() * 185)
       ];
       fakeDisplaySpeeds = [
-        96 + Math.floor(Math.random() * 4),
-        96 + Math.floor(Math.random() * 4),
-        96 + Math.floor(Math.random() * 4)
+        316 + Math.floor(Math.random() * 9),
+        316 + Math.floor(Math.random() * 9),
+        316 + Math.floor(Math.random() * 9)
       ];
 
       // Reset Hidden Real Bets
@@ -5832,13 +5785,11 @@ ET
         finishEl.style.right = '-40px';
       }
 
-      const arena = document.getElementById('racetrack-arena');
-      if (arena) arena.style.backgroundColor = '#272a33';
-
       for (let i = 0; i < 3; i++) {
         const runner = document.getElementById('runner-car-' + i);
         if (runner) {
-          runner.style.left = '24px';
+          runner.style.left = '18px';
+          runner.style.top = '6px';
           runner.style.transform = 'rotate(0deg)';
         }
         const flame = document.getElementById('nitro-flame-' + i);
@@ -5850,6 +5801,8 @@ ET
         }
         const crown = document.getElementById('win-crown-' + i);
         if (crown) crown.style.display = 'none';
+        const posTag = document.getElementById('pos-tag-' + i);
+        if (posTag) posTag.innerText = `${CAR_LETTERS[i]} • ${i === 0 ? '1st' : (i === 1 ? '2nd' : '3rd')}`;
         const teleBox = document.getElementById('lane-telemetry-box-' + i);
         if (teleBox) teleBox.style.borderColor = '#334155';
 
@@ -5857,8 +5810,7 @@ ET
           currentRaceCars[i].color1,
           currentRaceCars[i].color2,
           currentRaceCars[i].accent,
-          i + 1,
-          currentRaceCars[i].type
+          i
         );
 
         const runSvg = document.getElementById('runner-svg-' + i);
@@ -5870,7 +5822,7 @@ ET
         if (cardPreview) cardPreview.innerHTML = svgMarkup;
 
         const trackTitle = document.getElementById('track-car-title-' + i);
-        if (trackTitle) trackTitle.innerText = currentRaceCars[i].name;
+        if (trackTitle) trackTitle.innerText = `CAR ${CAR_LETTERS[i]} (${currentRaceCars[i].name})`;
 
         const card = document.getElementById('bet-card-' + i);
         if (card) {
@@ -5881,7 +5833,7 @@ ET
 
       const statusBadge = document.getElementById('race-status-badge');
       if (statusBadge) {
-        statusBadge.innerText = '🟢 SELECT VEHICLE (30s)';
+        statusBadge.innerText = '🟢 SELECT CAR A / B / C (30s)';
         statusBadge.style.background = '#16a34a';
         statusBadge.style.color = '#ffffff';
       }
@@ -5898,11 +5850,11 @@ ET
       fakeCrowdTickerTimer = setInterval(() => {
         if (isRaceRunning) return;
         for (let i = 0; i < 3; i++) {
-          fakeDisplayScores[i] += Math.floor(15 + Math.random() * 85);
-          fakeDisplayRiders[i] += Math.floor(Math.random() * 6);
+          fakeDisplayScores[i] += Math.floor(18 + Math.random() * 90);
+          fakeDisplayRiders[i] += Math.floor(Math.random() * 5);
         }
         updateBetsDisplay();
-      }, 1100);
+      }, 1050);
     }
 
     // 30-Second Automatic Betting Countdown Timer
@@ -5950,11 +5902,11 @@ ET
         if (fakeRidersEl) fakeRidersEl.innerText = fakeDisplayRiders[i].toLocaleString();
 
         const fakeSpeedEl = document.getElementById('car-fake-speed-' + i);
-        if (fakeSpeedEl) fakeSpeedEl.innerText = fakeDisplaySpeeds[i] + '%';
+        if (fakeSpeedEl) fakeSpeedEl.innerText = fakeDisplaySpeeds[i];
 
         const playerEl = document.getElementById('car-player-bet-' + i);
         if (playerEl) {
-          playerEl.innerText = currentPlayerBets[i] > 0 ? '✅ Selected' : '🎯 Select';
+          playerEl.innerText = currentPlayerBets[i] > 0 ? `✅ CAR ${CAR_LETTERS[i]} Locked` : `🎯 Select ${CAR_LETTERS[i]}`;
         }
 
         const card = document.getElementById('bet-card-' + i);
@@ -5983,7 +5935,7 @@ ET
       });
     }
 
-    // Place Bet on Vehicle 1, 2, or 3 (Deducts coins & records hidden real bet without showing real rupees on UI)
+    // Place Bet on Car A, B, or C (Deducts coins & records hidden real bet without showing real rupees on UI)
     function placeBetOnCar(carIndex) {
       if (isRaceRunning) return;
 
@@ -5998,7 +5950,7 @@ ET
 
       // Add random fake numbers to all 3 so the user's bet is completely camouflaged
       for (let i = 0; i < 3; i++) {
-        fakeDisplayScores[i] += Math.floor(20 + Math.random() * 60);
+        fakeDisplayScores[i] += Math.floor(25 + Math.random() * 65);
       }
 
       playCoinSound();
@@ -6015,7 +5967,7 @@ ET
       updateBetsDisplay();
     }
 
-    // FLIP TO 1-MINUTE ENDLESS SCROLLING ROAD RACE (LOWEST REAL BET WINS!)
+    // FLIP TO 1-MINUTE VIDEO RACE WITH CONTINUOUS A-B-C OVERTAKES (LOWEST REAL BET WINS!)
     function startCarRace() {
       if (isRaceRunning) return;
       isRaceRunning = true;
@@ -6047,23 +5999,26 @@ ET
       executeRaceTrackAnimation(winningCarIndex);
     }
 
-    // 1-Minute (60-Second) Endless Scrolling Road Race with Oncoming Potholes & Realistic Overtakes
+    // 1-Minute (60-Second) Video Highway Race where A, B, and C Continuously Cross & Overtake Each Other Right Until the End!
     function executeRaceTrackAnimation(winningIndex) {
       const arena = document.getElementById('racetrack-arena');
+      const bgVid = document.getElementById('race-bg-video-player');
       const trackWidth = arena ? arena.offsetWidth : 340;
-      const minX = 16;
-      const maxCruiseX = Math.max(130, trackWidth - 115);
-      const finishCrossX = Math.max(150, trackWidth - 88);
+      const minX = 14;
+      const maxOvertakeX = Math.max(145, trackWidth - 110);
+      const finishCrossX = Math.max(165, trackWidth - 96);
 
-      let positions = [24, 24, 24];
-      // Dynamic weaving targets so cars realistically overtake each other while road scrolls from ahead
-      let targetX = [
-        45 + Math.random() * (maxCruiseX - 55),
-        45 + Math.random() * (maxCruiseX - 55),
-        45 + Math.random() * (maxCruiseX - 55)
-      ];
+      // Identify the 2 losing indices so we can script thrilling lead swaps among A, B, and C
+      const losers = [0, 1, 2].filter(i => i !== winningIndex);
+      const loser1 = losers[0];
+      const loser2 = losers[1];
 
-      // Oncoming pothole X positions (in % of track width) for the 2 losing lanes
+      let positions = [18, 18, 18];
+      let targetX = [45, 45, 45];
+      let laneYOffset = [6, 6, 6];
+      let lastLeaderIdx = -1;
+
+      // Oncoming pothole X positions (in % of track width) for the 2 losing lanes in the final seconds
       let potholeX = [110, 110, 110];
       let potholeActive = [false, false, false];
 
@@ -6074,10 +6029,61 @@ ET
       const timerPill = document.getElementById('race-timer-pill');
       const progBar = document.getElementById('race-timer-progress-bar');
       const distEl = document.getElementById('race-distance-meter');
+      const orderPill = document.getElementById('race-live-order-pill');
       const seg0 = document.getElementById('road-seg-0');
       const seg1 = document.getElementById('road-seg-1');
       const seg2 = document.getElementById('road-seg-2');
       const finishEl = document.getElementById('scrolling-finish-line');
+
+      // Multi-stage overtaking choreography (progress 0% -> 100%)
+      // Every few seconds a DIFFERENT car surges into 1st place while the others draft and counter-overtake!
+      function getScriptedTargets(progress) {
+        const span = maxOvertakeX - minX;
+        const p1 = minX + span * 0.88; // 1st place X on screen
+        const p2 = minX + span * 0.56; // 2nd place X on screen
+        const p3 = minX + span * 0.26; // 3rd place X on screen
+
+        let t = [p2, p2, p2];
+        if (progress < 9) {
+          // Phase 1 (0-5.4s): Car A surges ahead first, B 2nd, C 3rd
+          t[0] = p1; t[1] = p2; t[2] = p3;
+        } else if (progress < 18) {
+          // Phase 2 (5.4-10.8s): Car B overtakes Car A!
+          t[1] = p1; t[0] = p2; t[2] = p3 + 18;
+        } else if (progress < 27) {
+          // Phase 3 (10.8-16.2s): Car C charges from behind and overtakes both B and A!
+          t[2] = p1; t[1] = p3 + 10; t[0] = p2 + 12;
+        } else if (progress < 36) {
+          // Phase 4 (16.2-21.6s): Car A counter-attacks and crosses ahead of C and B!
+          t[0] = p1; t[2] = p2; t[1] = p3 + 15;
+        } else if (progress < 45) {
+          // Phase 5 (21.6-27s): Car B and C double-overtake Car A!
+          t[1] = p1; t[2] = p2 + 16; t[0] = p3;
+        } else if (progress < 54) {
+          // Phase 6 (27-32.4s): Car C takes the lead, Winning Car drafts in 2nd
+          t[2] = p1; t[winningIndex] = p2 + 14; t[loser1] = p3 + 12;
+        } else if (progress < 63) {
+          // Phase 7 (32.4-37.8s): Loser 1 blasts into 1st place!
+          t[loser1] = p1; t[loser2] = p2 + 10; t[winningIndex] = p3 + 18;
+        } else if (progress < 72) {
+          // Phase 8 (37.8-43.2s): Winning Car overtakes into 1st, then Loser 2 challenges!
+          t[winningIndex] = p1; t[loser2] = p2 + 18; t[loser1] = p3 + 8;
+        } else if (progress < 81) {
+          // Phase 9 (43.2-48.6s): Loser 2 crosses ahead into 1st! High suspense!
+          t[loser2] = p1; t[loser1] = p2 + 14; t[winningIndex] = p2 - 6;
+        } else if (progress < 91) {
+          // Phase 10 (48.6-54.6s): 3-Wide Neck-and-Neck Battle! Loser 1 noses ahead at 52s so nobody knows who will win!
+          t[loser1] = p1 + 6;
+          t[winningIndex] = p1 - 12;
+          t[loser2] = p1 - 18;
+        } else {
+          // Phase 11 (54.6-60s): Photo-Finish Final Overtake! Lowest-bet car fires full Nitro and crosses Finish Line 1st!
+          t[winningIndex] = finishCrossX;
+          t[loser1] = finishCrossX - 52;
+          t[loser2] = finishCrossX - 74;
+        }
+        return t;
+      }
 
       raceAnimationTimer = setInterval(() => {
         stepCount++;
@@ -6087,35 +6093,41 @@ ET
 
         if (timerPill) timerPill.innerText = `⏱️ ${remainingSec}s`;
         if (progBar) progBar.style.width = Math.max(0, 100 - raceProgress) + '%';
-        if (distEl) distEl.innerText = `${Math.min(1800, Math.round((raceProgress / 100) * 1800))}m / 1800m`;
+        if (distEl) distEl.innerText = `${Math.min(3000, Math.round((raceProgress / 100) * 3000))}m / 3000m`;
 
-        // Road surface & stage transitions (0-35% Highway -> 35-75% Bumpy Pothole Road -> 75-100% Off-Road Sprint)
+        // Speed up the background highway video as the race intensifies
+        if (bgVid) {
+          if (raceProgress < 35) bgVid.playbackRate = 1.15;
+          else if (raceProgress < 75) bgVid.playbackRate = 1.35;
+          else bgVid.playbackRate = 1.6;
+        }
+
+        // Update sector indicator pills
         if (raceProgress < 35) {
-          if (arena) arena.style.backgroundColor = '#272a33';
           if (seg0) { seg0.style.background = '#eab308'; seg0.style.color = '#0f172a'; }
           if (seg1) { seg1.style.background = '#1e293b'; seg1.style.color = '#94a3b8'; }
           if (seg2) { seg2.style.background = '#1e293b'; seg2.style.color = '#94a3b8'; }
-        } else if (raceProgress < 75) {
-          if (arena) arena.style.backgroundColor = '#3b2818';
-          if (seg1) { seg1.style.background = '#dc2626'; seg1.style.color = '#ffffff'; }
+        } else if (raceProgress < 78) {
+          if (seg1) { seg1.style.background = '#eab308'; seg1.style.color = '#0f172a'; }
         } else {
-          if (arena) arena.style.backgroundColor = '#243b18';
           if (seg2) { seg2.style.background = '#16a34a'; seg2.style.color = '#ffffff'; }
         }
 
-        // Every 2.2 seconds during the first 82% of the race, pick new overtake targets so the race looks super realistic
-        if (stepCount % 44 === 0 && raceProgress < 82) {
-          for (let i = 0; i < 3; i++) {
-            targetX[i] = 32 + Math.random() * (maxCruiseX - 40);
-          }
+        // Compute scripted overtake targets + organic high-frequency slipstream oscillation
+        const baseTargets = getScriptedTargets(raceProgress);
+        for (let i = 0; i < 3; i++) {
+          const wave = Math.sin((stepCount * 0.11) + (i * 2.1)) * 11;
+          targetX[i] = baseTargets[i] + (raceProgress < 91 ? wave : 0);
+          // Subtle vertical weaving inside each lane during overtakes
+          laneYOffset[i] = 6 + Math.sin((stepCount * 0.15) + (i * 1.7)) * 3.2;
         }
 
-        // Spawn oncoming scrolling potholes from the right side (ahead) in the losing lanes at 40%, 62%, and 84%
-        if (stepCount === 480 || stepCount === 740 || stepCount === 990) {
+        // Spawn oncoming road hazards in the 2 losing lanes at 90% (54s) so the final overtake looks 100% physical
+        if (stepCount === 1080) {
           for (let i = 0; i < 3; i++) {
             if (i !== winningIndex) {
               potholeActive[i] = true;
-              potholeX[i] = 104 + (i * 8);
+              potholeX[i] = 102 + (i * 6);
               const phEl = document.getElementById('lane-pothole-' + i);
               if (phEl) {
                 phEl.style.display = 'flex';
@@ -6123,22 +6135,21 @@ ET
               }
             }
           }
+          playNitroSound();
         }
 
-        // Scroll active potholes from right (105%) to left (-20%) so they come from ahead and exit behind!
+        // Scroll active road hazards from right to left
         for (let i = 0; i < 3; i++) {
           if (potholeActive[i]) {
-            potholeX[i] -= 1.65;
+            potholeX[i] -= 1.85;
             const phEl = document.getElementById('lane-pothole-' + i);
             if (phEl) phEl.style.left = potholeX[i] + '%';
 
             const potholePx = (potholeX[i] / 100) * trackWidth;
-            // When pothole passes under a losing vehicle, knock the losing vehicle back & tilt it
             if (Math.abs(potholePx - positions[i]) < 28) {
-              targetX[i] = Math.max(minX + 6, positions[i] - 38);
               const runner = document.getElementById('runner-car-' + i);
               if (runner) {
-                runner.style.transform = (stepCount % 2 === 0) ? 'rotate(-7deg)' : 'rotate(6deg)';
+                runner.style.transform = (stepCount % 2 === 0) ? 'rotate(-5deg)' : 'rotate(5deg)';
               }
               if (stepCount % 8 === 0) playPotholeBumpSound();
             } else {
@@ -6155,49 +6166,59 @@ ET
           }
         }
 
-        // Final 15% of the 60-second race: Winner activates Nitro Boost and surges to the finish line while losers fall behind
-        if (raceProgress >= 85) {
-          targetX[winningIndex] = finishCrossX;
-          const winFlame = document.getElementById('nitro-flame-' + winningIndex);
-          if (winFlame) winFlame.style.display = 'inline-block';
-          if (stepCount === 1030) playNitroSound();
-
-          for (let i = 0; i < 3; i++) {
-            if (i !== winningIndex) {
-              targetX[i] = Math.min(targetX[i], finishCrossX - 65 - (i * 14));
-              const loseFlame = document.getElementById('nitro-flame-' + i);
-              if (loseFlame) loseFlame.style.display = 'none';
-            }
-          }
-        } else {
-          // Occasional short nitro bursts during normal racing
-          for (let i = 0; i < 3; i++) {
-            const fl = document.getElementById('nitro-flame-' + i);
-            if (fl) {
-              fl.style.display = (targetX[i] - positions[i] > 28) ? 'inline-block' : 'none';
-            }
-          }
-        }
-
-        // Scroll in the Checkered Finish Line from ahead (right) during the final 3 seconds (95% -> 100%)
+        // Scroll in the Checkered Finish Line during the final 3 seconds (95% -> 100%)
         if (raceProgress >= 95 && finishEl) {
           finishEl.style.display = 'block';
           const finishRatio = (raceProgress - 95) / 5;
-          const rightPx = Math.round(-30 + (finishRatio * 58));
+          const rightPx = Math.round(-32 + (finishRatio * 60));
           finishEl.style.right = rightPx + 'px';
         }
 
-        // Smoothly interpolate vehicle positions & update live speedometer
+        // Move cars smoothly toward their current overtake targets & show Nitro Flame on whichever car is accelerating/overtaking
         for (let i = 0; i < 3; i++) {
-          positions[i] += (targetX[i] - positions[i]) * 0.085;
+          const delta = targetX[i] - positions[i];
+          positions[i] += delta * 0.065;
+
           const runner = document.getElementById('runner-car-' + i);
-          if (runner) runner.style.left = Math.round(positions[i]) + 'px';
+          if (runner) {
+            runner.style.left = Math.round(positions[i]) + 'px';
+            runner.style.top = laneYOffset[i].toFixed(1) + 'px';
+          }
+
+          const fl = document.getElementById('nitro-flame-' + i);
+          if (fl) {
+            const isOvertakingNow = (delta > 8) || (raceProgress >= 90 && i === winningIndex);
+            fl.style.display = isOvertakingNow ? 'block' : 'none';
+          }
 
           const spdEl = document.getElementById('lane-speed-' + i);
-          if (spdEl && stepCount % 6 === 0) {
-            const baseSpd = (raceProgress >= 85 && i === winningIndex) ? 192 : (potholeActive[i] ? 94 : 145);
-            spdEl.innerText = baseSpd + Math.floor(Math.random() * 14);
+          if (spdEl && stepCount % 5 === 0) {
+            const baseSpd = (raceProgress >= 90 && i === winningIndex) ? 328 : Math.round(255 + delta * 1.4);
+            spdEl.innerText = Math.max(195, Math.min(339, baseSpd + Math.floor(Math.random() * 9)));
           }
+        }
+
+        // Rank cars by current X position (1st, 2nd, 3rd) and update live badges as they overtake each other!
+        const ranked = [0, 1, 2].slice().sort((a, b) => positions[b] - positions[a]);
+        if (ranked[0] !== lastLeaderIdx) {
+          if (lastLeaderIdx !== -1 && stepCount % 4 === 0) {
+            playOvertakeWhooshSound();
+          }
+          lastLeaderIdx = ranked[0];
+        }
+
+        const rankLabels = ['1st', '2nd', '3rd'];
+        ranked.forEach((carIdx, rPos) => {
+          const posTag = document.getElementById('pos-tag-' + carIdx);
+          if (posTag) {
+            posTag.innerText = `${CAR_LETTERS[carIdx]} • ${rankLabels[rPos]}`;
+            posTag.style.background = (rPos === 0) ? '#eab308' : 'rgba(15,23,42,0.92)';
+            posTag.style.color = (rPos === 0) ? '#0f172a' : '#fde047';
+          }
+        });
+
+        if (orderPill) {
+          orderPill.innerText = `🥇${CAR_LETTERS[ranked[0]]} 🥈${CAR_LETTERS[ranked[1]]} 🥉${CAR_LETTERS[ranked[2]]}`;
         }
 
         if (stepCount >= totalSteps) {
@@ -6208,7 +6229,7 @@ ET
       }, intervalMs);
     }
 
-    // Finish Race Cleanly (No Winner Name Banner Clutter — Just Crown on Winning Lane + Instant Coin Payout + Auto Flip Back)
+    // Finish Race Cleanly (No Winner Name Banner Clutter — Just Crown on Winning Car + Instant Coin Payout + Auto Flip Back)
     function handleRaceFinished(winningIndex) {
       isRaceRunning = false;
       const playerBetOnWinner = currentPlayerBets[winningIndex];
@@ -6224,7 +6245,7 @@ ET
 
       const statusBadge = document.getElementById('race-status-badge');
       if (statusBadge) {
-        statusBadge.innerText = '🏁 LANE ' + (winningIndex + 1) + ' WON';
+        statusBadge.innerText = `🏁 CAR ${CAR_LETTERS[winningIndex]} WON (3x)`;
         statusBadge.style.background = '#eab308';
         statusBadge.style.color = '#0f172a';
       }
