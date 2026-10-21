@@ -1,23 +1,29 @@
 {
   "rules": {
+    "ss_users": {
+      "": {
+        ".read": "auth != null && (auth.uid ===  || auth.token.admin === true)",
+        ".write": "auth != null && (auth.uid ===  || auth.token.admin === true)"
+      }
+    },
     "ss_rides": {
       ".read": true,
-      ".write": "auth != null",
       "": {
-        ".validate": "newData.hasChildren(['origin', 'destination', 'farePerSeat', 'seatsAvailable']) && newData.child('seatsAvailable').isNumber()"
+        ".write": "auth != null && (!data.exists() || data.child('userId').val() === auth.uid || auth.token.admin === true || (newData.child('seatsAvailable').exists() && newData.child('seatsAvailable').val() <= data.child('seatsAvailable').val()))",
+        ".validate": "newData.hasChildren(['origin', 'destination', 'seatsAvailable']) && newData.child('seatsAvailable').isNumber()"
       }
     },
     "ss_bookings": {
-      ".read": "auth != null",
-      ".write": "auth != null",
       "": {
-        ".validate": "newData.hasChildren(['rideId', 'passengerPhone', 'seatsBooked', 'passengerUtr']) && newData.child('passengerUtr').val().matches(/^[0-9]{12}$/)"
+        ".read": "auth != null && (data.child('passengerId').val() === auth.uid || data.child('driverId').val() === auth.uid || auth.token.admin === true)",
+        ".write": "auth != null && (!data.exists() ? (newData.child('passengerId').val() === auth.uid) : (data.child('passengerId').val() === auth.uid || data.child('driverId').val() === auth.uid || auth.token.admin === true))",
+        ".validate": "newData.hasChildren(['rideId', 'passengerPhone', 'seatsBooked']) && newData.child('seatsBooked').isNumber()"
       }
     },
     "ss_telemetry": {
-      ".read": "auth != null",
-      ".write": "auth != null",
       "": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid ===  || auth.token.admin === true)",
         ".validate": "newData.hasChildren(['lat', 'lng']) && newData.child('lat').isNumber() && newData.child('lng').isNumber()"
       }
     },

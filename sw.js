@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v52-clean-zero-otp-auth)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v53-car-racing-gaming-zone)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v52-clean-zero-otp-auth';
+const CACHE_NAME = 'safarsaathi-v53-car-racing-gaming-zone';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

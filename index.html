@@ -951,10 +951,11 @@
         </a>
       </div>
       <div class="header-right" style="display: flex; gap: 8px; align-items: center;">
-        <!-- 🗺️ LIVE MAP TOGGLE BUTTON -->
-        <button type="button" id="btn-toggle-top-map" class="header-action-btn" onclick="toggleTopLiveMap()" title="Live Route Map" style="font-size: 0.76rem; padding: 5px 12px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 5px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.12); cursor: pointer; white-space: nowrap;">
-          <span>🗺️</span>
-          <span id="top-map-btn-text">Live Map</span>
+        <!-- 🎮 GAMING ZONE TOGGLE BUTTON -->
+        <button type="button" id="btn-toggle-top-gaming" class="header-action-btn" onclick="toggleGamingZone()" title="Car Race Gaming Zone" style="font-size: 0.76rem; padding: 5px 12px; width: auto; border-radius: 20px; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 6px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.12); cursor: pointer; white-space: nowrap;">
+          <span>🎮</span>
+          <span id="top-gaming-btn-text">Gaming Zone</span>
+          <span id="top-coins-badge" style="background: #16a34a; color: #ffffff; padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 900; display: inline-flex; align-items: center; gap: 3px;">🪙 <span id="top-coins-count">100</span></span>
         </button>
         <!-- 👤 PROFILE BUTTON -->
         <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC" style="width: 36px; height: 36px; border-radius: 50%; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; flex-shrink: 0;">
@@ -983,9 +984,9 @@
 
       <!-- Row 2: 3 Account & Hub Buttons -->
       <div class="nav-row">
-        <button class="nav-btn" id="btn-nav-live" onclick="showSection('map')">
-          <span>🗺️</span>
-          <span>Live Map</span>
+        <button class="nav-btn" id="btn-nav-gaming" onclick="showSection('gaming')">
+          <span>🎮</span>
+          <span>Gaming Zone</span>
         </button>
         <button class="nav-btn" id="btn-nav-bookings" onclick="showSection('my-tickets')">
           <span>🎟️</span>
@@ -1268,176 +1269,252 @@
       </div>
     </section>
 
-    <!-- ==================== 4. 🗺️ LIVE MAP (FULL FLIP SECTION) ==================== -->
-    <section id="section-map" class="app-section" style="display: none;">
-      <div id="top-map-container" style="max-width: 900px; margin: 0 auto; padding: 0;">
-        <div id="route-map-card" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(22, 163, 74, 0.12);">
-          <!-- Screen-Fitting Google Map Header with Controls -->
-          <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.45rem 0.75rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 1rem;">🗺️</span>
-              <div>
-                <strong id="map-live-loc-title" style="font-size: 0.82rem; font-weight: 900; color: #ffffff; display: block; line-height: 1.2;">
-                  Google Maps • AI Road-Lock
-                </strong>
-                <span id="map-radar-count-badge" style="font-size: 0.68rem; color: #dcfce7; font-weight: 800;">
-                  🟢 100% Accurate on Road (1s Stream)
-                </span>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <button type="button" onclick="centerOnUserLiveGps(true)" style="background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-size: 0.7rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; cursor: pointer;" title="Center on my accurate GPS location">
-                🎯 GPS
-              </button>
-              <button type="button" id="btn-gmap-satellite" onclick="toggleGoogleMapSatelliteLayer()" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 3px 8px; font-size: 0.7rem; font-weight: 900; border-radius: 6px; cursor: pointer;" title="Toggle Satellite View">
-                🛰️ Satellite
-              </button>
-              <button type="button" onclick="showSection('live-cars')" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; font-size: 0.88rem; cursor: pointer; padding: 1px 6px; border-radius: 5px; font-weight: 900;" title="Close Map">✕</button>
-            </div>
-          </div>
-
-                    <!-- Screen-Fitting Compact Live Google Maps Viewport (Zero-Scroll Lock) -->
-          <div id="google-live-map-div" style="height: var(--auto-map-height, 160px); min-height: 135px; max-height: 175px; width: 100%; position: relative; background: #e8f5e9; overflow: hidden;">
-            <!-- Interactive Vector Route Map of Assam (Always renders, even offline!) -->
-            <svg id="assam-vector-map" viewBox="0 0 600 280" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; display: block; position: absolute; top:0; left:0;">
-              <!-- Background Terrain -->
-              <rect width="600" height="280" fill="#e8f5e9" />
-              <!-- Brahmaputra River -->
-              <path d="M 0,90 Q 150,75 250,95 T 450,110 T 600,100" fill="none" stroke="#bbf7d0" stroke-width="22" opacity="0.85" />
-              <path d="M 0,90 Q 150,75 250,95 T 450,110 T 600,100" fill="none" stroke="#86efac" stroke-width="9" opacity="0.9" />
-
-              <!-- Regional Road Network -->
-              <path d="M 50,185 L 150,140 L 320,150 L 480,130 L 580,120" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
-              <path d="M 150,140 L 170,225" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
-              <path d="M 320,150 L 300,70 L 400,60" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="4 4" />
-
-              <!-- Active Glowing Highway Corridors -->
-              <!-- Guwahati to Nagaon (NH-27) -->
-              <path id="route-path-nagaon" d="M 150,140 Q 230,130 320,150" fill="none" stroke="#16a34a" stroke-width="6" stroke-linecap="round" />
-              <!-- Guwahati to Shillong (GS Road / NH-40) -->
-              <path id="route-path-shillong" d="M 150,140 Q 155,185 170,225" fill="none" stroke="#15803d" stroke-width="4.5" stroke-linecap="round" />
-              <!-- Nagaon to Jorhat (NH-715) -->
-              <path id="route-path-jorhat" d="M 320,150 Q 400,140 480,130" fill="none" stroke="#16a34a" stroke-width="4.5" stroke-linecap="round" />
-
-              <!-- Live Pulsing Car Tracker -->
-              <circle cx="235" cy="135" r="14" fill="#22c55e" opacity="0.25">
-                <animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.4;0.05;0.4" dur="2s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="235" cy="135" r="6" fill="#15803d" stroke="#ffffff" stroke-width="2" />
-              <text x="227" y="127" font-size="16">🚗</text>
-
-              <!-- Guwahati (Point A) -->
-              <g transform="translate(150, 140)">
-                <circle r="12" fill="#15803d" stroke="#ffffff" stroke-width="2.5" />
-                <text text-anchor="middle" y="4" fill="#ffffff" font-size="10" font-weight="900" font-family="sans-serif">A</text>
-                <text text-anchor="middle" y="-16" fill="#000000" font-size="12" font-weight="900" font-family="sans-serif">Guwahati</text>
-              </g>
-
-              <!-- Nagaon (Point B) -->
-              <g transform="translate(320, 150)">
-                <circle r="11" fill="#16a34a" stroke="#ffffff" stroke-width="2.5" />
-                <text text-anchor="middle" y="4" fill="#ffffff" font-size="10" font-weight="900" font-family="sans-serif">B</text>
-                <text text-anchor="middle" y="-16" fill="#000000" font-size="12" font-weight="900" font-family="sans-serif">Nagaon</text>
-              </g>
-
-              <!-- Shillong -->
-              <g transform="translate(170, 225)">
-                <circle r="9" fill="#15803d" stroke="#ffffff" stroke-width="2" />
-                <text text-anchor="middle" y="18" fill="#000000" font-size="11" font-weight="800" font-family="sans-serif">Shillong</text>
-              </g>
-
-              <!-- Jorhat -->
-              <g transform="translate(480, 130)">
-                <circle r="9" fill="#16a34a" stroke="#ffffff" stroke-width="2" />
-                <text text-anchor="middle" y="-14" fill="#000000" font-size="11" font-weight="800" font-family="sans-serif">Jorhat</text>
-              </g>
-
-              <!-- Tezpur -->
-              <g transform="translate(300, 70)">
-                <circle r="8" fill="#15803d" stroke="#ffffff" stroke-width="1.5" />
-                <text text-anchor="middle" y="-12" fill="#000000" font-size="10" font-weight="800" font-family="sans-serif">Tezpur</text>
-              </g>
-            </svg>
-          </div>
-
-          <!-- 🟢 OLA/UBER STYLE LIVE CONNECTING RIDE TRACKER HUD -->
-          <div id="active-ride-tracking-hud" style="display: none; background: #ffffff; border-top: 2px solid #16a34a; padding: 10px 14px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-              <div style="display: flex; align-items: center; gap: 9px;">
-                <div style="width: 38px; height: 38px; border-radius: 50%; background: #dcfce7; border: 2px solid #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-                  🚗
-                </div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s infinite;"></span>
-                    <strong style="color: #000000; font-size: 0.92rem; font-weight: 900;" id="hud-status-title">
-                      Gaadi On The Way (Live Connecting)
-                    </strong>
-                  </div>
-                  <span id="hud-status-subtitle" style="font-size: 0.72rem; color: #15803d; font-weight: 800; display: block; margin-top: 1px;">
-                    Driver aapke pickup point ki taraf aa rahe hain
-                  </span>
-                </div>
-              </div>
-              <div style="text-align: right; background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 4px 10px;">
-                <div style="font-size: 1.15rem; font-weight: 900; color: #15803d; line-height: 1.1;" id="hud-eta-display">-- min</div>
-                <div style="font-size: 0.72rem; color: #000000; font-weight: 900; margin-top: 2px;" id="hud-distance-display">-- km door</div>
-              </div>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.76rem;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <img id="hud-driver-img" src="driver_photo_avatar.png" alt="Driver" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #16a34a;">
-                <div>
-                  <b style="color: #000000;" id="hud-driver-name">Dipankar Baidya</b>
-                  <div style="margin-top: 2px;">
-                    <span class="rc-hsrp-badge" id="hud-vehicle-plate" style="font-size: 0.7rem; background: #ffffff; color: #000000; border: 1px solid #000000; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-weight: 900;">
-                      IND • AS 02 M 8287
-                    </span>
-                    <span style="color: #64748b; font-weight: 700; margin-left: 4px;" id="hud-vehicle-model">Maruti Dzire</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <a id="hud-call-btn" href="tel:" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
-                  📞 Call
-                </a>
-                <a id="hud-wa-btn" href="#" target="_blank" style="background: #ffffff; color: #15803d; border: 1px solid #16a34a; font-weight: 900; font-size: 0.72rem; padding: 4px 9px; border-radius: 6px; text-decoration: none; display: flex; align-items: center; gap: 3px;">
-                  💬 WhatsApp
-                </a>
-                <button type="button" onclick="stopActiveRideTracking(true); showSection('live-cars');" style="background: #f1f5f9; color: #000000; border: 1px solid #cbd5e1; font-weight: 800; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; cursor: pointer;" title="Close Tracking View">
-                  ✕
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Compact Screen-Fitting Map Footer -->
-          <div style="background: #ffffff; padding: 4px 8px; border-top: 1.5px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 0.68rem;">
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pulse 1s infinite;"></span>
-              <span id="map-coords-display" style="color: #000000; font-weight: 800; font-family: monospace;">🟢 AI Road-Lock Active</span>
-            </div>
-            <div style="color: #15803d; font-weight: 900; font-size: 0.68rem;">
-              ⚡ 1s Live Stream
-            </div>
-          </div>
-        </div><!-- /#route-map-card -->
-
-        <!-- 🎬 MAP CORRIDOR VIDEO PLAYER (NEW 10S VIDEO AD • ZERO BANNERS • CONTINUOUS PLAY WITH SOUND) -->
-        <div id="map-video-ad-box" style="position: relative; margin-top: 0.3rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(18vh, 120px); max-height: 120px;">
-          <video id="map-video-player" src="map_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 10px;"></video>
+    <!-- ==================== 4. 🎮 CAR RACING GAMING ZONE ==================== -->
+    <section id="section-gaming" class="app-section" style="display: none;">
+      <div id="gaming-zone-container" style="max-width: 900px; margin: 0 auto; padding: 0;">
+        <div class="app-card" style="border: 2px solid #16a34a; border-radius: 18px; box-shadow: 0 4px 20px rgba(22, 163, 74, 0.12); overflow: hidden; padding: 0;">
           
-          <!-- 🔊 MAP VIDEO MUTE / UNMUTE BUTTON (SOUND ACTIVE BY DEFAULT) -->
-          <button type="button" id="btn-map-video-mute-toggle" onclick="toggleMapVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
-            <span id="map-video-mute-icon" style="font-size: 0.85rem;">🔊</span>
-            <span id="map-video-mute-label">Mute</span>
-          </button>
-        </div>
+          <!-- Gaming Header with Coin Balance and Buy Coins Action -->
+          <div style="background: linear-gradient(135deg, #15803d, #16a34a); padding: 0.65rem 0.95rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span style="font-size: 1.25rem;">🏎️</span>
+                <strong style="font-size: 1.05rem; font-weight: 900; color: #ffffff;">SafarSaathi Supercar Race</strong>
+              </div>
+              <div style="font-size: 0.72rem; color: #dcfce7; font-weight: 700; margin-top: 2px;">
+                ⚡ 3-Car Showdown • Lowest Total Bet Car WINS! • 3x Winnings
+              </div>
+            </div>
 
-      </div><!-- /#top-map-container -->
+            <!-- Coin Wallet Controls -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 20px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                <span style="font-size: 0.95rem;">🪙</span>
+                <div>
+                  <span id="game-coins-display" style="font-size: 0.95rem; font-weight: 900; color: #15803d; font-family: monospace;">100</span>
+                  <span style="font-size: 0.62rem; color: #64748b; font-weight: 800; display: block; line-height: 1;">(₹1 = 1 Coin)</span>
+                </div>
+              </div>
+
+              <!-- Buy Coins Button -->
+              <button type="button" onclick="openBuyCoinsModal()" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); white-space: nowrap;">
+                <span>➕</span>
+                <span>Buy Coins</span>
+              </button>
+
+              <!-- Daily Bonus Button -->
+              <button type="button" onclick="claimDailyBonus()" style="background: #fef08a; color: #854d0e; border: 1.5px solid #eab308; padding: 6px 9px; border-radius: 20px; font-weight: 900; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; gap: 3px; white-space: nowrap;" title="Claim 20 Free Coins Daily">
+                <span>🎁</span>
+                <span>Bonus</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Rule Banner: Direct Explanation for the User -->
+          <div style="background: #f0fdf4; border-bottom: 1.5px solid #86efac; padding: 0.5rem 0.85rem; font-size: 0.75rem; color: #14532d; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 0.95rem;">🎯</span>
+              <span><strong>Winning Rule:</strong> जिस कार पर <b>सबसे कम बेट (Lowest Bet)</b> लगेगा, वही रेस जीतेगी! अगर आपकी कार जीती, तो आपको <b>3x (300%)</b> कॉइन्स मिलेंगे!</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: #ffffff; border: 1px solid #16a34a; color: #15803d; border-radius: 6px; padding: 2px 8px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">
+                🔊 Sound ON
+              </button>
+            </div>
+          </div>
+
+          <!-- Round Header -->
+          <div style="padding: 0.65rem 0.85rem 0.35rem 0.85rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+            <div>
+              <span style="font-weight: 900; color: #000000;">🏁 Round #<span id="race-round-number" style="color: #15803d; font-family: monospace;">101</span></span>
+              <span style="color: #64748b; font-weight: 700; margin-left: 6px;">• 3 Fresh Supercars Ready</span>
+            </div>
+            <div id="race-status-badge" style="background: #dcfce7; color: #15803d; border: 1px solid #86efac; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 900;">
+              🟢 Betting Open (Place Your Bet)
+            </div>
+          </div>
+
+          <!-- 3-LANE REALISTIC ASPHALT RACETRACK ARENA -->
+          <div style="padding: 0 0.85rem 0.65rem 0.85rem;">
+            <div id="racetrack-arena" style="height: 200px; background: #0f172a; border-radius: 14px; position: relative; overflow: hidden; border: 2.5px solid #1e293b; box-shadow: inset 0 4px 16px rgba(0,0,0,0.8);">
+              
+              <!-- Start Line Marker (Left) -->
+              <div style="position: absolute; left: 70px; top: 0; bottom: 0; width: 4px; background: rgba(34, 197, 94, 0.7); z-index: 4;">
+                <div style="position: absolute; top: 4px; left: -16px; background: #16a34a; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px;">START</div>
+              </div>
+
+              <!-- Finish Line Checkered Banner (Right) -->
+              <div style="position: absolute; right: 45px; top: 0; bottom: 0; width: 14px; background: repeating-linear-gradient(45deg, #ffffff, #ffffff 4px, #000000 4px, #000000 8px); z-index: 5; box-shadow: 0 0 10px rgba(255,255,255,0.4);">
+                <div style="position: absolute; top: 4px; right: 18px; background: #fef08a; color: #854d0e; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; border: 1px solid #eab308; white-space: nowrap;">🏁 FINISH</div>
+              </div>
+
+              <!-- Big Countdown & Race Telemetry Overlay -->
+              <div id="track-overlay-msg" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 20; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(2px);">
+                <div id="track-big-countdown" style="font-size: 2.6rem; font-weight: 900; color: #fef08a; text-shadow: 0 0 20px rgba(234, 179, 8, 0.9); text-transform: uppercase;">
+                  3
+                </div>
+              </div>
+
+              <!-- Lane 1 (Top) -->
+              <div class="race-lane" id="race-lane-0" style="position: absolute; top: 0; left: 0; right: 0; height: 66px; border-bottom: 2px dashed rgba(255,255,255,0.25); display: flex; align-items: center;">
+                <span style="position: absolute; left: 8px; top: 8px; background: rgba(255,255,255,0.15); color: #94a3b8; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 4px;">LANE 1</span>
+                <div id="runner-car-0" style="position: absolute; left: 15px; top: 12px; transition: left 0.1s linear; display: flex; align-items: center;">
+                  <div id="runner-svg-0" style="width: 95px; height: 38px;"></div>
+                  <span id="nitro-flame-0" style="display: none; font-size: 1.1rem; margin-left: -12px; filter: drop-shadow(0 0 8px #f97316); transform: scaleX(-1);">🔥</span>
+                </div>
+              </div>
+
+              <!-- Lane 2 (Middle) -->
+              <div class="race-lane" id="race-lane-1" style="position: absolute; top: 66px; left: 0; right: 0; height: 66px; border-bottom: 2px dashed rgba(255,255,255,0.25); display: flex; align-items: center;">
+                <span style="position: absolute; left: 8px; top: 8px; background: rgba(255,255,255,0.15); color: #94a3b8; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 4px;">LANE 2</span>
+                <div id="runner-car-1" style="position: absolute; left: 15px; top: 12px; transition: left 0.1s linear; display: flex; align-items: center;">
+                  <div id="runner-svg-1" style="width: 95px; height: 38px;"></div>
+                  <span id="nitro-flame-1" style="display: none; font-size: 1.1rem; margin-left: -12px; filter: drop-shadow(0 0 8px #f97316); transform: scaleX(-1);">🔥</span>
+                </div>
+              </div>
+
+              <!-- Lane 3 (Bottom) -->
+              <div class="race-lane" id="race-lane-2" style="position: absolute; top: 132px; left: 0; right: 0; height: 66px; display: flex; align-items: center;">
+                <span style="position: absolute; left: 8px; top: 8px; background: rgba(255,255,255,0.15); color: #94a3b8; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 4px;">LANE 3</span>
+                <div id="runner-car-2" style="position: absolute; left: 15px; top: 12px; transition: left 0.1s linear; display: flex; align-items: center;">
+                  <div id="runner-svg-2" style="width: 95px; height: 38px;"></div>
+                  <span id="nitro-flame-2" style="display: none; font-size: 1.1rem; margin-left: -12px; filter: drop-shadow(0 0 8px #f97316); transform: scaleX(-1);">🔥</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- WINNER VICTORY PODIUM CARD (Shown After Race) -->
+          <div id="race-winner-card" style="display: none; margin: 0 0.85rem 0.65rem 0.85rem; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #16a34a; border-radius: 14px; padding: 0.85rem; text-align: center; box-shadow: 0 4px 16px rgba(22, 163, 74, 0.2); animation: flipSection 0.2s ease-out;">
+            <div style="font-size: 2rem; margin-bottom: 2px;">🏆</div>
+            <h3 id="winner-banner-title" style="margin: 0; font-size: 1.15rem; font-weight: 900; color: #15803d;">
+              Winner Announced!
+            </h3>
+            <p id="winner-banner-desc" style="font-size: 0.8rem; color: #166534; font-weight: 800; margin: 3px 0 0.5rem 0;">
+              Car won with the lowest total bet!
+            </p>
+            <div id="winner-payout-box" style="margin-bottom: 0.65rem;"></div>
+            <button type="button" onclick="setupNewRaceRound()" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; padding: 8px 18px; border-radius: 10px; font-weight: 900; font-size: 0.85rem; cursor: pointer; box-shadow: 0 3px 10px rgba(22,163,74,0.35);">
+              🏁 Play Next Race (3 New Cars) ➔
+            </button>
+          </div>
+
+          <!-- 3 CARS BETTING CARDS GRID -->
+          <div style="padding: 0 0.85rem 0.65rem 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+              <span style="font-size: 0.78rem; font-weight: 900; color: #000000;">🎯 Place Bets on Cars:</span>
+              <div style="display: flex; gap: 4px; align-items: center;">
+                <span style="font-size: 0.7rem; color: #64748b; font-weight: 800;">Chip Value:</span>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(10)" id="chip-val-10" style="padding: 2px 7px; font-size: 0.7rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #16a34a; background: #16a34a; color: #ffffff; cursor: pointer;">🪙 10</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(25)" id="chip-val-25" style="padding: 2px 7px; font-size: 0.7rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #000000; cursor: pointer;">🪙 25</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(50)" id="chip-val-50" style="padding: 2px 7px; font-size: 0.7rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #000000; cursor: pointer;">🪙 50</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(100)" id="chip-val-100" style="padding: 2px 7px; font-size: 0.7rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #000000; cursor: pointer;">🪙 100</button>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+              
+              <!-- Car Card 1 -->
+              <div id="bet-card-0" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 0.55rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.04); transition: all 0.2s;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <span style="font-size: 0.65rem; font-weight: 900; background: #f1f5f9; color: #334155; padding: 1px 5px; border-radius: 4px;">L1</span>
+                    <span id="car-top-speed-0" style="font-size: 0.62rem; color: #64748b; font-weight: 800;">340 km/h</span>
+                  </div>
+                  <strong id="car-name-0" style="font-size: 0.78rem; font-weight: 900; color: #000000; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ferrari F8</strong>
+                  <div id="car-preview-svg-0" style="margin: 2px auto; width: 100%; height: 36px;"></div>
+                  
+                  <!-- Total Bet on this car -->
+                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 4px; margin-top: 3px;">
+                    <div style="font-size: 0.62rem; color: #64748b; font-weight: 700;">Total Bets:</div>
+                    <div style="font-size: 0.88rem; font-weight: 900; color: #0f172a; font-family: monospace;">🪙 <span id="car-total-bet-0">0</span></div>
+                    <div id="car-lowest-badge-0" style="font-size: 0.6rem; font-weight: 900; color: #15803d; background: #dcfce7; padding: 1px 4px; border-radius: 4px; margin-top: 2px; display: none;">⭐ LOWEST BET</div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 5px;">
+                  <div style="font-size: 0.65rem; color: #15803d; font-weight: 800; margin-bottom: 3px;">
+                    Aapka Bet: <b>🪙 <span id="car-player-bet-0">0</span></b>
+                  </div>
+                  <button type="button" class="btn-bet-action" onclick="placeBetOnCar(0)" style="width: 100%; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-weight: 900; font-size: 0.72rem; padding: 5px 2px; border-radius: 8px; cursor: pointer;">
+                    + Bet Car 1
+                  </button>
+                </div>
+              </div>
+
+              <!-- Car Card 2 -->
+              <div id="bet-card-1" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 0.55rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.04); transition: all 0.2s;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <span style="font-size: 0.65rem; font-weight: 900; background: #f1f5f9; color: #334155; padding: 1px 5px; border-radius: 4px;">L2</span>
+                    <span id="car-top-speed-1" style="font-size: 0.62rem; color: #64748b; font-weight: 800;">325 km/h</span>
+                  </div>
+                  <strong id="car-name-1" style="font-size: 0.78rem; font-weight: 900; color: #000000; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Lambo Huracán</strong>
+                  <div id="car-preview-svg-1" style="margin: 2px auto; width: 100%; height: 36px;"></div>
+                  
+                  <!-- Total Bet on this car -->
+                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 4px; margin-top: 3px;">
+                    <div style="font-size: 0.62rem; color: #64748b; font-weight: 700;">Total Bets:</div>
+                    <div style="font-size: 0.88rem; font-weight: 900; color: #0f172a; font-family: monospace;">🪙 <span id="car-total-bet-1">0</span></div>
+                    <div id="car-lowest-badge-1" style="font-size: 0.6rem; font-weight: 900; color: #15803d; background: #dcfce7; padding: 1px 4px; border-radius: 4px; margin-top: 2px; display: none;">⭐ LOWEST BET</div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 5px;">
+                  <div style="font-size: 0.65rem; color: #15803d; font-weight: 800; margin-bottom: 3px;">
+                    Aapka Bet: <b>🪙 <span id="car-player-bet-1">0</span></b>
+                  </div>
+                  <button type="button" class="btn-bet-action" onclick="placeBetOnCar(1)" style="width: 100%; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-weight: 900; font-size: 0.72rem; padding: 5px 2px; border-radius: 8px; cursor: pointer;">
+                    + Bet Car 2
+                  </button>
+                </div>
+              </div>
+
+              <!-- Car Card 3 -->
+              <div id="bet-card-2" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 0.55rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.04); transition: all 0.2s;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <span style="font-size: 0.65rem; font-weight: 900; background: #f1f5f9; color: #334155; padding: 1px 5px; border-radius: 4px;">L3</span>
+                    <span id="car-top-speed-2" style="font-size: 0.62rem; color: #64748b; font-weight: 800;">318 km/h</span>
+                  </div>
+                  <strong id="car-name-2" style="font-size: 0.78rem; font-weight: 900; color: #000000; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Porsche 911</strong>
+                  <div id="car-preview-svg-2" style="margin: 2px auto; width: 100%; height: 36px;"></div>
+                  
+                  <!-- Total Bet on this car -->
+                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 4px; margin-top: 3px;">
+                    <div style="font-size: 0.62rem; color: #64748b; font-weight: 700;">Total Bets:</div>
+                    <div style="font-size: 0.88rem; font-weight: 900; color: #0f172a; font-family: monospace;">🪙 <span id="car-total-bet-2">0</span></div>
+                    <div id="car-lowest-badge-2" style="font-size: 0.6rem; font-weight: 900; color: #15803d; background: #dcfce7; padding: 1px 4px; border-radius: 4px; margin-top: 2px; display: none;">⭐ LOWEST BET</div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 5px;">
+                  <div style="font-size: 0.65rem; color: #15803d; font-weight: 800; margin-bottom: 3px;">
+                    Aapka Bet: <b>🪙 <span id="car-player-bet-2">0</span></b>
+                  </div>
+                  <button type="button" class="btn-bet-action" onclick="placeBetOnCar(2)" style="width: 100%; background: #ffffff; border: 1.5px solid #16a34a; color: #15803d; font-weight: 900; font-size: 0.72rem; padding: 5px 2px; border-radius: 8px; cursor: pointer;">
+                    + Bet Car 3
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Bottom Action Buttons: Clear Bets & Start 3-Car Race -->
+          <div style="padding: 0 0.85rem 0.85rem 0.85rem; display: flex; gap: 8px; align-items: center;">
+            <button type="button" id="btn-clear-bets" onclick="clearAllPlayerBets()" style="background: #f1f5f9; border: 1.5px solid #cbd5e1; color: #475569; padding: 0.7rem 0.9rem; border-radius: 12px; font-weight: 800; font-size: 0.76rem; cursor: pointer; white-space: nowrap;">
+              🔄 Clear
+            </button>
+            <button type="button" id="btn-start-race" onclick="startCarRace()" style="flex: 1; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; padding: 0.75rem 1rem; border-radius: 12px; font-weight: 900; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);">
+              <span>🚀</span>
+              <span id="btn-start-race-text">START 3-CAR RACE (Lowest Bet Wins) ➔</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
     </section>
 
     <!-- ==================== 5. ✨ GEMINI AI COPILOT (SCREEN-FITTING ZERO-SCROLL CHAT) ==================== -->
@@ -2374,10 +2451,12 @@
       const secProf = document.getElementById('section-profile');
       const secTickets = document.getElementById('section-my-tickets');
       const secFleet = document.getElementById('section-driver-fleet');
-      const secMap = document.getElementById('section-map');
+      const secGaming = document.getElementById('section-gaming');
       const secGemini = document.getElementById('section-gemini-ai');
 
-      if (tab !== 'map' && tab !== 'gemini-ai' && tab !== 'ai') {
+      const isGamingTab = (tab === 'gaming' || tab === 'map');
+
+      if (!isGamingTab && tab !== 'gemini-ai' && tab !== 'ai') {
         lastActiveSection = tab;
       }
 
@@ -2388,12 +2467,8 @@
         resumeProfileHomeVideoAdIfNeeded();
       }
 
-      // Play Map Video Ad when on map tab, stop when leaving map
-      if (tab === 'map') {
-        initMapVideoAd();
-      } else {
-        stopMapVideoAd();
-      }
+      // Stop map video ad if any
+      stopMapVideoAd();
 
       // 1. Strict Flip System: ONLY target section is displayed, other sections are 100% hidden!
       if (secLive) secLive.style.display = (tab === 'live-cars') ? 'block' : 'none';
@@ -2402,38 +2477,38 @@
       if (secProf) secProf.style.display = (tab === 'profile') ? 'block' : 'none';
       if (secTickets) secTickets.style.display = (tab === 'my-tickets' || tab === 'bookings') ? 'block' : 'none';
       if (secFleet) secFleet.style.display = (tab === 'driver-fleet' || tab === 'fleet') ? 'block' : 'none';
-      if (secMap) secMap.style.display = (tab === 'map') ? 'block' : 'none';
+      if (secGaming) secGaming.style.display = isGamingTab ? 'block' : 'none';
       if (secGemini) secGemini.style.display = (tab === 'gemini-ai' || tab === 'ai') ? 'block' : 'none';
 
-      // 2. Hide footer & Gemini bottom dock on Profile Home, Map, or AI full view to guarantee ZERO-SCROLL screen fit!
+      // 2. Hide footer & Gemini bottom dock on Profile Home, Gaming Zone, or AI full view to guarantee ZERO-SCROLL screen fit!
       const pageFooter = document.getElementById('main-company-footer');
       const pageAiDock = document.getElementById('gemini-page-dock');
-      const isCleanFitTab = (tab === 'profile' || tab === 'map' || tab === 'gemini-ai' || tab === 'ai');
+      const isCleanFitTab = (tab === 'profile' || isGamingTab || tab === 'gemini-ai' || tab === 'ai');
       if (pageFooter) pageFooter.style.display = isCleanFitTab ? 'none' : 'block';
       if (pageAiDock) pageAiDock.style.display = isCleanFitTab ? 'none' : 'flex';
 
-      // 3. Update active state across the 6 core navigation buttons
-      const btnLive = document.getElementById('btn-nav-live');
+      // 3. Update active state across navigation buttons
+      const btnGaming = document.getElementById('btn-nav-gaming') || document.getElementById('btn-nav-live');
       const btnDriver = document.getElementById('btn-nav-driver');
       const btnSearch = document.getElementById('btn-nav-search');
       const btnProf = document.getElementById('btn-nav-profile');
       const btnBookings = document.getElementById('btn-nav-bookings');
       const btnFleet = document.getElementById('btn-nav-fleet');
 
-      if (btnLive) btnLive.classList.toggle('active', tab === 'map' || tab === 'live-cars');
+      if (btnGaming) btnGaming.classList.toggle('active', isGamingTab);
       if (btnDriver) btnDriver.classList.toggle('active', tab === 'driver');
       if (btnSearch) btnSearch.classList.toggle('active', tab === 'passenger');
       if (btnProf) btnProf.classList.toggle('active', tab === 'profile');
       if (btnBookings) btnBookings.classList.toggle('active', tab === 'my-tickets' || tab === 'bookings');
       if (btnFleet) btnFleet.classList.toggle('active', tab === 'driver-fleet' || tab === 'fleet');
 
-      // Update header map button label
-      const mapBtnText = document.getElementById('top-map-btn-text');
-      const mapHeaderBtn = document.getElementById('btn-toggle-top-map');
-      if (mapBtnText) mapBtnText.innerText = (tab === 'map') ? '✕ Close Map' : 'Live Map';
-      if (mapHeaderBtn) {
-        mapHeaderBtn.style.background = (tab === 'map') ? '#16a34a' : '#ffffff';
-        mapHeaderBtn.style.color = (tab === 'map') ? '#ffffff' : '#15803d';
+      // Update header gaming button label
+      const gamingBtnText = document.getElementById('top-gaming-btn-text') || document.getElementById('top-map-btn-text');
+      const gamingHeaderBtn = document.getElementById('btn-toggle-top-gaming') || document.getElementById('btn-toggle-top-map');
+      if (gamingBtnText) gamingBtnText.innerText = isGamingTab ? '✕ Close Game' : 'Gaming Zone';
+      if (gamingHeaderBtn) {
+        gamingHeaderBtn.style.background = isGamingTab ? '#16a34a' : '#ffffff';
+        gamingHeaderBtn.style.color = isGamingTab ? '#ffffff' : '#15803d';
       }
 
       // 4. Execution logic for each distinct section
@@ -2443,9 +2518,8 @@
         checkDriverAadhaarAndOpenPost();
       } else if (tab === 'passenger') {
         executePassengerCorridorSearch();
-      } else if (tab === 'map') {
-        initCleanGoogleLiveMap();
-        setTimeout(() => { if (googleLiveMap) googleLiveMap.invalidateSize(); }, 120);
+      } else if (isGamingTab) {
+        initCarRacingGame();
       } else if (tab === 'gemini-ai' || tab === 'ai') {
         const inp = document.getElementById('gemini-user-input');
         if (inp) setTimeout(() => inp.focus(), 150);
@@ -2457,9 +2531,7 @@
         renderProfileView();
       }
 
-      if (tab !== 'map') {
-        stopActiveRideTracking(false);
-      }
+      stopActiveRideTracking(false);
 
       updateNavCounts();
       const mainEl = document.querySelector('main');
@@ -5185,8 +5257,655 @@ ET
       }
     }
 
+
+    // =========================================================================
+    // 🎮 SAFARSAATHI CAR RACING GAMING ZONE ENGINE (3 CARS • LOWEST BET WINS)
+    // 🪙 1 Coin = ₹1 • Dynamic Models Every Round • Instant UPI Coin Purchase
+    // =========================================================================
+    function toggleGamingZone() {
+      const secGaming = document.getElementById('section-gaming');
+      const isGamingOpen = (secGaming && secGaming.style.display !== 'none' && secGaming.style.display !== '');
+      if (isGamingOpen) {
+        showSection(lastActiveSection || 'live-cars');
+      } else {
+        showSection('gaming');
+      }
+    }
+
+    function toggleTopLiveMap() {
+      toggleGamingZone();
+    }
+
+    // Rich Pool of 18 Supercars with Unique Colors, Liveries and Specs
+    const CAR_MODELS_POOL = [
+      { id: 'ferrari_f8', name: 'Ferrari F8', model: 'F8 Tributo V8 Twin-Turbo', color1: '#ef4444', color2: '#991b1b', accent: '#fef08a', topSpeed: '340 km/h' },
+      { id: 'lambo_huracan', name: 'Lambo Huracán', model: 'Huracán EVO V10', color1: '#eab308', color2: '#a16207', accent: '#0f172a', topSpeed: '325 km/h' },
+      { id: 'porsche_911', name: 'Porsche 911', model: '911 GT3 RS Aero', color1: '#16a34a', color2: '#14532d', accent: '#86efac', topSpeed: '318 km/h' },
+      { id: 'mustang_gt', name: 'Mustang Shelby', model: 'Shelby GT500 Predator', color1: '#2563eb', color2: '#1e3a8a', accent: '#ffffff', topSpeed: '305 km/h' },
+      { id: 'bugatti_chiron', name: 'Bugatti Chiron', model: 'Chiron Pur Sport W16', color1: '#06b6d4', color2: '#0e7490', accent: '#f43f5e', topSpeed: '420 km/h' },
+      { id: 'mclaren_720s', name: 'McLaren 720S', model: '720S Spider Twin-Turbo', color1: '#8b5cf6', color2: '#5b21b6', accent: '#f97316', topSpeed: '341 km/h' },
+      { id: 'nissan_gtr', name: 'Nissan GT-R', model: 'GT-R Nismo AWD Spec', color1: '#334155', color2: '#0f172a', accent: '#ef4444', topSpeed: '315 km/h' },
+      { id: 'toyota_supra', name: 'Toyota Supra', model: 'Supra GR Drift Edition', color1: '#f97316', color2: '#9a3412', accent: '#fef08a', topSpeed: '280 km/h' },
+      { id: 'corvette_z06', name: 'Corvette Z06', model: 'Z06 Flat-Plane Crank', color1: '#dc2626', color2: '#7f1d1d', accent: '#38bdf8', topSpeed: '312 km/h' },
+      { id: 'bmw_m4', name: 'BMW M4', model: 'M4 Competition TwinPower', color1: '#84cc16', color2: '#3f6212', accent: '#0f172a', topSpeed: '290 km/h' },
+      { id: 'aston_vantage', name: 'Aston Vantage', model: 'Vantage F1 Edition', color1: '#0d9488', color2: '#134e4a', accent: '#fef08a', topSpeed: '314 km/h' },
+      { id: 'audi_r8', name: 'Audi R8', model: 'R8 V10 Plus Quattro', color1: '#3b82f6', color2: '#1d4ed8', accent: '#fb7185', topSpeed: '331 km/h' },
+      { id: 'dodge_viper', name: 'Dodge Viper', model: 'Viper ACR Extreme 8.4L', color1: '#b91c1c', color2: '#450a0a', accent: '#ffffff', topSpeed: '285 km/h' },
+      { id: 'koenigsegg_jesko', name: 'Koenigsegg', model: 'Jesko Absolut 1600HP', color1: '#cbd5e1', color2: '#475569', accent: '#16a34a', topSpeed: '480 km/h' },
+      { id: 'thar_4x4', name: 'Thar 4x4 Beast', model: 'Thar Custom Turbo V8', color1: '#d97706', color2: '#78350f', accent: '#000000', topSpeed: '210 km/h' },
+      { id: 'mercedes_amg', name: 'Mercedes AMG', model: 'AMG GT Black Series', color1: '#f59e0b', color2: '#b45309', accent: '#0f172a', topSpeed: '325 km/h' },
+      { id: 'pagani_huayra', name: 'Pagani Huayra', model: 'Huayra BC Roadster', color1: '#6366f1', color2: '#3730a3', accent: '#34d399', topSpeed: '383 km/h' },
+      { id: 'ford_gt', name: 'Ford GT', model: 'Heritage Gulf Edition', color1: '#38bdf8', color2: '#0284c7', accent: '#f97316', topSpeed: '347 km/h' }
+    ];
+
+    let currentRaceCars = [];
+    let currentRaceRound = 101;
+    let currentPoolBets = [0, 0, 0];
+    let currentPlayerBets = [0, 0, 0];
+    let selectedBetChip = 25;
+    let isRaceRunning = false;
+    let gameSoundEnabled = true;
+    let raceAnimationTimer = null;
+    let audioCtx = null;
+
+    // Web Audio Synthesizer for rich dynamic SFX without any external file dependency
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, gainVal = 0.15) {
+      if (!gameSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch(e){}
+    }
+
+    function playCountdownSound(isGo = false) {
+      if (isGo) {
+        playTone(880, 'triangle', 0.4, 0.25);
+      } else {
+        playTone(440, 'sine', 0.2, 0.18);
+      }
+    }
+
+    function playCoinSound() {
+      playTone(987, 'triangle', 0.12, 0.2);
+      setTimeout(() => playTone(1318, 'triangle', 0.18, 0.25), 60);
+    }
+
+    function playNitroSound() {
+      if (!gameSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.6);
+      } catch(e){}
+    }
+
+    function playWinFanfare() {
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((f, idx) => {
+        setTimeout(() => playTone(f, 'triangle', 0.25, 0.28), idx * 110);
+      });
+    }
+
+    function toggleGameSound() {
+      gameSoundEnabled = !gameSoundEnabled;
+      const btn = document.getElementById('btn-game-sound-toggle');
+      if (btn) {
+        btn.innerText = gameSoundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+        btn.style.color = gameSoundEnabled ? '#15803d' : '#64748b';
+      }
+      showToast(gameSoundEnabled ? '🔊 Audio Enabled' : '🔇 Audio Muted', '#15803d');
+    }
+
+    // Coin Storage & Wallet (1 Coin = ₹1)
+    function getGameCoins() {
+      let coins = localStorage.getItem('ss_user_coins');
+      if (coins === null) {
+        coins = 100; // Welcome Free Coins
+        localStorage.setItem('ss_user_coins', '100');
+      }
+      return parseInt(coins) || 0;
+    }
+
+    function setGameCoins(amount) {
+      const valid = Math.max(0, parseInt(amount) || 0);
+      localStorage.setItem('ss_user_coins', valid.toString());
+      updateAllCoinDisplays();
+      return valid;
+    }
+
+    function updateAllCoinDisplays() {
+      const coins = getGameCoins();
+      const topCount = document.getElementById('top-coins-count');
+      const gameDisp = document.getElementById('game-coins-display');
+      if (topCount) topCount.innerText = coins;
+      if (gameDisp) gameDisp.innerText = coins;
+    }
+
+    // Dynamic SVG Generator for Supercars
+    function generateCarGraphicSvg(color1, color2, accent, number) {
+      return `
+        <svg viewBox="0 0 130 50" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.45));">
+          <defs>
+            <linearGradient id="cg_${number}_${Date.now()}" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="${color1}" />
+              <stop offset="100%" stop-color="${color2}" />
+            </linearGradient>
+          </defs>
+          <!-- Aerodynamic Rear Spoiler -->
+          <polygon points="7,13 23,14 21,18 6,16" fill="#0f172a" stroke="${accent}" stroke-width="1.2" />
+          <line x1="11" y1="16" x2="14" y2="25" stroke="#111827" stroke-width="2.5" />
+          <!-- Car Body Frame -->
+          <path d="M 9,34 L 14,24 L 32,18 L 56,11 L 86,11 L 104,18 L 120,25 L 124,34 L 118,38 L 14,38 Z" fill="${color1}" stroke="#111827" stroke-width="1.5" />
+          <!-- Aerodynamic Front Splitter & Hood Accent -->
+          <polygon points="106,20 120,25 106,26" fill="${accent}" opacity="0.8" />
+          <polygon points="14,26 32,19 32,27" fill="${accent}" opacity="0.8" />
+          <!-- Cabin Tinted Windows -->
+          <path d="M 40,18 L 56,12 L 82,12 L 96,18 L 92,24 L 44,24 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" />
+          <!-- Racing Body Stripe -->
+          <rect x="12" y="23" width="108" height="3" fill="${accent}" opacity="0.95" />
+          <!-- Glowing Headlight -->
+          <polygon points="120,26 125,29 120,31" fill="#fef08a" />
+          <!-- Racing Number Badge -->
+          <circle cx="68" cy="29" r="6.5" fill="#ffffff" stroke="#111827" stroke-width="1.2" />
+          <text x="68" y="32" font-size="7.5" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="#0f172a">${number}</text>
+          <!-- Heavy Sports Alloy Wheels -->
+          <circle cx="32" cy="37" r="9" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
+          <circle cx="32" cy="37" r="5" fill="#0f172a" />
+          <circle cx="32" cy="37" r="2.5" fill="${accent}" />
+          <circle cx="102" cy="37" r="9" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
+          <circle cx="102" cy="37" r="5" fill="#0f172a" />
+          <circle cx="102" cy="37" r="2.5" fill="${accent}" />
+        </svg>
+      `;
+    }
+
+    // Set up a Fresh Race Round with 3 Completely Random Cars
+    function setupNewRaceRound() {
+      if (isRaceRunning) return;
+      currentRaceRound++;
+      const roundEl = document.getElementById('race-round-number');
+      if (roundEl) roundEl.innerText = currentRaceRound;
+
+      // Pick 3 unique random cars from the 18-car pool
+      const shuffled = [...CAR_MODELS_POOL].sort(() => 0.5 - Math.random());
+      currentRaceCars = shuffled.slice(0, 3);
+
+      // Generate distinct platform baseline bets so they vary and one is lowest initially
+      const base1 = Math.floor(40 + Math.random() * 60);
+      const base2 = Math.floor(90 + Math.random() * 80);
+      const base3 = Math.floor(60 + Math.random() * 70);
+      currentPoolBets = [base1, base2, base3];
+      currentPlayerBets = [0, 0, 0];
+
+      // Hide Winner Podium Card
+      const winCard = document.getElementById('race-winner-card');
+      if (winCard) winCard.style.display = 'none';
+
+      // Reset Track Runners
+      for (let i = 0; i < 3; i++) {
+        const runner = document.getElementById('runner-car-' + i);
+        if (runner) runner.style.left = '15px';
+        const flame = document.getElementById('nitro-flame-' + i);
+        if (flame) flame.style.display = 'none';
+
+        // Set runner SVG
+        const runSvg = document.getElementById('runner-svg-' + i);
+        if (runSvg) runSvg.innerHTML = generateCarGraphicSvg(currentRaceCars[i].color1, currentRaceCars[i].color2, currentRaceCars[i].accent, i + 1);
+
+        // Update Betting Card details
+        const cardName = document.getElementById('car-name-' + i);
+        if (cardName) cardName.innerText = currentRaceCars[i].name;
+        const cardSpeed = document.getElementById('car-top-speed-' + i);
+        if (cardSpeed) cardSpeed.innerText = currentRaceCars[i].topSpeed;
+        const cardPreview = document.getElementById('car-preview-svg-' + i);
+        if (cardPreview) cardPreview.innerHTML = generateCarGraphicSvg(currentRaceCars[i].color1, currentRaceCars[i].color2, currentRaceCars[i].accent, i + 1);
+
+        // Reset highlight borders
+        const card = document.getElementById('bet-card-' + i);
+        if (card) {
+          card.style.borderColor = '#cbd5e1';
+          card.style.background = '#ffffff';
+        }
+      }
+
+      // Reset Start Button
+      const startBtn = document.getElementById('btn-start-race');
+      const startText = document.getElementById('btn-start-race-text');
+      if (startBtn) {
+        startBtn.disabled = false;
+        startBtn.style.opacity = '1';
+        startBtn.style.cursor = 'pointer';
+      }
+      if (startText) startText.innerText = 'START 3-CAR RACE (Lowest Bet Wins) ➔';
+
+      const statusBadge = document.getElementById('race-status-badge');
+      if (statusBadge) {
+        statusBadge.innerText = '🟢 Betting Open (Place Your Bet)';
+        statusBadge.style.background = '#dcfce7';
+        statusBadge.style.color = '#15803d';
+      }
+
+      updateBetsDisplay();
+      updateAllCoinDisplays();
+    }
+
+    // Update Bets on Cards & Highlight Lowest Bet
+    function updateBetsDisplay() {
+      // Find current minimum bet
+      let minBet = Infinity;
+      let minIdx = -1;
+      for (let i = 0; i < 3; i++) {
+        if (currentPoolBets[i] < minBet) {
+          minBet = currentPoolBets[i];
+          minIdx = i;
+        }
+      }
+
+      for (let i = 0; i < 3; i++) {
+        const poolEl = document.getElementById('car-total-bet-i'.replace('i', i));
+        if (poolEl) poolEl.innerText = currentPoolBets[i];
+
+        const playerEl = document.getElementById('car-player-bet-i'.replace('i', i));
+        if (playerEl) playerEl.innerText = currentPlayerBets[i];
+
+        const lowestBadge = document.getElementById('car-lowest-badge-i'.replace('i', i));
+        if (lowestBadge) {
+          lowestBadge.style.display = (i === minIdx) ? 'inline-block' : 'none';
+        }
+
+        const card = document.getElementById('bet-card-' + i);
+        if (card) {
+          if (currentPlayerBets[i] > 0) {
+            card.style.borderColor = '#16a34a';
+            card.style.background = '#f0fdf4';
+          } else {
+            card.style.borderColor = (i === minIdx) ? '#86efac' : '#cbd5e1';
+            card.style.background = (i === minIdx) ? '#fbfdfc' : '#ffffff';
+          }
+        }
+      }
+    }
+
+    // Select Active Bet Chip (🪙 10, 25, 50, 100)
+    function selectBetChip(val) {
+      selectedBetChip = val;
+      [10, 25, 50, 100].forEach(c => {
+        const el = document.getElementById('chip-val-' + c);
+        if (el) {
+          const match = (c === val);
+          el.style.background = match ? '#16a34a' : '#ffffff';
+          el.style.color = match ? '#ffffff' : '#000000';
+          el.style.borderColor = match ? '#15803d' : '#cbd5e1';
+        }
+      });
+    }
+
+    // Place Bet on Car 1, 2, or 3
+    function placeBetOnCar(carIndex) {
+      if (isRaceRunning) {
+        showToast('Race in progress! Wait for next round.', '#dc2626');
+        return;
+      }
+
+      const coins = getGameCoins();
+      if (coins < selectedBetChip) {
+        alert('⚠️ आपके पास पर्याप्त कॉइन्स नहीं हैं!\n\n1 Coin = ₹1\nकृपया अपने वॉलेट में कॉइन्स खरीदें।');
+        openBuyCoinsModal(selectedBetChip);
+        return;
+      }
+
+      // Deduct coins & add to bet
+      setGameCoins(coins - selectedBetChip);
+      currentPlayerBets[carIndex] += selectedBetChip;
+      currentPoolBets[carIndex] += selectedBetChip;
+
+      playCoinSound();
+      updateBetsDisplay();
+
+      const carName = currentRaceCars[carIndex] ? currentRaceCars[carIndex].name : ('Car ' + (carIndex + 1));
+      showToast(`🪙 ${selectedBetChip} Coins placed on ${carName}!`, '#15803d');
+    }
+
+    // Clear Player's Bets and Refund Coins
+    function clearAllPlayerBets() {
+      if (isRaceRunning) return;
+      const totalRefund = currentPlayerBets[0] + currentPlayerBets[1] + currentPlayerBets[2];
+      if (totalRefund <= 0) return;
+
+      for (let i = 0; i < 3; i++) {
+        currentPoolBets[i] -= currentPlayerBets[i];
+        currentPlayerBets[i] = 0;
+      }
+
+      setGameCoins(getGameCoins() + totalRefund);
+      updateBetsDisplay();
+      showToast(`✓ Refunded 🪙 ${totalRefund} Coins to your wallet!`, '#15803d');
+    }
+
+    // START 3-CAR RACE (LOWEST TOTAL BET CAR GUARANTEED TO WIN)
+    function startCarRace() {
+      if (isRaceRunning) return;
+      isRaceRunning = true;
+
+      // Disable buttons
+      const startBtn = document.getElementById('btn-start-race');
+      const startText = document.getElementById('btn-start-race-text');
+      const clearBtn = document.getElementById('btn-clear-bets');
+      if (startBtn) {
+        startBtn.disabled = true;
+        startBtn.style.opacity = '0.6';
+        startBtn.style.cursor = 'not-allowed';
+      }
+      if (clearBtn) clearBtn.disabled = true;
+
+      // Status Badge
+      const statusBadge = document.getElementById('race-status-badge');
+      if (statusBadge) {
+        statusBadge.innerText = '🏁 Race In Progress...';
+        statusBadge.style.background = '#fef3c7';
+        statusBadge.style.color = '#92400e';
+      }
+
+      // Determine Winner: STRICT RULE: Lowest Total Bet Wins!
+      let minBet = Infinity;
+      let winningCarIndex = 0;
+      for (let i = 0; i < 3; i++) {
+        if (currentPoolBets[i] < minBet) {
+          minBet = currentPoolBets[i];
+          winningCarIndex = i;
+        }
+      }
+
+      // Countdown overlay
+      const overlay = document.getElementById('track-overlay-msg');
+      const countEl = document.getElementById('track-big-countdown');
+      if (overlay) overlay.style.display = 'flex';
+
+      let count = 3;
+      playCountdownSound(false);
+      if (countEl) countEl.innerText = '3';
+
+      const countInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          if (countEl) countEl.innerText = count.toString();
+          playCountdownSound(false);
+        } else if (count === 0) {
+          if (countEl) countEl.innerText = '🏁 GO!';
+          playCountdownSound(true);
+        } else {
+          clearInterval(countInterval);
+          if (overlay) overlay.style.display = 'none';
+          executeRaceTrackAnimation(winningCarIndex, minBet);
+        }
+      }, 700);
+    }
+
+    // Execute Smooth 7-Second Race with Nitro and Surge
+    function executeRaceTrackAnimation(winningIndex, minBet) {
+      const arena = document.getElementById('racetrack-arena');
+      const trackWidth = arena ? arena.offsetWidth : 350;
+      const startLeft = 15;
+      const finishLeft = Math.max(startLeft + 60, trackWidth - 120);
+
+      let positions = [startLeft, startLeft, startLeft];
+      let raceProgress = 0; // 0 to 100
+      const totalDuration = 6800; // 6.8 seconds
+      const intervalMs = 50;
+      const steps = totalDuration / intervalMs;
+      let stepCount = 0;
+
+      // Nitro audio
+      setTimeout(() => playNitroSound(), 2500);
+      setTimeout(() => playNitroSound(), 5000);
+
+      raceAnimationTimer = setInterval(() => {
+        stepCount++;
+        raceProgress = (stepCount / steps) * 100;
+
+        // Animate positions with random realistic lead changes
+        for (let i = 0; i < 3; i++) {
+          if (raceProgress < 75) {
+            // First 75%: Natural racing fluctuation
+            const randomJitter = (Math.random() - 0.48) * 12;
+            const targetPos = startLeft + ((finishLeft - startLeft) * (raceProgress / 100)) + randomJitter;
+            positions[i] = Math.max(startLeft, Math.min(finishLeft - 30, targetPos));
+          } else {
+            // Final 25%: The car with LOWEST BET surges ahead and wins!
+            if (i === winningIndex) {
+              const surgeProgress = (raceProgress - 75) / 25;
+              positions[i] = (finishLeft - 30) + (surgeProgress * 30);
+              const flame = document.getElementById('nitro-flame-' + i);
+              if (flame) flame.style.display = 'inline-block';
+            } else {
+              // Other cars lag slightly behind
+              const lagDistance = (i % 2 === 0) ? 22 : 38;
+              positions[i] = Math.max(startLeft, positions[winningIndex] - lagDistance);
+            }
+          }
+
+          const runner = document.getElementById('runner-car-' + i);
+          if (runner) runner.style.left = positions[i] + 'px';
+        }
+
+        // Check if race finished
+        if (stepCount >= steps) {
+          clearInterval(raceAnimationTimer);
+          raceAnimationTimer = null;
+          handleRaceFinished(winningIndex, minBet);
+        }
+      }, intervalMs);
+    }
+
+    // Race Finished: Announce Winner & Pay Out 3x Coins
+    function handleRaceFinished(winningIndex, minBet) {
+      isRaceRunning = false;
+      const winnerCar = currentRaceCars[winningIndex];
+      const playerBetOnWinner = currentPlayerBets[winningIndex];
+      const winPayout = playerBetOnWinner * 3;
+
+      // Sound
+      playWinFanfare();
+
+      // Status Badge
+      const statusBadge = document.getElementById('race-status-badge');
+      if (statusBadge) {
+        statusBadge.innerText = '🎉 Race Finished!';
+        statusBadge.style.background = '#dcfce7';
+        statusBadge.style.color = '#15803d';
+      }
+
+      // Show Winner Victory Card
+      const winCard = document.getElementById('race-winner-card');
+      const winTitle = document.getElementById('winner-banner-title');
+      const winDesc = document.getElementById('winner-banner-desc');
+      const winPayoutBox = document.getElementById('winner-payout-box');
+
+      if (winTitle) {
+        winTitle.innerText = `🏆 Winner: Car ${winningIndex + 1} (${winnerCar.name})!`;
+      }
+      if (winDesc) {
+        winDesc.innerText = `Sabse Kam Bet (Lowest Bet: 🪙 ${minBet} Coins) ➔ 1st Place!`;
+      }
+
+      if (winPayoutBox) {
+        if (playerBetOnWinner > 0) {
+          setGameCoins(getGameCoins() + winPayout);
+          winPayoutBox.innerHTML = `
+            <div style="background: #ffffff; border: 2px solid #16a34a; border-radius: 12px; padding: 0.65rem; display: inline-block; box-shadow: 0 4px 12px rgba(22,163,74,0.25);">
+              <div style="font-size: 1.25rem; font-weight: 900; color: #15803d;">🎉 SHANDAR JEET!</div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: #000000; margin-top: 2px;">
+                Aapka Bet: 🪙 ${playerBetOnWinner} • <b>Payout (3x): +🪙 ${winPayout} Coins (₹${winPayout})!</b>
+              </div>
+            </div>
+          `;
+          showToast(`🎉 Congratulations! You won 🪙 ${winPayout} Coins!`, '#15803d');
+        } else {
+          winPayoutBox.innerHTML = `
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 0.5rem 0.85rem; display: inline-block;">
+              <span style="font-size: 0.78rem; color: #475569; font-weight: 700;">
+                Aapne is car par bet nahi lagaya tha. Agli race mein sabse kam bet wali car chunein!
+              </span>
+            </div>
+          `;
+        }
+      }
+
+      if (winCard) {
+        winCard.style.display = 'block';
+        winCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      updateAllCoinDisplays();
+    }
+
+    // Initialize Game on First Tab Open
+    let isGameInitialized = false;
+    function initCarRacingGame() {
+      updateAllCoinDisplays();
+      if (!isGameInitialized) {
+        isGameInitialized = true;
+        setupNewRaceRound();
+      }
+    }
+
+    // Daily Bonus: 20 Coins Free Every Day
+    function claimDailyBonus() {
+      const today = new Date().toISOString().split('T')[0];
+      const lastClaim = localStorage.getItem('ss_last_daily_bonus');
+      if (lastClaim === today) {
+        alert('🎁 Aapne aaj ka Daily Bonus pehle hi le liya hai! Kal wapas aaiye.');
+        return;
+      }
+      localStorage.setItem('ss_last_daily_bonus', today);
+      setGameCoins(getGameCoins() + 20);
+      playCoinSound();
+      showToast('🎁 Daily Bonus: +20 Free Coins added to your wallet!', '#15803d');
+    }
+
+    // =========================================================================
+    // 🪙 BUY COINS MODAL CONTROLLER (1 COIN = ₹1 VIA MITALI KALITA QR)
+    // =========================================================================
+    let currentBuyCoinPack = 100;
+
+    function openBuyCoinsModal(preselectCoins) {
+      if (preselectCoins && preselectCoins > 0) {
+        selectBuyCoinPack(preselectCoins);
+      } else {
+        selectBuyCoinPack(100);
+      }
+      const modal = document.getElementById('buy-coins-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeBuyCoinsModal() {
+      const modal = document.getElementById('buy-coins-modal');
+      if (modal) modal.style.display = 'none';
+      const utrInp = document.getElementById('buy-coins-utr-input');
+      if (utrInp) utrInp.value = '';
+    }
+
+    function selectBuyCoinPack(coins) {
+      currentBuyCoinPack = coins;
+      [50, 100, 200, 500].forEach(c => {
+        const btn = document.getElementById('pack-btn-' + c);
+        if (btn) {
+          const match = (c === coins);
+          btn.style.background = match ? '#16a34a' : '#ffffff';
+          btn.style.color = match ? '#ffffff' : '#000000';
+          btn.style.borderColor = match ? '#15803d' : '#16a34a';
+        }
+      });
+
+      const amtText = document.getElementById('buy-amount-text');
+      const coinText = document.getElementById('buy-coins-text');
+      if (amtText) amtText.innerText = '₹' + coins;
+      if (coinText) coinText.innerText = coins + ' Coins';
+
+      // 1-Tap UPI Launchers for exact amount
+      const upiBox = document.getElementById('buy-coins-upi-buttons');
+      if (upiBox) {
+        const payeeUpi = '6901027507@nyes';
+        const payeeName = encodeURIComponent('Mitali Kalita');
+        const note = encodeURIComponent('SafarSaathi Game Coins');
+        upiBox.innerHTML = `
+          <a href="phonepe://pay?pa=${payeeUpi}&pn=${payeeName}&am=${coins}&cu=INR&tn=${note}" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.45rem; font-size: 0.72rem; border-radius: 8px; justify-content: center; gap: 4px; text-decoration: none;">
+            <span>🟣 PhonePe (₹${coins})</span>
+          </a>
+          <a href="tez://upi/pay?pa=${payeeUpi}&pn=${payeeName}&am=${coins}&cu=INR&tn=${note}" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.45rem; font-size: 0.72rem; border-radius: 8px; justify-content: center; gap: 4px; text-decoration: none;">
+            <span>🔵 Google Pay (₹${coins})</span>
+          </a>
+          <a href="paytmmp://pay?pa=${payeeUpi}&pn=${payeeName}&am=${coins}&cu=INR&tn=${note}" class="btn" style="background:#ffffff; color:#000000; border:1.5px solid #16a34a; font-weight:900; padding: 0.45rem; font-size: 0.72rem; border-radius: 8px; justify-content: center; gap: 4px; text-decoration: none;">
+            <span>🔷 Paytm (₹${coins})</span>
+          </a>
+          <a href="upi://pay?pa=${payeeUpi}&pn=${payeeName}&am=${coins}&cu=INR&tn=${note}" class="btn" style="background:#16a34a; color:#ffffff; border:1.5px solid #15803d; font-weight:900; padding: 0.45rem; font-size: 0.72rem; border-radius: 8px; justify-content: center; gap: 4px; text-decoration: none;">
+            <span>🇮🇳 Any UPI App</span>
+          </a>
+        `;
+      }
+    }
+
+    function submitBuyCoinsUtr() {
+      const utrInp = document.getElementById('buy-coins-utr-input');
+      const utr = (utrInp?.value || '').trim();
+      if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
+        alert('कृपया अपने बैंक पेमेंट SMS या UPI ऐप की रसीद से सही 12-अंकों का न्यूमेरिक UTR नंबर दर्ज करें!');
+        utrInp?.focus();
+        return;
+      }
+
+      // Check anti-fraud duplicate
+      let usedUtrs = JSON.parse(localStorage.getItem('ss_used_coin_utrs')) || [];
+      if (usedUtrs.includes(utr)) {
+        alert('⚠️ यह UTR नंबर पहले ही इस्तेमाल किया जा चुका है!');
+        return;
+      }
+      usedUtrs.push(utr);
+      localStorage.setItem('ss_used_coin_utrs', JSON.stringify(usedUtrs));
+
+      // Credit Coins (1 Coin = ₹1)
+      const addedCoins = currentBuyCoinPack;
+      setGameCoins(getGameCoins() + addedCoins);
+      playCoinSound();
+
+      closeBuyCoinsModal();
+      showToast(`🎉 Payment Verified! +🪙 ${addedCoins} Coins (₹${addedCoins}) credited to your wallet!`, '#15803d');
+    }
+
     // App Startup (👤 PROFILE IS NOW THE 100% DEFAULT HOME PAGE)
     window.addEventListener('DOMContentLoaded', () => {
+      try { updateAllCoinDisplays(); } catch(e){}
       initFirebase();
       executeAiCloudSync();
       showSection('profile');
@@ -5566,5 +6285,69 @@ ET
     </div>
   </div>
 
+
+  <!-- ==================== 🪙 BUY COINS MODAL (1 COIN = ₹1 VIA UPI QR) ==================== -->
+  <div class="modal-backdrop" id="buy-coins-modal" style="display: none; z-index: 10002;" onclick="if(event.target===this) closeBuyCoinsModal();">
+    <div class="modal-card" style="background: #ffffff; color: #000000; border: 2px solid #16a34a; border-radius: 18px; max-width: 440px; width: 92vw; padding: 1.2rem; box-sizing: border-box; text-align: center;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.45rem;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 1.2rem;">🪙</span>
+          <h3 style="font-size: 1.05rem; font-weight: 900; color: #15803d; margin: 0;">Buy Game Coins</h3>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="closeBuyCoinsModal()" style="padding: 2px 7px; font-size: 0.8rem; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">✕</button>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 6px 10px; margin-bottom: 0.75rem; font-size: 0.76rem; color: #166534; font-weight: 800;">
+        ⚡ Instant Credit: <b>1 Coin = ₹1</b> • Jana Small Finance Bank
+      </div>
+
+      <!-- Quick Coin Packs -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 0.75rem;">
+        <button type="button" onclick="selectBuyCoinPack(50)" id="pack-btn-50" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 6px 2px; cursor: pointer;">
+          <div style="font-size: 0.82rem; font-weight: 900; color: #15803d;">50</div>
+          <div style="font-size: 0.65rem; color: #64748b; font-weight: 700;">₹50</div>
+        </button>
+        <button type="button" onclick="selectBuyCoinPack(100)" id="pack-btn-100" style="background: #16a34a; color: #ffffff; border: 1.5px solid #15803d; border-radius: 8px; padding: 6px 2px; cursor: pointer; box-shadow: 0 2px 6px rgba(22,163,74,0.3);">
+          <div style="font-size: 0.82rem; font-weight: 900;">100</div>
+          <div style="font-size: 0.65rem; color: #dcfce7; font-weight: 700;">₹100 ⭐</div>
+        </button>
+        <button type="button" onclick="selectBuyCoinPack(200)" id="pack-btn-200" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 6px 2px; cursor: pointer;">
+          <div style="font-size: 0.82rem; font-weight: 900; color: #15803d;">200</div>
+          <div style="font-size: 0.65rem; color: #64748b; font-weight: 700;">₹200</div>
+        </button>
+        <button type="button" onclick="selectBuyCoinPack(500)" id="pack-btn-500" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 6px 2px; cursor: pointer;">
+          <div style="font-size: 0.82rem; font-weight: 900; color: #15803d;">500</div>
+          <div style="font-size: 0.65rem; color: #64748b; font-weight: 700;">₹500</div>
+        </button>
+      </div>
+
+      <!-- QR & Payee Details -->
+      <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0.75rem; margin-bottom: 0.75rem;">
+        <div style="font-size: 0.82rem; font-weight: 900; color: #000000; margin-bottom: 2px;">
+          Amount to Pay: <span id="buy-amount-text" style="color: #15803d; font-size: 1.15rem; font-family: monospace;">₹100</span> (<span id="buy-coins-text">100 Coins</span>)
+        </div>
+        <div style="font-size: 0.72rem; color: #64748b; font-weight: 700; margin-bottom: 0.4rem;">Jana Small Finance Bank • 6901027507@nyes</div>
+
+        <img src="mitali_qr_compact.svg" style="width: 115px; height: 115px; background: #ffffff; border-radius: 8px; padding: 3px; border: 1.5px solid #16a34a; margin: 0 auto 0.4rem;">
+
+        <!-- 1-Tap UPI Launchers -->
+        <div id="buy-coins-upi-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 4px;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- UTR Input Field -->
+      <div class="form-group" style="margin-bottom: 0.75rem; text-align: left;">
+        <label style="font-size: 0.72rem; font-weight: 800; color: #000000; margin-bottom: 2px;">12-Digit Bank Payment UTR Number*</label>
+        <input type="text" id="buy-coins-utr-input" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="font-family: monospace; font-size: 1rem; font-weight: 900; text-align: center; border: 1.5px solid #16a34a; background: #ffffff; color: #000000;">
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitBuyCoinsUtr()" style="width: 100%; padding: 0.75rem; font-weight: 900; font-size: 0.92rem; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 10px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);">
+        ✅ Verify Payment & Add Coins ➔
+      </button>
+
+    </div>
+  </div>
 </body>
 </html>

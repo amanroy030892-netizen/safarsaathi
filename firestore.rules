@@ -1,28 +1,66 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAuthenticated() { return request.auth != null; }
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isPhoneOwner(phone) {
+      return isAuthenticated() && request.auth.token.phone_number == phone;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+
+    function isBookingParticipant(bookingData) {
+      return isAuthenticated() && (
+        request.auth.uid == bookingData.passengerId ||
+        request.auth.uid == bookingData.driverId ||
+        request.auth.token.phone_number == bookingData.passengerPhone ||
+        request.auth.token.phone_number == bookingData.driverPhone ||
+        isAdmin()
+      );
+    }
+
+    match /ss_users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
     match /ss_rides/{rideId} {
       allow read: if true;
       allow create: if isAuthenticated()
+                    && (request.resource.data.userId == request.auth.uid || request.resource.data.driverPhone == request.auth.token.phone_number)
+                    && request.resource.data.origin is string
+                    && request.resource.data.destination is string
                     && request.resource.data.seatsAvailable is int
                     && request.resource.data.seatsAvailable >= 0
                     && request.resource.data.farePerSeat is int
                     && request.resource.data.farePerSeat > 0;
-      allow update, delete: if isAuthenticated() && (request.auth.uid == resource.data.userId || request.auth.token.admin == true);
+      allow update: if (isAuthenticated() && (resource.data.userId == request.auth.uid || request.auth.token.phone_number == resource.data.driverPhone))
+                    || isAdmin()
+                    || (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seatsAvailable']));
+      allow delete: if (isAuthenticated() && (resource.data.userId == request.auth.uid || request.auth.token.phone_number == resource.data.driverPhone)) || isAdmin();
     }
+
     match /ss_bookings/{bookingId} {
-      allow read: if isAuthenticated() && (request.auth.uid == resource.data.passengerId || request.auth.uid == resource.data.driverId || request.auth.token.admin == true);
-      allow create: if isAuthenticated() && request.resource.data.seatsBooked is int && request.resource.data.seatsBooked > 0;
-      allow update: if isAuthenticated() && (request.auth.uid == resource.data.passengerId || request.auth.uid == resource.data.driverId || request.auth.token.admin == true);
-      allow delete: if isAuthenticated() && request.auth.token.admin == true;
+      allow read: if isBookingParticipant(resource.data);
+      allow create: if isAuthenticated()
+                    && (request.resource.data.passengerId == request.auth.uid || request.auth.token.phone_number == request.resource.data.passengerPhone)
+                    && request.resource.data.seatsBooked is int
+                    && request.resource.data.seatsBooked > 0;
+      allow update: if isBookingParticipant(resource.data);
+      allow delete: if isAdmin();
     }
+
     match /ss_settings/{settingId} {
       allow read: if true;
-      allow write: if isAuthenticated() && request.auth.token.admin == true;
-    }
-    match /ss_users/{userId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAdmin();
     }
   }
 }
