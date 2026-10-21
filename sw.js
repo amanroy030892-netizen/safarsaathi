@@ -2,7 +2,7 @@
   SafarSaathi AI Auto-Purge Service Worker (Version: v54-chamet-race-and-live-map)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v55-chamet-race-and-live-map';
+const CACHE_NAME = 'safarsaathi-v60-live-admin-sync-verified';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
