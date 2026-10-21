@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    window._ssMemStore = {};
+    window.ssStorage = {
+      getItem: function(k) {
+        try {
+          var v = window.localStorage.getItem(k);
+          return v !== null ? v : (Object.prototype.hasOwnProperty.call(window._ssMemStore, k) ? window._ssMemStore[k] : null);
+        } catch (e) {
+          return Object.prototype.hasOwnProperty.call(window._ssMemStore, k) ? window._ssMemStore[k] : null;
+        }
+      },
+      setItem: function(k, v) {
+        window._ssMemStore[k] = String(v);
+        try { window.localStorage.setItem(k, String(v)); } catch (e) {}
+      },
+      removeItem: function(k) {
+        delete window._ssMemStore[k];
+        try { window.localStorage.removeItem(k); } catch (e) {}
+      }
+    };
+  </script>
   <!-- 🤖 AI SMART AUTO-PURGE CACHE CLEANER (Clears Old Data on Chrome, Safari, Android & iPhone) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
   <meta http-equiv="Pragma" content="no-cache">
@@ -22,19 +43,19 @@
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
         const CURRENT_VERSION = 'SS_PROD_V39_GOOGLE_MAPS_DRIVING_ARROW';
-        const lastVer = localStorage.getItem('ss_build_ver');
+        const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
         const demoUtrs = ['987654321013', '987654321014', '987654321015', '987654321012'];
 
-        let raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
+        let raw = JSON.parse(ssStorage.getItem('ss_rides')) || [];
         let hasDemo = raw.some(r => demoRideIds.includes(r.id) || demoNames.includes(r.driverName) || demoUtrs.includes(r.platformFeeUtr));
 
         if (lastVer !== CURRENT_VERSION || hasDemo) {
           // Immediately purge old demo rides from localStorage
           let cleanRides = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName) && !demoUtrs.includes(r.platformFeeUtr));
-          localStorage.setItem('ss_rides', JSON.stringify(cleanRides));
-          localStorage.setItem('ss_build_ver', CURRENT_VERSION);
+          ssStorage.setItem('ss_rides', JSON.stringify(cleanRides));
+          ssStorage.setItem('ss_build_ver', CURRENT_VERSION);
         }
       } catch(e) {}
     })();
@@ -1047,7 +1068,7 @@
       <div class="app-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚗 Publish a Carpool Ride</h2>
+            <h2 style="font-size: 1.15rem; font-weight: 900; color: #000000; margin: 0;">🚗 Publish a Carpool Ride</h2>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Fill your empty seats • Earn ₹300 - ₹500 per seat • Direct UPI</p>
           </div>
           <span style="font-size: 0.7rem; background: rgba(22, 163, 74, 0.15); color: #15803d; padding: 2px 8px; border-radius: 9999px; font-weight: 800;">₹100 Fee / Car</span>
@@ -1242,7 +1263,7 @@
     <!-- ==================== 3. 🔍 FIND RIDE (CORRIDOR SEARCH) ==================== -->
     <section id="section-passenger" class="app-section">
       <div class="app-card">
-        <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin-bottom: 0.35rem;">🔍 Search Carpool Corridors</h2>
+        <h2 style="font-size: 1.15rem; font-weight: 900; color: #000000; margin-bottom: 0.35rem;">🔍 Search Carpool Corridors</h2>
         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem;">Find vacant seats travelling on your exact date and route:</p>
 
         <div class="form-grid-2">
@@ -1334,7 +1355,7 @@
           </div>
 
           <!-- Interactive Google/Leaflet Map Canvas -->
-          <div id="google-live-map-div" style="width: 100%; height: var(--auto-map-height, 220px); min-height: 175px; border-radius: 12px; overflow: hidden; border: 2px solid #16a34a; position: relative; z-index: 1; background: #e2e8f0;"></div>
+          <div id="google-live-map-div" style="width: 100%; height: var(--auto-map-height, 210px); min-height: 170px; border-radius: 12px; overflow: hidden; border: 2px solid #16a34a; position: relative; z-index: 1; background: #e2e8f0;"></div>
 
           <!-- Corridor Quick Jump Chips -->
           <div style="display: flex; gap: 5px; overflow-x: auto; padding: 6px 0 2px 0; scrollbar-width: none;">
@@ -1345,7 +1366,7 @@
           </div>
 
           <!-- Map Corridor Video Ad Player Below Map -->
-          <div id="map-video-ad-box" style="position: relative; margin-top: 0.45rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: min(22vh, 145px); max-height: 145px;">
+          <div id="map-video-ad-box" style="position: relative; margin-top: 0.4rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: min(20vh, 135px); max-height: 135px;">
             <video id="map-video-player" src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
             <button type="button" onclick="toggleMapVideoMuteOnly(event)" style="position: absolute; bottom: 6px; right: 6px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 3px 9px; font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; gap: 4px; cursor: pointer;">
               <span id="map-video-mute-icon">🔊</span>
@@ -1356,305 +1377,323 @@
       </div>
     </section>
 
-    <!-- ==================== 4B. 🎮 CHAMET-STYLE RACING GAMING ZONE (OPENED ONLY VIA TOP HEADER BUTTON) ==================== -->
+    <!-- ==================== 4B. 🎮 CHAMET-STYLE 24/7 AUTO-RUNNING FLIP RACING GAME ==================== -->
     <section id="section-gaming" class="app-section" style="display: none;">
+      <style>
+        @keyframes chametFlipIn {
+          0% { transform: perspective(900px) rotateY(85deg) scale(0.95); opacity: 0.2; }
+          100% { transform: perspective(900px) rotateY(0deg) scale(1); opacity: 1; }
+        }
+        .chamet-flip-active {
+          animation: chametFlipIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+      </style>
       <div id="gaming-zone-container" style="max-width: 520px; margin: 0 auto; padding: 0;">
-        <div style="background: linear-gradient(180deg, #1e1040 0%, #2a1458 45%, #172554 100%); border: 2.5px solid #fbbf24; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); overflow: hidden; padding: 0; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div id="chamet-main-card" style="background: linear-gradient(180deg, #1e1040 0%, #2a1458 48%, #172554 100%); border: 2px solid #fbbf24; border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45); overflow: hidden; padding: 0; color: #ffffff;">
 
-          <!-- Top VIP Room & Wallet Bar (Matches Chamet Race Top Bar) -->
-          <div style="background: linear-gradient(90deg, rgba(15, 23, 42, 0.85), rgba(59, 7, 100, 0.85)); padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(251, 191, 36, 0.35); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+          <!-- CHAMET RACE NEON HEADER & WALLET BAR (Always Pinned at Top of Game) -->
+          <div style="background: linear-gradient(90deg, #1e1b4b, #311068, #1e1b4b); padding: 0.45rem 0.65rem; border-bottom: 1.5px solid #f59e0b; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
             <div style="display: flex; align-items: center; gap: 6px;">
-              <div style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #b45309); border: 2px solid #fef08a; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);">
-                👑
-              </div>
+              <span style="width: 26px; height: 26px; border-radius: 50%; background: #fbbf24; color: #78350f; display: inline-flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.4);">🏆</span>
               <div>
-                <div style="font-size: 0.72rem; font-weight: 900; color: #fef08a; line-height: 1.1;">SafarSaathi VIP Arena</div>
-                <div style="font-size: 0.62rem; color: #cbd5e1; font-weight: 700;">Passenger Live Fun Zone</div>
+                <div style="font-size: 1rem; font-weight: 900; letter-spacing: 0.5px; font-style: italic; color: #ffffff; text-shadow: 0 2px 8px #f59e0b; line-height: 1.05;">
+                  RACE <span style="color: #fbbf24;">🏁</span> <span style="font-size: 0.72rem; color: #38bdf8; font-style: normal; font-weight: 900;">24/7 LIVE</span>
+                </div>
+                <div style="font-size: 0.6rem; color: #cbd5e1; font-weight: 700;">
+                  👤 <span id="race-live-players">1,419</span> • Pool: ₹<span id="race-total-pool-banner" style="color: #fbbf24; font-family: monospace;">9,006</span> • Round #<span id="race-round-number">101</span>
+                </div>
               </div>
             </div>
 
-            <!-- Wallet & Quick Actions -->
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid #fbbf24; border-radius: 999px; padding: 3px 9px; display: inline-flex; align-items: center; gap: 4px;">
-                <span style="font-size: 0.82rem;">💎</span>
-                <span id="game-coins-display" style="font-size: 0.85rem; font-weight: 900; color: #fef08a; font-family: monospace;">100</span>
+            <!-- Wallet, Recharge, Bonus & Sound -->
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid #fbbf24; border-radius: 999px; padding: 2px 8px; display: inline-flex; align-items: center; gap: 3px;">
+                <span style="font-size: 0.76rem;">🪙</span>
+                <span id="game-coins-display" style="font-size: 0.82rem; font-weight: 900; color: #fef08a; font-family: monospace;">100</span>
               </div>
-              <button type="button" onclick="openBuyCoinsModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; border: 1px solid #fef08a; padding: 4px 9px; border-radius: 999px; font-weight: 900; font-size: 0.68rem; cursor: pointer; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);">
-                ➕ Recharge
+              <button type="button" onclick="openBuyCoinsModal()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; border: 1px solid #fef08a; padding: 3px 8px; border-radius: 999px; font-weight: 900; font-size: 0.65rem; cursor: pointer;">
+                ➕ Coins
               </button>
-              <button type="button" onclick="claimDailyBonus()" style="background: rgba(254, 240, 138, 0.18); color: #fef08a; border: 1px solid #fbbf24; padding: 4px 7px; border-radius: 999px; font-weight: 800; font-size: 0.66rem; cursor: pointer;" title="Daily Free Bonus">
-                🎁 Bonus
+              <button type="button" onclick="claimDailyBonus()" style="background: rgba(254, 240, 138, 0.18); color: #fef08a; border: 1px solid #fbbf24; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.64rem; cursor: pointer;" title="Daily 20 Free Coins">
+                🎁
               </button>
-              <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 50%; width: 26px; height: 26px; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Sound Toggle">
+              <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 50%; width: 24px; height: 24px; font-size: 0.68rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                 🔊
               </button>
             </div>
           </div>
 
-          <!-- Top 3 Crowned VIP Spectators / Leaderboard Podium (Matches Image 2 & 3) -->
-          <div style="padding: 0.45rem 0.65rem 0.25rem 0.65rem; background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.35), transparent 75%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
-            <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 10px; padding: 4px;">
-              <div style="font-size: 0.58rem; color: #fef08a; font-weight: 800;">🥇 🇮🇳 🎁 <span id="vip-top-1-pts">480.2K</span></div>
-              <div style="width: 34px; height: 34px; margin: 2px auto; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #db2777); border: 2px solid #fbbf24; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 0 10px rgba(251,191,36,0.5);">🦁</div>
-              <div style="font-size: 0.62rem; font-weight: 800; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Karun VIP</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(244, 114, 182, 0.35); border-radius: 10px; padding: 4px;">
-              <div style="font-size: 0.58rem; color: #f472b6; font-weight: 800;">🥈 🇮🇳 🎁 <span id="vip-top-2-pts">105.1K</span></div>
-              <div style="width: 34px; height: 34px; margin: 2px auto; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: 2px solid #f472b6; display: flex; align-items: center; justify-content: center; font-size: 1rem;">🌸</div>
-              <div style="font-size: 0.62rem; font-weight: 800; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Ishu Queen</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 10px; padding: 4px;">
-              <div style="font-size: 0.58rem; color: #38bdf8; font-weight: 800;">🥉 🇮🇳 🎁 <span id="vip-top-3-pts">81.6K</span></div>
-              <div style="width: 34px; height: 34px; margin: 2px auto; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #4f46e5); border: 2px solid #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1rem;">⚡</div>
-              <div style="font-size: 0.62rem; font-weight: 800; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mahakal_07</div>
-            </div>
-          </div>
-
-          <!-- CHAMET RACE NEON EMBLEM & TELEMETRY BAR (Matches Image 2 & 3) -->
-          <div style="padding: 0.3rem 0.75rem; position: relative;">
-            <div style="background: linear-gradient(180deg, #1e1b4b, #0f172a); border: 2px solid #f59e0b; border-radius: 14px; padding: 0.4rem 0.65rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);">
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <span style="width: 26px; height: 26px; border-radius: 50%; background: #fbbf24; color: #78350f; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.4);">🏆</span>
-                <span style="width: 26px; height: 26px; border-radius: 50%; background: #fbbf24; color: #78350f; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.4);">📊</span>
-              </div>
-
-              <div style="text-align: center;">
-                <div style="font-size: 1.15rem; font-weight: 900; letter-spacing: 1px; font-style: italic; color: #ffffff; text-shadow: 0 2px 8px #f59e0b;">
-                  RACE <span style="color: #fbbf24;">🏁</span> <span style="font-size: 0.78rem; color: #38bdf8; display: block; margin-top: -3px; letter-spacing: 1.5px;">CHAMET ARENA</span>
+          <!-- LIVE SERVER TIMER & PHASE STATUS BAR -->
+          <div style="padding: 0.4rem 0.65rem 0.25rem 0.65rem;">
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid rgba(251, 191, 36, 0.45); border-radius: 10px; padding: 5px 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span id="race-status-badge" style="background: #16a34a; color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 900;">
+                  🟢 BETTING PAGE (चुनें अपनी गाड़ी)
+                </span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span id="race-timer-pill" style="background: #dc2626; color: #ffffff; border: 1px solid #fca5a5; padding: 2px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 900; font-family: monospace;">
+                    ⏱️ 15s
+                  </span>
                 </div>
               </div>
-
-              <!-- Hide/Show Road Toggle Button (रास्ता हाइड ऑप्शन) -->
-              <div style="display: flex; gap: 5px; align-items: center;">
-                <button type="button" id="btn-toggle-road-hide" onclick="toggleRoadTrackVisibility()" style="background: linear-gradient(135deg, #fbbf24, #d97706); color: #0f172a; border: 1px solid #fef08a; border-radius: 999px; padding: 4px 9px; font-size: 0.65rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.35);">
-                  <span id="road-hide-icon">🙈</span>
-                  <span id="road-hide-text">Hide Road</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Live Room Players, Pool & Round Status Strip -->
-            <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
-              <div style="background: rgba(30, 41, 59, 0.9); border: 1px solid #60a5fa; border-radius: 999px; padding: 2px 10px; font-size: 0.68rem; font-weight: 800; color: #e2e8f0; display: inline-flex; align-items: center; gap: 8px;">
-                <span>👤 <b id="race-live-players">1,419</b></span>
-                <span style="color: #64748b;">|</span>
-                <span>💎 <b id="race-total-pool-banner" style="color: #fbbf24; font-family: monospace;">19,850</b></span>
-                <span style="color: #64748b;">|</span>
-                <span>Round #<b id="race-round-number" style="color: #38bdf8;">101</b></span>
-              </div>
-              <div id="race-status-badge" style="background: #dc2626; color: #ffffff; border: 1px solid #fca5a5; padding: 2px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 900;">
-                ⏱️ Betting Open
+              <!-- Smooth Visual Progress Bar for 24/7 Timer -->
+              <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 999px; overflow: hidden;">
+                <div id="race-timer-progress-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #22c55e, #fbbf24, #ef4444); transition: width 0.3s linear;"></div>
               </div>
             </div>
           </div>
 
-          <!-- MYSTERY HIDDEN ROAD CONDITION BAR (Matches Image 3: [Highway >] [???] [???]) -->
-          <div style="padding: 0.25rem 0.75rem 0.45rem 0.75rem;">
-            <div style="background: rgba(15, 23, 42, 0.78); border: 1.5px solid rgba(148, 163, 184, 0.35); border-radius: 10px; padding: 6px 8px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-size: 0.64rem; color: #cbd5e1; font-weight: 800;">🛣️ Upcoming Road Conditions (रास्ता हाइड मोड):</span>
-                <span id="road-mystery-status-text" style="font-size: 0.64rem; color: #fbbf24; font-weight: 900;">🔒 Road Hidden (???)</span>
+          <!-- =================================================================== -->
+          <!-- PAGE 1: 🎯 BETTING PAGE (SHOWN DURING BETTING COUNTDOWN)            -->
+          <!-- =================================================================== -->
+          <div id="chamet-betting-page" class="chamet-flip-active" style="padding: 0.2rem 0.65rem 0.55rem 0.65rem;">
+
+            <!-- Mystery Road Preview Strip on Betting Page ([Highway >] [???] [???]) -->
+            <div style="background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 10px; padding: 5px 7px; margin-bottom: 0.45rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <span style="font-size: 0.62rem; color: #fde047; font-weight: 800;">🛣️ Track Preview (रेस शुरू होते ही पूरा रास्ता खुलेगा):</span>
+                <span style="font-size: 0.6rem; color: #38bdf8; font-weight: 900;">🔒 Hidden Track</span>
               </div>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
-                <div id="road-seg-0" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; font-size: 0.68rem; padding: 3px 6px; border-radius: 6px; border: 1px solid #fef08a;">
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; text-align: center;">
+                <div style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; font-size: 0.65rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fef08a;">
                   🛣️ Highway &gt;
                 </div>
-                <div id="road-seg-1" style="background: linear-gradient(135deg, #fbbf24, #b45309); color: #0f172a; font-weight: 900; font-size: 0.72rem; padding: 3px 6px; border-radius: 6px; border: 1px solid #fef08a; letter-spacing: 1px;">
+                <div style="background: linear-gradient(135deg, #fbbf24, #b45309); color: #0f172a; font-weight: 900; font-size: 0.68rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fef08a; letter-spacing: 1px;">
                   ???
                 </div>
-                <div id="road-seg-2" style="background: linear-gradient(135deg, #fbbf24, #b45309); color: #0f172a; font-weight: 900; font-size: 0.72rem; padding: 3px 6px; border-radius: 6px; border: 1px solid #fef08a; letter-spacing: 1px;">
+                <div style="background: linear-gradient(135deg, #fbbf24, #b45309); color: #0f172a; font-weight: 900; font-size: 0.68rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fef08a; letter-spacing: 1px;">
                   ???
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- 3-LANE CHAMET RACE TRACK WITH HIDDEN ROAD CURTAIN & POTHOLE OBSTACLES (NO SPEED DISPLAY!) -->
-          <div id="chamet-track-wrapper" style="padding: 0 0.75rem 0.55rem 0.75rem;">
-            <!-- Scenic Perspective Horizon Header (Matches Image 2 without any speedometer/speed) -->
-            <div style="height: 44px; background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 55%, #86efac 55%, #4ade80 100%); border-radius: 12px 12px 0 0; border: 2px solid #fbbf24; border-bottom: none; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-              <!-- Perspective Road Trapezoid -->
-              <div style="position: absolute; bottom: 0; width: 65%; height: 22px; background: #92400e; clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%); border-top: 2px solid #fde047;"></div>
-              <!-- Rear-View Mirror / Live Road Commentary Pill (No Speed Shown) -->
-              <div id="track-live-commentary" style="position: relative; z-index: 3; background: rgba(15, 23, 42, 0.88); color: #fef08a; border: 1.5px solid #fbbf24; border-radius: 999px; padding: 2px 12px; font-size: 0.66rem; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-                🏁 गाड़ियां रेस के लिए तैयार हैं • रास्ता हिडन (???) है
-              </div>
-            </div>
-
-            <!-- Main 3-Lane Dirt/Asphalt Track Arena (Matches Image 2) -->
-            <div id="racetrack-arena" style="height: 192px; background: linear-gradient(90deg, #64748b 0px, #64748b 52px, #78350f 52px, #92400e 100%); border-radius: 0 0 12px 12px; position: relative; overflow: hidden; border: 2px solid #fbbf24; box-shadow: inset 0 4px 16px rgba(0,0,0,0.65);">
-
-              <!-- Top & Bottom Red/White Racing Curbs -->
-              <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: repeating-linear-gradient(90deg, #ef4444, #ef4444 14px, #ffffff 14px, #ffffff 28px); z-index: 6;"></div>
-              <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 6px; background: repeating-linear-gradient(90deg, #ef4444, #ef4444 14px, #ffffff 14px, #ffffff 28px); z-index: 6;"></div>
-
-              <!-- Checkered Start Line (Left) -->
-              <div style="position: absolute; left: 50px; top: 6px; bottom: 6px; width: 10px; background: repeating-linear-gradient(180deg, #ffffff, #ffffff 6px, #000000 6px, #000000 12px); z-index: 4; opacity: 0.9;"></div>
-
-              <!-- Checkered Finish Line (Right) -->
-              <div style="position: absolute; right: 32px; top: 6px; bottom: 6px; width: 12px; background: repeating-linear-gradient(180deg, #ffffff, #ffffff 6px, #000000 6px, #000000 12px); z-index: 5; box-shadow: 0 0 10px rgba(255,255,255,0.4);"></div>
-
-              <!-- Mystery Fog / Hidden Road Curtain Over Mid-Right Track (Hides Potholes Until Race Reveals Them!) -->
-              <div id="road-mystery-fog" style="position: absolute; left: 42%; right: 36px; top: 6px; bottom: 6px; background: repeating-linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.92) 12px, rgba(49, 16, 104, 0.92) 12px, rgba(49, 16, 104, 0.92) 24px); border-left: 2px dashed #fbbf24; z-index: 12; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(3px); transition: opacity 0.35s ease;">
-                <div style="background: #fbbf24; color: #0f172a; font-weight: 900; font-size: 0.72rem; padding: 3px 10px; border-radius: 999px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-                  🔒 ??? HIDDEN ROAD ???
-                </div>
-                <div style="font-size: 0.6rem; color: #fef08a; font-weight: 800; margin-top: 3px;">
-                  रेस के दौरान आगे का रास्ता खुलेगा!
-                </div>
-              </div>
-
-              <!-- Countdown Overlay -->
-              <div id="track-overlay-msg" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 20; background: rgba(15, 23, 42, 0.68); backdrop-filter: blur(2px);">
-                <div id="track-big-countdown" style="font-size: 2.5rem; font-weight: 900; color: #fef08a; text-shadow: 0 0 20px rgba(234, 179, 8, 0.9);">
-                  3
-                </div>
-              </div>
-
-              <!-- Lane 1 (Top) -->
-              <div class="race-lane" id="race-lane-0" style="position: absolute; top: 6px; left: 0; right: 0; height: 60px; border-bottom: 2px dashed rgba(254, 240, 138, 0.35); display: flex; align-items: center;">
-                <span style="position: absolute; left: 6px; top: 6px; background: rgba(0,0,0,0.45); color: #fef08a; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 4px; z-index: 5;">L1</span>
-                <!-- Dynamic Pothole Obstacle in Lane 1 -->
-                <div id="lane-pothole-0" style="display: none; position: absolute; left: 56%; top: 12px; z-index: 7; align-items: center; gap: 2px;">
-                  <div style="width: 38px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #1c1917 45%, #451a03 80%, #fbbf24 100%); border: 2px dashed #f97316; box-shadow: inset 0 4px 8px #000000; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">🕳️</div>
-                  <span style="background: #dc2626; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; white-space: nowrap;">गड्ढा!</span>
-                </div>
-                <div id="runner-car-0" style="position: absolute; left: 10px; top: 11px; transition: left 0.08s linear, transform 0.15s ease; display: flex; align-items: center; z-index: 8;">
-                  <div id="runner-svg-0" style="width: 82px; height: 36px;"></div>
-                  <span id="nitro-flame-0" style="display: none; font-size: 1rem; margin-left: -10px; filter: drop-shadow(0 0 8px #f97316); transform: scaleX(-1);">🔥</span>
-                  <span id="pothole-hit-badge-0" style="display: none; position: absolute; top: -11px; left: 10px; background: #dc2626; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 4px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">⚠️ गड्ढे में फंसी!</span>
-                </div>
-              </div>
-
-              <!-- Lane 2 (Middle) -->
-              <div class="race-lane" id="race-lane-1" style="position: absolute; top: 66px; left: 0; right: 0; height: 60px; border-bottom: 2px dashed rgba(254, 240, 138, 0.35); display: flex; align-items: center;">
-                <span style="position: absolute; left: 6px; top: 6px; background: rgba(0,0,0,0.45); color: #fef08a; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 4px; z-index: 5;">L2</span>
-                <!-- Dynamic Pothole Obstacle in Lane 2 -->
-                <div id="lane-pothole-1" style="display: none; position: absolute; left: 53%; top: 12px; z-index: 7; align-items: center; gap: 2px;">
-                  <div style="width: 38px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #1c1917 45%, #451a03 80%, #fbbf24 100%); border: 2px dashed #f97316; box-shadow: inset 0 4px 8px #000000; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">🕳️</div>
-                  <span style="background: #dc2626; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; white-space: nowrap;">गड्ढा!</span>
-                </div>
-                <div id="runner-car-1" style="position: absolute; left: 10px; top: 11px; transition: left 0.08s linear, transform 0.15s ease; display: flex; align-items: center; z-index: 8;">
-                  <div id="runner-svg-1" style="width: 82px; height: 36px;"></div>
-                  <span id="nitro-flame-1" style="display: none; font-size: 1rem; margin-left: -10px; filter: drop-shadow(0 0 8px #f97316); transform: scaleX(-1);">🔥</span>
-                  <span id="pothole-hit-badge-1" style="display: none; position: absolute; top: -11px; left: 10px; background: #dc2626; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 4px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">⚠️ गड्ढे में फंसी!</span>
-                </div>
-              </div>
-
-              <!-- Lane 3 (Bottom) -->
-              <div class="race-lane" id="race-lane-2" style="position: absolute; top: 126px; left: 0; right: 0; height: 60px; display: flex; align-items: center;">
-                <span style="position: absolute; left: 6px; top: 6px; background: rgba(0,0,0,0.45); color: #fef08a; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 4px; z-index: 5;">L3</span>
-                <!-- Dynamic Pothole Obstacle in Lane 3 -->
-                <div id="lane-pothole-2" style="display: none; position: absolute; left: 59%; top: 12px; z-index: 7; align-items: center; gap: 2px;">
-                  <div style="width: 38px; height: 28px; border-radius: 50%; background: radial-gradient(circle, #1c1917 45%, #451a03 80%, #fbbf24 100%); border: 2px dashed #f97316; box-shadow: inset 0 4px 8px #000000; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">🕳️</div>
-                  <span style="background: #dc2626; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 4px; white-space: nowrap;">गड्ढा!</span>
-                </div>
-                <div id="runner-car-2" style="position: absolute; left: 10px; top: 11px; transition: left 0.08s linear, transform 0.15s ease; display: flex; align-items: center; z-index: 8;">
-                  <div id="runner-svg-2" style="width: 82px; height: 36px;"></div>
-                  <span id="nitro-flame-2" style="display: none; font-size: 1rem; margin-left: -10px; filter: drop-shadow(0 0 8px #f97316); transform: scaleX(-1);">🔥</span>
-                  <span id="pothole-hit-badge-2" style="display: none; position: absolute; top: -11px; left: 10px; background: #dc2626; color: #ffffff; font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 4px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">⚠️ गड्ढे में फंसी!</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- WINNER VICTORY PODIUM CARD (Shown After Race - Explains Pothole Story, Zero Mention of Lowest Bet) -->
-          <div id="race-winner-card" style="display: none; margin: 0 0.75rem 0.55rem 0.75rem; background: linear-gradient(135deg, #1e1b4b, #311068); border: 2px solid #fbbf24; border-radius: 14px; padding: 0.75rem; text-align: center; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);">
-            <div style="font-size: 1.8rem; margin-bottom: 2px;">🏆</div>
-            <h3 id="winner-banner-title" style="margin: 0; font-size: 1.05rem; font-weight: 900; color: #fef08a;">
-              Winner Announced!
-            </h3>
-            <p id="winner-banner-desc" style="font-size: 0.74rem; color: #e2e8f0; font-weight: 700; margin: 4px 0 0.5rem 0;">
-              बाकी गाड़ियां गड्ढे (Pothole) में फंसकर पीछे हो गईं और यह गाड़ी आगे निकल गई!
-            </p>
-            <div id="winner-payout-box" style="margin-bottom: 0.55rem;"></div>
-            <button type="button" onclick="setupNewRaceRound()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; border: 1.5px solid #fef08a; padding: 7px 16px; border-radius: 10px; font-weight: 900; font-size: 0.8rem; cursor: pointer;">
-              🏁 Next Race Round ➔
-            </button>
-          </div>
-
-          <!-- 3 CHAMET-STYLE VEHICLE CARDS GRID (NO SPEED SHOWN, NO LOWEST BET SHOWN!) -->
-          <div style="padding: 0 0.75rem 0.55rem 0.75rem;">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px;">
+            <!-- 3 DYNAMIC VEHICLE BETTING CARDS (Starts at Fake ₹3001, ₹3002, ₹3003) -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 0.5rem;">
 
               <!-- Vehicle Card 1 -->
-              <div id="bet-card-0" onclick="placeBetOnCar(0)" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2.5px solid #cbd5e1; border-radius: 14px; padding: 0.45rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.25); transition: transform 0.15s;">
+              <div id="bet-card-0" onclick="placeBetOnCar(0)" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2.5px solid #cbd5e1; border-radius: 14px; padding: 0.5rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.28); transition: transform 0.12s;">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                     <span style="font-size: 0.6rem; font-weight: 900; background: #6366f1; color: #ffffff; padding: 1px 6px; border-radius: 999px;">3.0x</span>
-                    <span style="font-size: 0.6rem; color: #64748b; font-weight: 900;">Lane 1</span>
+                    <span style="font-size: 0.6rem; color: #475569; font-weight: 900;">Lane 1</span>
                   </div>
-                  <div id="car-preview-svg-0" style="margin: 4px auto; width: 100%; height: 38px;"></div>
+                  <div id="car-preview-svg-0" style="margin: 6px auto; width: 100%; height: 44px;"></div>
                   <strong id="car-name-0" style="font-size: 0.76rem; font-weight: 900; color: #0f172a; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Car</strong>
-                  <div style="font-size: 0.72rem; font-weight: 900; color: #d97706; font-family: monospace; margin-top: 1px;">
-                    💎 <span id="car-total-bet-0">0</span>
+                  <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; padding: 2px 4px; margin-top: 4px;">
+                    <div style="font-size: 0.56rem; color: #92400e; font-weight: 800;">Total Bet</div>
+                    <div style="font-size: 0.78rem; font-weight: 900; color: #b45309; font-family: monospace;">
+                      ₹<span id="car-total-bet-0">3,001</span>
+                    </div>
                   </div>
                 </div>
-                <div style="margin-top: 5px; background: linear-gradient(90deg, #3b82f6, #2563eb); color: #ffffff; border-radius: 999px; padding: 3px 6px; font-size: 0.68rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
-                  <span>💎</span>
+                <div style="margin-top: 6px; background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #ffffff; border-radius: 999px; padding: 4px 6px; font-size: 0.68rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 0 2px 6px rgba(37,99,235,0.35);">
+                  <span>+ Bet: ₹</span>
                   <span id="car-player-bet-0">0</span>
                 </div>
               </div>
 
               <!-- Vehicle Card 2 -->
-              <div id="bet-card-1" onclick="placeBetOnCar(1)" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2.5px solid #cbd5e1; border-radius: 14px; padding: 0.45rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.25); transition: transform 0.15s;">
+              <div id="bet-card-1" onclick="placeBetOnCar(1)" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2.5px solid #cbd5e1; border-radius: 14px; padding: 0.5rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.28); transition: transform 0.12s;">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                     <span style="font-size: 0.6rem; font-weight: 900; background: #6366f1; color: #ffffff; padding: 1px 6px; border-radius: 999px;">3.0x</span>
-                    <span style="font-size: 0.6rem; color: #64748b; font-weight: 900;">Lane 2</span>
+                    <span style="font-size: 0.6rem; color: #475569; font-weight: 900;">Lane 2</span>
                   </div>
-                  <div id="car-preview-svg-1" style="margin: 4px auto; width: 100%; height: 38px;"></div>
-                  <strong id="car-name-1" style="font-size: 0.76rem; font-weight: 900; color: #0f172a; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ATV 4x4</strong>
-                  <div style="font-size: 0.72rem; font-weight: 900; color: #d97706; font-family: monospace; margin-top: 1px;">
-                    💎 <span id="car-total-bet-1">0</span>
+                  <div id="car-preview-svg-1" style="margin: 6px auto; width: 100%; height: 44px;"></div>
+                  <strong id="car-name-1" style="font-size: 0.76rem; font-weight: 900; color: #0f172a; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bike</strong>
+                  <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; padding: 2px 4px; margin-top: 4px;">
+                    <div style="font-size: 0.56rem; color: #92400e; font-weight: 800;">Total Bet</div>
+                    <div style="font-size: 0.78rem; font-weight: 900; color: #b45309; font-family: monospace;">
+                      ₹<span id="car-total-bet-1">3,002</span>
+                    </div>
                   </div>
                 </div>
-                <div style="margin-top: 5px; background: linear-gradient(90deg, #3b82f6, #2563eb); color: #ffffff; border-radius: 999px; padding: 3px 6px; font-size: 0.68rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
-                  <span>💎</span>
+                <div style="margin-top: 6px; background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #ffffff; border-radius: 999px; padding: 4px 6px; font-size: 0.68rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 0 2px 6px rgba(37,99,235,0.35);">
+                  <span>+ Bet: ₹</span>
                   <span id="car-player-bet-1">0</span>
                 </div>
               </div>
 
               <!-- Vehicle Card 3 -->
-              <div id="bet-card-2" onclick="placeBetOnCar(2)" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2.5px solid #cbd5e1; border-radius: 14px; padding: 0.45rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.25); transition: transform 0.15s;">
+              <div id="bet-card-2" onclick="placeBetOnCar(2)" style="background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2.5px solid #cbd5e1; border-radius: 14px; padding: 0.5rem 0.35rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.28); transition: transform 0.12s;">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
                     <span style="font-size: 0.6rem; font-weight: 900; background: #6366f1; color: #ffffff; padding: 1px 6px; border-radius: 999px;">3.0x</span>
-                    <span style="font-size: 0.6rem; color: #64748b; font-weight: 900;">Lane 3</span>
+                    <span style="font-size: 0.6rem; color: #475569; font-weight: 900;">Lane 3</span>
                   </div>
-                  <div id="car-preview-svg-2" style="margin: 4px auto; width: 100%; height: 38px;"></div>
-                  <strong id="car-name-2" style="font-size: 0.76rem; font-weight: 900; color: #0f172a; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Monster SUV</strong>
-                  <div style="font-size: 0.72rem; font-weight: 900; color: #d97706; font-family: monospace; margin-top: 1px;">
-                    💎 <span id="car-total-bet-2">0</span>
+                  <div id="car-preview-svg-2" style="margin: 6px auto; width: 100%; height: 44px;"></div>
+                  <strong id="car-name-2" style="font-size: 0.76rem; font-weight: 900; color: #0f172a; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Monster Truck</strong>
+                  <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px; padding: 2px 4px; margin-top: 4px;">
+                    <div style="font-size: 0.56rem; color: #92400e; font-weight: 800;">Total Bet</div>
+                    <div style="font-size: 0.78rem; font-weight: 900; color: #b45309; font-family: monospace;">
+                      ₹<span id="car-total-bet-2">3,003</span>
+                    </div>
                   </div>
                 </div>
-                <div style="margin-top: 5px; background: linear-gradient(90deg, #3b82f6, #2563eb); color: #ffffff; border-radius: 999px; padding: 3px 6px; font-size: 0.68rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
-                  <span>💎</span>
+                <div style="margin-top: 6px; background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #ffffff; border-radius: 999px; padding: 4px 6px; font-size: 0.68rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 0 2px 6px rgba(37,99,235,0.35);">
+                  <span>+ Bet: ₹</span>
                   <span id="car-player-bet-2">0</span>
                 </div>
               </div>
 
             </div>
+
+            <!-- BETTING CHIPS & AUTO-TIMER FOOTER -->
+            <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(251, 191, 36, 0.35); border-radius: 12px; padding: 0.45rem 0.6rem; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <span style="font-size: 0.62rem; color: #cbd5e1; font-weight: 800;">Bet:</span>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(10)" id="chip-val-10" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #fbbf24; background: #f59e0b; color: #0f172a; cursor: pointer;">₹10</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(25)" id="chip-val-25" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">₹25</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(50)" id="chip-val-50" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">₹50</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(100)" id="chip-val-100" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">₹100</button>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <button type="button" id="btn-clear-bets" onclick="clearAllPlayerBets()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; padding: 5px 9px; border-radius: 999px; font-weight: 800; font-size: 0.66rem; cursor: pointer;">
+                  🔄 Reset
+                </button>
+                <button type="button" id="btn-start-race" onclick="startCarRace()" style="background: linear-gradient(135deg, #06b6d4, #2563eb); color: #ffffff; border: 1px solid #67e8f9; padding: 5px 11px; border-radius: 999px; font-weight: 900; font-size: 0.68rem; cursor: pointer;" title="Skip timer & flip to race now">
+                  ⚡ Flip to Race
+                </button>
+              </div>
+            </div>
           </div>
 
-          <!-- CHAMET-STYLE BOTTOM BETTING CHIP SELECTOR & PLAY BAR (Matches Image 3 Bottom Bar) -->
-          <div style="background: rgba(15, 23, 42, 0.92); border-top: 1.5px solid rgba(251, 191, 36, 0.35); padding: 0.55rem 0.75rem; display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <button type="button" class="btn-bet-chip" onclick="selectBetChip(10)" id="chip-val-10" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #fbbf24; background: #f59e0b; color: #0f172a; cursor: pointer;">💎 10</button>
-              <button type="button" class="btn-bet-chip" onclick="selectBetChip(25)" id="chip-val-25" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">💎 25</button>
-              <button type="button" class="btn-bet-chip" onclick="selectBetChip(50)" id="chip-val-50" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">💎 50</button>
-              <button type="button" class="btn-bet-chip" onclick="selectBetChip(100)" id="chip-val-100" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 999px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">💎 100</button>
+          <!-- =================================================================== -->
+          <!-- PAGE 2: 🏎️ RACING TRACK PAGE (FLIPS OPEN WHEN TIMER ENDS!)          -->
+          <!-- =================================================================== -->
+          <div id="chamet-track-page" style="display: none; padding: 0.2rem 0.65rem 0.6rem 0.65rem;">
+
+            <!-- FULL REVEALED ROAD CONDITIONS BAR (Highway / Bumpy Road / Off-Road) -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #fbbf24; border-radius: 10px; padding: 5px 8px; margin-bottom: 0.4rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <span id="road-mystery-status-text" style="font-size: 0.64rem; color: #fef08a; font-weight: 900;">🛣️ Live Track Conditions (पूरा रास्ता खुला):</span>
+                <button type="button" id="btn-toggle-road-hide" onclick="toggleRoadTrackVisibility()" style="background: rgba(251, 191, 36, 0.2); color: #fef08a; border: 1px solid #fbbf24; border-radius: 999px; padding: 1px 7px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">
+                  <span id="road-hide-icon">🙈</span> <span id="road-hide-text">Hide Track</span>
+                </button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; text-align: center;">
+                <div id="road-seg-0" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 900; font-size: 0.65rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fef08a;">
+                  🛣️ Highway &gt;
+                </div>
+                <div id="road-seg-1" style="background: #dc2626; color: #ffffff; font-weight: 900; font-size: 0.65rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #fca5a5;">
+                  🚧 Bumpy (गड्ढा) &gt;
+                </div>
+                <div id="road-seg-2" style="background: #7c3aed; color: #ffffff; font-weight: 900; font-size: 0.65rem; padding: 3px 4px; border-radius: 5px; border: 1px solid #c4b5fd;">
+                  🪨 Off-Road &gt;
+                </div>
+              </div>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 6px; flex: 1; justify-content: flex-end;">
-              <button type="button" id="btn-clear-bets" onclick="clearAllPlayerBets()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; padding: 6px 10px; border-radius: 999px; font-weight: 800; font-size: 0.7rem; cursor: pointer;">
-                🔄 Reset
-              </button>
-              <button type="button" id="btn-start-race" onclick="startCarRace()" style="background: linear-gradient(135deg, #06b6d4, #2563eb); color: #ffffff; border: 1.5px solid #67e8f9; padding: 7px 18px; border-radius: 999px; font-weight: 900; font-size: 0.82rem; cursor: pointer; box-shadow: 0 3px 12px rgba(6, 182, 212, 0.45);">
-                <span id="btn-start-race-text">▶ Play</span>
-              </button>
+            <!-- 3-LANE CHAMET RACE TRACK WITH POTHOLE OBSTACLES -->
+            <div id="chamet-track-wrapper">
+              <!-- Scenic Perspective Horizon Header -->
+              <div style="height: 34px; background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 52%, #86efac 52%, #4ade80 100%); border-radius: 10px 10px 0 0; border: 2px solid #fbbf24; border-bottom: none; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <div style="position: absolute; bottom: 0; width: 65%; height: 17px; background: #92400e; clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%); border-top: 1.5px solid #fde047;"></div>
+                <div id="track-live-commentary" style="position: relative; z-index: 3; background: rgba(15, 23, 42, 0.9); color: #fef08a; border: 1px solid #fbbf24; border-radius: 999px; padding: 1px 10px; font-size: 0.62rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 96%;">
+                  🏎️ रेस लाइव चल रही है!
+                </div>
+              </div>
+
+              <!-- Main 3-Lane Multi-Terrain Track Arena (Highway -> Bumpy Road -> Off-Road) -->
+              <div id="racetrack-arena" style="height: 168px; background: linear-gradient(90deg, #475569 0%, #475569 36%, #78350f 36%, #92400e 70%, #3f6212 70%, #365314 100%); border-radius: 0 0 10px 10px; position: relative; overflow: hidden; border: 2px solid #fbbf24; box-shadow: inset 0 3px 12px rgba(0,0,0,0.65);">
+
+                <!-- Terrain Zone Dividers -->
+                <div style="position: absolute; left: 36%; top: 5px; bottom: 5px; border-left: 1.5px dashed rgba(255,255,255,0.35); z-index: 2;"></div>
+                <div style="position: absolute; left: 70%; top: 5px; bottom: 5px; border-left: 1.5px dashed rgba(255,255,255,0.35); z-index: 2;"></div>
+
+                <!-- Top & Bottom Red/White Racing Curbs -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: repeating-linear-gradient(90deg, #ef4444, #ef4444 12px, #ffffff 12px, #ffffff 24px); z-index: 6;"></div>
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 5px; background: repeating-linear-gradient(90deg, #ef4444, #ef4444 12px, #ffffff 12px, #ffffff 24px); z-index: 6;"></div>
+
+                <!-- Checkered Start Line (Left) -->
+                <div style="position: absolute; left: 42px; top: 5px; bottom: 5px; width: 8px; background: repeating-linear-gradient(180deg, #ffffff, #ffffff 5px, #000000 5px, #000000 10px); z-index: 4; opacity: 0.9;"></div>
+
+                <!-- Checkered Finish Line (Right) -->
+                <div style="position: absolute; right: 24px; top: 5px; bottom: 5px; width: 10px; background: repeating-linear-gradient(180deg, #ffffff, #ffffff 5px, #000000 5px, #000000 10px); z-index: 5; box-shadow: 0 0 8px rgba(255,255,255,0.4);"></div>
+
+                <!-- Countdown Overlay -->
+                <div id="track-overlay-msg" style="position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 20; background: rgba(15, 23, 42, 0.68); backdrop-filter: blur(2px);">
+                  <div id="track-big-countdown" style="font-size: 2.2rem; font-weight: 900; color: #fef08a; text-shadow: 0 0 20px rgba(234, 179, 8, 0.9);">
+                    3
+                  </div>
+                </div>
+
+                <!-- Lane 1 (Top) -->
+                <div class="race-lane" id="race-lane-0" style="position: absolute; top: 5px; left: 0; right: 0; height: 52px; border-bottom: 1.5px dashed rgba(254, 240, 138, 0.35); display: flex; align-items: center;">
+                  <span style="position: absolute; left: 5px; top: 4px; background: rgba(0,0,0,0.55); color: #fef08a; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; z-index: 5;">L1</span>
+                  <div id="lane-pothole-0" style="display: none; position: absolute; left: 45%; top: 11px; z-index: 7; align-items: center; gap: 2px;">
+                    <div style="width: 36px; height: 26px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #451a03 80%, #fbbf24 100%); border: 2px dashed #f97316; box-shadow: inset 0 4px 8px #000000; display: flex; align-items: center; justify-content: center; font-size: 0.72rem;">🕳️</div>
+                    <span style="background: #dc2626; color: #ffffff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 3px; white-space: nowrap;">गड्ढा!</span>
+                  </div>
+                  <div id="runner-car-0" style="position: absolute; left: 8px; top: 10px; transition: left 0.08s linear, transform 0.15s ease; display: flex; align-items: center; z-index: 8;">
+                    <span id="nitro-flame-0" style="display: none; font-size: 0.95rem; margin-right: -8px; filter: drop-shadow(0 0 6px #f97316);">🔥</span>
+                    <div id="runner-svg-0" style="width: 74px; height: 34px;"></div>
+                    <span id="pothole-hit-badge-0" style="display: none; position: absolute; top: -9px; left: 6px; background: #dc2626; color: #ffffff; font-size: 7.5px; font-weight: 900; padding: 0px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">⚠️ गड्ढे में फंसी!</span>
+                  </div>
+                </div>
+
+                <!-- Lane 2 (Middle) -->
+                <div class="race-lane" id="race-lane-1" style="position: absolute; top: 57px; left: 0; right: 0; height: 52px; border-bottom: 1.5px dashed rgba(254, 240, 138, 0.35); display: flex; align-items: center;">
+                  <span style="position: absolute; left: 5px; top: 4px; background: rgba(0,0,0,0.55); color: #fef08a; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; z-index: 5;">L2</span>
+                  <div id="lane-pothole-1" style="display: none; position: absolute; left: 45%; top: 11px; z-index: 7; align-items: center; gap: 2px;">
+                    <div style="width: 36px; height: 26px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #451a03 80%, #fbbf24 100%); border: 2px dashed #f97316; box-shadow: inset 0 4px 8px #000000; display: flex; align-items: center; justify-content: center; font-size: 0.72rem;">🕳️</div>
+                    <span style="background: #dc2626; color: #ffffff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 3px; white-space: nowrap;">गड्ढा!</span>
+                  </div>
+                  <div id="runner-car-1" style="position: absolute; left: 8px; top: 10px; transition: left 0.08s linear, transform 0.15s ease; display: flex; align-items: center; z-index: 8;">
+                    <span id="nitro-flame-1" style="display: none; font-size: 0.95rem; margin-right: -8px; filter: drop-shadow(0 0 6px #f97316);">🔥</span>
+                    <div id="runner-svg-1" style="width: 74px; height: 34px;"></div>
+                    <span id="pothole-hit-badge-1" style="display: none; position: absolute; top: -9px; left: 6px; background: #dc2626; color: #ffffff; font-size: 7.5px; font-weight: 900; padding: 0px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">⚠️ गड्ढे में फंसी!</span>
+                  </div>
+                </div>
+
+                <!-- Lane 3 (Bottom) -->
+                <div class="race-lane" id="race-lane-2" style="position: absolute; top: 109px; left: 0; right: 0; height: 52px; display: flex; align-items: center;">
+                  <span style="position: absolute; left: 5px; top: 4px; background: rgba(0,0,0,0.55); color: #fef08a; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 3px; z-index: 5;">L3</span>
+                  <div id="lane-pothole-2" style="display: none; position: absolute; left: 45%; top: 11px; z-index: 7; align-items: center; gap: 2px;">
+                    <div style="width: 36px; height: 26px; border-radius: 50%; background: radial-gradient(circle, #09090b 45%, #451a03 80%, #fbbf24 100%); border: 2px dashed #f97316; box-shadow: inset 0 4px 8px #000000; display: flex; align-items: center; justify-content: center; font-size: 0.72rem;">🕳️</div>
+                    <span style="background: #dc2626; color: #ffffff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 3px; white-space: nowrap;">गड्ढा!</span>
+                  </div>
+                  <div id="runner-car-2" style="position: absolute; left: 8px; top: 10px; transition: left 0.08s linear, transform 0.15s ease; display: flex; align-items: center; z-index: 8;">
+                    <span id="nitro-flame-2" style="display: none; font-size: 0.95rem; margin-right: -8px; filter: drop-shadow(0 0 6px #f97316);">🔥</span>
+                    <div id="runner-svg-2" style="width: 74px; height: 34px;"></div>
+                    <span id="pothole-hit-badge-2" style="display: none; position: absolute; top: -9px; left: 6px; background: #dc2626; color: #ffffff; font-size: 7.5px; font-weight: 900; padding: 0px 4px; border-radius: 3px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">⚠️ गड्ढे में फंसी!</span>
+                  </div>
+                </div>
+
+              </div>
             </div>
+
+            <!-- Live Bet Summary Strip During Race -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 0.4rem; text-align: center;">
+              <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-0" style="font-size: 0.65rem; font-weight: 900; color: #fef08a;">L1: Car</div>
+                <div style="font-size: 0.62rem; color: #cbd5e1;">Total: ₹<b id="track-pool-bet-0">3,001</b> | You: ₹<b id="track-my-bet-0" style="color:#38bdf8;">0</b></div>
+              </div>
+              <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-1" style="font-size: 0.65rem; font-weight: 900; color: #fef08a;">L2: Bike</div>
+                <div style="font-size: 0.62rem; color: #cbd5e1;">Total: ₹<b id="track-pool-bet-1">3,002</b> | You: ₹<b id="track-my-bet-1" style="color:#38bdf8;">0</b></div>
+              </div>
+              <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-2" style="font-size: 0.65rem; font-weight: 900; color: #fef08a;">L3: Monster</div>
+                <div style="font-size: 0.62rem; color: #cbd5e1;">Total: ₹<b id="track-pool-bet-2">3,003</b> | You: ₹<b id="track-my-bet-2" style="color:#38bdf8;">0</b></div>
+              </div>
+            </div>
+
+            <!-- WINNER VICTORY PODIUM CARD (Auto-Flips Back to Betting Page After 4s!) -->
+            <div id="race-winner-card" style="display: none; margin-top: 0.45rem; background: linear-gradient(135deg, #1e1b4b, #311068); border: 2px solid #fbbf24; border-radius: 12px; padding: 0.55rem; text-align: center; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);">
+              <h3 id="winner-banner-title" style="margin: 0; font-size: 0.95rem; font-weight: 900; color: #fef08a;">
+                🏆 Winner Announced!
+              </h3>
+              <p id="winner-banner-desc" style="font-size: 0.68rem; color: #e2e8f0; font-weight: 700; margin: 2px 0 0.35rem 0;">
+                बाकी गाड़ियां गड्ढे (Pothole) में फंसकर पीछे हो गईं और यह गाड़ी आगे निकल गई!
+              </p>
+              <div id="winner-payout-box" style="margin-bottom: 0.35rem;"></div>
+              <div style="font-size: 0.64rem; color: #38bdf8; font-weight: 900;">
+                🔄 ऑटोमैटिक अगला राउंड (Betting Page) शुरू हो रहा है...
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -1808,7 +1847,7 @@
             </div>
             <div>
               <div style="display: flex; align-items: center; gap: 6px;">
-                <h3 id="prof-card-name" style="font-size: 1.15rem; font-weight: 900; color: white; margin: 0;">User Name</h3>
+                <h3 id="prof-card-name" style="font-size: 1.15rem; font-weight: 900; color: #000000; margin: 0;">User Name</h3>
                 <span class="rc-verified-shield">🛡️ AI Verified</span>
               </div>
               <div id="prof-card-phone" style="font-size: 0.8rem; color: var(--accent); font-weight: 800; margin-top: 2px;">📱 +91 ----------</div>
@@ -1833,7 +1872,7 @@
       <div class="app-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🎟️ Your Digital Boarding Passes</h2>
+            <h2 style="font-size: 1.15rem; font-weight: 900; color: #000000; margin: 0;">🎟️ Your Digital Boarding Passes</h2>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Passenger booked tickets • Retained 48 hours</p>
           </div>
           <button type="button" class="btn btn-secondary" onclick="showSection('live-cars')" style="padding: 4px 10px; font-size: 0.74rem; border-radius: 8px;">
@@ -1850,7 +1889,7 @@
       <div class="app-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.65rem;">
           <div>
-            <h2 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0;">🚙 Driver Fleet & Requests</h2>
+            <h2 style="font-size: 1.15rem; font-weight: 900; color: #000000; margin: 0;">🚙 Driver Fleet & Requests</h2>
             <p style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 0 0;">Manage your posted vehicles and confirm incoming passenger seats</p>
           </div>
           <button type="button" class="btn btn-primary" onclick="showSection('driver')" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 800; border-radius: 8px;">
@@ -1879,7 +1918,7 @@
     <!-- 🏢 ULTRA-COMPACT 1-LINE COMPANY FOOTER (NO BULK, ZERO ADMIN, SCREEN-FITTING) -->
     <footer id="main-company-footer" style="margin: 0.2rem auto 0.35rem auto; width: 100%; text-align: center; font-size: 0.68rem; color: #475569; padding: 2px 0; box-sizing: border-box;">
       <div>
-        <strong style="color: #000000;">🚗 SafarSaathi</strong> • Assam Carpooling Network • <a href="privacy.html" target="_blank" style="color: #15803d; text-decoration: underline; font-weight: 700;">Privacy & Terms</a>
+        <strong style="color: #000000;">🚗 SafarSaathi</strong> • Assam Carpooling Network • <a href="#privacy" onclick="showToast('🔒 SafarSaathi Assam: 100% Aadhaar AI Verified & Encrypted Peer-to-Peer Network', '#15803d'); return false;" style="color: #15803d; text-decoration: underline; font-weight: 700;">Privacy & Terms</a>
       </div>
     </footer>
 
@@ -2086,7 +2125,7 @@
 
       // Check cross-tab local storage synchronization with Admin Portal
       try {
-        const stored = JSON.parse(localStorage.getItem('ss_rides')) || [];
+        const stored = JSON.parse(ssStorage.getItem('ss_rides')) || [];
         const cleanStored = stored.filter(r => r.id !== 'RIDE-DB-8287' && !r.isDemo);
         if (cleanStored.length !== rides.length) {
           rides = cleanStored;
@@ -2223,7 +2262,7 @@
               <strong>🚗 ${r.origin} ➔ ${r.destination}</strong><br>
               <span style="color:#94a3b8; font-size:0.75rem;">Vehicle: ${r.vehicleModel} (${r.vehicleNumber}) • Time: ${r.time} • Seats: ${r.seatsAvailable} Left</span><br>
               <span style="color:#4ade80; font-weight:800;">₹${r.farePerSeat} / seat</span>
-              <button onclick="closeGeminiAiModal(); openCustomerBookingModal('${r.id}');" style="margin-left:8px; padding:2px 8px; font-size:0.72rem; background:#16a34a; border:none; color:white; border-radius:4px; font-weight:800; cursor:pointer;">Book ➔</button>
+              <button onclick="closeGeminiAiModal(); openBookingModalForRide('${r.id}');" style="margin-left:8px; padding:2px 8px; font-size:0.72rem; background:#16a34a; border:none; color:white; border-radius:4px; font-weight:800; cursor:pointer;">Book ➔</button>
             </div>
           `).join('');
 
@@ -2489,19 +2528,19 @@
     // STRICT 0% DEMO DATA POLICY: ZERO DEMO RIDES EVER
     let storedRides = [];
     try {
-      storedRides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      storedRides = JSON.parse(ssStorage.getItem('ss_rides')) || [];
     } catch(e) {}
 
     // Filter out any leftover demo rides
     if (Array.isArray(storedRides)) {
       storedRides = storedRides.filter(r => r.id !== 'RIDE-DB-8287' && !r.isDemo && r.driverPhone !== '9864012345');
-      try { localStorage.setItem('ss_rides', JSON.stringify(storedRides)); } catch(e){}
+      try { ssStorage.setItem('ss_rides', JSON.stringify(storedRides)); } catch(e){}
     } else {
       storedRides = [];
     }
     let rides = storedRides;
 
-    let bookings = JSON.parse(localStorage.getItem('ss_bookings')) || [];
+    let bookings = JSON.parse(ssStorage.getItem('ss_bookings')) || [];
     let selectedRideForBooking = null;
     let driverUploadedQrData = '';
     let uploadedAadhaarData = '';
@@ -2517,7 +2556,7 @@
       measurementId: "G-0PB4K9PWVD"
     };
 
-    let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
+    let firebaseConfig = JSON.parse(ssStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
     let db = null;
 
     // Helper: 48-Hour Retention Check
@@ -3633,7 +3672,7 @@
       });
 
       if (changed) {
-        try { localStorage.setItem('ss_rides', JSON.stringify(rides)); } catch(e){}
+        try { ssStorage.setItem('ss_rides', JSON.stringify(rides)); } catch(e){}
       }
     }
 
@@ -3905,13 +3944,13 @@
 
     function openBookingModalForRide(rideId) {
       if (!isUserLoggedIn()) {
-        alert('⚠️ सीट बुक करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
+        showToast('⚠️ सीट बुक करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर कोई भी कस्टमर गाड़ियां आसानी से देख सकता है, लेकिन सीट बुक करने के लिए अकाउंट में लॉगिन या नया रजिस्ट्रेशन होना अनिवार्य है।\n\nकृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।', '#dc2626');
         showSection('profile');
         setAuthMode('login');
         return;
       }
       if (!isUserProfileVerified()) {
-        alert('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nसफ़रसाथी पर सीट बुक करने से पहले पैसेंजर की सुरक्षा हेतु AI आधार वेरिफिकेशन अनिवार्य है।\n\nकृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।');
+        showToast('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nसफ़रसाथी पर सीट बुक करने से पहले पैसेंजर की सुरक्षा हेतु AI आधार वेरिफिकेशन अनिवार्य है।\n\nकृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।', '#dc2626');
         showSection('profile');
         return;
       }
@@ -4309,7 +4348,7 @@ ET
       if (!selectedRideForBooking) return;
       const utr = (document.getElementById('bm-utr-input')?.value || '').trim();
       if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
-        alert('Please enter valid 12-digit numeric UPI UTR number from your payment receipt!');
+        showToast('Please enter valid 12-digit numeric UPI UTR number from your payment receipt!', '#dc2626');
         document.getElementById('bm-utr-input')?.focus();
         return;
       }
@@ -4317,7 +4356,7 @@ ET
       // Anti-Fraud UTR duplicate check
       const isUtrUsed = bookings.some(b => b.passengerUtr === utr);
       if (isUtrUsed) {
-        alert('⚠️ यह UTR नंबर पहले से ही किसी बुकिंग में दर्ज है! कृपया अपना वास्तविक पेमेंट UTR दर्ज करें।');
+        showToast('⚠️ यह UTR नंबर पहले से ही किसी बुकिंग में दर्ज है! कृपया अपना वास्तविक पेमेंट UTR दर्ज करें।', '#dc2626');
         return;
       }
 
@@ -4327,7 +4366,7 @@ ET
       const available = parseInt(freshRide ? freshRide.seatsAvailable : 0) || 0;
 
       if (!freshRide || available < seatsCount) {
-        alert('⚠️ सीट पहले ही बुक हो चुकी है या पर्याप्त सीट उपलब्ध नहीं हैं! (Available: ' + available + ')');
+        showToast('⚠️ सीट पहले ही बुक हो चुकी है या पर्याप्त सीट उपलब्ध नहीं हैं! (Available: ' + available + ')', '#dc2626');
         closeBookingModal();
         renderLiveCarsHome();
         return;
@@ -4358,10 +4397,10 @@ ET
       };
 
       bookings.unshift(booking);
-      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+      ssStorage.setItem('ss_bookings', JSON.stringify(bookings));
 
       selectedRideForBooking.seatsAvailable = Math.max(0, (selectedRideForBooking.seatsAvailable || 1) - seatsCount);
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      ssStorage.setItem('ss_rides', JSON.stringify(rides));
 
       if (db) {
         try {
@@ -4400,12 +4439,12 @@ ET
       const plate = (document.getElementById('df-plate')?.value || '').trim();
       const model = (document.getElementById('df-model')?.value || '').trim();
       if (!model) {
-        alert('Please enter your vehicle model!');
+        showToast('Please enter your vehicle model!', '#dc2626');
         document.getElementById('df-model')?.focus();
         return;
       }
       if (!plate) {
-        alert('Please take a live photo of your car number plate using the camera button!');
+        showToast('Please take a live photo of your car number plate using the camera button!', '#dc2626');
         return;
       }
       goToDriverStep(3);
@@ -4414,7 +4453,7 @@ ET
     function proceedToDriverStep4() {
       const upi = (document.getElementById('df-driver-upi')?.value || '').trim();
       if (!upi) {
-        alert('Please enter your receiving UPI ID!');
+        showToast('Please enter your receiving UPI ID!', '#dc2626');
         document.getElementById('df-driver-upi')?.focus();
         return;
       }
@@ -4462,20 +4501,20 @@ ET
 
     function submitDriverRideDirect() {
       if (!isUserLoggedIn()) {
-        alert('⚠️ गाड़ी पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए कृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।');
+        showToast('⚠️ गाड़ी पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है (Login Required)!\n\nसफ़रसाथी पर गाड़ी पोस्ट करने के लिए कृपया अपनी User ID और पासवर्ड से लॉगिन करें या "Register" पर टैप करें।', '#dc2626');
         showSection('profile');
         setAuthMode('login');
         return;
       }
       if (!isUserProfileVerified()) {
-        alert('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nगाड़ी पोस्ट करने के लिए ड्राइवर का आधार AI वेरीफाइड होना अनिवार्य है।\n\nकृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।');
+        showToast('⚠️ आधार वेरिफिकेशन अनिवार्य है (Aadhaar Verification Mandatory)!\n\nगाड़ी पोस्ट करने के लिए ड्राइवर का आधार AI वेरीफाइड होना अनिवार्य है।\n\nकृपया अपनी प्रोफ़ाइल में आधार कार्ड अपलोड करके वेरिफिकेशन पूरा करें।', '#dc2626');
         showSection('profile');
         return;
       }
 
       const utr = (document.getElementById('df-utr')?.value || '').trim();
       if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
-        alert('Please enter valid 12-digit numeric payment UTR number for your ₹100 platform fee!');
+        showToast('Please enter valid 12-digit numeric payment UTR number for your ₹100 platform fee!', '#dc2626');
         document.getElementById('df-utr')?.focus();
         return;
       }
@@ -4514,7 +4553,7 @@ ET
       };
 
       rides.unshift(newRide);
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      ssStorage.setItem('ss_rides', JSON.stringify(rides));
       broadcastRidesLocally(rides); // Instant (<50ms) push to Admin Portal!
 
       if (db) {
@@ -4631,10 +4670,10 @@ ET
     }
 
     function getActiveUserProfile() {
-      const uid = localStorage.getItem('ss_current_user_id');
+      const uid = ssStorage.getItem('ss_current_user_id');
       if (!uid) return null;
       let users = {};
-      try { users = JSON.parse(localStorage.getItem('ss_users_db')) || {}; } catch(e){}
+      try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
       return users[uid] || null;
     }
 
@@ -4720,20 +4759,20 @@ ET
       const confPwdInput = document.getElementById('auth-input-confirm-password');
 
       if (!uid || uid.length !== 10 || !/^\d{10}$/.test(uid)) {
-        alert('Please enter valid 10-digit mobile number as User ID!');
+        showToast('Please enter valid 10-digit mobile number as User ID!', '#dc2626');
         document.getElementById('auth-input-userid')?.focus();
         return;
       }
 
 
       if (!pwd || pwd.length < 3) {
-        alert('Please enter password of at least 3 characters!');
+        showToast('Please enter password of at least 3 characters!', '#dc2626');
         document.getElementById('auth-input-password')?.focus();
         return;
       }
 
       let users = {};
-      try { users = JSON.parse(localStorage.getItem('ss_users_db')) || {}; } catch(e){}
+      try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
 
       if (currentAuthMode === 'register') {
         const confPwd = (confPwdInput?.value || '').trim();
@@ -4741,19 +4780,19 @@ ET
         const addr = (document.getElementById('auth-input-address')?.value || '').trim();
 
         if (pwd !== confPwd) {
-          alert('❌ Passwords do not match! Please check both password fields.');
+          showToast('❌ Passwords do not match! Please check both password fields.', '#dc2626');
           return;
         }
         if (!name) {
-          alert('Please enter your full legal name!');
+          showToast('Please enter your full legal name!', '#dc2626');
           return;
         }
         if (!addr) {
-          alert('Please enter your address in Assam!');
+          showToast('Please enter your address in Assam!', '#dc2626');
           return;
         }
         if (!uploadedAadhaarData) {
-          alert('⚠️ आधार कार्ड अपलोड करना अनिवार्य है! कृपया अपने आधार की फ़ोटो अपलोड करें।');
+          showToast('⚠️ आधार कार्ड अपलोड करना अनिवार्य है! कृपया अपने आधार की फ़ोटो अपलोड करें।', '#dc2626');
           return;
         }
 
@@ -4773,8 +4812,8 @@ ET
         };
 
         users[uid] = newUser;
-        localStorage.setItem('ss_users_db', JSON.stringify(users));
-        localStorage.setItem('ss_current_user_id', uid);
+        ssStorage.setItem('ss_users_db', JSON.stringify(users));
+        ssStorage.setItem('ss_current_user_id', uid);
 
         // Clear password fields from DOM memory for security
         if (pwdInput) pwdInput.value = '';
@@ -4785,7 +4824,7 @@ ET
       } else {
         const existing = users[uid];
         if (!existing) {
-          alert('❌ यह User ID रजिस्टर्ड नहीं है! कृपया पहले Register टैब पर क्लिक करके नया अकाउंट बनाएं।');
+          showToast('❌ यह User ID रजिस्टर्ड नहीं है! कृपया पहले Register टैब पर क्लिक करके नया अकाउंट बनाएं।', '#dc2626');
           setAuthMode('register');
           return;
         }
@@ -4803,19 +4842,19 @@ ET
             existing.salt = newSalt;
             delete existing.password; // Remove plaintext password forever!
             users[uid] = existing;
-            localStorage.setItem('ss_users_db', JSON.stringify(users));
+            ssStorage.setItem('ss_users_db', JSON.stringify(users));
           }
         }
 
         if (!isMatch) {
-          alert('❌ गलत पासवर्ड! कृपया सही पासवर्ड डालें।');
+          showToast('❌ गलत पासवर्ड! कृपया सही पासवर्ड डालें।', '#dc2626');
           return;
         }
 
         // Clear password field from DOM
         if (pwdInput) pwdInput.value = '';
 
-        localStorage.setItem('ss_current_user_id', uid);
+        ssStorage.setItem('ss_current_user_id', uid);
         showToast(`✓ स्वागत है, ${existing.name}!`, '#15803d');
         renderProfileView();
       }
@@ -4846,7 +4885,7 @@ ET
     }
 
     function logoutUserProfile() {
-      localStorage.removeItem('ss_current_user_id');
+      ssStorage.removeItem('ss_current_user_id');
       renderProfileView();
       showToast('लॉगआउट सफल रहा।', '#16a34a');
     }
@@ -4873,21 +4912,21 @@ ET
       }
 
       if (!isCurrMatch) {
-        alert('❌ गलत पुराना पासवर्ड!');
+        showToast('❌ गलत पुराना पासवर्ड!', '#dc2626');
         return;
       }
       if (!next || next.length < 3 || next !== conf) {
-        alert('❌ New passwords do not match or are too short!');
+        showToast('❌ New passwords do not match or are too short!', '#dc2626');
         return;
       }
 
-      let users = JSON.parse(localStorage.getItem('ss_users_db')) || {};
+      let users = JSON.parse(ssStorage.getItem('ss_users_db')) || {};
       const newSalt = generateSecureSalt();
       user.passwordHash = await hashUserPassword(next, newSalt);
       user.salt = newSalt;
       delete user.password;
       users[user.userId] = user;
-      localStorage.setItem('ss_users_db', JSON.stringify(users));
+      ssStorage.setItem('ss_users_db', JSON.stringify(users));
 
       document.getElementById('cp-current-password').value = '';
       document.getElementById('cp-new-password').value = '';
@@ -4909,18 +4948,18 @@ ET
       const next = (document.getElementById('fp-input-new-password')?.value || '').trim();
       const conf = (document.getElementById('fp-input-confirm-password')?.value || '').trim();
 
-      let users = JSON.parse(localStorage.getItem('ss_users_db')) || {};
+      let users = JSON.parse(ssStorage.getItem('ss_users_db')) || {};
       const user = users[uid];
       if (!user) {
-        alert('❌ User ID not found!');
+        showToast('❌ User ID not found!', '#dc2626');
         return;
       }
       if ((user.name || '').toLowerCase() !== name.toLowerCase()) {
-        alert('❌ Security check failed: Name does not match!');
+        showToast('❌ Security check failed: Name does not match!', '#dc2626');
         return;
       }
       if (!next || next.length < 3 || next !== conf) {
-        alert('❌ Passwords do not match or are too short!');
+        showToast('❌ Passwords do not match or are too short!', '#dc2626');
         return;
       }
 
@@ -4929,8 +4968,8 @@ ET
       user.salt = newSalt;
       delete user.password;
       users[uid] = user;
-      localStorage.setItem('ss_users_db', JSON.stringify(users));
-      localStorage.setItem('ss_current_user_id', uid);
+      ssStorage.setItem('ss_users_db', JSON.stringify(users));
+      ssStorage.setItem('ss_current_user_id', uid);
 
       document.getElementById('fp-input-new-password').value = '';
       document.getElementById('fp-input-confirm-password').value = '';
@@ -5312,11 +5351,11 @@ ET
       const b = bookings.find(item => item.bookingId === bookingId);
       if (!b) return;
       if (!user || user.phone !== b.driverPhone) {
-        alert('Unauthorized: You can only manage bookings for your own posted vehicle.');
+        showToast('Unauthorized: You can only manage bookings for your own posted vehicle.', '#dc2626');
         return;
       }
       b.status = 'CONFIRMED';
-      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+      ssStorage.setItem('ss_bookings', JSON.stringify(bookings));
       if (db) {
         try { db.collection('ss_bookings').doc(bookingId).update({ status: 'CONFIRMED' }); } catch(e){}
       }
@@ -5329,11 +5368,11 @@ ET
       const b = bookings.find(item => item.bookingId === bookingId);
       if (!b) return;
       if (!user || user.phone !== b.driverPhone) {
-        alert('Unauthorized: You can only manage bookings for your own posted vehicle.');
+        showToast('Unauthorized: You can only manage bookings for your own posted vehicle.', '#dc2626');
         return;
       }
       b.status = 'REJECTED';
-      localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+      ssStorage.setItem('ss_bookings', JSON.stringify(bookings));
       if (db) {
         try { db.collection('ss_bookings').doc(bookingId).update({ status: 'REJECTED' }); } catch(e){}
       }
@@ -5366,7 +5405,7 @@ ET
 
 
       rides = finalRides;
-      localStorage.setItem('ss_rides', JSON.stringify(rides));
+      ssStorage.setItem('ss_rides', JSON.stringify(rides));
       renderLiveCarsHome();
       renderDriverFleet();
       updateNavCounts();
@@ -5417,8 +5456,8 @@ ET
 
 
     // =========================================================================
-    // 🎮 SAFARSAATHI CHAMET-STYLE RACING GAMING ZONE ENGINE
-    // 🤖 Secret AI Engine + Hidden Road (???) + Pothole (गड्ढा) Overtake Physics
+    // 🎮 SAFARSAATHI CHAMET-STYLE 24/7 CONTINUOUS AUTO-RUNNING FLIP RACING ENGINE
+    // 🤖 ₹3001, ₹3002, ₹3003 Fake Baselines • Auto Betting Timer -> Flip to Track -> Lowest Bet Wins
     // =========================================================================
     function toggleGamingZone() {
       const secGaming = document.getElementById('section-gaming');
@@ -5430,28 +5469,36 @@ ET
       }
     }
 
-    // Pool of Chamet-Style Vehicles (No Speed Displayed to Customer)
+    // Dynamic Pool of Chamet-Style Vehicles: Car, Bike/Motorcycle, Monster Truck, ATV 4x4, SUV, Buggy
     const CAR_MODELS_POOL = [
-      { id: 'pink_gt', name: 'Pink GT Car', color1: '#ec4899', color2: '#be185d', accent: '#fef08a' },
-      { id: 'red_atv', name: 'ATV 4x4', color1: '#ef4444', color2: '#991b1b', accent: '#fbbf24' },
-      { id: 'monster_green', name: 'Monster Truck', color1: '#22c55e', color2: '#15803d', accent: '#fef08a' },
-      { id: 'purple_suv', name: 'Luxury SUV', color1: '#8b5cf6', color2: '#5b21b6', accent: '#38bdf8' },
-      { id: 'blue_bugatti', name: 'Bugatti Apex', color1: '#06b6d4', color2: '#0e7490', accent: '#fde047' },
-      { id: 'gold_lambo', name: 'Golden Huracán', color1: '#eab308', color2: '#a16207', accent: '#ffffff' },
-      { id: 'orange_raptor', name: 'Dune Buggy', color1: '#f97316', color2: '#9a3412', accent: '#fef08a' },
-      { id: 'cyber_rover', name: 'Turbo Rover', color1: '#3b82f6', color2: '#1d4ed8', accent: '#f472b6' },
-      { id: 'emerald_f1', name: 'Formula Racer', color1: '#10b981', color2: '#047857', accent: '#fef08a' }
+      { id: 'pink_car', type: 'car', name: 'Supercar GT', color1: '#ec4899', color2: '#be185d', accent: '#fef08a' },
+      { id: 'green_bike', type: 'bike', name: 'Superbike ZX', color1: '#22c55e', color2: '#15803d', accent: '#fef08a' },
+      { id: 'monster_truck', type: 'monster', name: 'Monster Truck', color1: '#16a34a', color2: '#14532d', accent: '#fbbf24' },
+      { id: 'red_atv', type: 'atv', name: 'ATV 4x4 Quad', color1: '#ef4444', color2: '#991b1b', accent: '#fbbf24' },
+      { id: 'purple_suv', type: 'suv', name: 'Luxury SUV', color1: '#8b5cf6', color2: '#5b21b6', accent: '#38bdf8' },
+      { id: 'gold_bike', type: 'bike', name: 'Hayabusa Turbo', color1: '#eab308', color2: '#a16207', accent: '#ffffff' },
+      { id: 'blue_monster', type: 'monster', name: 'Beast 4x4 Truck', color1: '#0284c7', color2: '#1e3a8a', accent: '#fde047' },
+      { id: 'orange_atv', type: 'atv', name: 'Dune ATV', color1: '#f97316', color2: '#9a3412', accent: '#fef08a' },
+      { id: 'cyber_car', type: 'car', name: 'Bugatti Apex', color1: '#06b6d4', color2: '#0e7490', accent: '#f472b6' }
     ];
+
+    // Standard Fake Baselines Every Round: ₹3001, ₹3002, ₹3003
+    const FAKE_BASELINE_AMOUNTS = [3001, 3002, 3003];
 
     let currentRaceCars = [];
     let currentRaceRound = 101;
-    let currentPoolBets = [0, 0, 0];
+    let currentFakeBaseBets = [3001, 3002, 3003];
+    let currentPoolBets = [3001, 3002, 3003];
     let currentPlayerBets = [0, 0, 0];
     let selectedBetChip = 10;
     let isRaceRunning = false;
     let gameSoundEnabled = true;
     let isRoadTrackHiddenByUser = false;
     let raceAnimationTimer = null;
+    let bettingCountdownTimer = null;
+    let nextRoundFlipTimer = null;
+    let bettingSecondsLeft = 15;
+    const BETTING_DURATION_SEC = 15;
     let audioCtx = null;
 
     function getAudioContext() {
@@ -5487,7 +5534,7 @@ ET
       if (isGo) {
         playTone(880, 'triangle', 0.4, 0.25);
       } else {
-        playTone(440, 'sine', 0.2, 0.18);
+        playTone(440, 'sine', 0.16, 0.15);
       }
     }
 
@@ -5550,38 +5597,32 @@ ET
       showToast(gameSoundEnabled ? '🔊 Audio ON' : '🔇 Audio Muted', '#15803d');
     }
 
-    // Toggle Road Track Visibility (रास्ता हाइड ऑप्शन)
     function toggleRoadTrackVisibility() {
       isRoadTrackHiddenByUser = !isRoadTrackHiddenByUser;
       const trackWrap = document.getElementById('chamet-track-wrapper');
       const iconEl = document.getElementById('road-hide-icon');
       const textEl = document.getElementById('road-hide-text');
-      const fogEl = document.getElementById('road-mystery-fog');
 
       if (trackWrap) {
         trackWrap.style.display = isRoadTrackHiddenByUser ? 'none' : 'block';
       }
       if (iconEl) iconEl.innerText = isRoadTrackHiddenByUser ? '👁️' : '🙈';
-      if (textEl) textEl.innerText = isRoadTrackHiddenByUser ? 'Show Road' : 'Hide Road';
-      if (fogEl && !isRaceRunning) {
-        fogEl.style.display = 'flex';
-        fogEl.style.opacity = '1';
-      }
+      if (textEl) textEl.innerText = isRoadTrackHiddenByUser ? 'Show Track' : 'Hide Track';
     }
 
     // Coin Storage & Wallet (1 Coin = ₹1)
     function getGameCoins() {
-      let coins = localStorage.getItem('ss_user_coins');
+      let coins = ssStorage.getItem('ss_user_coins');
       if (coins === null) {
         coins = 100;
-        localStorage.setItem('ss_user_coins', '100');
+        ssStorage.setItem('ss_user_coins', '100');
       }
       return parseInt(coins) || 0;
     }
 
     function setGameCoins(amount) {
       const valid = Math.max(0, parseInt(amount) || 0);
-      localStorage.setItem('ss_user_coins', valid.toString());
+      ssStorage.setItem('ss_user_coins', valid.toString());
       updateAllCoinDisplays();
       return valid;
     }
@@ -5594,8 +5635,61 @@ ET
       if (gameDisp) gameDisp.innerText = coins;
     }
 
-    // Dynamic SVG Generator for Chamet-Style Vehicles (No Speed Shown)
-    function generateCarGraphicSvg(color1, color2, accent, number) {
+    // Distinct Chamet-Style SVG Graphics for Car, Bike/Motorcycle, Monster Truck, ATV, and SUV
+    function generateCarGraphicSvg(color1, color2, accent, number, vType) {
+      if (vType === 'bike') {
+        return `
+          <svg viewBox="0 0 130 56" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 5px rgba(0,0,0,0.45));">
+            <!-- Rear & Front Bike Tires -->
+            <circle cx="30" cy="40" r="12" fill="#0f172a" stroke="#94a3b8" stroke-width="2.2" />
+            <circle cx="30" cy="40" r="5.5" fill="${accent}" />
+            <circle cx="100" cy="40" r="12" fill="#0f172a" stroke="#94a3b8" stroke-width="2.2" />
+            <circle cx="100" cy="40" r="5.5" fill="${accent}" />
+            <!-- Bike Frame & Fairing -->
+            <path d="M 28,38 L 48,20 L 78,18 L 96,26 L 82,36 L 46,38 Z" fill="${color1}" stroke="#111827" stroke-width="1.6" />
+            <!-- Rider Silhouette & Helmet -->
+            <path d="M 48,20 L 62,8 L 74,10 L 68,22 Z" fill="#1e293b" stroke="${accent}" stroke-width="1.2" />
+            <circle cx="68" cy="9" r="5.5" fill="${accent}" stroke="#0f172a" stroke-width="1.2" />
+            <!-- Front Fork & Number -->
+            <line x1="84" y1="20" x2="100" y2="40" stroke="#e2e8f0" stroke-width="3" />
+            <circle cx="66" cy="27" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1" />
+            <text x="66" y="30" font-size="7.5" font-weight="900" text-anchor="middle" fill="#0f172a">${number}</text>
+          </svg>
+        `;
+      } else if (vType === 'monster') {
+        return `
+          <svg viewBox="0 0 130 58" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));">
+            <!-- Suspension Struts -->
+            <rect x="28" y="26" width="74" height="6" fill="#475569" rx="2" />
+            <!-- High Monster Truck Body -->
+            <path d="M 16,28 L 20,10 L 76,10 L 88,18 L 114,20 L 116,30 L 16,30 Z" fill="${color1}" stroke="#111827" stroke-width="1.6" />
+            <path d="M 42,12 L 72,12 L 82,19 L 42,19 Z" fill="#1e293b" stroke="#bae6fd" stroke-width="1.2" />
+            <rect x="18" y="22" width="94" height="3.5" fill="${accent}" rx="1.5" />
+            <circle cx="60" cy="24" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+            <text x="60" y="27" font-size="7.5" font-weight="900" text-anchor="middle" fill="#0f172a">${number}</text>
+            <!-- Giant Monster Tires -->
+            <circle cx="34" cy="41" r="14" fill="#0f172a" stroke="#fbbf24" stroke-width="2.2" stroke-dasharray="5,3" />
+            <circle cx="34" cy="41" r="6" fill="${accent}" />
+            <circle cx="96" cy="41" r="14" fill="#0f172a" stroke="#fbbf24" stroke-width="2.2" stroke-dasharray="5,3" />
+            <circle cx="96" cy="41" r="6" fill="${accent}" />
+          </svg>
+        `;
+      } else if (vType === 'atv') {
+        return `
+          <svg viewBox="0 0 130 56" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 5px rgba(0,0,0,0.45));">
+            <path d="M 22,32 L 32,16 L 82,16 L 106,24 L 110,34 L 22,34 Z" fill="${color1}" stroke="#111827" stroke-width="1.6" />
+            <path d="M 46,16 L 56,6 L 68,6 L 64,16 Z" fill="#1e293b" stroke="${accent}" stroke-width="1.2" />
+            <rect x="26" y="24" width="78" height="3.5" fill="${accent}" rx="1.5" />
+            <circle cx="64" cy="26" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.2" />
+            <text x="64" y="29" font-size="7.5" font-weight="900" text-anchor="middle" fill="#0f172a">${number}</text>
+            <circle cx="34" cy="40" r="11.5" fill="#0f172a" stroke="#94a3b8" stroke-width="2" />
+            <circle cx="34" cy="40" r="5" fill="${accent}" />
+            <circle cx="96" cy="40" r="11.5" fill="#0f172a" stroke="#94a3b8" stroke-width="2" />
+            <circle cx="96" cy="40" r="5" fill="${accent}" />
+          </svg>
+        `;
+      }
+      // Default Car / SUV Graphic
       return `
         <svg viewBox="0 0 130 52" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 5px rgba(0,0,0,0.45));">
           <polygon points="8,14 24,15 22,20 7,18" fill="#0f172a" stroke="${accent}" stroke-width="1.2" />
@@ -5613,57 +5707,63 @@ ET
       `;
     }
 
-    // Set up a Fresh Race Round
+    // Flip helper between Betting Page ('betting') and Racing Track Page ('track')
+    function switchChametGameView(mode) {
+      const bettingPage = document.getElementById('chamet-betting-page');
+      const trackPage = document.getElementById('chamet-track-page');
+      if (!bettingPage || !trackPage) return;
+
+      if (mode === 'betting') {
+        trackPage.style.display = 'none';
+        bettingPage.style.display = 'block';
+        bettingPage.classList.remove('chamet-flip-active');
+        void bettingPage.offsetWidth;
+        bettingPage.classList.add('chamet-flip-active');
+      } else {
+        bettingPage.style.display = 'none';
+        trackPage.style.display = 'block';
+        trackPage.classList.remove('chamet-flip-active');
+        void trackPage.offsetWidth;
+        trackPage.classList.add('chamet-flip-active');
+      }
+    }
+
+    // Set up a Fresh Race Round (Starts on Betting Page with ₹3001, ₹3002, ₹3003 Fake Baselines & 15s Auto Timer)
     function setupNewRaceRound() {
-      if (isRaceRunning) return;
+      if (raceAnimationTimer) { clearInterval(raceAnimationTimer); raceAnimationTimer = null; }
+      if (bettingCountdownTimer) { clearInterval(bettingCountdownTimer); bettingCountdownTimer = null; }
+      if (nextRoundFlipTimer) { clearTimeout(nextRoundFlipTimer); nextRoundFlipTimer = null; }
+      isRaceRunning = false;
+
       currentRaceRound++;
       const roundEl = document.getElementById('race-round-number');
       if (roundEl) roundEl.innerText = currentRaceRound;
 
-      // Pick 3 unique vehicles
+      // Flip to Betting Page
+      switchChametGameView('betting');
+
+      // Pick 3 unique vehicles of different types (e.g. Car, Bike, Monster Truck / ATV)
       const shuffled = [...CAR_MODELS_POOL].sort(() => 0.5 - Math.random());
       currentRaceCars = shuffled.slice(0, 3);
 
-      // Simulated active room pool bets
-      const base1 = Math.floor(1200 + Math.random() * 2400);
-      const base2 = Math.floor(1500 + Math.random() * 2600);
-      const base3 = Math.floor(1100 + Math.random() * 2500);
-      currentPoolBets = [base1, base2, base3];
+      // Normal Fake Baselines Every Round: ₹3001, ₹3002, ₹3003
+      currentFakeBaseBets = [3001, 3002, 3003];
+      currentPoolBets = [3001, 3002, 3003];
       currentPlayerBets = [0, 0, 0];
 
       // Update live players count
       const playersEl = document.getElementById('race-live-players');
-      if (playersEl) playersEl.innerText = (1280 + Math.floor(Math.random() * 350)).toLocaleString();
+      if (playersEl) playersEl.innerText = (1350 + Math.floor(Math.random() * 280)).toLocaleString();
 
       // Hide Winner Podium Card
       const winCard = document.getElementById('race-winner-card');
       if (winCard) winCard.style.display = 'none';
 
-      // Reset Mystery Road Segments to Hidden ('???')
-      const seg0 = document.getElementById('road-seg-0');
-      const seg1 = document.getElementById('road-seg-1');
-      const seg2 = document.getElementById('road-seg-2');
-      if (seg0) { seg0.innerText = '🛣️ Highway >'; seg0.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)'; seg0.style.color = '#0f172a'; }
-      if (seg1) { seg1.innerText = '???'; seg1.style.background = 'linear-gradient(135deg, #fbbf24, #b45309)'; seg1.style.color = '#0f172a'; }
-      if (seg2) { seg2.innerText = '???'; seg2.style.background = 'linear-gradient(135deg, #fbbf24, #b45309)'; seg2.style.color = '#0f172a'; }
-
-      const mysteryStatus = document.getElementById('road-mystery-status-text');
-      if (mysteryStatus) mysteryStatus.innerText = '🔒 Road Hidden (???)';
-
-      const fogEl = document.getElementById('road-mystery-fog');
-      if (fogEl) {
-        fogEl.style.display = 'flex';
-        fogEl.style.opacity = '1';
-      }
-
-      const commEl = document.getElementById('track-live-commentary');
-      if (commEl) commEl.innerText = '🏁 अपनी पसंदीदा गाड़ी चुनें • आगे का रास्ता हिडन (???) है';
-
       // Reset Track Runners & Hide Potholes
       for (let i = 0; i < 3; i++) {
         const runner = document.getElementById('runner-car-' + i);
         if (runner) {
-          runner.style.left = '10px';
+          runner.style.left = '8px';
           runner.style.transform = 'rotate(0deg)';
         }
         const flame = document.getElementById('nitro-flame-' + i);
@@ -5673,44 +5773,75 @@ ET
         const hitBadge = document.getElementById('pothole-hit-badge-' + i);
         if (hitBadge) hitBadge.style.display = 'none';
 
+        const svgMarkup = generateCarGraphicSvg(
+          currentRaceCars[i].color1,
+          currentRaceCars[i].color2,
+          currentRaceCars[i].accent,
+          i + 1,
+          currentRaceCars[i].type
+        );
+
         const runSvg = document.getElementById('runner-svg-' + i);
-        if (runSvg) runSvg.innerHTML = generateCarGraphicSvg(currentRaceCars[i].color1, currentRaceCars[i].color2, currentRaceCars[i].accent, i + 1);
+        if (runSvg) runSvg.innerHTML = svgMarkup;
 
         const cardName = document.getElementById('car-name-' + i);
         if (cardName) cardName.innerText = currentRaceCars[i].name;
         const cardPreview = document.getElementById('car-preview-svg-' + i);
-        if (cardPreview) cardPreview.innerHTML = generateCarGraphicSvg(currentRaceCars[i].color1, currentRaceCars[i].color2, currentRaceCars[i].accent, i + 1);
+        if (cardPreview) cardPreview.innerHTML = svgMarkup;
+
+        const trackTitle = document.getElementById('track-car-title-' + i);
+        if (trackTitle) trackTitle.innerText = `L${i + 1}: ${currentRaceCars[i].name}`;
 
         const card = document.getElementById('bet-card-' + i);
         if (card) {
           card.style.borderColor = '#cbd5e1';
-          card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.25)';
+          card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.28)';
         }
       }
 
-      const startBtn = document.getElementById('btn-start-race');
-      const startText = document.getElementById('btn-start-race-text');
-      const clearBtn = document.getElementById('btn-clear-bets');
-      if (startBtn) {
-        startBtn.disabled = false;
-        startBtn.style.opacity = '1';
-        startBtn.style.cursor = 'pointer';
-      }
-      if (clearBtn) clearBtn.disabled = false;
-      if (startText) startText.innerText = '▶ Play';
-
       const statusBadge = document.getElementById('race-status-badge');
       if (statusBadge) {
-        statusBadge.innerText = '🟢 Betting Open';
+        statusBadge.innerText = '🟢 BETTING OPEN (अपनी गाड़ी पर बेट लगाएं)';
         statusBadge.style.background = '#16a34a';
         statusBadge.style.color = '#ffffff';
       }
 
       updateBetsDisplay();
       updateAllCoinDisplays();
+      startAutomaticBettingCountdown();
     }
 
-    // Update Bets on Cards (ZERO leak or highlight of lowest bet!)
+    // 24/7 Continuous Automatic Betting Countdown Timer
+    function startAutomaticBettingCountdown() {
+      if (bettingCountdownTimer) clearInterval(bettingCountdownTimer);
+      bettingSecondsLeft = BETTING_DURATION_SEC;
+
+      const timerPill = document.getElementById('race-timer-pill');
+      const progBar = document.getElementById('race-timer-progress-bar');
+      if (timerPill) timerPill.innerText = `⏱️ ${bettingSecondsLeft}s`;
+      if (progBar) progBar.style.width = '100%';
+
+      bettingCountdownTimer = setInterval(() => {
+        bettingSecondsLeft--;
+        if (timerPill) timerPill.innerText = `⏱️ ${Math.max(0, bettingSecondsLeft)}s`;
+        if (progBar) {
+          const pct = Math.max(0, (bettingSecondsLeft / BETTING_DURATION_SEC) * 100);
+          progBar.style.width = pct + '%';
+        }
+
+        if (bettingSecondsLeft <= 3 && bettingSecondsLeft > 0) {
+          playCountdownSound(false);
+        }
+
+        if (bettingSecondsLeft <= 0) {
+          clearInterval(bettingCountdownTimer);
+          bettingCountdownTimer = null;
+          startCarRace();
+        }
+      }, 1000);
+    }
+
+    // Update Bets on Both Betting Page Cards & Track Summary (Zero Leak of Lowest Bet!)
     function updateBetsDisplay() {
       const totalPool = currentPoolBets[0] + currentPoolBets[1] + currentPoolBets[2];
       const poolBanner = document.getElementById('race-total-pool-banner');
@@ -5721,16 +5852,22 @@ ET
         if (poolEl) poolEl.innerText = currentPoolBets[i].toLocaleString();
 
         const playerEl = document.getElementById('car-player-bet-' + i);
-        if (playerEl) playerEl.innerText = currentPlayerBets[i];
+        if (playerEl) playerEl.innerText = currentPlayerBets[i].toLocaleString();
+
+        const trackPoolEl = document.getElementById('track-pool-bet-' + i);
+        if (trackPoolEl) trackPoolEl.innerText = currentPoolBets[i].toLocaleString();
+
+        const trackMyEl = document.getElementById('track-my-bet-' + i);
+        if (trackMyEl) trackMyEl.innerText = currentPlayerBets[i].toLocaleString();
 
         const card = document.getElementById('bet-card-' + i);
         if (card) {
           if (currentPlayerBets[i] > 0) {
             card.style.borderColor = '#f59e0b';
-            card.style.boxShadow = '0 0 14px rgba(245, 158, 11, 0.65)';
+            card.style.boxShadow = '0 0 14px rgba(245, 158, 11, 0.7)';
           } else {
             card.style.borderColor = '#cbd5e1';
-            card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.25)';
+            card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.28)';
           }
         }
       }
@@ -5753,13 +5890,13 @@ ET
     // Place Bet on Vehicle 1, 2, or 3
     function placeBetOnCar(carIndex) {
       if (isRaceRunning) {
-        showToast('⏳ रेस चल रही है! अगले राउंड की प्रतीक्षा करें।', '#dc2626');
+        showToast('⏳ रेस चल रही है! अगले राउंड के बेटिंग पेज की प्रतीक्षा करें।', '#dc2626');
         return;
       }
 
       const coins = getGameCoins();
       if (coins < selectedBetChip) {
-        showToast('⚠️ पर्याप्त कॉइन्स नहीं हैं! कृपया Recharge करें।', '#dc2626');
+        showToast('⚠️ पर्याप्त कॉइन्स नहीं हैं! कृपया Coins खरीदें।', '#dc2626');
         openBuyCoinsModal(selectedBetChip);
         return;
       }
@@ -5771,8 +5908,8 @@ ET
       playCoinSound();
       updateBetsDisplay();
 
-      const carName = currentRaceCars[carIndex] ? currentRaceCars[carIndex].name : ('Car ' + (carIndex + 1));
-      showToast(`💎 ${selectedBetChip} placed on ${carName}!`, '#6366f1');
+      const carName = currentRaceCars[carIndex] ? currentRaceCars[carIndex].name : ('Vehicle ' + (carIndex + 1));
+      showToast(`🪙 ₹${selectedBetChip} placed on ${carName}!`, '#6366f1');
     }
 
     // Clear Player's Bets and Refund
@@ -5788,82 +5925,56 @@ ET
 
       setGameCoins(getGameCoins() + totalRefund);
       updateBetsDisplay();
-      showToast(`✓ Refunded 💎 ${totalRefund} to your wallet!`, '#15803d');
+      showToast(`✓ Refunded ₹${totalRefund} to your wallet!`, '#15803d');
     }
 
-    // SECRET AI RACE ENGINE: Internally picks winner & stages Pothole (गड्ढा) overtake!
+    // FLIP FROM BETTING PAGE TO RACING TRACK PAGE & RUN RACE (LOWEST TOTAL BET WINS!)
     function startCarRace() {
       if (isRaceRunning) return;
       isRaceRunning = true;
 
-      // Ensure track is visible when race runs so player sees the pothole overtake story
-      if (isRoadTrackHiddenByUser) {
-        toggleRoadTrackVisibility();
+      if (bettingCountdownTimer) {
+        clearInterval(bettingCountdownTimer);
+        bettingCountdownTimer = null;
       }
 
-      const startBtn = document.getElementById('btn-start-race');
-      const clearBtn = document.getElementById('btn-clear-bets');
-      if (startBtn) {
-        startBtn.disabled = true;
-        startBtn.style.opacity = '0.6';
-        startBtn.style.cursor = 'not-allowed';
-      }
-      if (clearBtn) clearBtn.disabled = true;
+      // 1. Flip screen from Betting Page directly to Racing Track Page!
+      switchChametGameView('track');
 
       const statusBadge = document.getElementById('race-status-badge');
       if (statusBadge) {
-        statusBadge.innerText = '🏁 Race Live';
+        statusBadge.innerText = '🏁 RACING LIVE (ट्रैक पर रेस चालू है)';
         statusBadge.style.background = '#f59e0b';
         statusBadge.style.color = '#0f172a';
       }
 
-      // 🤖 AI ENGINE: Dynamic telemetry calculation
-      // Internal race outcome calculation
+      const timerPill = document.getElementById('race-timer-pill');
+      if (timerPill) timerPill.innerText = '🏎️ LIVE';
+
+      // 🤖 CORE WINNING LOGIC: Calculate which vehicle has the LOWEST Total Bet Amount
+      let minBet = Infinity;
       let winningCarIndex = 0;
-      let minScore = Infinity;
       for (let i = 0; i < 3; i++) {
-        // Weight player bets strongly + pool bets so the house/AI always picks the lowest liability car
-        const aiLiabilityScore = (currentPlayerBets[i] * 100000) + currentPoolBets[i];
-        if (aiLiabilityScore < minScore) {
-          minScore = aiLiabilityScore;
+        if (currentPoolBets[i] < minBet) {
+          minBet = currentPoolBets[i];
           winningCarIndex = i;
         }
       }
 
-      // Countdown overlay
-      const overlay = document.getElementById('track-overlay-msg');
-      const countEl = document.getElementById('track-big-countdown');
-      if (overlay) overlay.style.display = 'flex';
-
-      let count = 3;
-      playCountdownSound(false);
-      if (countEl) countEl.innerText = '3';
-
-      const countInterval = setInterval(() => {
-        count--;
-        if (count > 0) {
-          if (countEl) countEl.innerText = count.toString();
-          playCountdownSound(false);
-        } else if (count === 0) {
-          if (countEl) countEl.innerText = 'GO!';
-          playCountdownSound(true);
-        } else {
-          clearInterval(countInterval);
-          if (overlay) overlay.style.display = 'none';
-          executeRaceTrackAnimation(winningCarIndex);
-        }
-      }, 650);
+      playCountdownSound(true);
+      executeRaceTrackAnimation(winningCarIndex);
     }
 
-    // Execute Race with Hidden Road Reveal & Pothole (गड्ढा) Slowdown for Losing Cars
+    // Execute Race on the Revealed Track with Pothole (गड्ढा) Slowdown for Losing Vehicles
     function executeRaceTrackAnimation(winningIndex) {
       const arena = document.getElementById('racetrack-arena');
       const trackWidth = arena ? arena.offsetWidth : 340;
-      const startLeft = 10;
-      const finishLeft = Math.max(startLeft + 80, trackWidth - 115);
+      const startLeft = 8;
+      const potholeZoneLeft = Math.round(trackWidth * 0.43);
+      const finishLeft = Math.max(startLeft + 90, trackWidth - 92);
 
       let positions = [startLeft, startLeft, startLeft];
-      const totalDuration = 6500;
+      const totalDuration = 5600;
       const intervalMs = 50;
       const steps = totalDuration / intervalMs;
       let stepCount = 0;
@@ -5871,34 +5982,17 @@ ET
       let finalSegmentRevealed = false;
 
       const commEl = document.getElementById('track-live-commentary');
-      if (commEl) commEl.innerText = '🏎️ रेस शुरू! तीनों गाड़ियां तेज़ी से आगे बढ़ रही हैं...';
+      if (commEl) commEl.innerText = '🏎️ हाईवे पर तीनों गाड़ियां तेज़ी से दौड़ रही हैं...';
 
       raceAnimationTimer = setInterval(() => {
         stepCount++;
         const raceProgress = (stepCount / steps) * 100;
 
-        // At 38% progress: Reveal Hidden Road Segment 2 -> Bumpy / गड्ढा!
-        if (raceProgress >= 38 && !potholesRevealed) {
+        // At 36% progress: Losing vehicles hit the Bumpy Road / Pothole (गड्ढा)!
+        if (raceProgress >= 36 && !potholesRevealed) {
           potholesRevealed = true;
           playPotholeBumpSound();
 
-          // Lift the mystery fog curtain to reveal potholes on the losing lanes!
-          const fogEl = document.getElementById('road-mystery-fog');
-          if (fogEl) {
-            fogEl.style.opacity = '0';
-            setTimeout(() => { fogEl.style.display = 'none'; }, 320);
-          }
-
-          const seg1 = document.getElementById('road-seg-1');
-          if (seg1) {
-            seg1.innerText = '🚧 Bumpy (गड्ढा) >';
-            seg1.style.background = '#dc2626';
-            seg1.style.color = '#ffffff';
-          }
-          const mysteryStatus = document.getElementById('road-mystery-status-text');
-          if (mysteryStatus) mysteryStatus.innerText = '⚠️ आगे रास्ते में गड्ढे (Potholes) खुले!';
-
-          // Show potholes ONLY on the 2 losing lanes!
           for (let i = 0; i < 3; i++) {
             if (i !== winningIndex) {
               const pothole = document.getElementById('lane-pothole-' + i);
@@ -5909,56 +6003,50 @@ ET
           }
 
           if (commEl) {
-            commEl.innerText = `⚠️ रास्ते में बड़ा गड्ढा आया! बाकी गाड़ियां गड्ढे में फंसकर पीछे हुईं, ${currentRaceCars[winningIndex].name} आगे निकली!`;
+            commEl.innerText = `⚠️ बंपी रोड पर गड्ढा आया! बाकी गाड़ियां पीछे हुईं, ${currentRaceCars[winningIndex].name} आगे निकली!`;
           }
         }
 
-        // At 72% progress: Reveal Segment 3 -> Clear Sprint for Winning Car
-        if (raceProgress >= 72 && !finalSegmentRevealed) {
+        // At 70% progress: Winning vehicle surges across Off-Road finish stretch
+        if (raceProgress >= 70 && !finalSegmentRevealed) {
           finalSegmentRevealed = true;
           playNitroSound();
-          const seg2 = document.getElementById('road-seg-2');
-          if (seg2) {
-            seg2.innerText = '🏁 Clear Sprint';
-            seg2.style.background = '#16a34a';
-            seg2.style.color = '#ffffff';
-          }
         }
 
         for (let i = 0; i < 3; i++) {
           const runner = document.getElementById('runner-car-' + i);
 
-          if (raceProgress < 38) {
-            // Phase 1: Losing cars actually run slightly ahead before hitting the pothole!
-            const earlyBoost = (i === winningIndex) ? 0.88 : 1.06;
-            const jitter = (Math.random() - 0.48) * 5;
-            const target = startLeft + ((finishLeft - startLeft) * (raceProgress / 100) * earlyBoost) + jitter;
-            positions[i] = Math.max(startLeft, Math.min(finishLeft - 40, target));
+          if (raceProgress < 36) {
+            const earlyRatio = raceProgress / 36;
+            const target = (i === winningIndex)
+              ? startLeft + ((potholeZoneLeft - 18 - startLeft) * earlyRatio)
+              : startLeft + ((potholeZoneLeft - startLeft) * earlyRatio);
+            positions[i] = Math.max(startLeft, target);
           } else if (raceProgress < 72) {
-            // Phase 2: Pothole impact! Losing cars get stuck/jolt in the pothole while winner overtakes smoothly!
             if (i === winningIndex) {
-              const target = startLeft + ((finishLeft - startLeft) * (raceProgress / 100) * 1.04);
-              positions[i] = Math.max(positions[i], Math.min(finishLeft - 15, target));
+              const midRatio = (raceProgress - 36) / 36;
+              const fromX = potholeZoneLeft - 18;
+              const toX = potholeZoneLeft + Math.round((finishLeft - potholeZoneLeft) * 0.68);
+              positions[i] = fromX + ((toX - fromX) * midRatio);
               const flame = document.getElementById('nitro-flame-' + i);
               if (flame) flame.style.display = 'inline-block';
             } else {
-              // Losing car jolts & slows dramatically in the pothole
-              positions[i] = positions[i] + 0.55;
+              positions[i] = potholeZoneLeft + ((stepCount % 2 === 0) ? -2 : 2);
               if (runner) {
                 const tilt = (stepCount % 2 === 0) ? -7 : 6;
                 runner.style.transform = `rotate(${tilt}deg)`;
               }
             }
           } else {
-            // Phase 3: Winner crosses finish line first; losing cars recover from pothole but stay behind
             if (i === winningIndex) {
-              const surgeProgress = (raceProgress - 72) / 28;
-              const startSurge = startLeft + ((finishLeft - startLeft) * 0.74);
-              positions[i] = startSurge + ((finishLeft - startSurge) * surgeProgress);
+              const endRatio = (raceProgress - 72) / 28;
+              const fromX = potholeZoneLeft + Math.round((finishLeft - potholeZoneLeft) * 0.68);
+              positions[i] = fromX + ((finishLeft - fromX) * endRatio);
             } else {
               if (runner) runner.style.transform = 'rotate(0deg)';
-              const lagOffset = (i % 2 === 0) ? 32 : 48;
-              positions[i] = Math.min(finishLeft - lagOffset, positions[i] + 1.4);
+              const endRatio = (raceProgress - 72) / 28;
+              const maxRecover = potholeZoneLeft + ((i % 2 === 0) ? 28 : 18);
+              positions[i] = potholeZoneLeft + ((maxRecover - potholeZoneLeft) * endRatio);
             }
           }
 
@@ -5973,7 +6061,7 @@ ET
       }, intervalMs);
     }
 
-    // Race Finished: Announce Winner with Pothole Story (Zero Mention of Lowest Bet!)
+    // Race Finished: Show Result & Automatically Flip Back to Betting Page After 4 Seconds (24/7 Loop)
     function handleRaceFinished(winningIndex) {
       isRaceRunning = false;
       const winnerCar = currentRaceCars[winningIndex];
@@ -5984,7 +6072,7 @@ ET
 
       const statusBadge = document.getElementById('race-status-badge');
       if (statusBadge) {
-        statusBadge.innerText = '🎉 Race Finished';
+        statusBadge.innerText = '🎉 RACE FINISHED (अगला राउंड 4s में)';
         statusBadge.style.background = '#16a34a';
         statusBadge.style.color = '#ffffff';
       }
@@ -5998,26 +6086,26 @@ ET
         winTitle.innerText = `🏆 Winner: ${winnerCar.name} (Lane ${winningIndex + 1})!`;
       }
       if (winDesc) {
-        winDesc.innerText = `🚧 बाकी लेन्स में गड्ढा (Pothole) आने से वो गाड़ियां पीछे चली गईं और ${winnerCar.name} आगे निकलकर जीत गई!`;
+        winDesc.innerText = `🚧 बाकी लेन्स में गड्ढा (Pothole) था इसलिए वे गाड़ियां पीछे चली गईं और ${winnerCar.name} आगे निकलकर जीत गई!`;
       }
 
       if (winPayoutBox) {
         if (playerBetOnWinner > 0) {
           setGameCoins(getGameCoins() + winPayout);
           winPayoutBox.innerHTML = `
-            <div style="background: rgba(22, 163, 74, 0.25); border: 1.5px solid #4ade80; border-radius: 10px; padding: 0.5rem 0.75rem; display: inline-block;">
-              <div style="font-size: 1rem; font-weight: 900; color: #4ade80;">🎉 शानदार जीत! +💎 ${winPayout} Coins!</div>
-              <div style="font-size: 0.74rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
-                आपका बेट: 💎 ${playerBetOnWinner} • 3x इनाम: <b>₹${winPayout}</b> वॉलेट में जुड़ गए!
+            <div style="background: rgba(22, 163, 74, 0.25); border: 1.5px solid #4ade80; border-radius: 10px; padding: 0.4rem 0.65rem; display: inline-block;">
+              <div style="font-size: 0.92rem; font-weight: 900; color: #4ade80;">🎉 शानदार जीत! +₹${winPayout} Coins!</div>
+              <div style="font-size: 0.7rem; font-weight: 800; color: #ffffff;">
+                आपका बेट: ₹${playerBetOnWinner} • 3x इनाम: <b>₹${winPayout}</b> वॉलेट में जुड़ गए!
               </div>
             </div>
           `;
-          showToast(`🎉 You won 💎 ${winPayout} Coins!`, '#15803d');
+          showToast(`🎉 You won ₹${winPayout} Coins!`, '#15803d');
         } else {
           winPayoutBox.innerHTML = `
-            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 0.45rem 0.75rem; display: inline-block;">
-              <span style="font-size: 0.74rem; color: #fde047; font-weight: 700;">
-                आपकी गाड़ी गड्ढे (Pothole) के कारण पीछे रह गई! अगली रेस में फिर से किस्मत आज़माएं।
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 0.35rem 0.65rem; display: inline-block;">
+              <span style="font-size: 0.7rem; color: #fde047; font-weight: 700;">
+                रास्ते में गड्ढा (Pothole) आने से दूसरी गाड़ियां पीछे रह गईं! अगले राउंड में फिर खेलें।
               </span>
             </div>
           `;
@@ -6029,14 +6117,25 @@ ET
       }
 
       updateAllCoinDisplays();
+
+      // Automatically flip back to Betting Page after 4.2 seconds for 24/7 continuous loop!
+      if (nextRoundFlipTimer) clearTimeout(nextRoundFlipTimer);
+      nextRoundFlipTimer = setTimeout(() => {
+        const secGaming = document.getElementById('section-gaming');
+        if (secGaming && secGaming.style.display !== 'none') {
+          setupNewRaceRound();
+        }
+      }, 4200);
     }
 
-    // Initialize Game on First Tab Open
+    // Initialize 24/7 Game on Tab Open
     let isGameInitialized = false;
     function initCarRacingGame() {
       updateAllCoinDisplays();
       if (!isGameInitialized) {
         isGameInitialized = true;
+        setupNewRaceRound();
+      } else if (!isRaceRunning && !bettingCountdownTimer) {
         setupNewRaceRound();
       }
     }
@@ -6044,15 +6143,50 @@ ET
     // Daily Bonus: 20 Coins Free Every Day
     function claimDailyBonus() {
       const today = new Date().toISOString().split('T')[0];
-      const lastClaim = localStorage.getItem('ss_last_daily_bonus');
+      const lastClaim = ssStorage.getItem('ss_last_daily_bonus');
       if (lastClaim === today) {
         showToast('🎁 आज का Daily Bonus आप पहले ही ले चुके हैं!', '#d97706');
         return;
       }
-      localStorage.setItem('ss_last_daily_bonus', today);
+      ssStorage.setItem('ss_last_daily_bonus', today);
       setGameCoins(getGameCoins() + 20);
       playCoinSound();
       showToast('🎁 Daily Bonus: +20 Free Coins added!', '#15803d');
+    }
+
+    // Ad Modal Handlers (Prevent undefined handler warnings)
+    let pendingAdFileData = '';
+    function openCreateAdModal() {
+      const m = document.getElementById('create-ad-modal');
+      if (m) m.style.display = 'flex';
+    }
+    function closeCreateAdModal() {
+      const m = document.getElementById('create-ad-modal');
+      if (m) m.style.display = 'none';
+    }
+    function handleAdFileUpload(event) {
+      const file = event && event.target && event.target.files ? event.target.files[0] : null;
+      if (!file) return;
+      const badge = document.getElementById('ad-file-status-badge');
+      if (badge) {
+        badge.style.display = 'block';
+        badge.innerText = '✓ Selected: ' + file.name;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) { pendingAdFileData = e.target.result; };
+      reader.readAsDataURL(file);
+    }
+    function submitNewAd() {
+      const title = (document.getElementById('ad-title-input')?.value || '').trim();
+      if (!title) {
+        showToast('⚠️ कृपया विज्ञापन का शीर्षक (Ad Title) दर्ज करें!', '#dc2626');
+        return;
+      }
+      if (pendingAdFileData) {
+        applyIncomingProfileVideoAd({ src: pendingAdFileData, title: title }, true);
+      }
+      closeCreateAdModal();
+      showToast('✓ विज्ञापन सफलतापूर्वक अपडेट हो गया!', '#15803d');
     }
 
     // =========================================================================
@@ -6121,19 +6255,19 @@ ET
       const utrInp = document.getElementById('buy-coins-utr-input');
       const utr = (utrInp?.value || '').trim();
       if (!utr || utr.length !== 12 || !/^\d{12}$/.test(utr)) {
-        alert('कृपया अपने बैंक पेमेंट SMS या UPI ऐप की रसीद से सही 12-अंकों का न्यूमेरिक UTR नंबर दर्ज करें!');
+        showToast('कृपया अपने बैंक पेमेंट SMS या UPI ऐप की रसीद से सही 12-अंकों का न्यूमेरिक UTR नंबर दर्ज करें!', '#dc2626');
         utrInp?.focus();
         return;
       }
 
       // Check anti-fraud duplicate
-      let usedUtrs = JSON.parse(localStorage.getItem('ss_used_coin_utrs')) || [];
+      let usedUtrs = JSON.parse(ssStorage.getItem('ss_used_coin_utrs')) || [];
       if (usedUtrs.includes(utr)) {
-        alert('⚠️ यह UTR नंबर पहले ही इस्तेमाल किया जा चुका है!');
+        showToast('⚠️ यह UTR नंबर पहले ही इस्तेमाल किया जा चुका है!', '#dc2626');
         return;
       }
       usedUtrs.push(utr);
-      localStorage.setItem('ss_used_coin_utrs', JSON.stringify(usedUtrs));
+      ssStorage.setItem('ss_used_coin_utrs', JSON.stringify(usedUtrs));
 
       // Credit Coins (1 Coin = ₹1)
       const addedCoins = currentBuyCoinPack;
@@ -6327,7 +6461,7 @@ ET
           if (ad && ad.src) {
             applyIncomingProfileVideoAd(ad, false);
           } else {
-            const localAd = localStorage.getItem('ss_profile_video_ad');
+            const localAd = ssStorage.getItem('ss_profile_video_ad');
             if (localAd) {
               try {
                 const parsed = JSON.parse(localAd);
@@ -6336,7 +6470,7 @@ ET
             }
           }
         }).catch(() => {
-          const localAd = localStorage.getItem('ss_profile_video_ad');
+          const localAd = ssStorage.getItem('ss_profile_video_ad');
           if (localAd) {
             try {
               const parsed = JSON.parse(localAd);
@@ -6470,7 +6604,7 @@ ET
       // Persist to localStorage if lightweight (< 2MB)
       try {
         if (ad.src.length < 2000000) {
-          localStorage.setItem('ss_profile_video_ad', JSON.stringify(ad));
+          ssStorage.setItem('ss_profile_video_ad', JSON.stringify(ad));
         }
       } catch(e){}
 
