@@ -1025,32 +1025,6 @@
 
   <main>
 
-    <!-- 🎙️ GLOBAL HINDI VOICE MAIL PLAYER CARD (क्या-क्या बदलाव किया है - हिंदी आवाज़ में सुनें) -->
-    <div id="global-hindi-voicemail-card" style="background: linear-gradient(135deg, #090d16 0%, #14532d 60%, #15803d 100%); border: 2px solid #a3e635; border-radius: 14px; padding: 0.5rem 0.75rem; margin-bottom: 0.45rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.28);">
-      <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-        <button type="button" id="btn-global-voicemail-play" onclick="speakHindiRaceVoiceMail()" style="width: 34px; height: 34px; border-radius: 50%; background: #a3e635; color: #090d16; border: 2px solid #ffffff; font-size: 0.9rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(163, 230, 53, 0.8);">
-          ▶️
-        </button>
-        <div style="min-width: 0;">
-          <div style="font-size: 0.76rem; font-weight: 900; color: #a3e635; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <span>🎙️ हिंदी वॉइस मेल (Voice Mail)</span>
-            <span id="global-voicemail-badge" style="background: rgba(163, 230, 53, 0.2); color: #ffffff; border: 1px solid #a3e635; padding: 1px 6px; border-radius: 999px; font-size: 0.58rem;">तैयार है</span>
-          </div>
-          <div id="global-voicemail-sub" style="font-size: 0.64rem; color: #e2e8f0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            क्या-क्या बदलाव किया गया है — सुनने के लिए ▶️ बटन दबाएं
-          </div>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
-        <button type="button" onclick="speakHindiRaceVoiceMail()" style="background: #a3e635; color: #090d16; border: none; border-radius: 999px; padding: 5px 10px; font-size: 0.68rem; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-          🔊 वॉइस मेल सुनें
-        </button>
-        <button type="button" onclick="showSection('gaming'); setTimeout(function(){ if (!isRaceRunning) triggerInstant3DRacePreview(); }, 80);" style="background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); border-radius: 999px; padding: 5px 8px; font-size: 0.64rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
-          🚴 3D रेस देखें
-        </button>
-      </div>
-    </div>
-
     <!-- ==================== 1. 🟢 LIVE CARS (HOME PAGE) ==================== -->
     <section id="section-live-cars" class="app-section active">
       <div class="app-card">
@@ -1393,7 +1367,7 @@
 
           <!-- Map Corridor Video Ad Player Below Map -->
           <div id="map-video-ad-box" style="position: relative; margin-top: 0.4rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: min(20vh, 135px); max-height: 135px;">
-            <video id="map-video-player" data-video-src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
+            <video id="map-video-player" src="map_ad.mp4" data-video-src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
             <button type="button" onclick="toggleMapVideoMuteOnly(event)" style="position: absolute; bottom: 6px; right: 6px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 3px 9px; font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; gap: 4px; cursor: pointer;">
               <span id="map-video-mute-icon">🔊</span>
               <span id="map-video-mute-label">Mute</span>
@@ -1524,31 +1498,10 @@
               <button type="button" onclick="claimDailyBonus()" style="background: rgba(163, 230, 53, 0.16); color: #d9f99d; border: 1px solid #a3e635; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.62rem; cursor: pointer;" title="Daily 20 Free Coins">
                 🎁
               </button>
-              <button type="button" onclick="speakHindiRaceVoiceMail()" title="हिंदी वॉइस सुनें" style="background: rgba(163, 230, 53, 0.2); border: 1px solid #a3e635; color: #a3e635; border-radius: 999px; padding: 2px 7px; font-size: 0.62rem; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;">🎙️ वॉइस</button>
               <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 50%; width: 24px; height: 24px; font-size: 0.66rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                 🔊
               </button>
             </div>
-          </div>
-
-          <!-- 🎙️ HINDI VOICE MAIL AUDIO PLAYER BAR (1-TAP PLAY/PAUSE SUMMARY OF ALL CHANGES) -->
-          <div id="rush-hindi-voicemail-bar" style="margin: 0.3rem 0.6rem 0.1rem 0.6rem; background: linear-gradient(90deg, rgba(22, 163, 74, 0.25), rgba(15, 23, 42, 0.95)); border: 1.5px solid #a3e635; border-radius: 10px; padding: 5px 9px; display: flex; justify-content: space-between; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">
-            <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
-              <button type="button" id="btn-voicemail-play" onclick="speakHindiRaceVoiceMail()" style="width: 28px; height: 28px; border-radius: 50%; background: #a3e635; color: #090d16; border: none; font-size: 0.78rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(163,230,53,0.6);">
-                ▶️
-              </button>
-              <div style="min-width: 0;">
-                <div style="font-size: 0.66rem; font-weight: 900; color: #a3e635; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  🎙️ हिंदी वॉइस मेल: सभी नए 3D बदलाव सुनें (Voice Note)
-                </div>
-                <div id="voicemail-sub-status" style="font-size: 0.56rem; color: #cbd5e1; font-weight: 700;">
-                  Real 60FPS 3D • Obstacle Bounce • A/B/C Overtake • Lowest Bid Wins
-                </div>
-              </div>
-            </div>
-            <button type="button" onclick="speakHindiRaceVoiceMail()" style="background: #16a34a; color: #ffffff; border: 1px solid #86efac; border-radius: 999px; padding: 3px 9px; font-size: 0.6rem; font-weight: 900; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-              🔊 वॉइस सुनें
-            </button>
           </div>
 
           <!-- GLOBAL SERVER CYCLE STATUS BAR (30s BETTING -> 60s CYCLE RACE -> 5s RESULT DISPLAY) -->
@@ -2090,7 +2043,7 @@
 
           <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (UNMUTED BY DEFAULT • NO PLAY/PAUSE INTERRUPTIONS • CUSTOMER CAN MUTE) -->
           <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(30vh, 205px); max-height: 205px;">
-            <video id="profile-video-player" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
+            <video id="profile-video-player" src="promo_ad.mp4" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
             
             <!-- 🔊 AUDIO ACTIVE BY DEFAULT (CUSTOMER CAN MUTE THEMSELVES) -->
             <button type="button" id="btn-video-mute-toggle" onclick="toggleProfileVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
@@ -3099,8 +3052,13 @@
     // 2. NAVIGATION & TAB SWITCHER (6 SEPARATE CLEAN SECTIONS)
     // =========================================================================
     let lastActiveSection = 'live-cars';
+    window.activeAppSection = 'profile';
 
     function showSection(tab) {
+      window.activeAppSection = tab;
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch(e){}
       const secLive = document.getElementById('section-live-cars');
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
@@ -6044,8 +6002,13 @@ ET
       return audioCtx;
     }
 
+    function isGamingZoneVisibleNow() {
+      const secGaming = document.getElementById('section-gaming');
+      return (window.activeAppSection === 'gaming') && !!(secGaming && secGaming.style.display !== 'none');
+    }
+
     function playTone(freq, type, duration, gainVal = 0.14) {
-      if (!gameSoundEnabled) return;
+      if (!gameSoundEnabled || !isGamingZoneVisibleNow()) return;
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
@@ -6094,67 +6057,6 @@ ET
     }
 
     
-    let isHindiVoiceMailPlaying = false;
-    function speakHindiRaceVoiceMail() {
-      try {
-        if (!("speechSynthesis" in window)) {
-          showToast("🔊 आपका ब्राउज़र वॉइस सपोर्ट नहीं करता", "#dc2626");
-          return;
-        }
-        const playBtn = document.getElementById("btn-voicemail-play");
-        const subStatus = document.getElementById("voicemail-sub-status");
-        const gPlayBtn = document.getElementById("btn-global-voicemail-play");
-        const gBadge = document.getElementById("global-voicemail-badge");
-        const gSub = document.getElementById("global-voicemail-sub");
-
-        if (window.speechSynthesis.speaking && isHindiVoiceMailPlaying) {
-          window.speechSynthesis.cancel();
-          isHindiVoiceMailPlaying = false;
-          if (playBtn) playBtn.innerText = "▶️";
-          if (gPlayBtn) gPlayBtn.innerText = "▶️";
-          if (gBadge) gBadge.innerText = "रोका गया";
-          if (gSub) gSub.innerText = "वॉइस मेल रोका गया • दोबारा सुनने के लिए टैप करें";
-          if (subStatus) subStatus.innerText = "वॉइस मेल रोका गया • दोबारा सुनने के लिए टैप करें";
-          showToast("⏹️ वॉइस मेल रोका गया", "#475569");
-          return;
-        }
-
-        window.speechSynthesis.cancel();
-        const msgText = "नमस्कार! सफरसाथी रश थ्री डी गेम के नए अपडेट्स का वॉइस मेल सुनिए। पहला बदलाव: पुराना फटा हुआ वीडियो हटाकर अब असली साठ एफपीएस फुल एचडी थ्री डी डाउनहिल माउंटेन साइकिल रेस इंजन लगा दिया गया है, जिसमें असली धूप, परछाई और हाई स्पीड मोशन ब्लर है। दूसरा बदलाव: रेस में कोई भी राइडर साइकिल से नीचे नहीं गिरता; पत्थर या रैंप से टकराने पर साइकिल सीमलेस बाउंस करती है, हल्का कैमरा शेक होता है और रेस बिना रुके चलती रहती है। तीसरा बदलाव: साइकिल ए, साइकिल बी और साइकिल सी पूरे साठ सेकंड लगातार एक दूसरे को क्रॉस और ओवरटेक करती हैं, और अंत में जिस साइकिल पर सबसे कम बेट लगी होती है, वही फिनिश लाइन पार करके फर्स्ट आती है और दोगुना इनाम देती है!";
-        const utter = new SpeechSynthesisUtterance(msgText);
-        utter.lang = "hi-IN";
-        const voices = window.speechSynthesis.getVoices();
-        const hiVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes("hi"));
-        if (hiVoice) utter.voice = hiVoice;
-        utter.rate = 0.98;
-        utter.pitch = 1.0;
-
-        utter.onstart = function() {
-          isHindiVoiceMailPlaying = true;
-          if (playBtn) playBtn.innerText = "⏸️";
-          if (gPlayBtn) gPlayBtn.innerText = "⏸️";
-          if (gBadge) gBadge.innerText = "🔊 बोल रहा है...";
-          if (gSub) gSub.innerText = "🔊 हिंदी वॉइस मेल चल रहा है... (रोकने के लिए टैप करें)";
-          if (subStatus) subStatus.innerText = "🔊 वॉइस मेल चल रहा है... (रोकने के लिए टैप करें)";
-        };
-        utter.onend = function() {
-          isHindiVoiceMailPlaying = false;
-          if (playBtn) playBtn.innerText = "▶️";
-          if (gPlayBtn) gPlayBtn.innerText = "▶️";
-          if (gBadge) gBadge.innerText = "✓ पूरा हुआ";
-          if (gSub) gSub.innerText = "✓ वॉइस मेल पूरा हुआ • दोबारा सुनने के लिए टैप करें";
-          if (subStatus) subStatus.innerText = "✓ वॉइस मेल पूरा हुआ • दोबारा सुनने के लिए टैप करें";
-        };
-        utter.onerror = function() {
-          isHindiVoiceMailPlaying = false;
-          if (playBtn) playBtn.innerText = "▶️";
-        };
-
-        window.speechSynthesis.speak(utter);
-        showToast("🎙️ हिंदी वॉइस मेल चालू हो गया है...", "#15803d");
-      } catch (e) {}
-    }
-
     function toggleGameSound() {
       gameSoundEnabled = !gameSoundEnabled;
       const btn = document.getElementById('btn-game-sound-toggle');
@@ -7748,7 +7650,7 @@ ET
       ctx.restore();
     }
 
-    // Live 3D Warmup Viewport Renderer for the 30-Second Betting Page
+    // Live 3D Warmup Viewport Renderer for the 30-Second Betting Page (with live MTB freehub & bounce audio!)
     function renderBettingWarmupPreview() {
       const secGaming = document.getElementById('section-gaming');
       if (!secGaming || secGaming.style.display === 'none' || currentPhaseMode !== 'betting') return;
@@ -7759,6 +7661,8 @@ ET
       const winIdx = getWinningCarIndexForCurrentRound();
       const riders = computeCyclistTelemetry(tSec % 40, winIdx, activeGlobalRoundId, warmupDist);
       const rankedRiders = [...riders].sort((a, b) => b.zRel - a.zRel);
+      const anyWarmupBounce = riders.some(r => r.hitObstacleNow);
+      playRealisticMtbPhysicsSound(82, anyWarmupBounce);
       render3DMountainWorldOnContext(ctx, rushPreviewW, rushPreviewH, tSec, warmupDist, riders, rankedRiders, true);
     }
 
@@ -8052,8 +7956,17 @@ ET
 
     let isGameInitialized = false;
     function initCarRacingGame() {
+      stopProfileHomeVideoAd();
+      stopMapVideoAd();
       updateAllCoinDisplays();
       ensureRushCanvasReady();
+      if (isGamingZoneVisibleNow() && gameSoundEnabled) {
+        try {
+          getAudioContext();
+          playTone(587.33, 'triangle', 0.12, 0.14);
+          setTimeout(() => playTone(880, 'triangle', 0.18, 0.16), 90);
+        } catch(e){}
+      }
       if (!isGameInitialized) {
         isGameInitialized = true;
         tickGlobalLiveGame();
@@ -8304,7 +8217,7 @@ ET
     }
   
     // =========================================================================
-    // 🎬 MAP CORRIDOR VIDEO AD CONTROLLER (NEW 10S VIDEO UNDER MAP)
+    // 🎬 MAP CORRIDOR VIDEO AD CONTROLLER (PLAYS ONLY ON LIVE MAP TAB)
     // =========================================================================
     function updateMapVideoMuteUi(isMuted) {
       const icon = document.getElementById('map-video-mute-icon');
@@ -8315,7 +8228,18 @@ ET
 
     function initMapVideoAd() {
       const mapVid = document.getElementById('map-video-player');
-      if (!mapVid) return;
+      if (!mapVid || window.activeAppSection !== 'map') return;
+
+      if (!mapVid.getAttribute('src')) {
+        mapVid.src = mapVid.getAttribute('data-video-src') || 'map_ad.mp4';
+      }
+
+      mapVid.onplay = function() {
+        if (window.activeAppSection !== 'map') {
+          mapVid.muted = true;
+          mapVid.pause();
+        }
+      };
 
       mapVid.muted = false;
       mapVid.volume = 1.0;
@@ -8326,22 +8250,10 @@ ET
         p.then(() => {
           updateMapVideoMuteUi(false);
         }).catch(() => {
+          if (window.activeAppSection !== 'map') return;
           mapVid.muted = true;
           mapVid.play().catch(()=>{});
           updateMapVideoMuteUi(false);
-
-          const unmuteOnMapTouch = function() {
-            mapVid.muted = false;
-            mapVid.volume = 1.0;
-            updateMapVideoMuteUi(false);
-            if (mapVid.paused) mapVid.play().catch(()=>{});
-            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
-              document.removeEventListener(evt, unmuteOnMapTouch);
-            });
-          };
-          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown'].forEach(evt => {
-            document.addEventListener(evt, unmuteOnMapTouch, { once: true, passive: true });
-          });
         });
       }
     }
@@ -8371,6 +8283,8 @@ ET
       const mapVid = document.getElementById('map-video-player');
       if (mapVid) {
         try {
+          mapVid.muted = true;
+          mapVid.volume = 0;
           mapVid.pause();
           mapVid.currentTime = 0;
         } catch(e){}
@@ -8428,8 +8342,20 @@ ET
     };
 
     // =========================================================================
-    // 🎬 PROFILE HOME VIDEO AD CONTROLLER (UNMUTED BY DEFAULT • CUSTOMER CAN MUTE)
+    // 🎬 PROFILE HOME VIDEO AD CONTROLLER
+    // • Plays with sound ONLY when App launches on Profile Home (when video is below)
+    //   and when user clicks Profile (Home).
+    // • Strictly stops & mutes when opening Gaming Zone or any other tab!
     // =========================================================================
+    let userManuallyMutedProfileVideo = false;
+
+    function isProfileVideoAllowedToPlay() {
+      const user = getActiveUserProfile();
+      const secProf = document.getElementById('section-profile');
+      const isProfVisible = !secProf || secProf.style.display !== 'none';
+      return (window.activeAppSection === 'profile') && !user && isProfVisible;
+    }
+
     function updateVideoMuteUi(isMuted) {
       const icon = document.getElementById('video-mute-icon');
       const label = document.getElementById('video-mute-label');
@@ -8440,6 +8366,19 @@ ET
     function initProfileHomeVideoAd() {
       const vidPlayer = document.getElementById('profile-video-player');
       if (!vidPlayer) return;
+
+      if (!vidPlayer.getAttribute('src')) {
+        vidPlayer.src = vidPlayer.getAttribute('data-video-src') || 'promo_ad.mp4';
+      }
+
+      // Guard: Never allow profile video to play if user is in Gaming Zone or another section!
+      vidPlayer.onplay = function() {
+        if (!isProfileVideoAllowedToPlay()) {
+          vidPlayer.muted = true;
+          vidPlayer.volume = 0;
+          vidPlayer.pause();
+        }
+      };
 
       // 1. Check cached video from IndexedDB or localStorage
       try {
@@ -8466,48 +8405,76 @@ ET
         });
       } catch(e){}
 
-      // 2. Audio Active by Default: Unmuted on load
-      vidPlayer.muted = false;
-      vidPlayer.volume = 1.0;
-      updateVideoMuteUi(false);
-
       vidPlayer.ontimeupdate = function() {
+        if (!isProfileVideoAllowedToPlay()) {
+          vidPlayer.muted = true;
+          vidPlayer.pause();
+          return;
+        }
         if (vidPlayer.currentTime >= 90) {
           vidPlayer.currentTime = 0;
           vidPlayer.play().catch(()=>{});
         }
       };
       vidPlayer.onerror = function() {
-        console.warn('Profile video source error, falling back to promo_ad.mp4');
         if (vidPlayer.src && !vidPlayer.src.endsWith('promo_ad.mp4')) {
           vidPlayer.src = 'promo_ad.mp4';
-          vidPlayer.play().catch(()=>{});
+          if (isProfileVideoAllowedToPlay()) {
+            vidPlayer.play().catch(()=>{});
+          }
         }
       };
 
-      // Attempt unmuted autoplay directly
+      if (!isProfileVideoAllowedToPlay()) {
+        stopProfileHomeVideoAd();
+        return;
+      }
+
+      // 2. Audio Active by Default on App Launch when Profile Video is below
+      vidPlayer.muted = false;
+      vidPlayer.volume = 1.0;
+      updateVideoMuteUi(false);
+
       const p = vidPlayer.play();
       if (p !== undefined) {
         p.then(() => {
-          updateVideoMuteUi(false);
+          if (!isProfileVideoAllowedToPlay()) {
+            stopProfileHomeVideoAd();
+          } else {
+            updateVideoMuteUi(false);
+          }
         }).catch(() => {
-          // If browser restricts unmuted autoplay on cold launch before first touch:
-          // Video plays continuously, and sound is primed to start at 100% volume on any touch/interaction!
+          if (!isProfileVideoAllowedToPlay()) return;
           vidPlayer.muted = true;
           vidPlayer.play().catch(()=>{});
-          updateVideoMuteUi(false); // ALWAYS keep button as '🔊 Mute' (Sound Active)
+          updateVideoMuteUi(false);
 
-          const unmuteOnFirstTouch = function() {
-            vidPlayer.muted = false;
-            vidPlayer.volume = 1.0;
-            updateVideoMuteUi(false);
-            if (vidPlayer.paused) vidPlayer.play().catch(()=>{});
-            ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown', 'keydown'].forEach(evt => {
-              document.removeEventListener(evt, unmuteOnFirstTouch);
+          // Unmute ONLY if the user touches while staying on Profile (NOT when tapping Gaming Zone or other nav tabs!)
+          const unmuteOnFirstTouch = function(evt) {
+            const tgt = evt && evt.target ? evt.target : null;
+            const clickedAwayTab = tgt && tgt.closest && tgt.closest(
+              '#btn-toggle-top-gaming, #btn-nav-driver, #btn-nav-search, #btn-nav-map, #btn-nav-bookings, #btn-nav-fleet, #gemini-page-dock'
+            );
+
+            ['touchstart', 'touchend', 'click', 'pointerdown', 'keydown'].forEach(evName => {
+              document.removeEventListener(evName, unmuteOnFirstTouch);
             });
+
+            if (clickedAwayTab || !isProfileVideoAllowedToPlay()) {
+              stopProfileHomeVideoAd();
+              return;
+            }
+
+            if (!userManuallyMutedProfileVideo && isProfileVideoAllowedToPlay()) {
+              vidPlayer.muted = false;
+              vidPlayer.volume = 1.0;
+              updateVideoMuteUi(false);
+              if (vidPlayer.paused) vidPlayer.play().catch(()=>{});
+            }
           };
-          ['touchstart', 'touchend', 'click', 'scroll', 'pointerdown', 'keydown'].forEach(evt => {
-            document.addEventListener(evt, unmuteOnFirstTouch, { once: true, passive: true });
+
+          ['touchstart', 'touchend', 'click', 'pointerdown', 'keydown'].forEach(evName => {
+            document.addEventListener(evName, unmuteOnFirstTouch, { once: true, passive: true });
           });
         });
       }
@@ -8522,15 +8489,17 @@ ET
       if (!vid) return;
 
       if (!vid.muted && vid.volume > 0) {
-        // Customer explicitly mutes
+        userManuallyMutedProfileVideo = true;
         vid.muted = true;
         updateVideoMuteUi(true);
         showToast('🔇 Video Muted', '#64748b');
       } else {
-        // Customer unmutes
+        userManuallyMutedProfileVideo = false;
         vid.muted = false;
         vid.volume = 1.0;
-        vid.play().catch(() => {});
+        if (isProfileVideoAllowedToPlay()) {
+          vid.play().catch(() => {});
+        }
         updateVideoMuteUi(false);
         showToast('🔊 Audio Active (Full Sound)', '#15803d');
       }
@@ -8540,6 +8509,8 @@ ET
       const vid = document.getElementById('profile-video-player');
       if (vid) {
         try {
+          vid.muted = true;
+          vid.volume = 0;
           vid.pause();
           vid.currentTime = 0;
         } catch(e){}
@@ -8551,16 +8522,19 @@ ET
     }
 
     function resumeProfileHomeVideoAdIfNeeded() {
-      const user = getActiveUserProfile();
       const adBox = document.getElementById('profile-home-video-ad-box');
       const vid = document.getElementById('profile-video-player');
-      if (!user) {
+      if (isProfileVideoAllowedToPlay()) {
         if (adBox) adBox.style.display = 'block';
-        if (vid && vid.paused) {
-          vid.muted = false;
-          vid.volume = 1.0;
-          updateVideoMuteUi(false);
+        if (vid) {
+          if (!vid.getAttribute('src')) {
+            vid.src = vid.getAttribute('data-video-src') || 'promo_ad.mp4';
+          }
+          vid.muted = userManuallyMutedProfileVideo ? true : false;
+          vid.volume = userManuallyMutedProfileVideo ? 0 : 1.0;
+          updateVideoMuteUi(userManuallyMutedProfileVideo);
           vid.play().catch(() => {
+            if (!isProfileVideoAllowedToPlay()) return;
             vid.muted = true;
             vid.play().catch(()=>{});
           });
@@ -8578,7 +8552,14 @@ ET
         if (!cur.includes(ad.src)) {
           vidPlayer.src = ad.src;
           vidPlayer.load();
-          vidPlayer.play().catch(()=>{});
+          if (isProfileVideoAllowedToPlay()) {
+            vidPlayer.muted = userManuallyMutedProfileVideo ? true : false;
+            vidPlayer.volume = userManuallyMutedProfileVideo ? 0 : 1.0;
+            vidPlayer.play().catch(()=>{});
+          } else {
+            vidPlayer.muted = true;
+            vidPlayer.pause();
+          }
         }
       }
 
