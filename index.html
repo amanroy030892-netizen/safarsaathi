@@ -1025,6 +1025,32 @@
 
   <main>
 
+    <!-- 🎙️ GLOBAL HINDI VOICE MAIL PLAYER CARD (क्या-क्या बदलाव किया है - हिंदी आवाज़ में सुनें) -->
+    <div id="global-hindi-voicemail-card" style="background: linear-gradient(135deg, #090d16 0%, #14532d 60%, #15803d 100%); border: 2px solid #a3e635; border-radius: 14px; padding: 0.5rem 0.75rem; margin-bottom: 0.45rem; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.28);">
+      <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+        <button type="button" id="btn-global-voicemail-play" onclick="speakHindiRaceVoiceMail()" style="width: 34px; height: 34px; border-radius: 50%; background: #a3e635; color: #090d16; border: 2px solid #ffffff; font-size: 0.9rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(163, 230, 53, 0.8);">
+          ▶️
+        </button>
+        <div style="min-width: 0;">
+          <div style="font-size: 0.76rem; font-weight: 900; color: #a3e635; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+            <span>🎙️ हिंदी वॉइस मेल (Voice Mail)</span>
+            <span id="global-voicemail-badge" style="background: rgba(163, 230, 53, 0.2); color: #ffffff; border: 1px solid #a3e635; padding: 1px 6px; border-radius: 999px; font-size: 0.58rem;">तैयार है</span>
+          </div>
+          <div id="global-voicemail-sub" style="font-size: 0.64rem; color: #e2e8f0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            क्या-क्या बदलाव किया गया है — सुनने के लिए ▶️ बटन दबाएं
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
+        <button type="button" onclick="speakHindiRaceVoiceMail()" style="background: #a3e635; color: #090d16; border: none; border-radius: 999px; padding: 5px 10px; font-size: 0.68rem; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+          🔊 वॉइस मेल सुनें
+        </button>
+        <button type="button" onclick="showSection('gaming')" style="background: rgba(255,255,255,0.15); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); border-radius: 999px; padding: 5px 8px; font-size: 0.64rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
+          🚴 3D रेस देखें
+        </button>
+      </div>
+    </div>
+
     <!-- ==================== 1. 🟢 LIVE CARS (HOME PAGE) ==================== -->
     <section id="section-live-cars" class="app-section active">
       <div class="app-card">
@@ -1480,10 +1506,31 @@
               <button type="button" onclick="claimDailyBonus()" style="background: rgba(163, 230, 53, 0.16); color: #d9f99d; border: 1px solid #a3e635; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.62rem; cursor: pointer;" title="Daily 20 Free Coins">
                 🎁
               </button>
+              <button type="button" onclick="speakHindiRaceVoiceMail()" title="हिंदी वॉइस सुनें" style="background: rgba(163, 230, 53, 0.2); border: 1px solid #a3e635; color: #a3e635; border-radius: 999px; padding: 2px 7px; font-size: 0.62rem; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;">🎙️ वॉइस</button>
               <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 50%; width: 24px; height: 24px; font-size: 0.66rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                 🔊
               </button>
             </div>
+          </div>
+
+          <!-- 🎙️ HINDI VOICE MAIL AUDIO PLAYER BAR (1-TAP PLAY/PAUSE SUMMARY OF ALL CHANGES) -->
+          <div id="rush-hindi-voicemail-bar" style="margin: 0.3rem 0.6rem 0.1rem 0.6rem; background: linear-gradient(90deg, rgba(22, 163, 74, 0.25), rgba(15, 23, 42, 0.95)); border: 1.5px solid #a3e635; border-radius: 10px; padding: 5px 9px; display: flex; justify-content: space-between; align-items: center; gap: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+            <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
+              <button type="button" id="btn-voicemail-play" onclick="speakHindiRaceVoiceMail()" style="width: 28px; height: 28px; border-radius: 50%; background: #a3e635; color: #090d16; border: none; font-size: 0.78rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(163,230,53,0.6);">
+                ▶️
+              </button>
+              <div style="min-width: 0;">
+                <div style="font-size: 0.66rem; font-weight: 900; color: #a3e635; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  🎙️ हिंदी वॉइस मेल: सभी नए 3D बदलाव सुनें (Voice Note)
+                </div>
+                <div id="voicemail-sub-status" style="font-size: 0.56rem; color: #cbd5e1; font-weight: 700;">
+                  Real 60FPS 3D • Obstacle Bounce • A/B/C Overtake • Lowest Bid Wins
+                </div>
+              </div>
+            </div>
+            <button type="button" onclick="speakHindiRaceVoiceMail()" style="background: #16a34a; color: #ffffff; border: 1px solid #86efac; border-radius: 999px; padding: 3px 9px; font-size: 0.6rem; font-weight: 900; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+              🔊 वॉइस सुनें
+            </button>
           </div>
 
           <!-- GLOBAL SERVER CYCLE STATUS BAR (30s BETTING -> 60s CYCLE RACE -> 5s RESULT DISPLAY) -->
@@ -6034,6 +6081,68 @@ ET
       notes.forEach((f, idx) => {
         setTimeout(() => playTone(f, 'triangle', 0.22, 0.24), idx * 105);
       });
+    }
+
+    
+    let isHindiVoiceMailPlaying = false;
+    function speakHindiRaceVoiceMail() {
+      try {
+        if (!("speechSynthesis" in window)) {
+          showToast("🔊 आपका ब्राउज़र वॉइस सपोर्ट नहीं करता", "#dc2626");
+          return;
+        }
+        const playBtn = document.getElementById("btn-voicemail-play");
+        const subStatus = document.getElementById("voicemail-sub-status");
+        const gPlayBtn = document.getElementById("btn-global-voicemail-play");
+        const gBadge = document.getElementById("global-voicemail-badge");
+        const gSub = document.getElementById("global-voicemail-sub");
+
+        if (window.speechSynthesis.speaking && isHindiVoiceMailPlaying) {
+          window.speechSynthesis.cancel();
+          isHindiVoiceMailPlaying = false;
+          if (playBtn) playBtn.innerText = "▶️";
+          if (gPlayBtn) gPlayBtn.innerText = "▶️";
+          if (gBadge) gBadge.innerText = "रोका गया";
+          if (gSub) gSub.innerText = "वॉइस मेल रोका गया • दोबारा सुनने के लिए टैप करें";
+          if (subStatus) subStatus.innerText = "वॉइस मेल रोका गया • दोबारा सुनने के लिए टैप करें";
+          showToast("⏹️ वॉइस मेल रोका गया", "#475569");
+          return;
+        }
+
+        window.speechSynthesis.cancel();
+        const msgText = "नमस्कार! सफरसाथी रश थ्री डी गेम के नए अपडेट्स का वॉइस मेल सुनिए। पहला बदलाव: पुराना फटा हुआ वीडियो हटाकर अब असली साठ एफपीएस फुल एचडी थ्री डी डाउनहिल माउंटेन साइकिल रेस इंजन लगा दिया गया है, जिसमें असली धूप, परछाई और हाई स्पीड मोशन ब्लर है। दूसरा बदलाव: रेस में कोई भी राइडर साइकिल से नीचे नहीं गिरता; पत्थर या रैंप से टकराने पर साइकिल सीमलेस बाउंस करती है, हल्का कैमरा शेक होता है और रेस बिना रुके चलती रहती है। तीसरा बदलाव: साइकिल ए, साइकिल बी और साइकिल सी पूरे साठ सेकंड लगातार एक दूसरे को क्रॉस और ओवरटेक करती हैं, और अंत में जिस साइकिल पर सबसे कम बेट लगी होती है, वही फिनिश लाइन पार करके फर्स्ट आती है और दोगुना इनाम देती है!";
+        const utter = new SpeechSynthesisUtterance(msgText);
+        utter.lang = "hi-IN";
+        const voices = window.speechSynthesis.getVoices();
+        const hiVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes("hi"));
+        if (hiVoice) utter.voice = hiVoice;
+        utter.rate = 0.98;
+        utter.pitch = 1.0;
+
+        utter.onstart = function() {
+          isHindiVoiceMailPlaying = true;
+          if (playBtn) playBtn.innerText = "⏸️";
+          if (gPlayBtn) gPlayBtn.innerText = "⏸️";
+          if (gBadge) gBadge.innerText = "🔊 बोल रहा है...";
+          if (gSub) gSub.innerText = "🔊 हिंदी वॉइस मेल चल रहा है... (रोकने के लिए टैप करें)";
+          if (subStatus) subStatus.innerText = "🔊 वॉइस मेल चल रहा है... (रोकने के लिए टैप करें)";
+        };
+        utter.onend = function() {
+          isHindiVoiceMailPlaying = false;
+          if (playBtn) playBtn.innerText = "▶️";
+          if (gPlayBtn) gPlayBtn.innerText = "▶️";
+          if (gBadge) gBadge.innerText = "✓ पूरा हुआ";
+          if (gSub) gSub.innerText = "✓ वॉइस मेल पूरा हुआ • दोबारा सुनने के लिए टैप करें";
+          if (subStatus) subStatus.innerText = "✓ वॉइस मेल पूरा हुआ • दोबारा सुनने के लिए टैप करें";
+        };
+        utter.onerror = function() {
+          isHindiVoiceMailPlaying = false;
+          if (playBtn) playBtn.innerText = "▶️";
+        };
+
+        window.speechSynthesis.speak(utter);
+        showToast("🎙️ हिंदी वॉइस मेल चालू हो गया है...", "#15803d");
+      } catch (e) {}
     }
 
     function toggleGameSound() {
