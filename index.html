@@ -42,7 +42,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V105_SMOOTH_VOICE_GUIDE';
+        const CURRENT_VERSION = 'SS_PROD_V106_CLEAN_NO_VOICE_BTN';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -1368,10 +1368,7 @@
           <!-- Map Corridor Video Ad Player Below Map -->
           <div id="map-video-ad-box" style="position: relative; margin-top: 0.4rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: min(20vh, 135px); max-height: 135px;">
             <video id="map-video-player" data-video-src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
-            <button type="button" onclick="toggleMapVideoMuteOnly(event)" style="position: absolute; bottom: 6px; right: 6px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 3px 9px; font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-              <span id="map-video-mute-icon">🔊</span>
-              <span id="map-video-mute-label">Mute</span>
-            </button>
+
           </div>
         </div>
       </div>
@@ -1486,7 +1483,7 @@
               </div>
             </div>
 
-            <!-- Wallet, Recharge, Bonus & Sound -->
+            <!-- Wallet, Recharge & Bonus -->
             <div style="display: flex; align-items: center; gap: 4px;">
               <div style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid #a3e635; border-radius: 999px; padding: 2px 8px; display: inline-flex; align-items: center; gap: 3px;">
                 <span style="font-size: 0.74rem;">🪙</span>
@@ -1498,9 +1495,7 @@
               <button type="button" onclick="claimDailyBonus()" style="background: rgba(163, 230, 53, 0.16); color: #d9f99d; border: 1px solid #a3e635; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.62rem; cursor: pointer;" title="Daily 20 Free Coins">
                 🎁
               </button>
-              <button type="button" id="btn-game-sound-toggle" onclick="toggleGameSound()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 50%; width: 24px; height: 24px; font-size: 0.66rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                🔊
-              </button>
+
             </div>
           </div>
 
@@ -1959,9 +1954,7 @@
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 5px;">
-            <button type="button" onclick="toggleSafarVoiceGuide('full')" style="background: #fde047; color: #090d16; border: 1px solid #ffffff; padding: 2px 8px; font-size: 0.68rem; border-radius: 6px; font-weight: 900; cursor: pointer;">
-              🔊 बोलकर सुनें
-            </button>
+
             <button type="button" class="btn btn-secondary" onclick="showSection('live-cars')" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; padding: 2px 8px; font-size: 0.72rem; border-radius: 6px; font-weight: 900; cursor: pointer;">
               ✕ Close
             </button>
@@ -2076,15 +2069,11 @@
             </a>
           </div>
 
-          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (UNMUTED BY DEFAULT • NO PLAY/PAUSE INTERRUPTIONS • CUSTOMER CAN MUTE) -->
+          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (AUTOMATIC SOUND ON PROFILE HOME) -->
           <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(30vh, 205px); max-height: 205px;">
             <video id="profile-video-player" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
             
-            <!-- 🔊 AUDIO ACTIVE BY DEFAULT (CUSTOMER CAN MUTE THEMSELVES) -->
-            <button type="button" id="btn-video-mute-toggle" onclick="toggleProfileVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
-              <span id="video-mute-icon" style="font-size: 0.85rem;">🔊</span>
-              <span id="video-mute-label">Mute</span>
-            </button>
+
           </div>
         </div>
 
@@ -2151,7 +2140,7 @@
     </section>
 
   
-        <!-- ✨ SLIM GEMINI AI COPILOT PILL + GEMINI-STYLE SPEAKER VOICE GUIDE BAR -->
+        <!-- ✨ SLIM GEMINI AI COPILOT PILL -->
     <div style="max-width: 480px; margin: 0.35rem auto 0.25rem auto; display: flex; flex-direction: column; gap: 6px;">
       <div id="gemini-page-dock" onclick="openGeminiAiModal()" style="padding: 5px 12px; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 9999px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.2); touch-action: manipulation;">
         <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
@@ -2165,21 +2154,7 @@
         </span>
       </div>
 
-      <!-- 🔊 GEMINI-STYLE SPEAKER BUTTON BELOW GEMINI ("जैसे Gemini के नीचे वॉयस वाला स्पीकर आता है दबाने से सब बोल के जाते हैं") -->
-      <div id="gemini-voice-guide-bar" style="background: linear-gradient(135deg, #0f172a, #1e293b); border: 1.5px solid #a3e635; border-radius: 14px; padding: 6px 10px; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
-          <button type="button" id="btn-gemini-speaker-main" onclick="toggleSafarVoiceGuide('full')" style="flex: 1; background: linear-gradient(135deg, #a3e635, #16a34a); color: #090d16; border: none; border-radius: 999px; padding: 6px 12px; font-size: 0.74rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 8px rgba(163, 230, 53, 0.4);">
-            <span id="gemini-speaker-icon" style="font-size: 0.95rem;">🔊</span>
-            <span id="gemini-speaker-label">सुनें: पूरा ऐप, गेम और एडमिन पैनल कैसे काम करता है (Voice Guide)</span>
-          </button>
-          <button type="button" id="btn-gemini-speaker-page" onclick="toggleSafarVoiceGuide('current')" style="background: rgba(255,255,255,0.12); color: #fde047; border: 1px solid #fde047; border-radius: 999px; padding: 5px 10px; font-size: 0.68rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
-            🔊 इस पेज को सुनें
-          </button>
-        </div>
-        <div id="gemini-voice-live-subtitle" style="display: none; margin-top: 6px; background: rgba(9, 13, 22, 0.9); border: 1px solid #a3e635; border-radius: 8px; padding: 5px 8px; font-size: 0.68rem; color: #d9f99d; font-weight: 700; line-height: 1.4;">
-          🎙️ बोल रहा है...
-        </div>
-      </div>
+
     </div>
 
     <!-- 🏢 ULTRA-COMPACT 1-LINE COMPANY FOOTER (NO BULK, ZERO ADMIN, SCREEN-FITTING) -->
@@ -2430,26 +2405,11 @@
       if (sender === 'user') {
         bubble.textContent = content; // 100% immune to XSS payload execution
       } else {
-        bubble.innerHTML = content + `<div style="margin-top:6px; border-top:1px solid rgba(22,163,74,0.25); padding-top:4px; display:flex; justify-content:flex-end;"><button type="button" onclick="speakCustomGeminiText(this)" style="background:#16a34a; color:#ffffff; border:none; border-radius:999px; padding:2px 9px; font-size:0.65rem; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">🔊 सुनें (Speak)</button></div>`;
+        bubble.innerHTML = content;
       }
       msgDiv.appendChild(bubble);
       history.appendChild(msgDiv);
       history.scrollTop = history.scrollHeight;
-    }
-
-    function speakCustomGeminiText(btnEl) {
-      if (isSafarVoiceSpeaking) {
-        stopSafarVoiceGuide();
-        return;
-      }
-      const bubble = btnEl && btnEl.closest ? btnEl.closest('.gemini-msg-bubble') : null;
-      if (!bubble) return;
-      const cleanText = (bubble.innerText || '').replace('🔊 सुनें (Speak)', '').trim();
-      if (!cleanText) return;
-      safarVoiceQueue = [cleanText];
-      safarVoiceIdx = 0;
-      isSafarVoiceSpeaking = true;
-      speakNextSafarChunk();
     }
 
     function sendGeminiMessage() {
@@ -3200,9 +3160,6 @@
 
     function showSection(tab) {
       window.activeAppSection = tab;
-      try {
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      } catch(e){}
       const secLive = document.getElementById('section-live-cars');
       const secDriver = document.getElementById('section-driver');
       const secPass = document.getElementById('section-passenger');
@@ -6193,12 +6150,7 @@ ET
     }
 
     
-    function toggleGameSound() {
-      gameSoundEnabled = !gameSoundEnabled;
-      const btn = document.getElementById('btn-game-sound-toggle');
-      if (btn) btn.innerText = gameSoundEnabled ? '🔊' : '🔇';
-      showToast(gameSoundEnabled ? '🔊 Game Sound ON' : '🔇 Game Sound Muted', '#15803d');
-    }
+
 
     function toggleRoadTrackVisibility() {
       isRoadTrackHiddenByUser = !isRoadTrackHiddenByUser;
@@ -8677,174 +8629,6 @@ ET
       showToast(`⏳ UTR (${utr}) वेरिफिकेशन के लिए Admin Panel में भेज दिया गया है! Admin द्वारा बैंक में ₹${currentBuyCoinPack} पेमेंट वेरिफाई करते ही कॉइन्स अपने आप जुड़ जाएंगे।`, '#d97706');
     }
 
-    // =========================================================================
-    // 🔊 GEMINI-STYLE HINDI VOICE SPEAKER GUIDE (EXPLAINS ENTIRE APP, GAME & ADMIN PANEL)
-    // =========================================================================
-    let isSafarVoiceSpeaking = false;
-    let safarVoiceQueue = [];
-    let safarVoiceIdx = 0;
-
-    const SAFAR_VOICE_SCRIPTS = {
-      full: [
-        "नमस्कार! सफरसाथी ऐप और एडमिन पैनल के वॉयस गाइड में आपका स्वागत है। मैं आपको एक-एक करके हमारे ऐप के सभी ऑप्शन, थ्री-डी साइकिल गेम, और एडमिन पैनल का पूरा काम आसान भाषा में समझाती हूँ।",
-        "पहला ऑप्शन: प्रोफाइल होम और आधार केवाईसी। जब आप ऐप खोलते हैं, तो सबसे पहले प्रोफाइल होम पेज खुलता है। यहाँ नया कस्टमर या ड्राइवर अपना दस अंकों का मोबाइल नंबर, नाम, पता और आधार कार्ड फोटो अपलोड करके सौ प्रतिशत फ्री रजिस्टर और लॉगिन कर सकता है। प्रोफाइल पेज पर नीचे प्रमोशनल वीडियो ऐड चलता है जिसका साउंड केवल प्रोफाइल पेज पर आता है और गेम खोलने पर अपने आप बंद हो जाता है।",
-        "दूसरा ऑप्शन: पोस्ट राइड यानी गाड़ी पोस्ट करना। जिस ड्राइवर का आधार वेरिफाइड है, वह पोस्ट राइड बटन दबाकर चार आसान स्टेप में अपनी गाड़ी पोस्ट कर सकता है: पहला रूट और समय चुनें, दूसरा गाड़ी की नंबर प्लेट स्कैन करें और खाली सीट व किराया लिखें, तीसरा अपना यूपीआई क्यूआर कोड अपलोड करें, और चौथा सौ रुपये प्लेटफॉर्म फीस का बारह अंकों का यूटीआर नंबर सबमिट करें।",
-        "तीसरा ऑप्शन: फाइंड राइड और लाइव कार्स। यहाँ पैसेंजर को असम के सभी हाईवे रूट्स जैसे गुवाहाटी, शिलांग, जोरहाट, नगांव और तेजपुर की वेरिफाइड गाड़ियाँ लाइव दिखती हैं। पैसेंजर सीट चुनकर सीधे ड्राइवर के यूपीआई पर पेमेंट करता है और यूटीआर डालते ही उसका पीडीएफ बोर्डिंग पास टिकट जनरेट हो जाता है।",
-        "चौथा ऑप्शन: लाइव जीपीएस मैप। लाइव मैप बटन दबाने पर असम हाईवे का लाइव मैप खुलता है, जहाँ आप अपनी लाइव जीपीएस लोकेशन और रूट की गाड़ियाँ ट्रैक कर सकते हैं।",
-        "पाँचवाँ ऑप्शन: माई टिकट्स और ड्राइवर फ्लीट। माई टिकट्स में पैसेंजर को अपनी बुक की गई सीट और पीडीएफ टिकट दिखता है। और ड्राइवर फ्लीट में ड्राइवर को अपनी पोस्ट की गई गाड़ियाँ और पैसेंजर की बुकिंग दिखती है।",
-        "छठा और सबसे खास ऑप्शन: ऊपर हेडर में दिया गया थ्री-डी साइकिल रेस गेमिंग ज़ोन। यह गेम चौबीस घंटे अपने आप चलता रहता है और अब सौ प्रतिशत स्मूद साठ एफपीएस पर बिना किसी शेक या रुकावट के चलता है।",
-        "गेम के नियम बहुत सरल हैं: पहले तीस सेकंड बेटिंग पेज खुलता है, जहाँ साइकिल ए, साइकिल बी, और साइकिल सी के तीनों कार्ड पर ऊपर रैंडम फेक कुल बेट दिखती है, और नीचे आपकी खुद की लगाई हुई बेट साफ दिखती है। आप दस, पच्चीस, पचास या सौ कॉइन्स की चिप चुनकर किसी भी साइकिल पर बेट लगा सकते हैं।",
-        "तीस सेकंड पूरे होते ही अपने आप साठ सेकंड की लाइव थ्री-डी साइकिल रेस शुरू होती है। तीनों साइकिलें आपस में स्मूद ओवरटेक और क्रॉसिंग करती हैं। गेम का नियम है कि जिस साइकिल पर सबसे कम बेट या आखिरी बेट लगी होती है, वही साइकिल जीतती है।",
-        "रेस के आखिरी दस सेकंड में कैमरा अपने आप ऑटोमैटिक ड्रोन फिनिश शॉट और स्लो-मोशन ज़ूम ले लेता है, जिससे साफ दिखता है कि कौन सी साइकिल का टायर फिनिश लाइन पहले पार कर रहा है। जीतने पर पूरे दोगुना यानी टू-एक्स कॉइन्स तुरंत वॉलेट में जुड़ जाते हैं। प्लस कॉइन्स बटन से कस्टमर पचास, सौ, दो सौ या पाँच सौ रुपये यूपीआई पे करके यूटीआर भेज सकता है।",
-        "सातवाँ हिस्सा: हमारा क्लिक एंड फ्लिप एडमिन पैनल। एडमिन पैनल में छह अलग-अलग कैटेगरी के बटन दिए गए हैं जो क्लिक करने पर ऐप की तरह फ्लिप होकर खुलते हैं।",
-        "एडमिन कैटेगरी एक: कॉइन यूटीआर वेरिफिकेशन। जब कोई कस्टमर गेम कॉइन्स के लिए जैसे पाँच सौ रुपये का यूटीआर भेजता है, तो एडमिन उसे बैंक में चेक करके कन्फर्म करता है। हमने इसमें वन-एक्स लॉक लगाया है, यानी पाँच सौ रुपये कन्फर्म करने पर कस्टमर के खाते में ठीक पाँच सौ कॉइन्स ही जुड़ेंगे, कभी भी ग्यारह हजार या डबल पैसा नहीं जाएगा। गलत यूटीआर होने पर एडमिन रिजेक्ट कर सकता है।",
-        "एडमिन कैटेगरी दो: कार यूटीआर। यहाँ ड्राइवर की सौ रुपये वाली गाड़ी पोस्टिंग यूटीआर को अप्रूव या रिजेक्ट किया जाता है। कैटेगरी तीन: बुकिंग्स, जहाँ सभी पैसेंजर टिकट दिखते हैं। कैटेगरी चार: थ्री-डी गेम पूल, जहाँ एडमिन को साइकिल ए, बी और सी पर लगी असली कुल बेट और कौन सी सबसे कम बेट वाली साइकिल जीतने वाली है, यह लाइव दिखता है। कैटेगरी पाँच में सभी आधार केवाईसी यूज़र्स की लिस्ट है, और कैटेगरी छह से एडमिन होम स्क्रीन का वीडियो ऐड बदल सकता है। धन्यवाद!"
-      ],
-      profile: [
-        "यह प्रोफाइल और आधार केवाईसी पेज है। यहाँ आप अपना दस अंकों का मोबाइल नंबर, पासवर्ड, पूरा नाम, पता और आधार कार्ड फोटो अपलोड करके नया अकाउंट बना सकते हैं या लॉगिन कर सकते हैं।"
-      ],
-      driver: [
-        "यह पोस्ट राइड पेज है। यहाँ वेरिफाइड ड्राइवर अपनी गाड़ी का रूट, समय, नंबर प्लेट, खाली सीटें और किराया भरकर और सौ रुपये प्लेटफॉर्म फीस का यूटीआर डालकर अपनी कार लाइव पोस्ट कर सकते हैं।"
-      ],
-      passenger: [
-        "यह फाइंड राइड पेज है। यहाँ आप गुवाहाटी, शिलांग, जोरहाट या किसी भी शहर का रूट चुनकर उपलब्ध गाड़ियाँ खोज सकते हैं और तुरंत सीट बुक कर सकते हैं।"
-      ],
-      map: [
-        "यह लाइव हाईवे मैप पेज है। यहाँ आप अपनी लाइव जीपीएस लोकेशन और असम हाईवे रूट को मैप पर देख सकते हैं।"
-      ],
-      "my-tickets": [
-        "यह माई टिकट्स पेज है। यहाँ आपकी बुक की गई सभी सीटों के कन्फर्म टिकट और पीडीएफ बोर्डिंग पास डाउनलोड करने का ऑप्शन मिलता है।"
-      ],
-      "driver-fleet": [
-        "यह ड्राइवर फ्लीट पेज है। यहाँ ड्राइवर अपनी पोस्ट की हुई गाड़ियाँ और उन पर आई पैसेंजर बुकिंग्स को मैनेज कर सकते हैं।"
-      ],
-      gaming: [
-        "यह थ्री-डी डाउनहिल साइकिल रेस गेम है। यह गेम चौबीस घंटे अपने आप चलता है: तीस सेकंड बेटिंग, साठ सेकंड स्मूद थ्री-डी रेस, और पाँच सेकंड रिजल्ट। तीनों साइकिल कार्ड पर ऊपर फेक कुल बेट और नीचे आपकी अपनी बेट दिखती है। सबसे कम बेट वाली साइकिल जीतती है और जीतने पर पूरे दोगुना यानी टू-एक्स कॉइन्स मिलते हैं। आखिरी दस सेकंड में अपने आप ऑटोमैटिक ड्रोन स्लो-मोशन शॉट दिखता है।"
-      ],
-      "gemini-ai": [
-        "यह सफरसाथी जेमिनी एआई कोपायलट है। यहाँ आप चैट करके या नीचे दिए गए स्पीकर बटन को दबाकर पूरे ऐप, गेम और एडमिन पैनल की जानकारी आवाज़ में सुन सकते हैं।"
-      ]
-    };
-
-    function updateVoiceGuideUi(isSpeaking, subtitleText) {
-      const iconEl = document.getElementById('gemini-speaker-icon');
-      const labelEl = document.getElementById('gemini-speaker-label');
-      const subEl = document.getElementById('gemini-voice-live-subtitle');
-      const btnEl = document.getElementById('btn-gemini-speaker-main');
-
-      if (iconEl) iconEl.innerText = isSpeaking ? '⏹️' : '🔊';
-      if (labelEl) {
-        labelEl.innerText = isSpeaking
-          ? 'रोकने के लिए टैप करें (Voice Guide चल रहा है...)'
-          : 'सुनें: पूरा ऐप, गेम और एडमिन पैनल कैसे काम करता है (Voice Guide)';
-      }
-      if (btnEl) {
-        btnEl.style.background = isSpeaking
-          ? 'linear-gradient(135deg, #ef4444, #b91c1c)'
-          : 'linear-gradient(135deg, #a3e635, #16a34a)';
-        btnEl.style.color = isSpeaking ? '#ffffff' : '#090d16';
-      }
-      if (subEl) {
-        if (isSpeaking && subtitleText) {
-          subEl.style.display = 'block';
-          subEl.innerText = '🎙️ ' + subtitleText;
-        } else {
-          subEl.style.display = 'none';
-        }
-      }
-    }
-
-    function stopSafarVoiceGuide() {
-      isSafarVoiceSpeaking = false;
-      safarVoiceQueue = [];
-      safarVoiceIdx = 0;
-      try {
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-        }
-      } catch(e){}
-      updateVoiceGuideUi(false, '');
-    }
-
-    function speakNextSafarChunk() {
-      if (!isSafarVoiceSpeaking || safarVoiceIdx >= safarVoiceQueue.length) {
-        stopSafarVoiceGuide();
-        return;
-      }
-      const chunkText = safarVoiceQueue[safarVoiceIdx];
-      updateVoiceGuideUi(true, chunkText);
-
-      if (!('speechSynthesis' in window)) {
-        showToast('🎙️ ' + chunkText, '#15803d');
-        safarVoiceIdx++;
-        setTimeout(speakNextSafarChunk, 4000);
-        return;
-      }
-
-      try {
-        const utter = new SpeechSynthesisUtterance(chunkText);
-        utter.lang = 'hi-IN';
-        utter.rate = 0.96;
-        utter.pitch = 1.0;
-
-        const voices = window.speechSynthesis.getVoices() || [];
-        const hindiVoice = voices.find(v => v.lang && (v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi'))) ||
-                           voices.find(v => v.lang && v.lang.toLowerCase().includes('in'));
-        if (hindiVoice) utter.voice = hindiVoice;
-
-        utter.onend = function() {
-          if (!isSafarVoiceSpeaking) return;
-          safarVoiceIdx++;
-          speakNextSafarChunk();
-        };
-        utter.onerror = function() {
-          if (!isSafarVoiceSpeaking) return;
-          safarVoiceIdx++;
-          speakNextSafarChunk();
-        };
-
-        window.speechSynthesis.speak(utter);
-      } catch (e) {
-        stopSafarVoiceGuide();
-      }
-    }
-
-    function toggleSafarVoiceGuide(mode) {
-      if (isSafarVoiceSpeaking) {
-        stopSafarVoiceGuide();
-        showToast('🔇 वॉयस गाइड बंद कर दिया गया।', '#475569');
-        return;
-      }
-
-      // Mute background promo video while listening to the voice guide so voice is 100% crystal clear
-      try {
-        const pv = document.getElementById('profile-video-player');
-        if (pv && !pv.paused) {
-          pv.muted = true;
-          updateVideoMuteUi(true);
-        }
-      } catch(e){}
-
-      try {
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-        }
-      } catch(e){}
-
-      let scriptList = SAFAR_VOICE_SCRIPTS.full;
-      if (mode === 'current') {
-        const secGaming = document.getElementById('section-gaming');
-        const isGamingNow = (secGaming && secGaming.style.display !== 'none');
-        const activeKey = isGamingNow ? 'gaming' : (window.activeAppSection || 'profile');
-        scriptList = SAFAR_VOICE_SCRIPTS[activeKey] || SAFAR_VOICE_SCRIPTS.full;
-      }
-
-      safarVoiceQueue = [...scriptList];
-      safarVoiceIdx = 0;
-      isSafarVoiceSpeaking = true;
-      speakNextSafarChunk();
-    }
-
     // App Startup (👤 PROFILE IS NOW THE 100% DEFAULT HOME PAGE)
     window.addEventListener('DOMContentLoaded', () => {
       try { updateAllCoinDisplays(); } catch(e){}
@@ -8884,13 +8668,6 @@ ET
     // =========================================================================
     // 🎬 MAP CORRIDOR VIDEO AD CONTROLLER (PLAYS ONLY ON LIVE MAP TAB)
     // =========================================================================
-    function updateMapVideoMuteUi(isMuted) {
-      const icon = document.getElementById('map-video-mute-icon');
-      const label = document.getElementById('map-video-mute-label');
-      if (icon) icon.innerText = isMuted ? '🔇' : '🔊';
-      if (label) label.innerText = isMuted ? 'Unmute' : 'Mute';
-    }
-
     function initMapVideoAd() {
       const mapVid = document.getElementById('map-video-player');
       if (!mapVid || window.activeAppSection !== 'map') return;
@@ -8908,39 +8685,15 @@ ET
 
       mapVid.muted = false;
       mapVid.volume = 1.0;
-      updateMapVideoMuteUi(false);
 
       const p = mapVid.play();
       if (p !== undefined) {
         p.then(() => {
-          updateMapVideoMuteUi(false);
-        }).catch(() => {
+            }).catch(() => {
           if (window.activeAppSection !== 'map') return;
           mapVid.muted = true;
           mapVid.play().catch(()=>{});
-          updateMapVideoMuteUi(false);
-        });
-      }
-    }
-
-    function toggleMapVideoMuteOnly(e) {
-      if (e) {
-        e.stopPropagation();
-        e.preventDefault();
-      }
-      const mapVid = document.getElementById('map-video-player');
-      if (!mapVid) return;
-
-      if (!mapVid.muted && mapVid.volume > 0) {
-        mapVid.muted = true;
-        updateMapVideoMuteUi(true);
-        showToast('🔇 Map Video Muted', '#64748b');
-      } else {
-        mapVid.muted = false;
-        mapVid.volume = 1.0;
-        mapVid.play().catch(() => {});
-        updateMapVideoMuteUi(false);
-        showToast('🔊 Audio Active', '#15803d');
+            });
       }
     }
 
@@ -9021,13 +8774,6 @@ ET
       return (window.activeAppSection === 'profile') && !user && isProfVisible;
     }
 
-    function updateVideoMuteUi(isMuted) {
-      const icon = document.getElementById('video-mute-icon');
-      const label = document.getElementById('video-mute-label');
-      if (icon) icon.innerText = isMuted ? '🔇' : '🔊';
-      if (label) label.innerText = isMuted ? 'Unmute' : 'Mute';
-    }
-
     function initProfileHomeVideoAd() {
       const vidPlayer = document.getElementById('profile-video-player');
       if (!vidPlayer) return;
@@ -9098,7 +8844,6 @@ ET
       // 2. Audio Active by Default on App Launch when Profile Video is below
       vidPlayer.muted = false;
       vidPlayer.volume = 1.0;
-      updateVideoMuteUi(false);
 
       const p = vidPlayer.play();
       if (p !== undefined) {
@@ -9106,14 +8851,12 @@ ET
           if (!isProfileVideoAllowedToPlay()) {
             stopProfileHomeVideoAd();
           } else {
-            updateVideoMuteUi(false);
-          }
+                }
         }).catch(() => {
           if (!isProfileVideoAllowedToPlay()) return;
           vidPlayer.muted = true;
           vidPlayer.play().catch(()=>{});
-          updateVideoMuteUi(false);
-
+    
           // Unmute ONLY if the user touches while staying on Profile (NOT when tapping Gaming Zone or other nav tabs!)
           const unmuteOnFirstTouch = function(evt) {
             const tgt = evt && evt.target ? evt.target : null;
@@ -9133,8 +8876,7 @@ ET
             if (!userManuallyMutedProfileVideo && isProfileVideoAllowedToPlay()) {
               vidPlayer.muted = false;
               vidPlayer.volume = 1.0;
-              updateVideoMuteUi(false);
-              if (vidPlayer.paused) vidPlayer.play().catch(()=>{});
+                      if (vidPlayer.paused) vidPlayer.play().catch(()=>{});
             }
           };
 
@@ -9142,31 +8884,6 @@ ET
             document.addEventListener(evName, unmuteOnFirstTouch, { once: true, passive: true });
           });
         });
-      }
-    }
-
-    function toggleProfileVideoMuteOnly(e) {
-      if (e) {
-        e.stopPropagation();
-        e.preventDefault();
-      }
-      const vid = document.getElementById('profile-video-player');
-      if (!vid) return;
-
-      if (!vid.muted && vid.volume > 0) {
-        userManuallyMutedProfileVideo = true;
-        vid.muted = true;
-        updateVideoMuteUi(true);
-        showToast('🔇 Video Muted', '#64748b');
-      } else {
-        userManuallyMutedProfileVideo = false;
-        vid.muted = false;
-        vid.volume = 1.0;
-        if (isProfileVideoAllowedToPlay()) {
-          vid.play().catch(() => {});
-        }
-        updateVideoMuteUi(false);
-        showToast('🔊 Audio Active (Full Sound)', '#15803d');
       }
     }
 
@@ -9197,7 +8914,6 @@ ET
           }
           vid.muted = userManuallyMutedProfileVideo ? true : false;
           vid.volume = userManuallyMutedProfileVideo ? 0 : 1.0;
-          updateVideoMuteUi(userManuallyMutedProfileVideo);
           vid.play().catch(() => {
             if (!isProfileVideoAllowedToPlay()) return;
             vid.muted = true;
