@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v54-chamet-race-and-live-map)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v99-rush-3d-fixed)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v60-live-admin-sync-verified';
+const CACHE_NAME = 'safarsaathi-v99-rush-3d-fixed';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -18,10 +18,8 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
-
-  // Always fetch fresh from network to prevent stale data
   event.respondWith(
-    fetch(event.request).catch(() => {
+    fetch(event.request, { cache: 'no-store' }).catch(() => {
       return caches.match(event.request);
     })
   );

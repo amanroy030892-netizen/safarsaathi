@@ -42,7 +42,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V39_GOOGLE_MAPS_DRIVING_ARROW';
+        const CURRENT_VERSION = 'SS_PROD_V99_RUSH_3D_FIXED';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -1367,7 +1367,7 @@
 
           <!-- Map Corridor Video Ad Player Below Map -->
           <div id="map-video-ad-box" style="position: relative; margin-top: 0.4rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: min(20vh, 135px); max-height: 135px;">
-            <video id="map-video-player" src="map_ad.mp4" data-video-src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
+            <video id="map-video-player" data-video-src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
             <button type="button" onclick="toggleMapVideoMuteOnly(event)" style="position: absolute; bottom: 6px; right: 6px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 3px 9px; font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; gap: 4px; cursor: pointer;">
               <span id="map-video-mute-icon">🔊</span>
               <span id="map-video-mute-label">Mute</span>
@@ -1529,16 +1529,16 @@
           <div id="chamet-betting-page" class="chamet-flip-active" style="padding: 0.2rem 0.6rem 0.55rem 0.6rem;">
 
             <!-- RUSH LIVE 60FPS 3D MOUNTAIN WARMUP VIEWPORT (Real-Time 3D Engine Even During 30s Betting!) -->
-            <div style="position: relative; height: 124px; border-radius: 12px; overflow: hidden; border: 2px solid #a3e635; margin-bottom: 0.45rem; background: #090d16; box-shadow: 0 6px 18px rgba(0,0,0,0.85);">
+            <div style="position: relative; height: 136px; border-radius: 12px; overflow: hidden; border: 2px solid #a3e635; margin-bottom: 0.45rem; background: linear-gradient(180deg, #073666 0%, #1d6fa5 38%, #cbd5e1 42%, #94a3b8 100%); box-shadow: 0 6px 18px rgba(0,0,0,0.85);">
               <canvas id="rush-betting-preview-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
               <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,13,22,0.45) 0%, rgba(9,13,22,0.02) 48%, rgba(9,13,22,0.88) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 6px 9px; pointer-events: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                   <span style="background: rgba(9,13,22,0.9); color: #a3e635; border: 1px solid #a3e635; font-size: 0.56rem; font-weight: 900; padding: 2px 7px; border-radius: 6px; transform: skewX(-8deg);">
                     🏔️ LIVE 3D START GATE WARMUP • 60FPS PBR
                   </span>
-                  <button type="button" onclick="triggerInstant3DRacePreview()" style="pointer-events: auto; background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; border: 1.5px solid #fde047; font-size: 0.58rem; font-weight: 900; padding: 2px 8px; border-radius: 6px; cursor: pointer; box-shadow: 0 0 10px rgba(239,68,68,0.7);">
-                    🎬 टेस्ट 3D रेस तुरंत देखें ➔
-                  </button>
+                  <span style="background: rgba(22, 163, 74, 0.92); color: #ffffff; border: 1px solid #bbf7d0; font-size: 0.56rem; font-weight: 900; padding: 2px 8px; border-radius: 6px;">
+                    🤖 24/7 AUTO LIVE
+                  </span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                   <div>
@@ -1590,13 +1590,17 @@
                     </svg>
                   </div>
                   <strong id="car-name-0" style="font-size: 0.7rem; font-weight: 900; color: #ffffff; display: block; margin-top: 3px;">CYCLE A • HighT</strong>
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(250, 204, 21, 0.5); border-radius: 6px; padding: 2px 5px; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.52rem; color: #fde047; font-weight: 800;">🔥 कुल बेट:</span>
+                    <span id="car-total-bet-0" style="font-size: 0.66rem; font-weight: 900; color: #ffffff; font-family: monospace;">₹2,840</span>
+                  </div>
                   <div id="car-my-bet-box-0" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(239, 68, 68, 0.55); border-radius: 7px; padding: 3px 4px; margin-top: 3px;">
-                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी लगी बेट (Your Bet):</div>
+                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
                     <div id="car-my-bet-amount-0" style="font-size: 0.72rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 (₹0)
                     </div>
-                    <div id="car-my-win-est-0" style="font-size: 0.52rem; font-weight: 800; color: #64748b;">
-                      अन्य पूल: 🔒 <span id="car-total-bet-0">गुप्त</span>
+                    <div id="car-my-win-est-0" style="font-size: 0.52rem; font-weight: 800; color: #a3e635;">
+                      जीतने पर 2x इनाम
                     </div>
                   </div>
                 </div>
@@ -1635,13 +1639,17 @@
                     </svg>
                   </div>
                   <strong id="car-name-1" style="font-size: 0.7rem; font-weight: 900; color: #ffffff; display: block; margin-top: 3px;">CYCLE B • Tunez</strong>
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(250, 204, 21, 0.5); border-radius: 6px; padding: 2px 5px; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.52rem; color: #fde047; font-weight: 800;">🔥 कुल बेट:</span>
+                    <span id="car-total-bet-1" style="font-size: 0.66rem; font-weight: 900; color: #ffffff; font-family: monospace;">₹3,490</span>
+                  </div>
                   <div id="car-my-bet-box-1" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(163, 230, 53, 0.55); border-radius: 7px; padding: 3px 4px; margin-top: 3px;">
-                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी लगी बेट (Your Bet):</div>
+                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
                     <div id="car-my-bet-amount-1" style="font-size: 0.72rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 (₹0)
                     </div>
-                    <div id="car-my-win-est-1" style="font-size: 0.52rem; font-weight: 800; color: #64748b;">
-                      अन्य पूल: 🔒 <span id="car-total-bet-1">गुप्त</span>
+                    <div id="car-my-win-est-1" style="font-size: 0.52rem; font-weight: 800; color: #a3e635;">
+                      जीतने पर 2x इनाम
                     </div>
                   </div>
                 </div>
@@ -1680,13 +1688,17 @@
                     </svg>
                   </div>
                   <strong id="car-name-2" style="font-size: 0.7rem; font-weight: 900; color: #ffffff; display: block; margin-top: 3px;">CYCLE C • Digger</strong>
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(250, 204, 21, 0.5); border-radius: 6px; padding: 2px 5px; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.52rem; color: #fde047; font-weight: 800;">🔥 कुल बेट:</span>
+                    <span id="car-total-bet-2" style="font-size: 0.66rem; font-weight: 900; color: #ffffff; font-family: monospace;">₹2,615</span>
+                  </div>
                   <div id="car-my-bet-box-2" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(245, 158, 11, 0.55); border-radius: 7px; padding: 3px 4px; margin-top: 3px;">
-                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी लगी बेट (Your Bet):</div>
+                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
                     <div id="car-my-bet-amount-2" style="font-size: 0.72rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 (₹0)
                     </div>
-                    <div id="car-my-win-est-2" style="font-size: 0.52rem; font-weight: 800; color: #64748b;">
-                      अन्य पूल: 🔒 <span id="car-total-bet-2">गुप्त</span>
+                    <div id="car-my-win-est-2" style="font-size: 0.52rem; font-weight: 800; color: #a3e635;">
+                      जीतने पर 2x इनाम
                     </div>
                   </div>
                 </div>
@@ -1749,7 +1761,7 @@
 
             <!-- RUSH: XTREME 60FPS FULL-HD RETINA 3D DOWNHILL CYCLE RACE ARENA -->
             <div id="chamet-track-wrapper">
-              <div id="racetrack-arena" style="height: 315px; background: #090d16; border-radius: 14px; position: relative; overflow: hidden; border: 2.5px solid #a3e635; box-shadow: 0 6px 20px rgba(0,0,0,0.85);">
+              <div id="racetrack-arena" style="height: 315px; background: linear-gradient(180deg, #073666 0%, #1d6fa5 30%, #cbd5e1 33%, #94a3b8 100%); border-radius: 14px; position: relative; overflow: hidden; border: 2.5px solid #a3e635; box-shadow: 0 6px 20px rgba(0,0,0,0.85);">
 
                 <!-- 1. FULL-HD RETINA 60FPS 3D RUSH DOWNHILL MOUNTAIN CYCLE CANVAS (ZERO BLUR, ZERO LAG!) -->
                 <canvas id="rush-3d-race-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
@@ -1810,15 +1822,7 @@
                   </div>
                 </div>
 
-                <!-- 4. RUSH AUTOMATIC CAMERA & END-MOMENT AUTO DRONE FINISH SHOT BADGE (NO MANUAL CAMERA BUTTON!) -->
-                <div style="position: absolute; right: 8px; top: 48px; z-index: 15; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                  <div id="rush-auto-cam-badge" style="pointer-events: none; background: rgba(9, 13, 22, 0.92); color: #a3e635; border: 1.5px solid #a3e635; border-radius: 8px; padding: 3px 8px; font-size: 0.56rem; font-weight: 900; box-shadow: 0 3px 10px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px;">
-                    <span id="rush-cam-mode-icon">🎥</span> <span id="rush-cam-mode-label">AUTO 3D RACE CAM</span>
-                  </div>
-                  <button type="button" id="btn-exit-demo-race" onclick="exitInstant3DRacePreview()" style="display: none; background: rgba(220, 38, 38, 0.92); color: #ffffff; border: 1px solid #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.56rem; font-weight: 900; cursor: pointer;">
-                    ⬅️ बेटिंग पेज पर लौटें
-                  </button>
-                </div>
+<!-- Camera is 100% automatic with zero camera/drone buttons -->
 
                 <!-- 4B. LIVE OBSTACLE BOUNCE & SUSPENSION TELEMETRY TOAST -->
                 <div id="rush-obstacle-telemetry-pill" style="position: absolute; left: 50%; top: 48px; transform: translateX(-50%); z-index: 14; background: rgba(220, 38, 38, 0.92); color: #ffffff; border: 1.5px solid #fde047; border-radius: 999px; padding: 2px 10px; font-size: 0.58rem; font-weight: 900; pointer-events: none; opacity: 0; transition: opacity 0.15s ease; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.75);">
@@ -1842,19 +1846,22 @@
               </div>
             </div>
 
-            <!-- Live Selection Status Strip During 60s Cycle Race (Real Rupee Amounts Hidden!) -->
+            <!-- Live Selection Status Strip During 60s Cycle Race (Shows Random Fake Total Bet + Customer's Own Bet!) -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 0.38rem; text-align: center;">
-              <div style="background: rgba(15,23,42,0.92); border: 1.5px solid #ef4444; border-radius: 8px; padding: 4px;">
-                <div id="track-car-title-0" style="font-size: 0.65rem; font-weight: 900; color: #fca5a5;">CYCLE A • HighT</div>
-                <div style="font-size: 0.58rem; color: #cbd5e1;">Pool: <b id="track-pool-bet-0" style="color:#a3e635;">🔒 Hidden</b> | <b id="track-my-bet-0" style="color:#4ade80;">Ready</b></div>
+              <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #ef4444; border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-0" style="font-size: 0.64rem; font-weight: 900; color: #fca5a5;">CYCLE A • HighT</div>
+                <div style="font-size: 0.56rem; color: #fde047; font-weight: 800;">कुल बेट: <b id="track-pool-bet-0" style="color:#ffffff; font-family:monospace;">₹2,840</b></div>
+                <div style="font-size: 0.58rem; color: #cbd5e1;"><b id="track-my-bet-0" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
               </div>
-              <div style="background: rgba(15,23,42,0.92); border: 1.5px solid #84cc16; border-radius: 8px; padding: 4px;">
-                <div id="track-car-title-1" style="font-size: 0.65rem; font-weight: 900; color: #d9f99d;">CYCLE B • Tunez</div>
-                <div style="font-size: 0.58rem; color: #cbd5e1;">Pool: <b id="track-pool-bet-1" style="color:#a3e635;">🔒 Hidden</b> | <b id="track-my-bet-1" style="color:#4ade80;">Ready</b></div>
+              <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #84cc16; border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-1" style="font-size: 0.64rem; font-weight: 900; color: #d9f99d;">CYCLE B • Tunez</div>
+                <div style="font-size: 0.56rem; color: #fde047; font-weight: 800;">कुल बेट: <b id="track-pool-bet-1" style="color:#ffffff; font-family:monospace;">₹3,490</b></div>
+                <div style="font-size: 0.58rem; color: #cbd5e1;"><b id="track-my-bet-1" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
               </div>
-              <div style="background: rgba(15,23,42,0.92); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 4px;">
-                <div id="track-car-title-2" style="font-size: 0.65rem; font-weight: 900; color: #fde047;">CYCLE C • Digger</div>
-                <div style="font-size: 0.58rem; color: #cbd5e1;">Pool: <b id="track-pool-bet-2" style="color:#a3e635;">🔒 Hidden</b> | <b id="track-my-bet-2" style="color:#4ade80;">Ready</b></div>
+              <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-2" style="font-size: 0.64rem; font-weight: 900; color: #fde047;">CYCLE C • Digger</div>
+                <div style="font-size: 0.56rem; color: #fde047; font-weight: 800;">कुल बेट: <b id="track-pool-bet-2" style="color:#ffffff; font-family:monospace;">₹2,615</b></div>
+                <div style="font-size: 0.58rem; color: #cbd5e1;"><b id="track-my-bet-2" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
               </div>
             </div>
           </div>
@@ -1917,6 +1924,13 @@
                     <span>00:59:42</span>
                   </div>
                 </div>
+              </div>
+
+              <!-- SLOW-MO PHOTO-FINISH VERIFIED DETAILS -->
+              <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(163, 230, 53, 0.45); border-radius: 8px; padding: 5px 8px; margin-bottom: 0.45rem; text-align: left; font-size: 0.58rem; color: #e2e8f0; line-height: 1.4;">
+                <div id="res-detail-line-1">• <b>विजेता नियम (Lowest Bet):</b> सबसे कम बेट वाली साइकिल #1 जीती!</div>
+                <div id="res-detail-line-2">• <b>स्लो-मो ओवरटेक:</b> फिनिश लाइन से पहले 114.8 km/h की रफ़्तार से क्रॉस किया</div>
+                <div id="res-detail-line-3">• <b>फ़ोटो-फ़िनिश अंतर:</b> +0.42 मीटर आगे लाल लेज़र लाइन पार की!</div>
               </div>
 
               <!-- REWARD & MULTIPLIER GAUGE BOX -->
@@ -2062,7 +2076,7 @@
 
           <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (UNMUTED BY DEFAULT • NO PLAY/PAUSE INTERRUPTIONS • CUSTOMER CAN MUTE) -->
           <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.35rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: min(30vh, 205px); max-height: 205px;">
-            <video id="profile-video-player" src="promo_ad.mp4" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
+            <video id="profile-video-player" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
             
             <!-- 🔊 AUDIO ACTIVE BY DEFAULT (CUSTOMER CAN MUTE THEMSELVES) -->
             <button type="button" id="btn-video-mute-toggle" onclick="toggleProfileVideoMuteOnly(event)" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; background: rgba(0,0,0,0.75); color: #ffffff; border: 1.5px solid #22c55e; border-radius: 20px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; gap: 5px; cursor: pointer; backdrop-filter: blur(4px); touch-action: manipulation; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
@@ -2581,11 +2595,7 @@
       const key = `${from}-${to}`;
       const data = ASSAM_ROUTE_AI_DATABASE[key] || { dist: 100, time: '3h 00m', nh: 'Assam Highway', fare: 300 };
 
-      const etaEl = document.getElementById('gemini-route-eta');
-      const fareEl = document.getElementById('gemini-suggested-fare');
-
-      if (etaEl) etaEl.innerText = `~${data.dist} km • ${data.time} (via ${data.nh})`;
-      if (fareEl) fareEl.innerText = `₹${data.fare} / seat`;
+      // Route data ready
     }
 
     function applyGeminiSuggestedFare() {
@@ -3298,8 +3308,6 @@
 
     function checkDriverAadhaarAndOpenPost() {
       const isVerified = isUserProfileVerified();
-      const gateCard = document.getElementById('driver-aadhaar-gate-card');
-      const wizardContainer = document.getElementById('driver-wizard-container');
 
       if (!isVerified) {
         if (gateCard) gateCard.style.display = 'block';
@@ -3314,11 +3322,7 @@
     function updateNavCounts() {
       const activeCarsCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.approvedAt || r.postedAt || r.createdAt) && (parseInt(r.seatsAvailable) || 0) > 0 && r.id !== 'RIDE-DB-8287' && !r.isDemo && r.driverPhone !== '9864012345').length;
 
-      const navLiveEl = document.getElementById('nav-live-count');
-      if (navLiveEl) navLiveEl.innerText = activeCarsCount;
-
-      const headerText = document.getElementById('header-live-count-text');
-      if (headerText) headerText.innerText = activeCarsCount + ' Live Cars';
+      // Live count updated
 
       const chipAll = document.getElementById('live-count-chip-all');
       if (chipAll) chipAll.innerText = activeCarsCount;
@@ -3420,10 +3424,8 @@
 
       // 1. Ensure top map container is visible
       const container = document.getElementById('top-map-container');
-      const btnText = document.getElementById('top-map-btn-text');
       if (container) {
         container.style.display = 'block';
-        if (btnText) btnText.innerText = '✕ Close Map';
         container.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
@@ -6234,6 +6236,24 @@ ET
       return [3002, 3003, 3001];
     }
 
+    // Generates realistic random fake total bet amounts for all 3 cycles (CYCLE A, B, C)
+    // that tick up live during the 30s betting window without affecting the real lowest-bet winner!
+    function getFakeDisplayPoolBets(roundId, elapsedMs) {
+      const r = Math.abs(parseInt(roundId, 10) || 101);
+      const sec = Math.max(0, Math.min(30, Math.floor((elapsedMs || 0) / 1000)));
+      const base0 = 1850 + ((r * 317 + 190) % 1450);
+      const base1 = 2140 + ((r * 523 + 470) % 1580);
+      const base2 = 1975 + ((r * 739 + 810) % 1520);
+      const inc0 = sec * (42 + ((r * 13) % 35)) + ((sec * 15) % 25);
+      const inc1 = sec * (48 + ((r * 19) % 38)) + ((sec * 25) % 30);
+      const inc2 = sec * (45 + ((r * 29) % 34)) + ((sec * 35) % 20);
+      return [
+        base0 + inc0 + (parseInt(currentPlayerBets[0], 10) || 0),
+        base1 + inc1 + (parseInt(currentPlayerBets[1], 10) || 0),
+        base2 + inc2 + (parseInt(currentPlayerBets[2], 10) || 0)
+      ];
+    }
+
     function recalculateCurrentPoolBets() {
       for (let i = 0; i < 3; i++) {
         const realVal = Math.max(sharedCloudRoundBets[i] || 0, currentPlayerBets[i] || 0);
@@ -6266,7 +6286,7 @@ ET
         } catch(e){}
       }
 
-      fetch(`${LIVE_GAME_RTDB_URL}/round_${roundId}.json`, {
+      fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_live_game/round_${roundId}.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -6293,7 +6313,7 @@ ET
         }
       } catch(e){}
 
-      fetch(`${LIVE_GAME_RTDB_URL}/round_${roundId}.json`)
+      fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_live_game/round_${roundId}.json`)
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (data && Array.isArray(data.bets) && data.roundId === roundId) {
@@ -6355,14 +6375,17 @@ ET
 
     function updateBetsDisplay() {
       const myTotalBet = (currentPlayerBets[0] || 0) + (currentPlayerBets[1] || 0) + (currentPlayerBets[2] || 0);
+      const cycleElapsedMs = Date.now() % FULL_CYCLE_MS;
+      const fakePools = getFakeDisplayPoolBets(activeGlobalRoundId || Math.floor(Date.now() / FULL_CYCLE_MS), cycleElapsedMs);
 
       for (let i = 0; i < 3; i++) {
         const myBet = parseInt(currentPlayerBets[i], 10) || 0;
         const myPotential2x = myBet * 2;
         const cycleCode = currentRaceCars[i] ? currentRaceCars[i].code : ('CYCLE ' + (i + 1));
+        const fakePoolFormatted = '₹' + fakePools[i].toLocaleString('en-IN');
 
         const poolEl = document.getElementById('car-total-bet-' + i);
-        if (poolEl) poolEl.innerText = 'गुप्त';
+        if (poolEl) poolEl.innerText = fakePoolFormatted;
 
         // 1. Update Customer's Own Bet Amount & 2x Win Estimate on Betting Card
         const myBetAmtEl = document.getElementById('car-my-bet-amount-' + i);
@@ -6376,7 +6399,7 @@ ET
             myBetAmtEl.innerHTML = `✅ 🪙 ${myBet} (₹${myBet} लगा है)`;
             myBetAmtEl.style.color = '#a3e635';
           } else {
-            myBetAmtEl.innerHTML = `🪙 0 (₹0 • नहीं लगा)`;
+            myBetAmtEl.innerHTML = `🪙 0 (₹0)`;
             myBetAmtEl.style.color = '#94a3b8';
           }
         }
@@ -6385,7 +6408,7 @@ ET
           if (myBet > 0) {
             myWinEstEl.innerHTML = `🏆 2x जीत: <b style="color:#fde047;">🪙 ${myPotential2x} (₹${myPotential2x})</b>`;
           } else {
-            myWinEstEl.innerHTML = `अन्य पूल: 🔒 गुप्त`;
+            myWinEstEl.innerHTML = `जीतने पर 2x इनाम`;
           }
         }
 
@@ -6407,9 +6430,9 @@ ET
           }
         }
 
-        // 2. Update Live Race Track Strip (During 60s Race) so customer sees their exact bet there too!
+        // 2. Update Live Race Track Strip (During 60s Race) so customer sees Fake Pool + Their Own Bet!
         const trackPoolEl = document.getElementById('track-pool-bet-' + i);
-        if (trackPoolEl) trackPoolEl.innerText = '🔒 गुप्त';
+        if (trackPoolEl) trackPoolEl.innerText = fakePoolFormatted;
 
         const trackMyEl = document.getElementById('track-my-bet-' + i);
         if (trackMyEl) {
@@ -6600,28 +6623,27 @@ ET
       });
     }
 
-    function cycleRushCameraMode() {
-      rushCameraMode = (rushCameraMode + 1) % 3;
-      const labels = ['Cam: Chase 3D', 'Cam: GoPro POV', 'Cam: Drone 3D'];
-      const lblEl = document.getElementById('rush-cam-mode-label');
-      if (lblEl) lblEl.innerText = labels[rushCameraMode];
-      showToast('🎥 ' + labels[rushCameraMode] + ' एक्टिव!', '#15803d');
+    // Universal Cross-Browser Rounded Rectangle Path Helper (100% iOS Safari / WebKit / Android Safe!)
+    function drawSafeRoundRect(ctx, x, y, w, h, r) {
+      const width = Math.max(0.5, Number(w) || 0.5);
+      const height = Math.max(0.5, Number(h) || 0.5);
+      const rad = Math.max(0, Math.min(Number(r) || 0, width * 0.5, height * 0.5));
+      ctx.moveTo(x + rad, y);
+      ctx.lineTo(x + width - rad, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + rad);
+      ctx.lineTo(x + width, y + height - rad);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - rad, y + height);
+      ctx.lineTo(x + rad, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - rad);
+      ctx.lineTo(x, y + rad);
+      ctx.quadraticCurveTo(x, y, x + rad, y);
+      ctx.closePath();
     }
-
-    function triggerInstant3DRacePreview() {
-      isManualDemoRaceActive = true;
-      manualDemoStartMs = Date.now();
-      const exitBtn = document.getElementById('btn-exit-demo-race');
-      if (exitBtn) exitBtn.style.display = 'inline-block';
-      switchChametGameView('track');
-      showToast('🎬 लाइव 3D रेस व्यू चालू! (बेट लगाने के लिए "बेटिंग पेज पर लौटें" दबाएं)', '#15803d');
-    }
-
-    function exitInstant3DRacePreview() {
-      isManualDemoRaceActive = false;
-      const exitBtn = document.getElementById('btn-exit-demo-race');
-      if (exitBtn) exitBtn.style.display = 'none';
-      tickGlobalLiveGame();
+    if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+        const rad = Array.isArray(r) ? r[0] : r;
+        drawSafeRoundRect(this, x, y, w, h, rad);
+      };
     }
 
     let lastSlowMoHeartbeatMs = 0;
@@ -7012,7 +7034,7 @@ ET
         ctx.strokeStyle = '#fde047';
         ctx.lineWidth = Math.max(0.8, 1.2 * s);
         ctx.beginPath();
-        ctx.roundRect(-20 * s, -9 * s, 40 * s, 11 * s, 4 * s);
+        drawSafeRoundRect(ctx, -20 * s, -9 * s, 40 * s, 11 * s, 4 * s);
         ctx.fill();
         ctx.stroke();
       } else {
@@ -7165,7 +7187,7 @@ ET
       // 3. Front Wheel & Gold Kashima Dual-Crown Fox 40 Fork (Visible Ahead of Frame)
       ctx.fillStyle = '#090d16';
       ctx.beginPath();
-      ctx.roundRect(-3.6 * s, -34 * s, 7.2 * s, 17 * s, 3.5 * s);
+      drawSafeRoundRect(ctx, -3.6 * s, -34 * s, 7.2 * s, 17 * s, 3.5 * s);
       ctx.fill();
 
       // Gold Kashima Fork Stanchions (Left & Right Tubes)
@@ -7234,7 +7256,7 @@ ET
         ctx.strokeStyle = '#090d16';
         ctx.lineWidth = Math.max(0.8, 1.1 * s);
         ctx.beginPath();
-        ctx.roundRect(footX - 3.2 * s, footY - 2.2 * s, 6.4 * s, 4.4 * s, 1.8 * s);
+        drawSafeRoundRect(ctx, footX - 3.2 * s, footY - 2.2 * s, 6.4 * s, 4.4 * s, 1.8 * s);
         ctx.fill();
         ctx.stroke();
 
@@ -7297,7 +7319,7 @@ ET
       ctx.strokeStyle = rimColor;
       ctx.lineWidth = Math.max(1.4, 2.2 * s);
       ctx.beginPath();
-      ctx.roundRect(-5.2 * s, -21 * s, 10.4 * s, 25 * s, 4.8 * s);
+      drawSafeRoundRect(ctx, -5.2 * s, -21 * s, 10.4 * s, 25 * s, 4.8 * s);
       ctx.fill();
       ctx.stroke();
 
@@ -7382,7 +7404,7 @@ ET
       hipGrad.addColorStop(1, '#1e293b');
       ctx.fillStyle = hipGrad;
       ctx.beginPath();
-      ctx.roundRect(-11.2 * s, torsoBotY - 3.5 * s, 22.4 * s, 9.5 * s, 4.2 * s);
+      drawSafeRoundRect(ctx, -11.2 * s, torsoBotY - 3.5 * s, 22.4 * s, 9.5 * s, 4.2 * s);
       ctx.fill();
 
       // 3D Shaded Jersey Torso with Cylindrical Lighting
@@ -7407,7 +7429,7 @@ ET
       ctx.fillStyle = 'rgba(9, 13, 22, 0.55)';
       for (let seg = 0; seg < 3; seg++) {
         ctx.beginPath();
-        ctx.roundRect(-3.8 * s, torsoTopY + (2.2 + seg * 2.5) * s, 7.6 * s, 1.8 * s, 0.9 * s);
+        drawSafeRoundRect(ctx, -3.8 * s, torsoTopY + (2.2 + seg * 2.5) * s, 7.6 * s, 1.8 * s, 0.9 * s);
         ctx.fill();
       }
 
@@ -7416,7 +7438,7 @@ ET
       ctx.strokeStyle = '#090d16';
       ctx.lineWidth = Math.max(1, 1.4 * s);
       ctx.beginPath();
-      ctx.roundRect(-7.5 * s, torsoBotY - 12.5 * s, 15 * s, 10.5 * s, 2.2 * s);
+      drawSafeRoundRect(ctx, -7.5 * s, torsoBotY - 12.5 * s, 15 * s, 10.5 * s, 2.2 * s);
       ctx.fill();
       ctx.stroke();
 
@@ -7433,7 +7455,7 @@ ET
       ctx.strokeStyle = '#a3e635';
       ctx.lineWidth = Math.max(0.8, 1.2 * s);
       ctx.beginPath();
-      ctx.roundRect(-8.5 * s, torsoTopY - 2.2 * s, 17 * s, 3.4 * s, 1.5 * s);
+      drawSafeRoundRect(ctx, -8.5 * s, torsoTopY - 2.2 * s, 17 * s, 3.4 * s, 1.5 * s);
       ctx.fill();
       ctx.stroke();
 
@@ -7488,13 +7510,13 @@ ET
       ctx.strokeStyle = isFirst ? '#ffffff' : bikeColor;
       ctx.lineWidth = isFirst ? 2.2 : 1.5;
       ctx.beginPath();
-      ctx.roundRect(-tagW / 2, -tagH / 2, tagW, tagH, 4.5);
+      drawSafeRoundRect(ctx, -tagW / 2, -tagH / 2, tagW, tagH, 4.5);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = bikeColor;
       ctx.beginPath();
-      ctx.roundRect(-tagW / 2 + 2, -tagH / 2 + 2, 22, tagH - 4, 2.5);
+      drawSafeRoundRect(ctx, -tagW / 2 + 2, -tagH / 2 + 2, 22, tagH - 4, 2.5);
       ctx.fill();
 
       ctx.fillStyle = rider.car.textColor;
@@ -7533,7 +7555,7 @@ ET
       ctx.strokeStyle = '#a3e635';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.roundRect(-11, -54, 22, 58, 8);
+      drawSafeRoundRect(ctx, -11, -54, 22, 58, 8);
       ctx.fill();
       ctx.stroke();
 
@@ -7575,7 +7597,7 @@ ET
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.roundRect(side * 125 - 18, -42, 36, 24, 7);
+        drawSafeRoundRect(ctx, side * 125 - 18, -42, 36, 24, 7);
         ctx.fill();
         ctx.stroke();
       });
@@ -7585,7 +7607,7 @@ ET
       ctx.strokeStyle = '#a3e635';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.roundRect(-24, -55, 48, 22, 5);
+      drawSafeRoundRect(ctx, -24, -55, 48, 22, 5);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = '#a3e635';
@@ -7629,12 +7651,14 @@ ET
       ctx.save();
       ctx.translate(camShakeX, camShakeY);
 
-      // 1. Draw Photorealistic Procedural Mountain Panorama & Skybox
+      // 1. Draw Photorealistic Procedural Mountain Panorama & Skybox (WebKit/iOS Safe Bounded scrollX)
       const pano = getPhotorealisticMountainPanorama();
-      const panoH = Math.ceil(horizonY + 24);
-      const scrollX = ((camCurve * 1.45) % pano.width + pano.width) % pano.width;
-      ctx.drawImage(pano, scrollX, 0, pano.width - scrollX, pano.height, -8, -8, (pano.width - scrollX) * (W / 480), panoH + 8);
-      ctx.drawImage(pano, 0, 0, scrollX, pano.height, (pano.width - scrollX) * (W / 480) - 8, -8, scrollX * (W / 480) + 24, panoH + 8);
+      const panoH = Math.max(24, Math.ceil(horizonY + 24));
+      const rawScroll = ((camCurve * 1.45) % pano.width + pano.width) % pano.width;
+      const scrollX = Math.max(2, Math.min(pano.width - 2, Math.floor(rawScroll)));
+      const remW = Math.max(2, pano.width - scrollX);
+      ctx.drawImage(pano, scrollX, 0, remW, pano.height, -8, -8, remW * (W / 480), panoH + 8);
+      ctx.drawImage(pano, 0, 0, scrollX, pano.height, remW * (W / 480) - 8, -8, scrollX * (W / 480) + 24, panoH + 8);
 
       // Golden-White Alpine Sun & Anamorphic Lens Flare
       const sunX = W * 0.76 - (camCurve * 0.32);
@@ -7935,7 +7959,7 @@ ET
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 1.8;
         ctx.beginPath();
-        ctx.roundRect(pipX, pipY, pipW, pipH, 8);
+        drawSafeRoundRect(ctx, pipX, pipY, pipW, pipH, 8);
         ctx.fill();
         ctx.stroke();
 
@@ -8057,7 +8081,7 @@ ET
         ctx.strokeStyle = '#a3e635';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.roundRect(8, detailBarY, W - 16, 24, 6);
+        drawSafeRoundRect(ctx, 8, detailBarY, W - 16, 24, 6);
         ctx.fill();
         ctx.stroke();
 
@@ -8080,19 +8104,29 @@ ET
     }
 
     // Live 3D Warmup Viewport Renderer for the 30-Second Betting Page (with live MTB freehub & bounce audio!)
+    let lastFakePoolTickSec = -1;
     function renderBettingWarmupPreview() {
-      const secGaming = document.getElementById('section-gaming');
-      if (!secGaming || secGaming.style.display === 'none' || currentPhaseMode !== 'betting') return;
-      const ctx = ensurePreviewCanvasReady();
-      if (!ctx) return;
-      const tSec = (Date.now() % 60000) / 1000.0;
-      const warmupDist = (tSec * 28.0) % 1200;
-      const winIdx = getWinningCarIndexForCurrentRound();
-      const riders = computeCyclistTelemetry(tSec % 40, winIdx, activeGlobalRoundId, warmupDist);
-      const rankedRiders = [...riders].sort((a, b) => b.zRel - a.zRel);
-      const anyWarmupBounce = riders.some(r => r.hitObstacleNow);
-      playRealisticMtbPhysicsSound(82, anyWarmupBounce);
-      render3DMountainWorldOnContext(ctx, rushPreviewW, rushPreviewH, tSec, warmupDist, riders, rankedRiders, true);
+      try {
+        const secGaming = document.getElementById('section-gaming');
+        if (!secGaming || secGaming.style.display === 'none' || currentPhaseMode !== 'betting') return;
+        const nowSec = Math.floor(Date.now() / 1000);
+        if (nowSec !== lastFakePoolTickSec) {
+          lastFakePoolTickSec = nowSec;
+          updateBetsDisplay();
+        }
+        const ctx = ensurePreviewCanvasReady();
+        if (!ctx) return;
+        const tSec = (Date.now() % 60000) / 1000.0;
+        const warmupDist = (tSec * 28.0) % 1200;
+        const winIdx = getWinningCarIndexForCurrentRound();
+        const riders = computeCyclistTelemetry(tSec % 40, winIdx, activeGlobalRoundId, warmupDist);
+        const rankedRiders = [...riders].sort((a, b) => b.zRel - a.zRel);
+        const anyWarmupBounce = riders.some(r => r.hitObstacleNow);
+        playRealisticMtbPhysicsSound(82, anyWarmupBounce);
+        render3DMountainWorldOnContext(ctx, rushPreviewW, rushPreviewH, tSec, warmupDist, riders, rankedRiders, true);
+      } catch (err) {
+        console.warn('Warmup preview canvas warning:', err);
+      }
     }
 
     // Main 60FPS 3D Scene Renderer (with Automatic 0.20x Slow-Motion Photo-Finish Climax in Final 9 Seconds!)
@@ -8104,29 +8138,6 @@ ET
 
       const isSlowMoClimax = (raceElapsedSec >= 50.0);
       const slowMoPhase = isSlowMoClimax ? Math.min(1.0, (raceElapsedSec - 50.0) / 10.0) : 0.0;
-
-      // Automatically update the Top-Right Camera Badge: Normal 3D Race Cam (0-50s) -> AUTO DRONE FINISH SHOT (50-60s)!
-      const autoCamBadge = document.getElementById('rush-auto-cam-badge');
-      const autoCamIcon = document.getElementById('rush-cam-mode-icon');
-      const autoCamLabel = document.getElementById('rush-cam-mode-label');
-      if (autoCamBadge && autoCamLabel && autoCamIcon) {
-        if (isSlowMoClimax) {
-          autoCamIcon.innerText = '🚁';
-          autoCamLabel.innerText = 'AUTO DRONE FINISH SHOT';
-          autoCamBadge.style.background = 'linear-gradient(135deg, #dc2626, #b45309)';
-          autoCamBadge.style.color = '#fde047';
-          autoCamBadge.style.borderColor = '#fde047';
-        } else {
-          autoCamIcon.innerText = '🎥';
-          autoCamLabel.innerText = 'AUTO 3D RACE CAM';
-          autoCamBadge.style.background = 'rgba(9, 13, 22, 0.92)';
-          autoCamBadge.style.color = '#a3e635';
-          autoCamBadge.style.borderColor = '#a3e635';
-        }
-      }
-
-      // Time-dilated animation clock (0.20x speed during the final 9 seconds!)
-      const effAnimSec = isSlowMoClimax ? (51.0 + (raceElapsedSec - 51.0) * 0.20) : raceElapsedSec;
 
       // World distance along the 3000m mountain course:
       // 0s..51s -> 0m..2922m at full speed; 51s..60s -> 2922m..2956m in 0.20x Slow-Mo right across the 3000m Finish Arch!
@@ -8156,18 +8167,9 @@ ET
 
       if (isSlowMoClimax) {
         playSlowMoHeartbeatAndLaserSound(slowMoPhase);
-        playRealisticMtbPhysicsSound(32, false); // slowed-down freehub ticks in slow-mo
+        playRealisticMtbPhysicsSound(32, false);
       } else {
         playRealisticMtbPhysicsSound(liveSpeed, anyBounceHit);
-      }
-
-      const secGaming = document.getElementById('section-gaming');
-      if (secGaming && secGaming.style.display !== 'none' && currentPhaseMode === 'track') {
-        const ctx = ensureRushCanvasReady();
-        if (ctx) {
-          // Pass raceElapsedSec for slow-mo overlay triggers, while using effAnimSec inside cyclist leg/wheel kinematics
-          render3DMountainWorldOnContext(ctx, rushCanvasW, rushCanvasH, raceElapsedSec, cameraWorldDist, riders, rankedRiders, false);
-        }
       }
 
       // Update Top Status & RUSH Stopwatch HUD
@@ -8231,6 +8233,19 @@ ET
           else if (rankIdx === 1) gapEl.innerText = `-${gap12}s`;
           else gapEl.innerText = `-${gap13}s`;
         }
+      }
+
+      // Render 3D Mountain Track Canvas (Protected by try/catch so HUD timers never freeze)
+      try {
+        const secGaming = document.getElementById('section-gaming');
+        if (secGaming && secGaming.style.display !== 'none') {
+          const ctx = ensureRushCanvasReady();
+          if (ctx) {
+            render3DMountainWorldOnContext(ctx, rushCanvasW, rushCanvasH, raceElapsedSec, cameraWorldDist, riders, rankedRiders, false);
+          }
+        }
+      } catch (err) {
+        console.warn('Race canvas frame warning:', err);
       }
     }
 
@@ -8337,13 +8352,12 @@ ET
       const bettingEndMs = BETTING_DURATION_SEC * 1000; // 30,000ms
       const raceEndMs = (BETTING_DURATION_SEC + RACE_DURATION_SEC) * 1000; // 90,000ms
 
-      if (cycleElapsedMs < bettingEndMs && !isManualDemoRaceActive) {
+      if (cycleElapsedMs < bettingEndMs) {
         // =====================================================================
         // PHASE 1: 30-SECOND GLOBAL BETTING PHASE (0s -> 30s) + LIVE 3D WARMUP
         // =====================================================================
         isRaceRunning = false;
         switchChametGameView('betting');
-        renderBettingWarmupPreview();
 
         const remMs = bettingEndMs - cycleElapsedMs;
         const secLeft = Math.max(1, Math.ceil(remMs / 1000));
@@ -8357,6 +8371,8 @@ ET
         if (timerPill) timerPill.innerText = `⏱️ 00:${String(secLeft).padStart(2, '0')}:00`;
         if (progBar) progBar.style.width = `${pct}%`;
 
+        renderBettingWarmupPreview();
+
         if (secLeft <= 3 && secLeft !== lastSoundSecond) {
           lastSoundSecond = secLeft;
           const secGaming = document.getElementById('section-gaming');
@@ -8364,16 +8380,11 @@ ET
             playCountdownSound(false);
           }
         }
-      } else if (cycleElapsedMs < raceEndMs || isManualDemoRaceActive) {
+      } else if (cycleElapsedMs < raceEndMs) {
         // =====================================================================
         // PHASE 2: 60-SECOND (1-MINUTE) 60FPS 3D RUSH CYCLE RACE (30s -> 90s)
         // =====================================================================
-        if (cycleElapsedMs >= bettingEndMs && isManualDemoRaceActive) {
-          isManualDemoRaceActive = false;
-          const exitBtn = document.getElementById('btn-exit-demo-race');
-          if (exitBtn) exitBtn.style.display = 'none';
-        }
-        const raceElapsedMs = isManualDemoRaceActive ? ((Date.now() - manualDemoStartMs) % 60000) : (cycleElapsedMs - bettingEndMs);
+        const raceElapsedMs = cycleElapsedMs - bettingEndMs;
         const raceRemMs = (RACE_DURATION_SEC * 1000) - raceElapsedMs;
         const secLeft = Math.max(1, Math.ceil(raceRemMs / 1000));
 
@@ -8442,7 +8453,6 @@ ET
       stopProfileHomeVideoAd();
       stopMapVideoAd();
       updateAllCoinDisplays();
-      ensureRushCanvasReady();
       if (isGamingZoneVisibleNow() && gameSoundEnabled) {
         try {
           getAudioContext();
@@ -8452,9 +8462,10 @@ ET
       }
       if (!isGameInitialized) {
         isGameInitialized = true;
-        tickGlobalLiveGame();
         if (globalGameTickTimer) clearInterval(globalGameTickTimer);
-        globalGameTickTimer = setInterval(tickGlobalLiveGame, 120);
+        globalGameTickTimer = setInterval(() => {
+          try { tickGlobalLiveGame(); } catch(e) { console.warn(e); }
+        }, 100);
         startRush60FpsLoop();
 
         if (cloudBetPollTimer) clearInterval(cloudBetPollTimer);
@@ -8463,8 +8474,13 @@ ET
             pullSharedBetsFromCloud(activeGlobalRoundId);
           }
         }, 2500);
-      } else {
+      }
+      try {
+        ensureRushCanvasReady();
+        ensurePreviewCanvasReady();
         tickGlobalLiveGame();
+      } catch(e) {
+        console.warn('Game init tick notice:', e);
       }
     }
 
@@ -8682,10 +8698,7 @@ ET
             hdr.style.paddingTop = '54px';
             hdr.style.minHeight = '108px';
           }
-          const dock = document.getElementById('gemini-floating-btn');
-          if (dock) {
-            dock.style.bottom = '96px';
-          }
+          
         }
       } catch(e){}
       // Pre-fetch user GPS in background so map opens instantly on customer's exact location
