@@ -1810,11 +1810,11 @@
                   </div>
                 </div>
 
-                <!-- 4. RUSH RIGHT-SIDE CAMERA MODE SWITCHER & NEON BOOST HUD -->
+                <!-- 4. RUSH AUTOMATIC CAMERA & END-MOMENT AUTO DRONE FINISH SHOT BADGE (NO MANUAL CAMERA BUTTON!) -->
                 <div style="position: absolute; right: 8px; top: 48px; z-index: 15; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-                  <button type="button" id="btn-rush-cam-mode" onclick="cycleRushCameraMode()" style="background: rgba(9, 13, 22, 0.92); color: #a3e635; border: 1.5px solid #a3e635; border-radius: 8px; padding: 3px 8px; font-size: 0.58rem; font-weight: 900; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px;">
-                    <span>🎥</span> <span id="rush-cam-mode-label">Cam: Chase 3D</span>
-                  </button>
+                  <div id="rush-auto-cam-badge" style="pointer-events: none; background: rgba(9, 13, 22, 0.92); color: #a3e635; border: 1.5px solid #a3e635; border-radius: 8px; padding: 3px 8px; font-size: 0.56rem; font-weight: 900; box-shadow: 0 3px 10px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 4px;">
+                    <span id="rush-cam-mode-icon">🎥</span> <span id="rush-cam-mode-label">AUTO 3D RACE CAM</span>
+                  </div>
                   <button type="button" id="btn-exit-demo-race" onclick="exitInstant3DRacePreview()" style="display: none; background: rgba(220, 38, 38, 0.92); color: #ffffff; border: 1px solid #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.56rem; font-weight: 900; cursor: pointer;">
                     ⬅️ बेटिंग पेज पर लौटें
                   </button>
@@ -6624,6 +6624,22 @@ ET
       tickGlobalLiveGame();
     }
 
+    let lastSlowMoHeartbeatMs = 0;
+    function playSlowMoHeartbeatAndLaserSound(slowMoPhase) {
+      if (!gameSoundEnabled || !isGamingZoneVisibleNow()) return;
+      const now = Date.now();
+      if (now - lastSlowMoHeartbeatMs < 620) return;
+      lastSlowMoHeartbeatMs = now;
+      try {
+        // Dramatic heartbeat pulse during the automatic end-moment Drone Finish Shot
+        playTone(110, 'sine', 0.14, 0.16);
+        setTimeout(() => playTone(165, 'triangle', 0.12, 0.14), 120);
+        if (slowMoPhase >= 0.70 && slowMoPhase <= 0.85) {
+          setTimeout(() => playTone(1046.5, 'sine', 0.18, 0.18), 180);
+        }
+      } catch(e){}
+    }
+
     // Real-time Web Audio MTB Freehub Ratchet & Suspension Impact Synthesizer
     function playRealisticMtbPhysicsSound(speedKmh, isBounceHit) {
       if (!gameSoundEnabled) return;
@@ -6878,7 +6894,7 @@ ET
         const dLaneDt = (
           0.92 * Math.cos(tSec * 0.92 + idx * 2.094 + seedPhase) * 0.64 -
           1.68 * Math.sin(tSec * 1.68 - idx * 2.094) * 0.24
-        ) * (1 - smoothSprint * 0.7);
+        ) * (1 - smoothPre * 0.7);
 
         let finalX = 0.0;
         if (idx === winningIndex) {
@@ -6923,7 +6939,7 @@ ET
               if (airPhase < 0.35) hitObstacleNow = true;
             }
             // Minor 15% speed drop pull-back when brushing obstacle (unless final winner sprint)
-            if (sprintBlend < 0.4) {
+            if (preSprintBlend < 0.4) {
               zRel -= Math.sin(Math.max(0, Math.min(1, (dz + 1.8) / 9.3)) * Math.PI) * 1.15;
             }
             break;
@@ -7580,11 +7596,15 @@ ET
       ctx.restore();
     }
 
-    // Core Reusable 3D Mountain World Renderer (renders onto either main Race Canvas or Betting Warmup Canvas!)
+    // Core Reusable 3D Mountain World Renderer (100% Automatic 3D Race Cam -> Automatic End-Moment Drone Finish Shot!)
     function render3DMountainWorldOnContext(ctx, W, H, raceElapsedSec, cameraWorldDist, riders, rankedRiders, isWarmupPreview) {
-      const slowMoZoom = (!isWarmupPreview && raceElapsedSec >= 51.0) ? (1.0 + Math.min(1.0, (raceElapsedSec - 51.0) / 4.0) * 0.24) : 1.0;
-      const fovScale = ((rushCameraMode === 2 && !isWarmupPreview) ? 0.82 : 1.0) * slowMoZoom;
-      const horizonY = H * (rushCameraMode === 1 && !isWarmupPreview ? 0.36 : 0.31) + Math.sin(raceElapsedSec * 3.2) * 3.2;
+      rushCameraMode = 0; // Always automatic; never manual GoPro cockpit
+      const isAutoDroneFinishShot = (!isWarmupPreview && raceElapsedSec >= 50.0);
+      const droneBlend = isAutoDroneFinishShot ? Math.min(1.0, (raceElapsedSec - 50.0) / 2.2) : 0.0;
+      // In Automatic End-Moment Drone Shot, camera elevates (higher horizon) and zooms into the 3 neck-and-neck cycles at the finish line!
+      const slowMoZoom = isAutoDroneFinishShot ? (1.0 + droneBlend * 0.22) : 1.0;
+      const fovScale = slowMoZoom;
+      const horizonY = H * (0.30 - droneBlend * 0.08) + Math.sin(raceElapsedSec * 3.2) * (2.8 * (1 - droneBlend * 0.6));
       const camCurve = getTrackCurveX(cameraWorldDist);
 
       // Check if any rider is currently bouncing on an obstacle for camera shake & telemetry pill
@@ -7892,7 +7912,7 @@ ET
       ctx.fillRect(-10, -10, W + 20, H + 20);
 
       // 8. 🔬 CINEMATIC 0.20x ULTRA SLOW-MO PHOTO-FINISH SIDE-ZOOM CAM & DETAILED WIN ANALYSIS OVERLAY (51.0s -> 60.0s)
-      if (!isWarmupPreview && raceElapsedSec >= 51.0) {
+      if (!isWarmupPreview && raceElapsedSec >= 50.0) {
         const slowMoProg = Math.min(1.0, (raceElapsedSec - 51.0) / 9.0);
         const winnerR = rankedRiders[0];
         const secondR = rankedRiders[1];
@@ -7925,7 +7945,7 @@ ET
         ctx.fillStyle = '#fde047';
         ctx.font = '900 8.5px sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText('🔬 0.20x SLOW-MO SIDE PHOTO-FINISH CAM', pipX + 6, pipY + 11.5);
+        ctx.fillText('🚁 AUTO DRONE DRAW-FINISH SHOT (0.20x SLOW-MO)', pipX + 6, pipY + 11.5);
 
         // Snow Track Surface inside PiP
         ctx.fillStyle = '#1e293b';
@@ -8082,8 +8102,28 @@ ET
       const progress = Math.max(0, Math.min(100, (raceElapsedMs / totalDurationMs) * 100));
       const secondsLeft = Math.max(0, (totalDurationMs - raceElapsedMs) / 1000);
 
-      const isSlowMoClimax = (raceElapsedSec >= 51.0);
-      const slowMoPhase = isSlowMoClimax ? Math.min(1.0, (raceElapsedSec - 51.0) / 9.0) : 0.0;
+      const isSlowMoClimax = (raceElapsedSec >= 50.0);
+      const slowMoPhase = isSlowMoClimax ? Math.min(1.0, (raceElapsedSec - 50.0) / 10.0) : 0.0;
+
+      // Automatically update the Top-Right Camera Badge: Normal 3D Race Cam (0-50s) -> AUTO DRONE FINISH SHOT (50-60s)!
+      const autoCamBadge = document.getElementById('rush-auto-cam-badge');
+      const autoCamIcon = document.getElementById('rush-cam-mode-icon');
+      const autoCamLabel = document.getElementById('rush-cam-mode-label');
+      if (autoCamBadge && autoCamLabel && autoCamIcon) {
+        if (isSlowMoClimax) {
+          autoCamIcon.innerText = '🚁';
+          autoCamLabel.innerText = 'AUTO DRONE FINISH SHOT';
+          autoCamBadge.style.background = 'linear-gradient(135deg, #dc2626, #b45309)';
+          autoCamBadge.style.color = '#fde047';
+          autoCamBadge.style.borderColor = '#fde047';
+        } else {
+          autoCamIcon.innerText = '🎥';
+          autoCamLabel.innerText = 'AUTO 3D RACE CAM';
+          autoCamBadge.style.background = 'rgba(9, 13, 22, 0.92)';
+          autoCamBadge.style.color = '#a3e635';
+          autoCamBadge.style.borderColor = '#a3e635';
+        }
+      }
 
       // Time-dilated animation clock (0.20x speed during the final 9 seconds!)
       const effAnimSec = isSlowMoClimax ? (51.0 + (raceElapsedSec - 51.0) * 0.20) : raceElapsedSec;
