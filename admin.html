@@ -282,15 +282,34 @@
         </div>
 
         <div style="display: flex; align-items: center; gap: 6px;">
+          <button type="button" id="btn-admin-voice-top" onclick="toggleAdminVoiceGuide('full')" style="background: #fde047; color: #090d16; border: 1.5px solid #ffffff; border-radius: 8px; padding: 4px 9px; font-size: 0.68rem; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+            <span id="adm-voice-top-icon">🔊</span> <span id="adm-voice-top-label">Voice Guide</span>
+          </button>
           <button type="button" onclick="syncAdminWithCloud(true)" style="background: rgba(255,255,255,0.18); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
             🔄 Sync
           </button>
-          <a href="index.html" style="background: #ffffff; color: #15803d; text-decoration: none; border-radius: 8px; padding: 4px 9px; font-size: 0.7rem; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+          <button type="button" onclick="window.location.assign('index.' + 'html')" style="background: #ffffff; color: #15803d; border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.7rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
             🚗 App ➔
-          </a>
+          </button>
           <button type="button" id="btn-top-adm-logout" onclick="logoutAdmin()" style="display: none; background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
             🚪
           </button>
+        </div>
+      </div>
+
+      <!-- 🔊 GEMINI-STYLE ADMIN VOICE SPEAKER BAR (EXPLAINS ALL 6 CATEGORIES & APP IN HINDI) -->
+      <div style="padding: 5px 10px; background: rgba(9, 13, 22, 0.92); border-bottom: 1.5px solid #a3e635; display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <button type="button" id="btn-adm-speaker-main" onclick="toggleAdminVoiceGuide('full')" style="flex: 1; background: linear-gradient(135deg, #a3e635, #16a34a); color: #090d16; border: none; border-radius: 999px; padding: 5px 12px; font-size: 0.72rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span id="adm-speaker-bar-icon">🔊</span>
+            <span id="adm-speaker-bar-label">सुनें: एडमिन पैनल और पूरे ऐप के सभी ऑप्शन कैसे काम करते हैं (Full Voice Guide)</span>
+          </button>
+          <button type="button" onclick="toggleAdminVoiceGuide('category')" style="background: rgba(255,255,255,0.14); color: #fde047; border: 1px solid #fde047; border-radius: 999px; padding: 4px 10px; font-size: 0.66rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
+            🔊 इस कैटेगरी को सुनें
+          </button>
+        </div>
+        <div id="adm-voice-subtitle-box" style="display: none; background: #0f172a; border: 1px solid #a3e635; border-radius: 8px; padding: 4px 8px; font-size: 0.66rem; color: #d9f99d; font-weight: 700; line-height: 1.35;">
+          🎙️ बोल रहा है...
         </div>
       </div>
 
@@ -566,7 +585,7 @@
                   </button>
                 </div>
                 <div style="background: #000000; border-radius: 8px; overflow: hidden; max-height: 190px;">
-                  <video id="adm-video-preview" src="promo_ad.mp4" controls playsinline style="width: 100%; max-height: 185px; object-fit: contain; display: block;"></video>
+                  <video id="adm-video-preview" data-video-src="promo_ad.mp4" controls playsinline style="width: 100%; max-height: 185px; object-fit: contain; display: block;"></video>
                 </div>
                 <div id="adm-video-preview-title" style="font-size: 0.72rem; color: #cbd5e1; margin-top: 5px; font-weight: 700;">
                   Current Video: promo_ad.mp4
@@ -774,7 +793,7 @@
 
       let authSuccessful = false;
       try {
-        const resp = await fetch('/api/admin/login', {
+        const resp = await fetch(window.location.origin + '/api/admin/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ adminSecret: pin })
@@ -1703,6 +1722,148 @@
         try { await adminDb.collection('ss_settings').doc('video_ad').set(adObj, { merge: true }); } catch(e){}
       }
       showAdminToast('🎉 Video Ad Published to Customer App!');
+    }
+
+    // =========================================================================
+    // 🔊 GEMINI-STYLE HINDI VOICE SPEAKER FOR ADMIN PANEL & FULL APP GUIDE
+    // =========================================================================
+    let isAdminVoiceSpeaking = false;
+    let adminVoiceQueue = [];
+    let adminVoiceIdx = 0;
+
+    const ADMIN_VOICE_SCRIPTS = {
+      full: [
+        "नमस्कार एडमिन! सफरसाथी के क्लिक एंड फ्लिप एडमिन पैनल में आपका स्वागत है। यहाँ से आप पूरे सफरसाथी ऐप और थ्री-डी साइकिल रेस गेम को कंट्रोल कर सकते हैं।",
+        "ऊपर आपको छह अलग-अलग कैटेगरी के बटन दिए गए हैं, जिन पर क्लिक करने से हर कैटेगरी ऐप की तरह फ्लिप होकर खुलती है।",
+        "पहली कैटेगरी है: कॉइन यूटीआर। जब कोई कस्टमर साइकिल गेम में कॉइन्स रिचार्ज करने के लिए पचास, सौ, दो सौ या पाँच सौ रुपये यूपीआई पे करके बारह अंकों का यूटीआर भेजता है, तो वह यहाँ दिखता है। जब आप अप्रूव बटन दबाते हैं, तो वन-एक्स लॉक के साथ ठीक उतने ही कॉइन्स कस्टमर के खाते में सिर्फ एक बार जुड़ते हैं—जैसे पाँच सौ रुपये पर सिर्फ पाँच सौ कॉइन्स ही जुड़ेंगे, कभी भी ग्यारह हजार या एक्स्ट्रा पैसा नहीं जाएगा। और अगर यूटीआर गलत है तो आप रिजेक्ट दबा सकते हैं।",
+        "नीचे कस्टमर वॉलेट डायरेक्ट कंट्रोल बॉक्स भी है, जहाँ से आप किसी भी मोबाइल नंबर या डिवाइस आईडी का बैलेंस सीधे सेट या रिसेट कर सकते हैं।",
+        "दूसरी कैटेगरी है: कार यूटीआर। जब कोई ड्राइवर अपनी गाड़ी पोस्ट करने के लिए सौ रुपये प्लेटफॉर्म फीस का यूटीआर सबमिट करता है, तो आप यहाँ से उसे वेरिफाई करके गाड़ी को चालीस-अड़तालीस घंटे के लिए लाइव कर सकते हैं।",
+        "तीसरी कैटेगरी है: बुकिंग्स। यहाँ पैसेंजर द्वारा बुक की गई सभी सीटों और उनके पीडीएफ बोर्डिंग पास टिकटों का पूरा रिकॉर्ड दिखता है।",
+        "चौथी कैटेगरी है: थ्री-डी गेम पूल। यहाँ आपको लाइव दिखता है कि इस राउंड में साइकिल ए, साइकिल बी और साइकिल सी पर कुल कितना असली रुपया लगा है, और नियम के अनुसार सबसे कम बेट वाली कौन सी साइकिल इस राउंड में जीतने वाली है। जीतने वाले को हमेशा ठीक दोगुना यानी टू-एक्स इनाम मिलता है।",
+        "पाँचवीं कैटेगरी है: केवाईसी यूज़र्स। यहाँ ऐप में रजिस्टर किए गए सभी कस्टमर्स और ड्राइवर्स के नाम, मोबाइल नंबर, पता और आधार कार्ड फोटो दिखते हैं।",
+        "छठी कैटेगरी है: वीडियो ऐड्स। यहाँ से आप कस्टमर ऐप के प्रोफाइल होम पेज पर चलने वाला प्रमोशनल वीडियो ऐड कभी भी अपलोड और पब्लिश कर सकते हैं। धन्यवाद!"
+      ],
+      coins: [
+        "यह कैटेगरी एक: गेम कॉइन यूटीआर वेरिफिकेशन है। यहाँ कस्टमर द्वारा भेजे गए पचास, सौ, दो सौ या पाँच सौ रुपये के यूटीआर को बैंक में चेक करके अप्रूव या रिजेक्ट करें। अप्रूव करने पर ठीक उतने ही कॉइन्स सिर्फ एक बार जुड़ेंगे।"
+      ],
+      rides: [
+        "यह कैटेगरी दो: ड्राइवर कार यूटीआर वेरिफिकेशन है। यहाँ ड्राइवर की सौ रुपये वाली प्लेटफॉर्म फीस यूटीआर को अप्रूव करके गाड़ी को ऐप में लाइव करें।"
+      ],
+      bookings: [
+        "यह कैटेगरी तीन: पैसेंजर सीट बुकिंग्स है। यहाँ सभी पैसेंजर्स के टिकट और पेमेंट यूटीआर की जानकारी दिखती है।"
+      ],
+      game: [
+        "यह कैटेगरी चार: लाइव थ्री-डी साइकिल रेस बेट पूल है। यहाँ तीनों साइकिलों पर लगी असली बेट और सबसे कम बेट वाली विजेता साइकिल लाइव दिखती है।"
+      ],
+      users: [
+        "यह कैटेगरी पाँच: रजिस्टर्ड आधार केवाईसी यूज़र्स है। यहाँ सभी वेरिफाइड यूज़र्स के नाम, मोबाइल नंबर और आधार फोटो दिखते हैं।"
+      ],
+      video: [
+        "यह कैटेगरी छह: होम स्क्रीन स्पॉन्सर वीडियो ऐड मैनेजर है। यहाँ से आप प्रोफाइल पेज पर चलने वाला वीडियो ऐड बदल सकते हैं।"
+      ]
+    };
+
+    function updateAdminVoiceUi(isSpeaking, subText) {
+      const topIcon = document.getElementById('adm-voice-top-icon');
+      const topLbl = document.getElementById('adm-voice-top-label');
+      const barIcon = document.getElementById('adm-speaker-bar-icon');
+      const barLbl = document.getElementById('adm-speaker-bar-label');
+      const barBtn = document.getElementById('btn-adm-speaker-main');
+      const subBox = document.getElementById('adm-voice-subtitle-box');
+
+      if (topIcon) topIcon.innerText = isSpeaking ? '⏹️' : '🔊';
+      if (topLbl) topLbl.innerText = isSpeaking ? 'Stop Voice' : 'Voice Guide';
+      if (barIcon) barIcon.innerText = isSpeaking ? '⏹️' : '🔊';
+      if (barLbl) {
+        barLbl.innerText = isSpeaking
+          ? 'रोकने के लिए टैप करें (Voice Guide बोल रहा है...)'
+          : 'सुनें: एडमिन पैनल और पूरे ऐप के सभी ऑप्शन कैसे काम करते हैं (Full Voice Guide)';
+      }
+      if (barBtn) {
+        barBtn.style.background = isSpeaking
+          ? 'linear-gradient(135deg, #ef4444, #b91c1c)'
+          : 'linear-gradient(135deg, #a3e635, #16a34a)';
+        barBtn.style.color = isSpeaking ? '#ffffff' : '#090d16';
+      }
+      if (subBox) {
+        if (isSpeaking && subText) {
+          subBox.style.display = 'block';
+          subBox.innerText = '🎙️ ' + subText;
+        } else {
+          subBox.style.display = 'none';
+        }
+      }
+    }
+
+    function stopAdminVoiceGuide() {
+      isAdminVoiceSpeaking = false;
+      adminVoiceQueue = [];
+      adminVoiceIdx = 0;
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch(e){}
+      updateAdminVoiceUi(false, '');
+    }
+
+    function speakNextAdminChunk() {
+      if (!isAdminVoiceSpeaking || adminVoiceIdx >= adminVoiceQueue.length) {
+        stopAdminVoiceGuide();
+        return;
+      }
+      const text = adminVoiceQueue[adminVoiceIdx];
+      updateAdminVoiceUi(true, text);
+
+      if (!('speechSynthesis' in window)) {
+        showAdminToast('🎙️ ' + text);
+        adminVoiceIdx++;
+        setTimeout(speakNextAdminChunk, 4000);
+        return;
+      }
+
+      try {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'hi-IN';
+        utter.rate = 0.96;
+        const voices = window.speechSynthesis.getVoices() || [];
+        const hindiVoice = voices.find(v => v.lang && (v.lang.toLowerCase().includes('hi') || v.name.toLowerCase().includes('hindi'))) ||
+                           voices.find(v => v.lang && v.lang.toLowerCase().includes('in'));
+        if (hindiVoice) utter.voice = hindiVoice;
+
+        utter.onend = function() {
+          if (!isAdminVoiceSpeaking) return;
+          adminVoiceIdx++;
+          speakNextAdminChunk();
+        };
+        utter.onerror = function() {
+          if (!isAdminVoiceSpeaking) return;
+          adminVoiceIdx++;
+          speakNextAdminChunk();
+        };
+        window.speechSynthesis.speak(utter);
+      } catch(e) {
+        stopAdminVoiceGuide();
+      }
+    }
+
+    function toggleAdminVoiceGuide(mode) {
+      if (isAdminVoiceSpeaking) {
+        stopAdminVoiceGuide();
+        showAdminToast('🔇 वॉयस गाइड बंद कर दिया गया।');
+        return;
+      }
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch(e){}
+
+      let list = ADMIN_VOICE_SCRIPTS.full;
+      if (mode === 'category') {
+        const cat = typeof currentAdminCategory !== 'undefined' ? currentAdminCategory : 'coins';
+        list = ADMIN_VOICE_SCRIPTS[cat] || ADMIN_VOICE_SCRIPTS.full;
+      }
+      adminVoiceQueue = [...list];
+      adminVoiceIdx = 0;
+      isAdminVoiceSpeaking = true;
+      speakNextAdminChunk();
     }
 
     window.addEventListener('DOMContentLoaded', () => {

@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v99-rush-3d-fixed)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v105-smooth-voice-guide)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v99-rush-3d-fixed';
+const CACHE_NAME = 'safarsaathi-v105-smooth-voice-guide';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
