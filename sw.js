@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v53-car-racing-gaming-zone)
-  Zero Stale Cache • Network-First • Chrome & Safari Compatible
+  SafarSaathi AI Auto-Purge Service Worker (Version: v110-live-moving-erickshaw-no-fare)
+  Zero Stale Cache • Network-First No-Store • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v53-car-racing-gaming-zone';
+const CACHE_NAME = 'safarsaathi-v110-live-moving-erickshaw-no-fare';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -19,9 +19,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
-  // Always fetch fresh from network to prevent stale data
   event.respondWith(
-    fetch(event.request).catch(() => {
+    fetch(event.request, { cache: 'no-store' }).catch(() => {
       return caches.match(event.request);
     })
   );

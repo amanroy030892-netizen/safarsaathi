@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function ensureSafeAdminStorage() {
+      try {
+        window.localStorage.getItem("__ss_adm_test");
+      } catch (e) {
+        var _mem = {};
+        var _safe = {
+          getItem: function(k) { return Object.prototype.hasOwnProperty.call(_mem, k) ? _mem[k] : null; },
+          setItem: function(k, v) { _mem[k] = String(v); },
+          removeItem: function(k) { delete _mem[k]; }
+        };
+        try { Object.defineProperty(window, "localStorage", { value: _safe }); } catch (err) {}
+        try { Object.defineProperty(window, "sessionStorage", { value: _safe }); } catch (err) {}
+      }
+    })();
+  </script>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -678,9 +694,10 @@
       appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
       measurementId: "G-0PB4K9PWVD"
     };
-    let firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
+    let firebaseConfig = defaultFirebaseConfig;
+    try { firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig; } catch(e) {}
     let adminDb = null;
-    let currentAdminCategory = 'coins';
+    var currentAdminCategory = 'coins';
 
     // Click & Flip Category Switcher (Exactly like Customer App!)
     function showAdminCategory(cat) {
@@ -882,6 +899,7 @@
       renderAdminUsers();
       renderAdminLiveGameMonitor();
       loadCurrentPublishedVideoAd();
+      try { renderAdminErickshaws(); renderAdminComplaints(); } catch(e){}
       showAdminCategory(currentAdminCategory || 'coins');
     }
 
@@ -1025,6 +1043,26 @@
             registeredUsers = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}), ...data };
             localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
             renderAdminUsers();
+          }
+        }).catch(() => {});
+
+      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            const list = Array.isArray(data) ? data : Object.values(data);
+            localStorage.setItem('ss_erickshaws', JSON.stringify(list));
+            if (typeof renderAdminErickshaws === 'function') renderAdminErickshaws();
+          }
+        }).catch(() => {});
+
+      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_complaints.json')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            const list = Array.isArray(data) ? data : Object.values(data);
+            localStorage.setItem('ss_complaints', JSON.stringify(list));
+            if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
           }
         }).catch(() => {});
 
@@ -1786,8 +1824,8 @@
       container.innerHTML = list.map(er => `
         <div style="background: rgba(15,23,42,0.85); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.65rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
           <div>
-            <div style="font-size: 0.84rem; font-weight: 900; color: #86efac;">🛺 ${er.driverName} (${er.vehicleNumber}) • ₹${er.farePerSeat}/seat</div>
-            <div style="font-size: 0.72rem; color: #cbd5e1;">📍 Stand: ${er.standArea} • 📞 ${er.driverPhone}</div>
+            <div style="font-size: 0.84rem; font-weight: 900; color: #86efac;">🛺 ${er.driverName} (${er.vehicleNumber}) • 🟢 Live Route GPS (Direct Call - No Fare)</div>
+            <div style="font-size: 0.72rem; color: #cbd5e1;">🛣️ Roaming Route: ${er.standArea} • 📞 ${er.driverPhone}</div>
             <div style="font-size: 0.68rem; color: #fbbf24; font-family: monospace;">💰 ₹100 UTR: ${er.utrNumber || 'VERIFIED'} • Posted: ${new Date(er.postedAt).toLocaleTimeString()} (12h Valid)</div>
           </div>
           <button type="button" class="btn btn-danger" onclick="removeAdminErickshaw('${er.id}')" style="font-size: 0.7rem; padding: 4px 10px;">🗑️ Remove</button>

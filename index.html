@@ -42,7 +42,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V106_CLEAN_NO_VOICE_BTN';
+        const CURRENT_VERSION = 'SS_PROD_V110_LIVE_MOVING_ERICKSHAW_NO_FARE';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -2173,61 +2173,63 @@
       </div>
     </section>
 
-    <!-- ==================== 7. 🛺 POST E-RICKSHAW (₹100 FOR 12 HOURS LIVE GPS) ==================== -->
+    <!-- ==================== 7. 🛺 POST E-RICKSHAW (₹100 FOR 12 HOURS LIVE MOVING GPS - NO FARE) ==================== -->
     <section id="section-post-erickshaw" class="app-section" style="display: none;">
-      <div class="app-card" style="padding: 0.6rem 0.7rem !important;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.35rem;">
+      <div class="app-card" style="padding: 0.55rem 0.65rem !important;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.3rem;">
           <div>
-            <h2 style="font-size: 0.96rem; font-weight: 900; color: #000000; margin: 0;">🛺 Post E-Rickshaw (12 Hours Live)</h2>
-            <p style="font-size: 0.66rem; color: #15803d; font-weight: 800; margin: 1px 0 0 0;">
-              Same Profile Registration • ₹100 Charge • 12 घंटे तक आसपास के कस्टमर्स को लाइव दिखेगा
+            <h2 style="font-size: 0.94rem; font-weight: 900; color: #000000; margin: 0;">🛺 Post Live Moving E-Rickshaw (12 Hours)</h2>
+            <p style="font-size: 0.64rem; color: #15803d; font-weight: 800; margin: 1px 0 0 0;">
+              ₹100 / 12 घंटे • जहाँ-जहाँ ई-रिक्शा रूट में घूमेगा मैप पर लाइव दिखेगा • <b>कोई फेयर नहीं, डायरेक्ट कॉल टू रिसीव!</b>
             </p>
           </div>
-          <span style="font-size: 0.65rem; background: #dcfce7; color: #15803d; border: 1px solid #16a34a; padding: 2px 7px; border-radius: 999px; font-weight: 900; white-space: nowrap;">₹100 / 12 Hrs</span>
+          <span style="font-size: 0.63rem; background: #dcfce7; color: #15803d; border: 1px solid #16a34a; padding: 2px 7px; border-radius: 999px; font-weight: 900; white-space: nowrap;">🟢 12h Live GPS</span>
         </div>
 
-        <!-- Compact 2-Column E-Rickshaw Post Form (Fits 100% on Screen Without Scrolling) -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.35rem;">
+        <!-- Compact 2-Column E-Rickshaw Post Form (NO FARE INPUT - Direct Call Only!) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.32rem;">
           <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.66rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Driver Name*</label>
-            <input type="text" id="er-driver-name" class="form-control" placeholder="आपका नाम (Auto-filled)" style="height: 30px !important; font-size: 0.78rem !important; padding: 2px 7px !important;">
+            <label style="font-size: 0.65rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Driver Name*</label>
+            <input type="text" id="er-driver-name" class="form-control" placeholder="आपका नाम (Auto-filled)" style="height: 30px !important; font-size: 0.76rem !important; padding: 2px 7px !important;">
           </div>
           <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.66rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw No. / Model*</label>
-            <input type="text" id="er-vehicle-no" class="form-control" value="AS-01-ER-4021" placeholder="e.g. AS-01-ER-4021" style="height: 30px !important; font-size: 0.78rem !important; padding: 2px 7px !important;">
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 6px; margin-bottom: 0.35rem;">
-          <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.66rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">Live Stand / Area Location (कहाँ खड़े हैं)*</label>
-            <input type="text" id="er-area" class="form-control" value="Paltan Bazar ⇄ Fancy Bazar, Guwahati" placeholder="e.g. Paltan Bazar, Ganeshguri" style="height: 30px !important; font-size: 0.78rem !important; padding: 2px 7px !important;">
-          </div>
-          <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.66rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">Base Fare (किराया)*</label>
-            <input type="number" id="er-fare" class="form-control" value="20" placeholder="₹20" style="height: 30px !important; font-size: 0.78rem !important; padding: 2px 7px !important;">
+            <label style="font-size: 0.65rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Vehicle No.*</label>
+            <input type="text" id="er-vehicle-no" class="form-control" value="AS-01-ER-4021" placeholder="e.g. AS-01-ER-4021" style="height: 30px !important; font-size: 0.76rem !important; padding: 2px 7px !important;">
           </div>
         </div>
 
-        <!-- Quick Stand Chips -->
-        <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.35rem;">
-          <button type="button" onclick="setErickshawStand('Paltan Bazar ⇄ Fancy Bazar, Guwahati')" style="padding: 2px 6px; font-size: 0.62rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">📍 Paltan Bazar</button>
-          <button type="button" onclick="setErickshawStand('Ganeshguri ⇄ Dispur Supermarket')" style="padding: 2px 6px; font-size: 0.62rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">📍 Ganeshguri</button>
-          <button type="button" onclick="setErickshawStand('Jalukbari ⇄ Maligaon Gate')" style="padding: 2px 6px; font-size: 0.62rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">📍 Maligaon</button>
-          <button type="button" onclick="setErickshawStand('Six Mile ⇄ Khanapara Stand')" style="padding: 2px 6px; font-size: 0.62rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">📍 Six Mile</button>
-          <button type="button" onclick="setErickshawStand('Nagaon Town ⇄ Haibargaon Stand')" style="padding: 2px 6px; font-size: 0.62rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">📍 Nagaon</button>
+        <div style="display: grid; grid-template-columns: 1.45fr 0.55fr; gap: 6px; margin-bottom: 0.32rem;">
+          <div class="form-group" style="margin: 0 !important;">
+            <label style="font-size: 0.65rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">Live Roaming Route (किस रूट में ई-रिक्शा घूम रहा है)*</label>
+            <input type="text" id="er-area" class="form-control" value="Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar Route" placeholder="जहाँ-जहाँ ई-रिक्शा घूमेगा वह रूट" style="height: 30px !important; font-size: 0.75rem !important; padding: 2px 7px !important;">
+          </div>
+          <div class="form-group" style="margin: 0 !important;">
+            <label style="font-size: 0.65rem; font-weight: 800; color: #15803d; margin-bottom: 2px; display: block;">Call & GPS Mode</label>
+            <div style="height: 30px; background: #dcfce7; border: 1.5px solid #16a34a; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 900; color: #15803d; padding: 0 4px; text-align: center;">
+              📞 Direct Call (No Fare)
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Roaming Route Chips -->
+        <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.32rem;">
+          <button type="button" onclick="setErickshawStand('Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Paltan–Fancy Route</button>
+          <button type="button" onclick="setErickshawStand('Ganeshguri ⇄ Dispur ⇄ Christian Basti Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Ganeshguri–Dispur</button>
+          <button type="button" onclick="setErickshawStand('Jalukbari ⇄ Maligaon ⇄ Kamakhya Gate Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Maligaon–Jalukbari</button>
+          <button type="button" onclick="setErickshawStand('Six Mile ⇄ Khanapara ⇄ Beltola Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Six Mile–Beltola</button>
+          <button type="button" onclick="setErickshawStand('Nagaon Town ⇄ Haibargaon ⇄ Dimaruguri Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Nagaon Route</button>
         </div>
 
         <!-- Compact ₹100 Payment & QR Box -->
-        <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.4rem 0.55rem; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNyAzNyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+PHJlY3Qgd2lkdGg9IjM3IiBoZWlnaHQ9IjM3IiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik0wLDBoMXYxaC0xek0xLDBoMXYxaC0xek0yLDBoMXYxaC0xek0zLDBoMXYxaC0xek00LDBoMXYxaC0xek01LDBoMXYxaC0xek02LDBoMXYxaC0xek05LDBoMXYxaC0xek0xNSwwaDF2MWgtMXpNMTYsMGgxdjFoLTF6TTE4LDBoMXYxaC0xek0xOSwwaDF2MWgtMXpNMjAsMGgxdjFoLTF6TTIyLDBoMXYxaC0xek0yMywwaDF2MWgtMXpNMjQsMGgxdjFoLTF6TTI1LDBoMXYxaC0xek0yOCwwaDF2MWgtMXpNMzAsMGgxdjFoLTF6TTMxLDBoMXYxaC0xek0zMiwwaDF2MWgtMXpNMzMsMGgxdjFoLTF6TTM0LDBoMXYxaC0xek0zNSwwaDF2MWgtMXpNMzYsMGgxdjFoLTF6TTAsMWgxdjFoLTF6TTYsMWgxdjFoLTF6TTgsMWgxdjFoLTF6TTksMWgxdjFoLTF6TTExLDFoMXYxaC0xek0xMiwxaDF2MWgtMXpNMjEsMWgxdjFoLTF6TTIyLDFoMXYxaC0xek0yNiwxaDF2MWgtMXpNMjcsMWgxdjFoLTF6TTI4LDFoMXYxaC0xek0zMCwxaDF2MWgtMXpNMzYsMWgxdjFoLTF6TTAsMmgxdjFoLTF6TTIsMmgxdjFoLTF6TTMsMmgxdjFoLTF6TTQsMmgxdjFoLTF6TTYsMmgxdjFoLTF6TTksMmgxdjFoLTF6TTEwLDJoMXYxaC0xek0xMSwyaDF2MWgtMXpNMTQsMmgxdjFoLTF6TTE2LDJoMXYxaC0xek0yMCwyaDF2MWgtMXpNMjEsMmgxdjFoLTF6TTIyLDJoMXYxaC0xek0yNiwyaDF2MWgtMXpNMjcsMmgxdjFoLTF6TTI4LDJoMXYxaC0xek0zMCwyaDF2MWgtMXpNMzIsMmgxdjFoLTF6TTMzLDJoMXYxaC0xek0zNCwyaDF2MWgtMXpNMzYsMmgxdjFoLTF6TTAsM2gxdjFoLTF6TTIsM2gxdjFoLTF6TTMsM2gxdjFoLTF6TTQsM2gxdjFoLTF6TTYsM2gxdjFoLTF6TTgsM2gxdjFoLTF6TTksM2gxdjFoLTF6TTExLDNoMXYxaC0xek0xNiwzaDF2MWgtMXpNMjMsM2gxdjFoLTF6TTI0LDNoMXYxaC0xek0yNSwzaDF2MWgtMXpNMjYsM2gxdjFoLTF6TTI4LDNoMXYxaC0xek0zMCwzaDF2MWgtMXpNMzIsM2gxdjFoLTF6TTMzLDNoMXYxaC0xek0zNCwzaDF2MWgtMXpNMzYsM2gxdjFoLTF6TTAsNGgxdjFoLTF6TTIsNGgxdjFoLTF6TTMsNGgxdjFoLTF6TTQsNGgxdjFoLTF6TTYsNGgxdjFoLTF6TTEwLDRoMXYxaC0xek0xMiw0aDF2MWgtMXpNMTMsNGgxdjFoLTF6TTE0LDRoMXYxaC0xek0xNSw0aDF2MWgtMXpNMTcsNGgxdjFoLTF6TTE5LDRoMXYxaC0xek0yMCw0aDF2MWgtMXpNMjEsNGgxdjFoLTF6TTIyLDRoMXYxaC0xek0yMyw0aDF2MWgtMXpNMjUsNGgxdjFoLTF6TTMwLDRoMXYxaC0xek0zMiw0aDF2MWgtMXpNMzMsNGgxdjFoLTF6TTM0LDRoMXYxaC0xek0zNiw0aDF2MWgtMXpNMCw1aDF2MWgtMXpNNiw1aDF2MWgtMXpNOCw1aDF2MWgtMXpNMTAsNWgxdjFoLTF6TTEzLDVoMXYxaC0xek0xNCw1aDF2MWgtMXpNMTUsNWgxdjFoLTF6TTE2LDVoMXYxaC0xek0xNyw1aDF2MWgtMXpNMjAsNWgxdjFoLTF6TTIxLDVoMXYxaC0xek0yNyw1aDF2MWgtMXpNMzAsNWgxdjFoLTF6TTM2LDVoMXYxaC0xek0wLDZoMXYxaC0xek0xLDZoMXYxaC0xek0yLDZoMXYxaC0xek0zLDZoMXYxaC0xek00LDZoMXYxaC0xek01LDZoMXYxaC0xek02LDZoMXYxaC0xek04LDZoMXYxaC0xek0xMCw2aDF2MWgtMXpNMTIsNmgxdjFoLTF6TTE0LDZoMXYxaC0xek0xNiw2aDF2MWgtMXpNMTgsNmgxdjFoLTF6TTIwLDZoMXYxaC0xek0yMiw2aDF2MWgtMXpNMjQsNmgxdjFoLTF6TTI2LDZoMXYxaC0xek0yOCw2aDF2MWgtMXpNMzAsNmgxdjFoLTF6TTMxLDZoMXYxaC0xek0zMiw2aDF2MWgtMXpNMzMsNmgxdjFoLTF6TTM0LDZoMXYxaC0xek0zNSw2aDF2MWgtMXpNMzYsNmgxdjFoLTF6TTEyLDdoMXYxaC0xek0xMyw3aDF2MWgtMXpNMTUsN2gxdjFoLTF6TTIxLDdoMXYxaC0xek0yMiw3aDF2MWgtMXpNMjQsN2gxdjFoLTF6TTI2LDdoMXYxaC0xek0yOCw3aDF2MWgtMXpNMCw4aDF2MWgtMXpNMSw4aDF2MWgtMXpNMiw4aDF2MWgtMXpNMyw4aDF2MWgtMXpNNCw4aDF2MWgtMXpNNiw4aDF2MWgtMXpNNyw4aDF2MWgtMXpNOCw4aDF2MWgtMXpNOSw4aDF2MWgtMXpNMTAsOGgxdjFoLTF6TTEyLDhoMXYxaC0xek0xNCw4aDF2MWgtMXpNMTUsOGgxdjFoLTF6TTE5LDhoMXYxaC0xek0yNCw4aDF2MWgtMXpNMjUsOGgxdjFoLTF6TTI2LDhoMXYxaC0xek0yOSw4aDF2MWgtMXpNMzEsOGgxdjFoLTF6TTMzLDhoMXYxaC0xek0zNSw4aDF2MWgtMXpNMiw5aDF2MWgtMXpNMyw5aDF2MWgtMXpNNCw5aDF2MWgtMXpNNSw5aDF2MWgtMXpNNyw5aDF2MWgtMXpNMTUsOWgxdjFoLTF6TTE2LDloMXYxaC0xek0xOSw5aDF2MWgtMXpNMjAsOWgxdjFoLTF6TTIxLDloMXYxaC0xek0yMiw5aDF2MWgtMXpNMjMsOWgxdjFoLTF6TTI2LDloMXYxaC0xek0yOCw5aDF2MWgtMXpNMjksOWgxdjFoLTF6TTM0LDloMXYxaC0xek0yLDEwaDF2MWgtMXpNMywxMGgxdjFoLTF6TTQsMTBoMXYxaC0xek02LDEwaDF2MWgtMXpNMTEsMTBoMXYxaC0xek0xMiwxMGgxdjFoLTF6TTE4LDEwaDF2MWgtMXpNMjEsMTBoMXYxaC0xek0yNCwxMGgxdjFoLTF6TTI2LDEwaDF2MWgtMXpNMjcsMTBoMXYxaC0xek0zMCwxMGgxdjFoLTF6TTM0LDEwaDF2MWgtMXpNMzYsMTBoMXYxaC0xek0xLDExaDF2MWgtMXpNMiwxMWgxdjFoLTF6TTMsMTFoMXYxaC0xek05LDExaDF2MWgtMXpNMTAsMTFoMXYxaC0xek0xMSwxMWgxdjFoLTF6TTE0LDExaDF2MWgtMXpNMTYsMTFoMXYxaC0xek0xOCwxMWgxdjFoLTF6TTE5LDExaDF2MWgtMXpNMjEsMTFoMXYxaC0xek0yMywxMWgxdjFoLTF6TTI3LDExaDF2MWgtMXpNMzUsMTFoMXYxaC0xek0yLDEyaDF2MWgtMXpNMywxMmgxdjFoLTF6TTQsMTJoMXYxaC0xek01LDEyaDF2MWgtMXpNNiwxMmgxdjFoLTF6TTcsMTJoMXYxaC0xek0xMCwxMmgxdjFoLTF6TTExLDEyaDF2MWgtMXpNMTYsMTJoMXYxaC0xek0xNywxMmgxdjFoLTF6TTIwLDEyaDF2MWgtMXpNMjQsMTJoMXYxaC0xek0yNSwxMmgxdjFoLTF6TTI2LDEyaDF2MWgtMXpNMjcsMTJoMXYxaC0xek0yOCwxMmgxdjFoLTF6TTMwLDEyaDF2MWgtMXpNMzEsMTJoMXYxaC0xek0zMiwxMmgxdjFoLTF6TTM0LDEyaDF2MWgtMXpNMzUsMTJoMXYxaC0xek0wLDEzaDF2MWgtMXpNMSwxM2gxdjFoLTF6TTUsMTNoMXYxaC0xek03LDEzaDF2MWgtMXpNOSwxM2gxdjFoLTF6TTEwLDEzaDF2MWgtMXpNMTIsMTNoMXYxaC0xek0xMywxM2gxdjFoLTF6TTE0LDEzaDF2MWgtMXpNMTUsMTNoMXYxaC0xek0xNywxM2gxdjFoLTF6TTE4LDEzaDF2MWgtMXpNMjAsMTNoMXYxaC0xek0yMSwxM2gxdjFoLTF6TTIyLDEzaDF2MWgtMXpNMjMsMTNoMXYxaC0xek0yNCwxM2gxdjFoLTF6TTI4LDEzaDF2MWgtMXpNMjksMTNoMXYxaC0xek0zMywxM2gxdjFoLTF6TTAsMTRoMXYxaC0xek0xLDE0aDF2MWgtMXpNMiwxNGgxdjFoLTF6TTYsMTRoMXYxaC0xek0xMywxNGgxdjFoLTF6TTE0LDE0aDF2MWgtMXpNMTUsMTRoMXYxaC0xek0xNiwxNGgxdjFoLTF6TTE3LDE0aDF2MWgtMXpNMjAsMTRoMXYxaC0xek0yMSwxNGgxdjFoLTF6TTI3LDE0aDF2MWgtMXpNMjksMTRoMXYxaC0xek0zMCwxNGgxdjFoLTF6TTMxLDE0aDF2MWgtMXpNMzMsMTRoMXYxaC0xek0zNiwxNGgxdjFoLTF6TTAsMTVoMXYxaC0xek0xLDE1aDF2MWgtMXpNMiwxNWgxdjFoLTF6TTMsMTVoMXYxaC0xek00LDE1aDF2MWgtMXpNOCwxNWgxdjFoLTF6TTEwLDE1aDF2MWgtMXpNMTIsMTVoMXYxaC0xek0xMywxNWgxdjFoLTF6TTE1LDE1aDF2MWgtMXpNMjAsMTVoMXYxaC0xek0yMSwxNWgxdjFoLTF6TTI0LDE1aDF2MWgtMXpNMjYsMTVoMXYxaC0xek0yOCwxNWgxdjFoLTF6TTI5LDE1aDF2MWgtMXpNMywxNmgxdjFoLTF6TTUsMTZoMXYxaC0xek02LDE2aDF2MWgtMXpNNywxNmgxdjFoLTF6TTgsMTZoMXYxaC0xek0xMCwxNmgxdjFoLTF6TTEyLDE2aDF2MWgtMXpNMTQsMTZoMXYxaC0xek0xNSwxNmgxdjFoLTF6TTE3LDE2aDF2MWgtMXpNMTksMTZoMXYxaC0xek0yMCwxNmgxdjFoLTF6TTI0LDE2aDF2MWgtMXpNMjUsMTZoMXYxaC0xek0yNiwxNmgxdjFoLTF6TTI3LDE2aDF2MWgtMXpNMzAsMTZoMXYxaC0xek0zMSwxNmgxdjFoLTF6TTMyLDE2aDF2MWgtMXpNMzMsMTZoMXYxaC0xek0zNCwxNmgxdjFoLTF6TTIsMTdoMXYxaC0xek03LDE3aDF2MWgtMXpNMTUsMTdoMXYxaC0xek0xNiwxN2gxdjFoLTF6TTE5LDE3aDF2MWgtMXpNMjEsMTdoMXYxaC0xek0yMywxN2gxdjFoLTF6TTI1LDE3aDF2MWgtMXpNMjksMTdoMXYxaC0xek0zMywxN2gxdjFoLTF6TTM1LDE3aDF2MWgtMXpNMCwxOGgxdjFoLTF6TTEsMThoMXYxaC0xek0yLDE4aDF2MWgtMXpNMywxOGgxdjFoLTF6TTUsMThoMXYxaC0xek02LDE4aDF2MWgtMXpNNywxOGgxdjFoLTF6TTEwLDE4aDF2MWgtMXpNMTEsMThoMXYxaC0xek0xMiwxOGgxdjFoLTF6TTE3LDE4aDF2MWgtMXpNMTgsMThoMXYxaC0xek0yMiwxOGgxdjFoLTF6TTI0LDE4aDF2MWgtMXpNMjYsMThoMXYxaC0xek0yNywxOGgxdjFoLTF6TTI4LDE4aDF2MWgtMXpNMjksMThoMXYxaC0xek0zMCwxOGgxdjFoLTF6TTM2LDE4aDF2MWgtMXpNMSwxOWgxdjFoLTF6TTMsMTloMXYxaC0xek04LDE5aDF2MWgtMXpNOSwxOWgxdjFoLTF6TTExLDE5aDF2MWgtMXpNMTQsMTloMXYxaC0xek0xNiwxOWgxdjFoLTF6TTE5LDE5aDF2MWgtMXpNMjAsMTloMXYxaC0xek0yMSwxOWgxdjFoLTF6TTI5LDE5aDF2MWgtMXpNMzAsMTloMXYxaC0xek0zNSwxOWgxdjFoLTF6TTM2LDE5aDF2MWgtMXpNMCwyMGgxdjFoLTF6TTIsMjBoMXYxaC0xek00LDIwaDF2MWgtMXpNNSwyMGgxdjFoLTF6TTYsMjBoMXYxaC0xek03LDIwaDF2MWgtMXpNOCwyMGgxdjFoLTF6TTksMjBoMXYxaC0xek0xMSwyMGgxdjFoLTF6TTE3LDIwaDF2MWgtMXpNMTksMjBoMXYxaC0xek0yMiwyMGgxdjFoLTF6TTI1LDIwaDF2MWgtMXpNMjYsMjBoMXYxaC0xek0yNywyMGgxdjFoLTF6TTI4LDIwaDF2MWgtMXpNMzAsMjBoMXYxaC0xek0zMSwyMGgxdjFoLTF6TTMyLDIwaDF2MWgtMXpNMzQsMjBoMXYxaC0xek0xLDIxaDF2MWgtMXpNNCwyMWgxdjFoLTF6TTUsMjFoMXYxaC0xek05LDIxaDF2MWgtMXpNMTAsMjFoMXYxaC0xek0xMiwyMWgxdjFoLTF6TTEzLDIxaDF2MWgtMXpNMTQsMjFoMXYxaC0xek0xNSwyMWgxdjFoLTF6TTE5LDIxaDF2MWgtMXpNMjAsMjFoMXYxaC0xek0yMSwyMWgxdjFoLTF6TTIzLDIxaDF2MWgtMXpNMjUsMjFoMXYxaC0xek0yOCwyMWgxdjFoLTF6TTI5LDIxaDF2MWgtMXpNMzMsMjFoMXYxaC0xek0zNCwyMWgxdjFoLTF6TTAsMjJoMXYxaC0xek0xLDIyaDF2MWgtMXpNMiwyMmgxdjFoLTF6TTMsMjJoMXYxaC0xek00LDIyaDF2MWgtMXpNNSwyMmgxdjFoLTF6TTYsMjJoMXYxaC0xek03LDIyaDF2MWgtMXpNOCwyMmgxdjFoLTF6TTksMjJoMXYxaC0xek0xMywyMmgxdjFoLTF6TTE0LDIyaDF2MWgtMXpNMTUsMjJoMXYxaC0xek0xNiwyMmgxdjFoLTF6TTI3LDIyaDF2MWgtMXpNMjgsMjJoMXYxaC0xek0zMCwyMmgxdjFoLTF6TTMxLDIyaDF2MWgtMXpNMzUsMjJoMXYxaC0xek0zNiwyMmgxdjFoLTF6TTAsMjNoMXYxaC0xek0xLDIzaDF2MWgtMXpNMiwyM2gxdjFoLTF6TTMsMjNoMXYxaC0xek01LDIzaDF2MWgtMXpNOCwyM2gxdjFoLTF6TTEwLDIzaDF2MWgtMXpNMTIsMjNoMXYxaC0xek0xMywyM2gxdjFoLTF6TTE1LDIzaDF2MWgtMXpNMTYsMjNoMXYxaC0xek0xOCwyM2gxdjFoLTF6TTIwLDIzaDF2MWgtMXpNMjEsMjNoMXYxaC0xek0yMiwyM2gxdjFoLTF6TTI0LDIzaDF2MWgtMXpNMjYsMjNoMXYxaC0xek0yNywyM2gxdjFoLTF6TTI4LDIzaDF2MWgtMXpNMzAsMjNoMXYxaC0xek0zMiwyM2gxdjFoLTF6TTMzLDIzaDF2MWgtMXpNMzYsMjNoMXYxaC0xek0wLDI0aDF2MWgtMXpNMywyNGgxdjFoLTF6TTQsMjRoMXYxaC0xek01LDI0aDF2MWgtMXpNNiwyNGgxdjFoLTF6TTEyLDI0aDF2MWgtMXpNMTQsMjRoMXYxaC0xek0xNSwyNGgxdjFoLTF6TTE3LDI0aDF2MWgtMXpNMjAsMjRoMXYxaC0xek0yMiwyNGgxdjFoLTF6TTIzLDI0aDF2MWgtMXpNMjQsMjRoMXYxaC0xek0yNSwyNGgxdjFoLTF6TTI3LDI0aDF2MWgtMXpNMzAsMjRoMXYxaC0xek0zMSwyNGgxdjFoLTF6TTMyLDI0aDF2MWgtMXpNMzQsMjRoMXYxaC0xek0zNiwyNGgxdjFoLTF6TTAsMjVoMXYxaC0xek0yLDI1aDF2MWgtMXpNNCwyNWgxdjFoLTF6TTUsMjVoMXYxaC0xek03LDI1aDF2MWgtMXpNOSwyNWgxdjFoLTF6TTE2LDI1aDF2MWgtMXpNMTcsMjVoMXYxaC0xek0xOCwyNWgxdjFoLTF6TTE5LDI1aDF2MWgtMXpNMjAsMjVoMXYxaC0xek0yMSwyNWgxdjFoLTF6TTIyLDI1aDF2MWgtMXpNMjMsMjVoMXYxaC0xek0yOCwyNWgxdjFoLTF6TTI5LDI1aDF2MWgtMXpNMzQsMjVoMXYxaC0xek0zNSwyNWgxdjFoLTF6TTAsMjZoMXYxaC0xek0yLDI2aDF2MWgtMXpNNCwyNmgxdjFoLTF6TTUsMjZoMXYxaC0xek02LDI2aDF2MWgtMXpNNywyNmgxdjFoLTF6TTgsMjZoMXYxaC0xek05LDI2aDF2MWgtMXpNMTEsMjZoMXYxaC0xek0xMiwyNmgxdjFoLTF6TTE1LDI2aDF2MWgtMXpNMTYsMjZoMXYxaC0xek0xOCwyNmgxdjFoLTF6TTIxLDI2aDF2MWgtMXpNMjIsMjZoMXYxaC0xek0yNCwyNmgxdjFoLTF6TTI2LDI2aDF2MWgtMXpNMjcsMjZoMXYxaC0xek0yOCwyNmgxdjFoLTF6TTI5LDI2aDF2MWgtMXpNMzAsMjZoMXYxaC0xek0zMiwyNmgxdjFoLTF6TTM0LDI2aDF2MWgtMXpNMzUsMjZoMXYxaC0xek0zNiwyNmgxdjFoLTF6TTAsMjdoMXYxaC0xek0yLDI3aDF2MWgtMXpNNCwyN2gxdjFoLTF6TTcsMjdoMXYxaC0xek04LDI3aDF2MWgtMXpNMTEsMjdoMXYxaC0xek0xNCwyN2gxdjFoLTF6TTE1LDI3aDF2MWgtMXpNMTYsMjdoMXYxaC0xek0xOSwyN2gxdjFoLTF6TTIwLDI3aDF2MWgtMXpNMjEsMjdoMXYxaC0xek0yMiwyN2gxdjFoLTF6TTI2LDI3aDF2MWgtMXpNMjcsMjdoMXYxaC0xek0yOSwyN2gxdjFoLTF6TTMxLDI3aDF2MWgtMXpNMzUsMjdoMXYxaC0xek0zNiwyN2gxdjFoLTF6TTAsMjhoMXYxaC0xek0yLDI4aDF2MWgtMXpNMywyOGgxdjFoLTF6TTYsMjhoMXYxaC0xek04LDI4aDF2MWgtMXpNMTEsMjhoMXYxaC0xek0xNSwyOGgxdjFoLTF6TTE3LDI4aDF2MWgtMXpNMjMsMjhoMXYxaC0xek0yNCwyOGgxdjFoLTF6TTI1LDI4aDF2MWgtMXpNMjgsMjhoMXYxaC0xek0yOSwyOGgxdjFoLTF6TTMwLDI4aDF2MWgtMXpNMzEsMjhoMXYxaC0xek0zMiwyOGgxdjFoLTF6TTM0LDI4aDF2MWgtMXpNMzUsMjhoMXYxaC0xek0zNiwyOGgxdjFoLTF6TTgsMjloMXYxaC0xek05LDI5aDF2MWgtMXpNMTAsMjloMXYxaC0xek0xMiwyOWgxdjFoLTF6TTEzLDI5aDF2MWgtMXpNMTQsMjloMXYxaC0xek0xNiwyOWgxdjFoLTF6TTE3LDI5aDF2MWgtMXpNMTgsMjloMXYxaC0xek0xOSwyOWgxdjFoLTF6TTIyLDI5aDF2MWgtMXpNMjMsMjloMXYxaC0xek0yNiwyOWgxdjFoLTF6TTI4LDI5aDF2MWgtMXpNMzIsMjloMXYxaC0xek0zMywyOWgxdjFoLTF6TTM1LDI5aDF2MWgtMXpNMCwzMGgxdjFoLTF6TTEsMzBoMXYxaC0xek0yLDMwaDF2MWgtMXpNMywzMGgxdjFoLTF6TTQsMzBoMXYxaC0xek01LDMwaDF2MWgtMXpNNiwzMGgxdjFoLTF6TTgsMzBoMXYxaC0xek0xMCwzMGgxdjFoLTF6TTEzLDMwaDF2MWgtMXpNMTQsMzBoMXYxaC0xek0xNSwzMGgxdjFoLTF6TTE3LDMwaDF2MWgtMXpNMjEsMzBoMXYxaC0xek0yMiwzMGgxdjFoLTF6TTI1LDMwaDF2MWgtMXpNMjgsMzBoMXYxaC0xek0zMCwzMGgxdjFoLTF6TTMyLDMwaDF2MWgtMXpNMzMsMzBoMXYxaC0xek0zNSwzMGgxdjFoLTF6TTM2LDMwaDF2MWgtMXpNMCwzMWgxdjFoLTF6TTYsMzFoMXYxaC0xek05LDMxaDF2MWgtMXpNMTIsMzFoMXYxaC0xek0xMywzMWgxdjFoLTF6TTE2LDMxaDF2MWgtMXpNMTgsMzFoMXYxaC0xek0xOSwzMWgxdjFoLTF6TTIxLDMxaDF2MWgtMXpNMjIsMzFoMXYxaC0xek0yNCwzMWgxdjFoLTF6TTI4LDMxaDF2MWgtMXpNMzIsMzFoMXYxaC0xek0zNSwzMWgxdjFoLTF6TTM2LDMxaDF2MWgtMXpNMCwzMmgxdjFoLTF6TTIsMzJoMXYxaC0xek0zLDMyaDF2MWgtMXpNNCwzMmgxdjFoLTF6TTYsMzJoMXYxaC0xek04LDMyaDF2MWgtMXpNOSwzMmgxdjFoLTF6TTEyLDMyaDF2MWgtMXpNMTQsMzJoMXYxaC0xek0xNSwzMmgxdjFoLTF6TTE3LDMyaDF2MWgtMXpNMjAsMzJoMXYxaC0xek0yMSwzMmgxdjFoLTF6TTIyLDMyaDF2MWgtMXpNMjQsMzJoMXYxaC0xek0yNSwzMmgxdjFoLTF6TTI3LDMyaDF2MWgtMXpNMjgsMzJoMXYxaC0xek0yOSwzMmgxdjFoLTF6TTMwLDMyaDF2MWgtMXpNMzEsMzJoMXYxaC0xek0zMiwzMmgxdjFoLTF6TTMzLDMyaDF2MWgtMXpNMzQsMzJoMXYxaC0xek0zNiwzMmgxdjFoLTF6TTAsMzNoMXYxaC0xek0yLDMzaDF2MWgtMXpNMywzM2gxdjFoLTF6TTQsMzNoMXYxaC0xek02LDMzaDF2MWgtMXpNOCwzM2gxdjFoLTF6TTEwLDMzaDF2MWgtMXpNMTUsMzNoMXYxaC0xek0xNiwzM2gxdjFoLTF6TTE4LDMzaDF2MWgtMXpNMjAsMzNoMXYxaC0xek0yMywzM2gxdjFoLTF6TTI2LDMzaDF2MWgtMXpNMjcsMzNoMXYxaC0xek0yOCwzM2gxdjFoLTF6TTI5LDMzaDF2MWgtMXpNMzAsMzNoMXYxaC0xek0zMSwzM2gxdjFoLTF6TTMyLDMzaDF2MWgtMXpNMzMsMzNoMXYxaC0xek0zNSwzM2gxdjFoLTF6TTM2LDMzaDF2MWgtMXpNMCwzNGgxdjFoLTF6TTIsMzRoMXYxaC0xek0zLDM0aDF2MWgtMXpNNCwzNGgxdjFoLTF6TTYsMzRoMXYxaC0xek04LDM0aDF2MWgtMXpNMTAsMzRoMXYxaC0xek0xMSwzNGgxdjFoLTF6TTEyLDM0aDF2MWgtMXpNMTUsMzRoMXYxaC0xek0xNiwzNGgxdjFoLTF6TTE3LDM0aDF2MWgtMXpNMjEsMzRoMXYxaC0xek0yOCwzNGgxdjFoLTF6TTMwLDM0aDF2MWgtMXpNMzUsMzRoMXYxaC0xek0zNiwzNGgxdjFoLTF6TTAsMzVoMXYxaC0xek02LDM1aDF2MWgtMXpNOCwzNWgxdjFoLTF6TTksMzVoMXYxaC0xek0xMCwzNWgxdjFoLTF6TTExLDM1aDF2MWgtMXpNMTQsMzVoMXYxaC0xek0xNiwzNWgxdjFoLTF6TTE5LDM1aDF2MWgtMXpNMjAsMzVoMXYxaC0xek0yMSwzNWgxdjFoLTF6TTIyLDM1aDF2MWgtMXpNMjMsMzVoMXYxaC0xek0yNCwzNWgxdjFoLTF6TTI3LDM1aDF2MWgtMXpNMjgsMzVoMXYxaC0xek0zMCwzNWgxdjFoLTF6TTMxLDM1aDF2MWgtMXpNMzMsMzVoMXYxaC0xek0zNiwzNWgxdjFoLTF6TTAsMzZoMXYxaC0xek0xLDM2aDF2MWgtMXpNMiwzNmgxdjFoLTF6TTMsMzZoMXYxaC0xek00LDM2aDF2MWgtMXpNNSwzNmgxdjFoLTF6TTYsMzZoMXYxaC0xek04LDM2aDF2MWgtMXpNOSwzNmgxdjFoLTF6TTExLDM2aDF2MWgtMXpNMTYsMzZoMXYxaC0xek0xOSwzNmgxdjFoLTF6TTIxLDM2aDF2MWgtMXpNMjIsMzZoMXYxaC0xek0yMywzNmgxdjFoLTF6TTI0LDM2aDF2MWgtMXpNMjUsMzZoMXYxaC0xek0yNiwzNmgxdjFoLTF6TTMwLDM2aDF2MWgtMXpNMzEsMzZoMXYxaC0xek0zMiwzNmgxdjFoLTF6TTM0LDM2aDF2MWgtMXpNMzUsMzZoMXYxaC0xek0zNiwzNmgxdjFoLTF6IiBmaWxsPSIjMGYxNzJhIi8+PC9zdmc+" alt="UPI QR" style="width: 64px; height: 64px; border-radius: 6px; border: 1px solid #16a34a; background: #fff; padding: 2px; flex-shrink: 0;">
+        <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.38rem 0.5rem; margin-bottom: 0.32rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNyAzNyIgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+PHJlY3Qgd2lkdGg9IjM3IiBoZWlnaHQ9IjM3IiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik0wLDBoMXYxaC0xek0xLDBoMXYxaC0xek0yLDBoMXYxaC0xek0zLDBoMXYxaC0xek00LDBoMXYxaC0xek01LDBoMXYxaC0xek02LDBoMXYxaC0xek05LDBoMXYxaC0xek0xNSwwaDF2MWgtMXpNMTYsMGgxdjFoLTF6TTE4LDBoMXYxaC0xek0xOSwwaDF2MWgtMXpNMjAsMGgxdjFoLTF6TTIyLDBoMXYxaC0xek0yMywwaDF2MWgtMXpNMjQsMGgxdjFoLTF6TTI1LDBoMXYxaC0xek0yOCwwaDF2MWgtMXpNMzAsMGgxdjFoLTF6TTMxLDBoMXYxaC0xek0zMiwwaDF2MWgtMXpNMzMsMGgxdjFoLTF6TTM0LDBoMXYxaC0xek0zNSwwaDF2MWgtMXpNMzYsMGgxdjFoLTF6TTAsMWgxdjFoLTF6TTYsMWgxdjFoLTF6TTgsMWgxdjFoLTF6TTksMWgxdjFoLTF6TTExLDFoMXYxaC0xek0xMiwxaDF2MWgtMXpNMjEsMWgxdjFoLTF6TTIyLDFoMXYxaC0xek0yNiwxaDF2MWgtMXpNMjcsMWgxdjFoLTF6TTI4LDFoMXYxaC0xek0zMCwxaDF2MWgtMXpNMzYsMWgxdjFoLTF6TTAsMmgxdjFoLTF6TTIsMmgxdjFoLTF6TTMsMmgxdjFoLTF6TTQsMmgxdjFoLTF6TTYsMmgxdjFoLTF6TTksMmgxdjFoLTF6TTEwLDJoMXYxaC0xek0xMSwyaDF2MWgtMXpNMTQsMmgxdjFoLTF6TTE2LDJoMXYxaC0xek0yMCwyaDF2MWgtMXpNMjEsMmgxdjFoLTF6TTIyLDJoMXYxaC0xek0yNiwyaDF2MWgtMXpNMjcsMmgxdjFoLTF6TTI4LDJoMXYxaC0xek0zMCwyaDF2MWgtMXpNMzIsMmgxdjFoLTF6TTMzLDJoMXYxaC0xek0zNCwyaDF2MWgtMXpNMzYsMmgxdjFoLTF6TTAsM2gxdjFoLTF6TTIsM2gxdjFoLTF6TTMsM2gxdjFoLTF6TTQsM2gxdjFoLTF6TTYsM2gxdjFoLTF6TTgsM2gxdjFoLTF6TTksM2gxdjFoLTF6TTExLDNoMXYxaC0xek0xNiwzaDF2MWgtMXpNMjMsM2gxdjFoLTF6TTI0LDNoMXYxaC0xek0yNSwzaDF2MWgtMXpNMjYsM2gxdjFoLTF6TTI4LDNoMXYxaC0xek0zMCwzaDF2MWgtMXpNMzIsM2gxdjFoLTF6TTMzLDNoMXYxaC0xek0zNCwzaDF2MWgtMXpNMzYsM2gxdjFoLTF6TTAsNGgxdjFoLTF6TTIsNGgxdjFoLTF6TTMsNGgxdjFoLTF6TTQsNGgxdjFoLTF6TTYsNGgxdjFoLTF6TTEwLDRoMXYxaC0xek0xMiw0aDF2MWgtMXpNMTMsNGgxdjFoLTF6TTE0LDRoMXYxaC0xek0xNSw0aDF2MWgtMXpNMTcsNGgxdjFoLTF6TTE5LDRoMXYxaC0xek0yMCw0aDF2MWgtMXpNMjEsNGgxdjFoLTF6TTIyLDRoMXYxaC0xek0yMyw0aDF2MWgtMXpNMjUsNGgxdjFoLTF6TTMwLDRoMXYxaC0xek0zMiw0aDF2MWgtMXpNMzMsNGgxdjFoLTF6TTM0LDRoMXYxaC0xek0zNiw0aDF2MWgtMXpNMCw1aDF2MWgtMXpNNiw1aDF2MWgtMXpNOCw1aDF2MWgtMXpNMTAsNWgxdjFoLTF6TTEzLDVoMXYxaC0xek0xNCw1aDF2MWgtMXpNMTUsNWgxdjFoLTF6TTE2LDVoMXYxaC0xek0xNyw1aDF2MWgtMXpNMjAsNWgxdjFoLTF6TTIxLDVoMXYxaC0xek0yNyw1aDF2MWgtMXpNMzAsNWgxdjFoLTF6TTM2LDVoMXYxaC0xek0wLDZoMXYxaC0xek0xLDZoMXYxaC0xek0yLDZoMXYxaC0xek0zLDZoMXYxaC0xek00LDZoMXYxaC0xek01LDZoMXYxaC0xek02LDZoMXYxaC0xek04LDZoMXYxaC0xek0xMCw2aDF2MWgtMXpNMTIsNmgxdjFoLTF6TTE0LDZoMXYxaC0xek0xNiw2aDF2MWgtMXpNMTgsNmgxdjFoLTF6TTIwLDZoMXYxaC0xek0yMiw2aDF2MWgtMXpNMjQsNmgxdjFoLTF6TTI2LDZoMXYxaC0xek0yOCw2aDF2MWgtMXpNMzAsNmgxdjFoLTF6TTMxLDZoMXYxaC0xek0zMiw2aDF2MWgtMXpNMzMsNmgxdjFoLTF6TTM0LDZoMXYxaC0xek0zNSw2aDF2MWgtMXpNMzYsNmgxdjFoLTF6TTEyLDdoMXYxaC0xek0xMyw3aDF2MWgtMXpNMTUsN2gxdjFoLTF6TTIxLDdoMXYxaC0xek0yMiw3aDF2MWgtMXpNMjQsN2gxdjFoLTF6TTI2LDdoMXYxaC0xek0yOCw3aDF2MWgtMXpNMCw4aDF2MWgtMXpNMSw4aDF2MWgtMXpNMiw4aDF2MWgtMXpNMyw4aDF2MWgtMXpNNCw4aDF2MWgtMXpNNiw4aDF2MWgtMXpNNyw4aDF2MWgtMXpNOCw4aDF2MWgtMXpNOSw4aDF2MWgtMXpNMTAsOGgxdjFoLTF6TTEyLDhoMXYxaC0xek0xNCw4aDF2MWgtMXpNMTUsOGgxdjFoLTF6TTE5LDhoMXYxaC0xek0yNCw4aDF2MWgtMXpNMjUsOGgxdjFoLTF6TTI2LDhoMXYxaC0xek0yOSw4aDF2MWgtMXpNMzEsOGgxdjFoLTF6TTMzLDhoMXYxaC0xek0zNSw4aDF2MWgtMXpNMiw5aDF2MWgtMXpNMyw5aDF2MWgtMXpNNCw5aDF2MWgtMXpNNSw5aDF2MWgtMXpNNyw5aDF2MWgtMXpNMTUsOWgxdjFoLTF6TTE2LDloMXYxaC0xek0xOSw5aDF2MWgtMXpNMjAsOWgxdjFoLTF6TTIxLDloMXYxaC0xek0yMiw5aDF2MWgtMXpNMjMsOWgxdjFoLTF6TTI2LDloMXYxaC0xek0yOCw5aDF2MWgtMXpNMjksOWgxdjFoLTF6TTM0LDloMXYxaC0xek0yLDEwaDF2MWgtMXpNMywxMGgxdjFoLTF6TTQsMTBoMXYxaC0xek02LDEwaDF2MWgtMXpNMTEsMTBoMXYxaC0xek0xMiwxMGgxdjFoLTF6TTE4LDEwaDF2MWgtMXpNMjEsMTBoMXYxaC0xek0yNCwxMGgxdjFoLTF6TTI2LDEwaDF2MWgtMXpNMjcsMTBoMXYxaC0xek0zMCwxMGgxdjFoLTF6TTM0LDEwaDF2MWgtMXpNMzYsMTBoMXYxaC0xek0xLDExaDF2MWgtMXpNMiwxMWgxdjFoLTF6TTMsMTFoMXYxaC0xek05LDExaDF2MWgtMXpNMTAsMTFoMXYxaC0xek0xMSwxMWgxdjFoLTF6TTE0LDExaDF2MWgtMXpNMTYsMTFoMXYxaC0xek0xOCwxMWgxdjFoLTF6TTE5LDExaDF2MWgtMXpNMjEsMTFoMXYxaC0xek0yMywxMWgxdjFoLTF6TTI3LDExaDF2MWgtMXpNMzUsMTFoMXYxaC0xek0yLDEyaDF2MWgtMXpNMywxMmgxdjFoLTF6TTQsMTJoMXYxaC0xek01LDEyaDF2MWgtMXpNNiwxMmgxdjFoLTF6TTcsMTJoMXYxaC0xek0xMCwxMmgxdjFoLTF6TTExLDEyaDF2MWgtMXpNMTYsMTJoMXYxaC0xek0xNywxMmgxdjFoLTF6TTIwLDEyaDF2MWgtMXpNMjQsMTJoMXYxaC0xek0yNSwxMmgxdjFoLTF6TTI2LDEyaDF2MWgtMXpNMjcsMTJoMXYxaC0xek0yOCwxMmgxdjFoLTF6TTMwLDEyaDF2MWgtMXpNMzEsMTJoMXYxaC0xek0zMiwxMmgxdjFoLTF6TTM0LDEyaDF2MWgtMXpNMzUsMTJoMXYxaC0xek0wLDEzaDF2MWgtMXpNMSwxM2gxdjFoLTF6TTUsMTNoMXYxaC0xek03LDEzaDF2MWgtMXpNOSwxM2gxdjFoLTF6TTEwLDEzaDF2MWgtMXpNMTIsMTNoMXYxaC0xek0xMywxM2gxdjFoLTF6TTE0LDEzaDF2MWgtMXpNMTUsMTNoMXYxaC0xek0xNywxM2gxdjFoLTF6TTE4LDEzaDF2MWgtMXpNMjAsMTNoMXYxaC0xek0yMSwxM2gxdjFoLTF6TTIyLDEzaDF2MWgtMXpNMjMsMTNoMXYxaC0xek0yNCwxM2gxdjFoLTF6TTI4LDEzaDF2MWgtMXpNMjksMTNoMXYxaC0xek0zMywxM2gxdjFoLTF6TTAsMTRoMXYxaC0xek0xLDE0aDF2MWgtMXpNMiwxNGgxdjFoLTF6TTYsMTRoMXYxaC0xek0xMywxNGgxdjFoLTF6TTE0LDE0aDF2MWgtMXpNMTUsMTRoMXYxaC0xek0xNiwxNGgxdjFoLTF6TTE3LDE0aDF2MWgtMXpNMjAsMTRoMXYxaC0xek0yMSwxNGgxdjFoLTF6TTI3LDE0aDF2MWgtMXpNMjksMTRoMXYxaC0xek0zMCwxNGgxdjFoLTF6TTMxLDE0aDF2MWgtMXpNMzMsMTRoMXYxaC0xek0zNiwxNGgxdjFoLTF6TTAsMTVoMXYxaC0xek0xLDE1aDF2MWgtMXpNMiwxNWgxdjFoLTF6TTMsMTVoMXYxaC0xek00LDE1aDF2MWgtMXpNOCwxNWgxdjFoLTF6TTEwLDE1aDF2MWgtMXpNMTIsMTVoMXYxaC0xek0xMywxNWgxdjFoLTF6TTE1LDE1aDF2MWgtMXpNMjAsMTVoMXYxaC0xek0yMSwxNWgxdjFoLTF6TTI0LDE1aDF2MWgtMXpNMjYsMTVoMXYxaC0xek0yOCwxNWgxdjFoLTF6TTI5LDE1aDF2MWgtMXpNMywxNmgxdjFoLTF6TTUsMTZoMXYxaC0xek02LDE2aDF2MWgtMXpNNywxNmgxdjFoLTF6TTgsMTZoMXYxaC0xek0xMCwxNmgxdjFoLTF6TTEyLDE2aDF2MWgtMXpNMTQsMTZoMXYxaC0xek0xNSwxNmgxdjFoLTF6TTE3LDE2aDF2MWgtMXpNMTksMTZoMXYxaC0xek0yMCwxNmgxdjFoLTF6TTI0LDE2aDF2MWgtMXpNMjUsMTZoMXYxaC0xek0yNiwxNmgxdjFoLTF6TTI3LDE2aDF2MWgtMXpNMzAsMTZoMXYxaC0xek0zMSwxNmgxdjFoLTF6TTMyLDE2aDF2MWgtMXpNMzMsMTZoMXYxaC0xek0zNCwxNmgxdjFoLTF6TTIsMTdoMXYxaC0xek03LDE3aDF2MWgtMXpNMTUsMTdoMXYxaC0xek0xNiwxN2gxdjFoLTF6TTE5LDE3aDF2MWgtMXpNMjEsMTdoMXYxaC0xek0yMywxN2gxdjFoLTF6TTI1LDE3aDF2MWgtMXpNMjksMTdoMXYxaC0xek0zMywxN2gxdjFoLTF6TTM1LDE3aDF2MWgtMXpNMCwxOGgxdjFoLTF6TTEsMThoMXYxaC0xek0yLDE4aDF2MWgtMXpNMywxOGgxdjFoLTF6TTUsMThoMXYxaC0xek02LDE4aDF2MWgtMXpNNywxOGgxdjFoLTF6TTEwLDE4aDF2MWgtMXpNMTEsMThoMXYxaC0xek0xMiwxOGgxdjFoLTF6TTE3LDE4aDF2MWgtMXpNMTgsMThoMXYxaC0xek0yMiwxOGgxdjFoLTF6TTI0LDE4aDF2MWgtMXpNMjYsMThoMXYxaC0xek0yNywxOGgxdjFoLTF6TTI4LDE4aDF2MWgtMXpNMjksMThoMXYxaC0xek0zMCwxOGgxdjFoLTF6TTM2LDE4aDF2MWgtMXpNMSwxOWgxdjFoLTF6TTMsMTloMXYxaC0xek04LDE5aDF2MWgtMXpNOSwxOWgxdjFoLTF6TTExLDE5aDF2MWgtMXpNMTQsMTloMXYxaC0xek0xNiwxOWgxdjFoLTF6TTE5LDE5aDF2MWgtMXpNMjAsMTloMXYxaC0xek0yMSwxOWgxdjFoLTF6TTI5LDE5aDF2MWgtMXpNMzAsMTloMXYxaC0xek0zNSwxOWgxdjFoLTF6TTM2LDE5aDF2MWgtMXpNMCwyMGgxdjFoLTF6TTIsMjBoMXYxaC0xek00LDIwaDF2MWgtMXpNNSwyMGgxdjFoLTF6TTYsMjBoMXYxaC0xek03LDIwaDF2MWgtMXpNOCwyMGgxdjFoLTF6TTksMjBoMXYxaC0xek0xMSwyMGgxdjFoLTF6TTE3LDIwaDF2MWgtMXpNMTksMjBoMXYxaC0xek0yMiwyMGgxdjFoLTF6TTI1LDIwaDF2MWgtMXpNMjYsMjBoMXYxaC0xek0yNywyMGgxdjFoLTF6TTI4LDIwaDF2MWgtMXpNMzAsMjBoMXYxaC0xek0zMSwyMGgxdjFoLTF6TTMyLDIwaDF2MWgtMXpNMzQsMjBoMXYxaC0xek0xLDIxaDF2MWgtMXpNNCwyMWgxdjFoLTF6TTUsMjFoMXYxaC0xek05LDIxaDF2MWgtMXpNMTAsMjFoMXYxaC0xek0xMiwyMWgxdjFoLTF6TTEzLDIxaDF2MWgtMXpNMTQsMjFoMXYxaC0xek0xNSwyMWgxdjFoLTF6TTE5LDIxaDF2MWgtMXpNMjAsMjFoMXYxaC0xek0yMSwyMWgxdjFoLTF6TTIzLDIxaDF2MWgtMXpNMjUsMjFoMXYxaC0xek0yOCwyMWgxdjFoLTF6TTI5LDIxaDF2MWgtMXpNMzMsMjFoMXYxaC0xek0zNCwyMWgxdjFoLTF6TTAsMjJoMXYxaC0xek0xLDIyaDF2MWgtMXpNMiwyMmgxdjFoLTF6TTMsMjJoMXYxaC0xek00LDIyaDF2MWgtMXpNNSwyMmgxdjFoLTF6TTYsMjJoMXYxaC0xek03LDIyaDF2MWgtMXpNOCwyMmgxdjFoLTF6TTksMjJoMXYxaC0xek0xMywyMmgxdjFoLTF6TTE0LDIyaDF2MWgtMXpNMTUsMjJoMXYxaC0xek0xNiwyMmgxdjFoLTF6TTI3LDIyaDF2MWgtMXpNMjgsMjJoMXYxaC0xek0zMCwyMmgxdjFoLTF6TTMxLDIyaDF2MWgtMXpNMzUsMjJoMXYxaC0xek0zNiwyMmgxdjFoLTF6TTAsMjNoMXYxaC0xek0xLDIzaDF2MWgtMXpNMiwyM2gxdjFoLTF6TTMsMjNoMXYxaC0xek01LDIzaDF2MWgtMXpNOCwyM2gxdjFoLTF6TTEwLDIzaDF2MWgtMXpNMTIsMjNoMXYxaC0xek0xMywyM2gxdjFoLTF6TTE1LDIzaDF2MWgtMXpNMTYsMjNoMXYxaC0xek0xOCwyM2gxdjFoLTF6TTIwLDIzaDF2MWgtMXpNMjEsMjNoMXYxaC0xek0yMiwyM2gxdjFoLTF6TTI0LDIzaDF2MWgtMXpNMjYsMjNoMXYxaC0xek0yNywyM2gxdjFoLTF6TTI4LDIzaDF2MWgtMXpNMzAsMjNoMXYxaC0xek0zMiwyM2gxdjFoLTF6TTMzLDIzaDF2MWgtMXpNMzYsMjNoMXYxaC0xek0wLDI0aDF2MWgtMXpNMywyNGgxdjFoLTF6TTQsMjRoMXYxaC0xek01LDI0aDF2MWgtMXpNNiwyNGgxdjFoLTF6TTEyLDI0aDF2MWgtMXpNMTQsMjRoMXYxaC0xek0xNSwyNGgxdjFoLTF6TTE3LDI0aDF2MWgtMXpNMjAsMjRoMXYxaC0xek0yMiwyNGgxdjFoLTF6TTIzLDI0aDF2MWgtMXpNMjQsMjRoMXYxaC0xek0yNSwyNGgxdjFoLTF6TTI3LDI0aDF2MWgtMXpNMzAsMjRoMXYxaC0xek0zMSwyNGgxdjFoLTF6TTMyLDI0aDF2MWgtMXpNMzQsMjRoMXYxaC0xek0zNiwyNGgxdjFoLTF6TTAsMjVoMXYxaC0xek0yLDI1aDF2MWgtMXpNNCwyNWgxdjFoLTF6TTUsMjVoMXYxaC0xek03LDI1aDF2MWgtMXpNOSwyNWgxdjFoLTF6TTE2LDI1aDF2MWgtMXpNMTcsMjVoMXYxaC0xek0xOCwyNWgxdjFoLTF6TTE5LDI1aDF2MWgtMXpNMjAsMjVoMXYxaC0xek0yMSwyNWgxdjFoLTF6TTIyLDI1aDF2MWgtMXpNMjMsMjVoMXYxaC0xek0yOCwyNWgxdjFoLTF6TTI5LDI1aDF2MWgtMXpNMzQsMjVoMXYxaC0xek0zNSwyNWgxdjFoLTF6TTAsMjZoMXYxaC0xek0yLDI2aDF2MWgtMXpNNCwyNmgxdjFoLTF6TTUsMjZoMXYxaC0xek02LDI2aDF2MWgtMXpNNywyNmgxdjFoLTF6TTgsMjZoMXYxaC0xek05LDI2aDF2MWgtMXpNMTEsMjZoMXYxaC0xek0xMiwyNmgxdjFoLTF6TTE1LDI2aDF2MWgtMXpNMTYsMjZoMXYxaC0xek0xOCwyNmgxdjFoLTF6TTIxLDI2aDF2MWgtMXpNMjIsMjZoMXYxaC0xek0yNCwyNmgxdjFoLTF6TTI2LDI2aDF2MWgtMXpNMjcsMjZoMXYxaC0xek0yOCwyNmgxdjFoLTF6TTI5LDI2aDF2MWgtMXpNMzAsMjZoMXYxaC0xek0zMiwyNmgxdjFoLTF6TTM0LDI2aDF2MWgtMXpNMzUsMjZoMXYxaC0xek0zNiwyNmgxdjFoLTF6TTAsMjdoMXYxaC0xek0yLDI3aDF2MWgtMXpNNCwyN2gxdjFoLTF6TTcsMjdoMXYxaC0xek04LDI3aDF2MWgtMXpNMTEsMjdoMXYxaC0xek0xNCwyN2gxdjFoLTF6TTE1LDI3aDF2MWgtMXpNMTYsMjdoMXYxaC0xek0xOSwyN2gxdjFoLTF6TTIwLDI3aDF2MWgtMXpNMjEsMjdoMXYxaC0xek0yMiwyN2gxdjFoLTF6TTI2LDI3aDF2MWgtMXpNMjcsMjdoMXYxaC0xek0yOSwyN2gxdjFoLTF6TTMxLDI3aDF2MWgtMXpNMzUsMjdoMXYxaC0xek0zNiwyN2gxdjFoLTF6TTAsMjhoMXYxaC0xek0yLDI4aDF2MWgtMXpNMywyOGgxdjFoLTF6TTYsMjhoMXYxaC0xek04LDI4aDF2MWgtMXpNMTEsMjhoMXYxaC0xek0xNSwyOGgxdjFoLTF6TTE3LDI4aDF2MWgtMXpNMjMsMjhoMXYxaC0xek0yNCwyOGgxdjFoLTF6TTI1LDI4aDF2MWgtMXpNMjgsMjhoMXYxaC0xek0yOSwyOGgxdjFoLTF6TTMwLDI4aDF2MWgtMXpNMzEsMjhoMXYxaC0xek0zMiwyOGgxdjFoLTF6TTM0LDI4aDF2MWgtMXpNMzUsMjhoMXYxaC0xek0zNiwyOGgxdjFoLTF6TTgsMjloMXYxaC0xek05LDI5aDF2MWgtMXpNMTAsMjloMXYxaC0xek0xMiwyOWgxdjFoLTF6TTEzLDI5aDF2MWgtMXpNMTQsMjloMXYxaC0xek0xNiwyOWgxdjFoLTF6TTE3LDI5aDF2MWgtMXpNMTgsMjloMXYxaC0xek0xOSwyOWgxdjFoLTF6TTIyLDI5aDF2MWgtMXpNMjMsMjloMXYxaC0xek0yNiwyOWgxdjFoLTF6TTI4LDI5aDF2MWgtMXpNMzIsMjloMXYxaC0xek0zMywyOWgxdjFoLTF6TTM1LDI5aDF2MWgtMXpNMCwzMGgxdjFoLTF6TTEsMzBoMXYxaC0xek0yLDMwaDF2MWgtMXpNMywzMGgxdjFoLTF6TTQsMzBoMXYxaC0xek01LDMwaDF2MWgtMXpNNiwzMGgxdjFoLTF6TTgsMzBoMXYxaC0xek0xMCwzMGgxdjFoLTF6TTEzLDMwaDF2MWgtMXpNMTQsMzBoMXYxaC0xek0xNSwzMGgxdjFoLTF6TTE3LDMwaDF2MWgtMXpNMjEsMzBoMXYxaC0xek0yMiwzMGgxdjFoLTF6TTI1LDMwaDF2MWgtMXpNMjgsMzBoMXYxaC0xek0zMCwzMGgxdjFoLTF6TTMyLDMwaDF2MWgtMXpNMzMsMzBoMXYxaC0xek0zNSwzMGgxdjFoLTF6TTM2LDMwaDF2MWgtMXpNMCwzMWgxdjFoLTF6TTYsMzFoMXYxaC0xek05LDMxaDF2MWgtMXpNMTIsMzFoMXYxaC0xek0xMywzMWgxdjFoLTF6TTE2LDMxaDF2MWgtMXpNMTgsMzFoMXYxaC0xek0xOSwzMWgxdjFoLTF6TTIxLDMxaDF2MWgtMXpNMjIsMzFoMXYxaC0xek0yNCwzMWgxdjFoLTF6TTI4LDMxaDF2MWgtMXpNMzIsMzFoMXYxaC0xek0zNSwzMWgxdjFoLTF6TTM2LDMxaDF2MWgtMXpNMCwzMmgxdjFoLTF6TTIsMzJoMXYxaC0xek0zLDMyaDF2MWgtMXpNNCwzMmgxdjFoLTF6TTYsMzJoMXYxaC0xek04LDMyaDF2MWgtMXpNOSwzMmgxdjFoLTF6TTEyLDMyaDF2MWgtMXpNMTQsMzJoMXYxaC0xek0xNSwzMmgxdjFoLTF6TTE3LDMyaDF2MWgtMXpNMjAsMzJoMXYxaC0xek0yMSwzMmgxdjFoLTF6TTIyLDMyaDF2MWgtMXpNMjQsMzJoMXYxaC0xek0yNSwzMmgxdjFoLTF6TTI3LDMyaDF2MWgtMXpNMjgsMzJoMXYxaC0xek0yOSwzMmgxdjFoLTF6TTMwLDMyaDF2MWgtMXpNMzEsMzJoMXYxaC0xek0zMiwzMmgxdjFoLTF6TTMzLDMyaDF2MWgtMXpNMzQsMzJoMXYxaC0xek0zNiwzMmgxdjFoLTF6TTAsMzNoMXYxaC0xek0yLDMzaDF2MWgtMXpNMywzM2gxdjFoLTF6TTQsMzNoMXYxaC0xek02LDMzaDF2MWgtMXpNOCwzM2gxdjFoLTF6TTEwLDMzaDF2MWgtMXpNMTUsMzNoMXYxaC0xek0xNiwzM2gxdjFoLTF6TTE4LDMzaDF2MWgtMXpNMjAsMzNoMXYxaC0xek0yMywzM2gxdjFoLTF6TTI2LDMzaDF2MWgtMXpNMjcsMzNoMXYxaC0xek0yOCwzM2gxdjFoLTF6TTI5LDMzaDF2MWgtMXpNMzAsMzNoMXYxaC0xek0zMSwzM2gxdjFoLTF6TTMyLDMzaDF2MWgtMXpNMzMsMzNoMXYxaC0xek0zNSwzM2gxdjFoLTF6TTM2LDMzaDF2MWgtMXpNMCwzNGgxdjFoLTF6TTIsMzRoMXYxaC0xek0zLDM0aDF2MWgtMXpNNCwzNGgxdjFoLTF6TTYsMzRoMXYxaC0xek04LDM0aDF2MWgtMXpNMTAsMzRoMXYxaC0xek0xMSwzNGgxdjFoLTF6TTEyLDM0aDF2MWgtMXpNMTUsMzRoMXYxaC0xek0xNiwzNGgxdjFoLTF6TTE3LDM0aDF2MWgtMXpNMjEsMzRoMXYxaC0xek0yOCwzNGgxdjFoLTF6TTMwLDM0aDF2MWgtMXpNMzUsMzRoMXYxaC0xek0zNiwzNGgxdjFoLTF6TTAsMzVoMXYxaC0xek02LDM1aDF2MWgtMXpNOCwzNWgxdjFoLTF6TTksMzVoMXYxaC0xek0xMCwzNWgxdjFoLTF6TTExLDM1aDF2MWgtMXpNMTQsMzVoMXYxaC0xek0xNiwzNWgxdjFoLTF6TTE5LDM1aDF2MWgtMXpNMjAsMzVoMXYxaC0xek0yMSwzNWgxdjFoLTF6TTIyLDM1aDF2MWgtMXpNMjMsMzVoMXYxaC0xek0yNCwzNWgxdjFoLTF6TTI3LDM1aDF2MWgtMXpNMjgsMzVoMXYxaC0xek0zMCwzNWgxdjFoLTF6TTMxLDM1aDF2MWgtMXpNMzMsMzVoMXYxaC0xek0zNiwzNWgxdjFoLTF6TTAsMzZoMXYxaC0xek0xLDM2aDF2MWgtMXpNMiwzNmgxdjFoLTF6TTMsMzZoMXYxaC0xek00LDM2aDF2MWgtMXpNNSwzNmgxdjFoLTF6TTYsMzZoMXYxaC0xek04LDM2aDF2MWgtMXpNOSwzNmgxdjFoLTF6TTExLDM2aDF2MWgtMXpNMTYsMzZoMXYxaC0xek0xOSwzNmgxdjFoLTF6TTIxLDM2aDF2MWgtMXpNMjIsMzZoMXYxaC0xek0yMywzNmgxdjFoLTF6TTI0LDM2aDF2MWgtMXpNMjUsMzZoMXYxaC0xek0yNiwzNmgxdjFoLTF6TTMwLDM2aDF2MWgtMXpNMzEsMzZoMXYxaC0xek0zMiwzNmgxdjFoLTF6TTM0LDM2aDF2MWgtMXpNMzUsMzZoMXYxaC0xek0zNiwzNmgxdjFoLTF6IiBmaWxsPSIjMGYxNzJhIi8+PC9zdmc+" alt="UPI QR" style="width: 60px; height: 60px; border-radius: 6px; border: 1px solid #16a34a; background: #fff; padding: 2px; flex-shrink: 0;">
           <div style="flex: 1; min-width: 0;">
-            <div style="font-size: 0.72rem; font-weight: 900; color: #000000;">Pay ₹100 E-Rickshaw Listing Fee (12 Hours)</div>
-            <div style="font-size: 0.62rem; color: #15803d; font-weight: 800; margin-bottom: 4px;">Jana Small Finance Bank • 6901027507@nyes</div>
+            <div style="font-size: 0.7rem; font-weight: 900; color: #000000;">Pay ₹100 Live E-Rickshaw GPS Post (12 Hours)</div>
+            <div style="font-size: 0.6rem; color: #15803d; font-weight: 800; margin-bottom: 3px;">Jana Small Finance Bank • 6901027507@nyes • No Seat Fare Needed</div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-              <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#5f259f; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; text-decoration: none;">PhonePe</a>
-              <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#1d4ed8; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; text-decoration: none;">GPay</a>
-              <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#16a34a; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; text-decoration: none;">UPI Pay</a>
+              <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#5f259f; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.58rem; font-weight: 900; text-decoration: none;">PhonePe</a>
+              <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#1d4ed8; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.58rem; font-weight: 900; text-decoration: none;">GPay</a>
+              <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#16a34a; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.58rem; font-weight: 900; text-decoration: none;">UPI Pay</a>
             </div>
           </div>
         </div>
@@ -2235,52 +2237,67 @@
         <!-- 12-Digit UTR + Submit Row -->
         <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: end;">
           <div>
-            <label style="font-size: 0.64rem; font-weight: 900; color: #000000; display: block; margin-bottom: 2px;">12-Digit Bank UTR Number (₹100)*</label>
-            <input type="text" id="er-utr" class="form-control" maxlength="12" placeholder="Enter 12-digit UTR" style="height: 32px !important; font-family: monospace; font-weight: 900; font-size: 0.85rem !important; border: 1.5px solid #16a34a;">
+            <label style="font-size: 0.63rem; font-weight: 900; color: #000000; display: block; margin-bottom: 2px;">12-Digit Bank UTR Number (₹100)*</label>
+            <input type="text" id="er-utr" class="form-control" maxlength="12" placeholder="Enter 12-digit UTR" style="height: 31px !important; font-family: monospace; font-weight: 900; font-size: 0.82rem !important; border: 1.5px solid #16a34a;">
           </div>
-          <button type="button" class="btn btn-primary" onclick="submitErickshawPost()" style="height: 32px; padding: 0 12px; font-size: 0.76rem; font-weight: 900; border-radius: 8px; white-space: nowrap;">
-            🛺 Post 12h Live ➔
+          <button type="button" class="btn btn-primary" onclick="submitErickshawPost()" style="height: 31px; padding: 0 11px; font-size: 0.74rem; font-weight: 900; border-radius: 8px; white-space: nowrap;">
+            🛺 Start 12h Live GPS ➔
           </button>
         </div>
       </div>
     </section>
 
-    <!-- ==================== 8. 🟢 LIVE E-RICKSHAW (NEARBY 5-6 E-RICKSHAWS + APP-TO-APP VOICE CALL) ==================== -->
+    <!-- ==================== 8. 🟢 LIVE E-RICKSHAW (LIVE MOVING ROUTE RADAR + DIRECT CALL TO RECEIVE - NO FARE) ==================== -->
     <section id="section-live-erickshaw" class="app-section" style="display: none;">
-      <div class="app-card" style="padding: 0.55rem 0.65rem !important;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.3rem; gap: 4px;">
+      <div class="app-card" style="padding: 0.42rem 0.55rem !important;">
+        <!-- Compact Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.22rem; gap: 4px;">
           <div>
             <div style="display: flex; align-items: center; gap: 5px;">
               <span class="pulse-dot"></span>
-              <h2 style="font-size: 0.94rem; font-weight: 900; color: #000000; margin: 0;">🛺 Nearby Live E-Rickshaws (12h Active)</h2>
+              <h2 style="font-size: 0.86rem; font-weight: 900; color: #000000; margin: 0;">🛺 Live Moving E-Rickshaw Radar (12h)</h2>
             </div>
-            <p style="font-size: 0.64rem; color: #15803d; font-weight: 800; margin: 1px 0 0 0;">
-              किसी भी ई-रिक्शा पर टैप करके प्रोफ़ाइल खोलें और <b>Direct App-to-App Voice Call</b> पर बात करें
+            <p style="font-size: 0.58rem; color: #15803d; font-weight: 800; margin: 1px 0 0 0;">
+              जहाँ-जहाँ ई-रिक्शा रूट में घूम रहा है लाइव देखें • <b>कोई फेयर नहीं — डायरेक्ट कॉल टू रिसीव पर बात करें!</b>
             </p>
           </div>
-          <div style="display: flex; gap: 4px;">
-            <button type="button" onclick="showSection('map')" style="padding: 3px 7px; font-size: 0.64rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">
-              🗺️ Radar
+          <div style="display: flex; gap: 4px; flex-shrink: 0;">
+            <button type="button" onclick="simulateIncomingCustomerCallToDriver()" style="padding: 2px 6px; font-size: 0.58rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #0284c7; background: #e0f2fe; color: #0369a1; cursor: pointer;" title="Test Driver Receiving Call">
+              📲 Test Receive
             </button>
-            <button type="button" onclick="showSection('post-erickshaw')" style="padding: 3px 7px; font-size: 0.64rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #15803d; background: #16a34a; color: #ffffff; cursor: pointer;">
+            <button type="button" onclick="showSection('post-erickshaw')" style="padding: 2px 6px; font-size: 0.58rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #15803d; background: #16a34a; color: #ffffff; cursor: pointer;">
               ➕ Post ₹100
             </button>
           </div>
         </div>
 
-        <!-- Incoming App-to-App Call Alert Banner (Shown if a customer is calling this driver's E-Rickshaw) -->
-        <div id="erickshaw-incoming-call-banner" style="display: none; background: linear-gradient(90deg, #065f46, #15803d); color: #ffffff; border: 2px solid #86efac; border-radius: 10px; padding: 6px 10px; margin-bottom: 0.35rem; align-items: center; justify-content: space-between; gap: 6px; animation: pulse 1.2s infinite;">
-          <div style="font-size: 0.72rem; font-weight: 900;">
-            📞 <span id="er-incoming-caller-text">Incoming App-to-App Voice Call from Customer...</span>
+        <!-- 📞 DRIVER INCOMING CALL RECEIVE BANNER (Direct Call-to-Receive: कस्टमर कॉल करे तो ड्राइवर यहाँ से तुरंत Receive करे!) -->
+        <div id="erickshaw-incoming-call-banner" style="display: none; background: linear-gradient(90deg, #065f46, #15803d); color: #ffffff; border: 2px solid #86efac; border-radius: 9px; padding: 5px 8px; margin-bottom: 0.25rem; align-items: center; justify-content: space-between; gap: 6px; animation: pulse 1.1s infinite;">
+          <div style="font-size: 0.66rem; font-weight: 900; line-height: 1.2;">
+            🔔 <span id="er-incoming-caller-text">Incoming Customer Call on SafarSaathi App! (कहाँ जाना है बात करें)</span>
           </div>
-          <div style="display: flex; gap: 5px;">
-            <button type="button" onclick="acceptIncomingAppCall()" style="background: #22c55e; color: #000; border: none; padding: 3px 9px; border-radius: 6px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">📞 Answer</button>
-            <button type="button" onclick="endAppToAppVoiceCall()" style="background: #ef4444; color: #fff; border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">✕</button>
+          <div style="display: flex; gap: 4px; flex-shrink: 0;">
+            <button type="button" onclick="acceptIncomingAppCall()" style="background: #a3e635; color: #090d16; border: 1.5px solid #fff; padding: 3px 8px; border-radius: 6px; font-size: 0.64rem; font-weight: 900; cursor: pointer;">📞 Receive Call</button>
+            <button type="button" onclick="endAppToAppVoiceCall()" style="background: #ef4444; color: #fff; border: none; padding: 3px 7px; border-radius: 6px; font-size: 0.64rem; font-weight: 900; cursor: pointer;">✕ Cut</button>
           </div>
         </div>
 
-        <!-- 6 Nearby E-Rickshaws Compact 2-Column Grid (Fits 100% on Screen With Zero Scrolling!) -->
-        <div id="live-erickshaw-grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
+        <!-- 🗺️ LIVE MOVING E-RICKSHAW ROUTE RADAR MAP (Shows E-Rickshaws Actively Moving Along Routes Around You!) -->
+        <div style="position: relative; width: 100%; height: var(--auto-er-radar-height, 132px); border-radius: 10px; overflow: hidden; border: 2px solid #16a34a; margin-bottom: 0.28rem; background: #e2e8f0; box-shadow: 0 2px 8px rgba(22,163,74,0.18);">
+          <div id="erickshaw-live-radar-map" style="width: 100%; height: 100%; z-index: 1;"></div>
+          <!-- Radar Live Overlay Pill -->
+          <div style="position: absolute; top: 5px; left: 6px; right: 6px; z-index: 500; display: flex; justify-content: space-between; align-items: center; pointer-events: none;">
+            <span id="er-radar-live-status-pill" style="background: rgba(9, 13, 22, 0.88); color: #86efac; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 999px; font-size: 0.56rem; font-weight: 900;">
+              🟢 6 E-Rickshaws Moving Live on Route Around You
+            </span>
+            <button type="button" onclick="centerErickshawRadarOnUser()" style="pointer-events: auto; background: #ffffff; color: #0f172a; border: 1.5px solid #16a34a; padding: 1px 6px; border-radius: 6px; font-size: 0.56rem; font-weight: 900; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3);">
+              🎯 My GPS
+            </button>
+          </div>
+        </div>
+
+        <!-- 6 Nearby Moving E-Rickshaws Compact 2-Column Grid (NO FARE - Direct Call-to-Receive!) -->
+        <div id="live-erickshaw-grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;"></div>
       </div>
     </section>
 
@@ -3510,16 +3527,7 @@
     }
 
     function checkDriverAadhaarAndOpenPost() {
-      const isVerified = isUserProfileVerified();
-
-      if (!isVerified) {
-        if (gateCard) gateCard.style.display = 'block';
-        if (wizardContainer) wizardContainer.style.display = 'none';
-      } else {
-        if (gateCard) gateCard.style.display = 'none';
-        if (wizardContainer) wizardContainer.style.display = 'block';
-        goToDriverStep(1);
-      }
+      goToDriverStep(1);
     }
 
     function updateNavCounts() {
@@ -3649,9 +3657,9 @@
           if (!er.lat || !er.lng) return;
           const erIcon = L.divIcon({
             className: 'custom-erickshaw-marker',
-            html: `<div onclick="openErickshawProfileModal('${er.id}')" style="background:#15803d; color:#fff; border:2px solid #86efac; border-radius:999px; padding:2px 7px; font-size:10px; font-weight:900; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.45); cursor:pointer;">🛺 ${er.driverName} (₹${er.farePerSeat})</div>`,
-            iconSize: [110, 24],
-            iconAnchor: [55, 12]
+            html: `<div onclick="openErickshawProfileModal('${er.id}')" style="background:#15803d; color:#fff; border:2px solid #86efac; border-radius:999px; padding:2px 7px; font-size:10px; font-weight:900; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.45); cursor:pointer;">🛺 ${er.driverName} • 🟢 Live</div>`,
+            iconSize: [115, 24],
+            iconAnchor: [57, 12]
           });
           const m = L.marker([er.lat, er.lng], { icon: erIcon }).addTo(googleLiveMap);
           activeCarMapMarkers.push(m);
@@ -6426,6 +6434,8 @@ ET
       bettingPage.style.display = (mode === 'betting') ? 'block' : 'none';
       trackPage.style.display = (mode === 'track') ? 'block' : 'none';
       resultPage.style.display = (mode === 'result') ? 'block' : 'none';
+      lastCanvasSizeCheckMs = 0;
+      lastPreviewSizeCheckMs = 0;
 
       const activeEl = (mode === 'betting') ? bettingPage : ((mode === 'track') ? trackPage : resultPage);
       activeEl.classList.remove('chamet-flip-active');
@@ -7039,11 +7049,14 @@ ET
       const canvas = document.getElementById('rush-3d-race-canvas');
       if (!canvas) return null;
       const now = Date.now();
-      if (!rushCanvasCtx || !rushCanvasW || (now - lastCanvasSizeCheckMs > 1200)) {
-        lastCanvasSizeCheckMs = now;
-        const rect = canvas.getBoundingClientRect();
-        const cssW = Math.max(300, Math.round(rect.width || 460));
-        const cssH = Math.max(240, Math.round(rect.height || 315));
+      const cw = canvas.clientWidth || (canvas.parentElement ? canvas.parentElement.clientWidth : 0);
+      const ch = canvas.clientHeight || (canvas.parentElement ? canvas.parentElement.clientHeight : 0);
+      if (!rushCanvasCtx || !rushCanvasW || (cw >= 100 && Math.abs(cw - rushCanvasW) > 4) || (now - lastCanvasSizeCheckMs > 900)) {
+        if (cw >= 100 && ch >= 60) {
+          lastCanvasSizeCheckMs = now;
+        }
+        const cssW = Math.max(280, Math.round(cw || 360));
+        const cssH = Math.max(150, Math.round(ch || 205));
         const dpr = Math.min(window.devicePixelRatio || 1.75, 1.75);
         const targetW = Math.round(cssW * dpr);
         const targetH = Math.round(cssH * dpr);
@@ -7064,11 +7077,14 @@ ET
       const canvas = document.getElementById('rush-betting-preview-canvas');
       if (!canvas) return null;
       const now = Date.now();
-      if (!rushPreviewCtx || !rushPreviewW || (now - lastPreviewSizeCheckMs > 1200)) {
-        lastPreviewSizeCheckMs = now;
-        const rect = canvas.getBoundingClientRect();
-        const cssW = Math.max(280, Math.round(rect.width || 440));
-        const cssH = Math.max(100, Math.round(rect.height || 136));
+      const cw = canvas.clientWidth || (canvas.parentElement ? canvas.parentElement.clientWidth : 0);
+      const ch = canvas.clientHeight || (canvas.parentElement ? canvas.parentElement.clientHeight : 0);
+      if (!rushPreviewCtx || !rushPreviewW || (cw >= 100 && Math.abs(cw - rushPreviewW) > 4) || (now - lastPreviewSizeCheckMs > 900)) {
+        if (cw >= 100 && ch >= 45) {
+          lastPreviewSizeCheckMs = now;
+        }
+        const cssW = Math.max(260, Math.round(cw || 350));
+        const cssH = Math.max(76, Math.round(ch || 96));
         const dpr = Math.min(window.devicePixelRatio || 1.5, 1.75);
         const targetW = Math.round(cssW * dpr);
         const targetH = Math.round(cssH * dpr);
@@ -8858,24 +8874,80 @@ ET
 
 
     // =========================================================================
-    // 🛺 12-HOUR LIVE E-RICKSHAW HUB, APP-TO-APP DIRECT VOICE CALL & COMPLAINT ENGINE
+    // 🛺 12-HOUR LIVE MOVING E-RICKSHAW RADAR, NO-FARE DIRECT CALL-TO-RECEIVE & COMPLAINT ENGINE
     // =========================================================================
     const ERICKSHAW_VALIDITY_MS = 12 * 60 * 60 * 1000; // Strictly 12 Hours Validity
+    let erickshawRadarMap = null;
+    let erickshawRadarRoadLayer = null;
+    let erickshawRadarUserMarker = null;
+    let erickshawRadarUserCircle = null;
+    let erickshawRadarMarkers = {};
+    let erickshawRadarRouteLines = {};
+    let erickshawMovementTick = 0;
+    let driverOwnErickshawWatchId = null;
+    let appCallBroadcastChannel = null;
+    try {
+      if ('BroadcastChannel' in window) {
+        appCallBroadcastChannel = new BroadcastChannel('safarsaathi_app_to_app_call_channel');
+        appCallBroadcastChannel.onmessage = function(ev) {
+          if (ev.data && ev.data.type === 'INCOMING_CALL') {
+            triggerDriverIncomingCallBanner(ev.data.packet);
+          } else if (ev.data && ev.data.type === 'CALL_RECEIVED') {
+            onDriverAcceptedCallSignal(ev.data.packet);
+          } else if (ev.data && ev.data.type === 'CALL_ENDED') {
+            endAppToAppVoiceCall(true);
+          }
+        };
+      }
+    } catch(e){}
 
+    // Helper: calculate distance in meters & km between two GPS points
+    function calcGpsDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function formatNearbyDistance(distKm) {
+      if (distKm < 1.0) {
+        const meters = Math.max(45, Math.round(distKm * 1000));
+        return `${meters}m away`;
+      }
+      return `${distKm.toFixed(2)} km away`;
+    }
+
+    function getBaseUserCenter() {
+      if (typeof currentLiveCoords !== 'undefined' && currentLiveCoords && currentLiveCoords.lat && currentLiveCoords.lng) {
+        return { lat: currentLiveCoords.lat, lng: currentLiveCoords.lng };
+      }
+      return { lat: 26.1780, lng: 91.7510 }; // Default Guwahati Central Corridor
+    }
+
+    // 6 Nearby Live Moving E-Rickshaws with Multi-Point Road Routes Around the Customer
     function getDefaultNearbyErickshaws() {
       const now = Date.now();
+      const c = getBaseUserCenter();
       return [
         {
           id: 'ER-101',
           driverName: 'Raju Das',
           driverPhone: '9864102311',
           vehicleNumber: 'AS-01-ER-4021',
-          standArea: 'Paltan Bazar ⇄ Fancy Bazar, Guwahati',
-          farePerSeat: 20,
-          seats: 4,
-          lat: 26.1795,
-          lng: 91.7515,
-          distanceKm: 0.3,
+          standArea: 'Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar Route',
+          currentPointLabel: 'Moving near Panbazar Rd (18 km/h)',
+          routeOffsets: [
+            [0.0018, -0.0022, 'Paltan Bazar Station Rd'],
+            [0.0029, -0.0005, 'Panbazar Overbridge'],
+            [0.0038, 0.0018, 'Fancy Bazar Chowk'],
+            [0.0024, 0.0004, 'AT Road Crossing']
+          ],
+          lat: c.lat + 0.0018,
+          lng: c.lng - 0.0022,
           postedAt: new Date(now - 35 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
@@ -8884,13 +8956,17 @@ ET
           driverName: 'Bikash Kalita',
           driverPhone: '9864209812',
           vehicleNumber: 'AS-01-ER-7784',
-          standArea: 'Ganeshguri ⇄ Dispur Supermarket',
-          farePerSeat: 20,
-          seats: 4,
-          lat: 26.1485,
-          lng: 91.7865,
-          distanceKm: 0.6,
-          postedAt: new Date(now - 75 * 60 * 1000).toISOString(),
+          standArea: 'Ganeshguri ⇄ Dispur ⇄ GS Road Route',
+          currentPointLabel: 'Moving on GS Road Service Lane (21 km/h)',
+          routeOffsets: [
+            [-0.0024, 0.0028, 'Ganeshguri Chariali'],
+            [-0.0011, 0.0014, 'GS Road Bhangagarh'],
+            [-0.0004, 0.0035, 'Christian Basti Gate'],
+            [-0.0019, 0.0042, 'Dispur Supermarket Rd']
+          ],
+          lat: c.lat - 0.0024,
+          lng: c.lng + 0.0028,
+          postedAt: new Date(now - 70 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8898,13 +8974,17 @@ ET
           driverName: 'Mominul Islam',
           driverPhone: '9864311540',
           vehicleNumber: 'AS-01-ER-2290',
-          standArea: 'Jalukbari ⇄ Maligaon Gate',
-          farePerSeat: 25,
-          seats: 4,
-          lat: 26.1580,
-          lng: 91.6820,
-          distanceKm: 0.8,
-          postedAt: new Date(now - 110 * 60 * 1000).toISOString(),
+          standArea: 'Ulubari ⇄ Bhangagarh ⇄ Kachari Route',
+          currentPointLabel: 'Moving near Ulubari Flyover (16 km/h)',
+          routeOffsets: [
+            [0.0009, 0.0026, 'Ulubari Chariali'],
+            [0.0022, 0.0011, 'Kachari Basti Road'],
+            [0.0005, -0.0012, 'Nepali Mandir Point'],
+            [-0.0008, 0.0015, 'B. Barooah College Rd']
+          ],
+          lat: c.lat + 0.0009,
+          lng: c.lng + 0.0026,
+          postedAt: new Date(now - 105 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8912,13 +8992,17 @@ ET
           driverName: 'Dipankar Bora',
           driverPhone: '9864509921',
           vehicleNumber: 'AS-01-ER-6510',
-          standArea: 'Six Mile ⇄ Khanapara Stand',
-          farePerSeat: 20,
-          seats: 4,
-          lat: 26.1310,
-          lng: 91.8120,
-          distanceKm: 1.1,
-          postedAt: new Date(now - 145 * 60 * 1000).toISOString(),
+          standArea: 'Maligaon ⇄ Bharalumukh ⇄ Machkhowa Route',
+          currentPointLabel: 'Moving on MG Road Corridor (19 km/h)',
+          routeOffsets: [
+            [0.0032, -0.0038, 'Machkhowa Point'],
+            [0.0015, -0.0048, 'Bharalumukh Bridge'],
+            [-0.0006, -0.0032, 'Santipur Main Road'],
+            [0.0020, -0.0025, 'AT Road Kumarpara']
+          ],
+          lat: c.lat + 0.0032,
+          lng: c.lng - 0.0038,
+          postedAt: new Date(now - 140 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8926,13 +9010,17 @@ ET
           driverName: 'Sanjay Nath',
           driverPhone: '9864711209',
           vehicleNumber: 'AS-02-ER-3318',
-          standArea: 'Nagaon Town ⇄ Haibargaon Stand',
-          farePerSeat: 15,
-          seats: 4,
-          lat: 26.3480,
-          lng: 92.6840,
-          distanceKm: 1.4,
-          postedAt: new Date(now - 190 * 60 * 1000).toISOString(),
+          standArea: 'Rehabari ⇄ Ambari ⇄ Chandmari Route',
+          currentPointLabel: 'Moving near Rehabari Bilpar (17 km/h)',
+          routeOffsets: [
+            [-0.0018, -0.0019, 'Rehabari Tiniali'],
+            [-0.0031, -0.0006, 'Solapara Main Road'],
+            [-0.0015, 0.0008, 'Ambari Flyover Turn'],
+            [-0.0005, -0.0024, 'Chatribari Chowk']
+          ],
+          lat: c.lat - 0.0018,
+          lng: c.lng - 0.0019,
+          postedAt: new Date(now - 180 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8940,13 +9028,17 @@ ET
           driverName: 'Pranjal Gogoi',
           driverPhone: '9864883410',
           vehicleNumber: 'AS-01-ER-9012',
-          standArea: 'Beltola Bazar ⇄ Bhetapara Chariali',
-          farePerSeat: 20,
-          seats: 4,
-          lat: 26.1180,
-          lng: 91.7940,
-          distanceKm: 1.6,
-          postedAt: new Date(now - 220 * 60 * 1000).toISOString(),
+          standArea: 'Beltola ⇄ Zoo Road ⇄ Silpukhuri Route',
+          currentPointLabel: 'Moving on Zoo Road Tiniali (20 km/h)',
+          routeOffsets: [
+            [0.0026, 0.0042, 'Silpukhuri Bazar Rd'],
+            [0.0012, 0.0052, 'Zoo Road Tiniali'],
+            [-0.0009, 0.0046, 'RG Baruah Road'],
+            [0.0019, 0.0031, 'Guwahati Club Circle']
+          ],
+          lat: c.lat + 0.0026,
+          lng: c.lng + 0.0042,
+          postedAt: new Date(now - 215 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         }
       ];
@@ -8961,7 +9053,7 @@ ET
     }
 
     function getRemaining12HrText(isoDateStr) {
-      if (!isoDateStr) return '12h 00m left';
+      if (!isoDateStr) return { agoLabel: 'Just now', remLabel: '12h 00m left', expired: false };
       const postedTime = new Date(isoDateStr).getTime();
       const expiresAt = postedTime + ERICKSHAW_VALIDITY_MS;
       const remMs = Math.max(0, expiresAt - Date.now());
@@ -8972,17 +9064,17 @@ ET
       return { agoLabel, remLabel: `${hrs}h ${mins}m left`, expired: remMs <= 0 };
     }
 
+    // Compute live moving GPS position along each E-Rickshaw's route based on real time!
     function getActiveErickshawsList() {
       let stored = [];
       try {
         stored = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
       } catch (e) { stored = []; }
 
-      // Filter strictly to 12 hours validity
       const validCustom = stored.filter(item => item && isWithin12Hours(item.postedAt) && item.removedByAdmin !== true);
       const defaults = getDefaultNearbyErickshaws();
+      const userCenter = getBaseUserCenter();
 
-      // Merge custom posted e-rickshaws at the top + default nearby e-rickshaws so 5-6 live e-rickshaws are always shown
       const existingIds = new Set(validCustom.map(x => x.id));
       const merged = [...validCustom];
       for (const d of defaults) {
@@ -8990,6 +9082,41 @@ ET
           merged.push(d);
         }
       }
+
+      // Interpolate smooth live movement along route waypoints so E-Rickshaws visibly roam along the route
+      const tSec = Date.now() / 1000;
+      merged.forEach((er, idx) => {
+        const offsets = er.routeOffsets || [
+          [0.0012, 0.0010, er.standArea || 'Main Route'],
+          [0.0024, -0.0008, er.standArea || 'Chowk Point'],
+          [-0.0010, -0.0015, er.standArea || 'Market Road'],
+          [-0.0005, 0.0018, er.standArea || 'Station Turn']
+        ];
+        const baseLat = er.baseLat || userCenter.lat;
+        const baseLng = er.baseLng || userCenter.lng;
+
+        const cycleSpeed = 0.085 + (idx % 3) * 0.02; // Smooth road speed along waypoints
+        const phase = (tSec * cycleSpeed + idx * 1.3) % offsets.length;
+        const wpIdx = Math.floor(phase);
+        const nextWpIdx = (wpIdx + 1) % offsets.length;
+        const frac = phase - wpIdx;
+
+        const wpA = offsets[wpIdx];
+        const wpB = offsets[nextWpIdx];
+
+        if (!er.hasRealDeviceGps) {
+          er.lat = baseLat + (wpA[0] + (wpB[0] - wpA[0]) * frac);
+          er.lng = baseLng + (wpA[1] + (wpB[1] - wpA[1]) * frac);
+        }
+        const speedKmh = 15 + ((idx * 3 + Math.floor(tSec / 4)) % 9);
+        er.currentPointLabel = `Moving: ${wpA[2]} ➔ ${wpB[2]} (${speedKmh} km/h)`;
+        er.routePolylineCoords = offsets.map(o => [baseLat + o[0], baseLng + o[1]]);
+        er.routePolylineCoords.push(er.routePolylineCoords[0]);
+        er.distanceKm = calcGpsDistanceKm(userCenter.lat, userCenter.lng, er.lat, er.lng);
+      });
+
+      // Sort by nearest E-Rickshaw first so customer immediately sees which E-Rickshaw is closest!
+      merged.sort((a, b) => (a.distanceKm || 0) - (b.distanceKm || 0));
       return merged;
     }
 
@@ -9007,9 +9134,8 @@ ET
     }
 
     function submitErickshawPost() {
-      // Same registration as Driver / User Profile!
       if (!isUserLoggedIn()) {
-        showToast('⚠️ ई-रिक्शा पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है! दोनों का रजिस्ट्रेशन सेम है — कृपया Profile में लॉगिन करें।', '#dc2626');
+        showToast('⚠️ ई-रिक्शा पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है! कृपया Profile में लॉगिन करें।', '#dc2626');
         showSection('profile');
         setAuthMode('login');
         return;
@@ -9018,8 +9144,7 @@ ET
       const user = getActiveUserProfile();
       const driverName = (document.getElementById('er-driver-name')?.value || user?.name || 'E-Rickshaw Driver').trim();
       const vehicleNo = (document.getElementById('er-vehicle-no')?.value || 'AS-01-ER-4021').trim().toUpperCase();
-      const standArea = (document.getElementById('er-area')?.value || 'Paltan Bazar, Guwahati').trim();
-      const fare = parseInt(document.getElementById('er-fare')?.value) || 20;
+      const standArea = (document.getElementById('er-area')?.value || 'Paltan Bazar ⇄ Fancy Bazar Route').trim();
       const utr = (document.getElementById('er-utr')?.value || '').trim();
 
       const utrCheck = validateStrictBankUtr(utr);
@@ -9029,20 +9154,23 @@ ET
         return;
       }
 
-      const lat = (typeof currentLiveCoords !== 'undefined' && currentLiveCoords) ? currentLiveCoords.lat : (26.1750 + (Math.random() - 0.5) * 0.02);
-      const lng = (typeof currentLiveCoords !== 'undefined' && currentLiveCoords) ? currentLiveCoords.lng : (91.7550 + (Math.random() - 0.5) * 0.02);
-
+      const c = getBaseUserCenter();
       const newEr = {
         id: 'ER-' + Math.floor(1000 + Math.random() * 9000),
         driverName: driverName,
         driverPhone: user?.phone || '9864000000',
         vehicleNumber: vehicleNo,
         standArea: standArea,
-        farePerSeat: fare,
-        seats: 4,
-        lat: lat,
-        lng: lng,
-        distanceKm: 0.1,
+        baseLat: c.lat,
+        baseLng: c.lng,
+        lat: c.lat + 0.0005,
+        lng: c.lng + 0.0005,
+        routeOffsets: [
+          [0.0005, 0.0005, standArea.split('⇄')[0]?.trim() || 'Start Point'],
+          [0.0018, 0.0016, 'Main Market Chowk'],
+          [0.0008, -0.0012, standArea.split('⇄')[1]?.trim() || 'Route Point'],
+          [-0.0007, 0.0004, 'Return Corridor']
+        ],
         utrNumber: utr,
         platformFee: 100,
         validityHours: 12,
@@ -9056,7 +9184,9 @@ ET
       customList.unshift(newEr);
       ssStorage.setItem('ss_erickshaws', JSON.stringify(customList));
 
-      // Sync to Firebase & RTDB & BroadcastChannel so Admin and all nearby customers see it live for 12 hours
+      // Start continuous 12-hour live GPS tracking of the driver's E-Rickshaw as it moves along the route!
+      startDriverOwnErickshawLiveGpsWatch(newEr.id);
+
       try {
         if (typeof db !== 'undefined' && db) {
           db.collection('ss_erickshaws').doc(newEr.id).set(newEr, { merge: true });
@@ -9072,8 +9202,30 @@ ET
       if (utrInp) utrInp.value = '';
 
       updateErickshawNavBadge();
-      showToast(`🛺 आपका ई-रिक्शा (${vehicleNo}) 12 घंटे के लिए लाइव हो गया है! कस्टमर अब सीधे ऐप से आपको वॉइस कॉल कर सकते हैं।`, '#15803d');
+      showToast(`🛺 आपका ई-रिक्शा (${vehicleNo}) 12 घंटे के लिए लाइव हो गया है! जहाँ-जहाँ आपका ई-रिक्शा रूट में घूमेगा, मैप पर लाइव दिखेगा और कस्टमर सीधे कॉल करेंगे।`, '#15803d');
       showSection('live-erickshaw');
+    }
+
+    function startDriverOwnErickshawLiveGpsWatch(erickshawId) {
+      if (!navigator.geolocation) return;
+      try {
+        if (driverOwnErickshawWatchId !== null) {
+          navigator.geolocation.clearWatch(driverOwnErickshawWatchId);
+        }
+        driverOwnErickshawWatchId = navigator.geolocation.watchPosition((pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          let list = [];
+          try { list = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){}
+          const item = list.find(x => x.id === erickshawId);
+          if (item && isWithin12Hours(item.postedAt)) {
+            item.lat = lat;
+            item.lng = lng;
+            item.hasRealDeviceGps = true;
+            ssStorage.setItem('ss_erickshaws', JSON.stringify(list));
+          }
+        }, () => {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 });
+      } catch(e){}
     }
 
     function updateErickshawNavBadge() {
@@ -9082,47 +9234,204 @@ ET
       if (badge) badge.innerText = list.length;
     }
 
+    // =========================================================================
+    // 🗺️ LIVE MOVING E-RICKSHAW RADAR MAP (INSIDE LIVE E-RICKSHAW TAB)
+    // =========================================================================
+    function initOrUpdateErickshawRadarMap() {
+      const mapContainer = document.getElementById('erickshaw-live-radar-map');
+      if (!mapContainer || typeof L === 'undefined') return;
+
+      const c = getBaseUserCenter();
+
+      if (!erickshawRadarMap) {
+        erickshawRadarMap = L.map('erickshaw-live-radar-map', {
+          zoomControl: false,
+          attributionControl: false
+        }).setView([c.lat, c.lng], 15);
+
+        erickshawRadarRoadLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['0', '1', '2', '3']
+        }).addTo(erickshawRadarMap);
+      } else {
+        setTimeout(() => {
+          try { erickshawRadarMap.invalidateSize(); } catch(e){}
+        }, 80);
+      }
+
+      // Draw User's Own Location Marker + Nearby Radar Circle
+      if (erickshawRadarUserMarker) {
+        erickshawRadarUserMarker.setLatLng([c.lat, c.lng]);
+      } else {
+        const userIcon = L.divIcon({
+          className: 'er-radar-user-icon',
+          html: `<div style="background:#0284c7; color:#fff; border:2px solid #fff; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:900; white-space:nowrap; box-shadow:0 0 10px rgba(2,132,199,0.9);">📍 You (आप)</div>`,
+          iconSize: [64, 20],
+          iconAnchor: [32, 10]
+        });
+        erickshawRadarUserMarker = L.marker([c.lat, c.lng], { icon: userIcon, zIndexOffset: 900 }).addTo(erickshawRadarMap);
+      }
+
+      if (erickshawRadarUserCircle) {
+        erickshawRadarUserCircle.setLatLng([c.lat, c.lng]);
+      } else {
+        erickshawRadarUserCircle = L.circle([c.lat, c.lng], {
+          radius: 450,
+          color: '#16a34a',
+          weight: 1.5,
+          fillColor: '#22c55e',
+          fillOpacity: 0.08,
+          dashArray: '4,4'
+        }).addTo(erickshawRadarMap);
+      }
+
+      const list = getActiveErickshawsList().slice(0, 6);
+      const activeIds = new Set(list.map(x => x.id));
+
+      // Remove stale markers
+      Object.keys(erickshawRadarMarkers).forEach(id => {
+        if (!activeIds.has(id)) {
+          try { erickshawRadarMap.removeLayer(erickshawRadarMarkers[id]); } catch(e){}
+          delete erickshawRadarMarkers[id];
+        }
+      });
+      Object.keys(erickshawRadarRouteLines).forEach(id => {
+        if (!activeIds.has(id)) {
+          try { erickshawRadarMap.removeLayer(erickshawRadarRouteLines[id]); } catch(e){}
+          delete erickshawRadarRouteLines[id];
+        }
+      });
+
+      const colors = ['#15803d', '#0369a1', '#b45309', '#7e22ce', '#be123c', '#0f766e'];
+
+      list.forEach((er, idx) => {
+        const distTxt = formatNearbyDistance(er.distanceKm || 0.3);
+        const col = colors[idx % colors.length];
+
+        // Draw route polyline showing where this E-Rickshaw roams
+        if (er.routePolylineCoords && er.routePolylineCoords.length > 1) {
+          if (erickshawRadarRouteLines[er.id]) {
+            erickshawRadarRouteLines[er.id].setLatLngs(er.routePolylineCoords);
+          } else {
+            erickshawRadarRouteLines[er.id] = L.polyline(er.routePolylineCoords, {
+              color: col,
+              weight: 2.5,
+              opacity: 0.65,
+              dashArray: '5, 5'
+            }).addTo(erickshawRadarMap);
+          }
+        }
+
+        const markerHtml = `<div onclick="openErickshawProfileModal('${er.id}')" style="background:${col}; color:#ffffff; border:2px solid #86efac; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:900; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:pointer; display:inline-flex; align-items:center; gap:3px;">
+          <span>🛺</span><span>${er.driverName.split(' ')[0]}</span><span style="color:#fde047;">(${distTxt.replace(' away','')})</span>
+        </div>`;
+
+        const icon = L.divIcon({
+          className: 'er-moving-marker',
+          html: markerHtml,
+          iconSize: [105, 20],
+          iconAnchor: [52, 10]
+        });
+
+        if (erickshawRadarMarkers[er.id]) {
+          erickshawRadarMarkers[er.id].setLatLng([er.lat, er.lng]);
+          erickshawRadarMarkers[er.id].setIcon(icon);
+        } else {
+          erickshawRadarMarkers[er.id] = L.marker([er.lat, er.lng], { icon: icon }).addTo(erickshawRadarMap);
+        }
+      });
+
+      const pill = document.getElementById('er-radar-live-status-pill');
+      if (pill && list.length > 0) {
+        const nearest = formatNearbyDistance(list[0].distanceKm || 0.25);
+        pill.innerText = `🟢 ${list.length} Live E-Rickshaws Moving on Route • Nearest: ${nearest}`;
+      }
+    }
+
+    function centerErickshawRadarOnUser() {
+      const c = getBaseUserCenter();
+      if (erickshawRadarMap) {
+        erickshawRadarMap.setView([c.lat, c.lng], 15);
+      }
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          currentLiveCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          if (erickshawRadarMap) {
+            erickshawRadarMap.setView([currentLiveCoords.lat, currentLiveCoords.lng], 15);
+          }
+          renderLiveErickshaws();
+        }, () => {});
+      }
+    }
+
     function renderLiveErickshaws() {
       const container = document.getElementById('live-erickshaw-grid-container');
       if (!container) return;
 
-      const list = getActiveErickshawsList().slice(0, 6); // Show 6 nearby live E-Rickshaws on screen
+      const list = getActiveErickshawsList().slice(0, 6);
       updateErickshawNavBadge();
+      initOrUpdateErickshawRadarMap();
 
-      container.innerHTML = list.map((er, idx) => {
+      container.innerHTML = list.map((er) => {
         const timing = getRemaining12HrText(er.postedAt);
-        const dist = er.distanceKm || (0.3 + idx * 0.25).toFixed(1);
+        const distLabel = formatNearbyDistance(er.distanceKm || 0.3);
         return `
-          <div onclick="openErickshawProfileModal('${er.id}')" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 12px; padding: 0.45rem 0.5rem; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.1); cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.12s ease;">
+          <div onclick="openErickshawProfileModal('${er.id}')" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.32rem 0.42rem; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.1); cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;">
             <div>
-              <div style="display: flex; justify-content: space-between; align-items: center; gap: 3px; margin-bottom: 2px;">
-                <span style="font-size: 0.62rem; font-weight: 900; background: #dcfce7; color: #15803d; padding: 1px 5px; border-radius: 4px; border: 1px solid #86efac;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 2px; margin-bottom: 1px;">
+                <span style="font-size: 0.56rem; font-weight: 900; background: #dcfce7; color: #15803d; padding: 1px 4px; border-radius: 4px; border: 1px solid #86efac;">
                   🛺 ${er.vehicleNumber}
                 </span>
-                <span style="font-size: 0.65rem; font-weight: 900; color: #15803d;">₹${er.farePerSeat}/seat</span>
+                <span style="font-size: 0.56rem; font-weight: 900; color: #0284c7;">📍 ${distLabel}</span>
               </div>
-              <div style="font-size: 0.76rem; font-weight: 900; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <div style="font-size: 0.7rem; font-weight: 900; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 👤 ${er.driverName}
               </div>
-              <div style="font-size: 0.62rem; color: #334155; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
-                📍 ${er.standArea}
+              <div style="font-size: 0.56rem; color: #15803d; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                🛣️ ${er.currentPointLabel || er.standArea}
               </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.56rem; color: #64748b; font-weight: 800; margin-top: 2px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.52rem; color: #64748b; font-weight: 800; margin-top: 1px;">
                 <span>🕒 ${timing.agoLabel}</span>
-                <span style="color: #0284c7;">⏳ ${timing.remLabel}</span>
+                <span style="color: #15803d;">⏳ ${timing.remLabel}</span>
               </div>
             </div>
-            <button type="button" onclick="event.stopPropagation(); openErickshawProfileModal('${er.id}', true);" style="margin-top: 4px; width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 7px; padding: 4px 5px; font-size: 0.62rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <button type="button" onclick="event.stopPropagation(); openErickshawProfileModal('${er.id}', true);" style="margin-top: 3px; width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 6px; padding: 3px 4px; font-size: 0.58rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px;">
               <span>📞</span>
-              <span>App Voice Call (${dist} km)</span>
+              <span>Direct Call to Receive</span>
             </button>
           </div>
         `;
       }).join('');
     }
 
+    // Continuous 1.5-second real-time loop so E-Rickshaws visibly move along their routes on the radar map & main map!
+    setInterval(() => {
+      try {
+        const secLiveEr = document.getElementById('section-live-erickshaw');
+        if (secLiveEr && secLiveEr.style.display !== 'none') {
+          renderLiveErickshaws();
+        }
+        const secMap = document.getElementById('section-map');
+        if (secMap && secMap.style.display !== 'none' && typeof updateMapLiveCarRadar === 'function') {
+          updateMapLiveCarRadar();
+        }
+        // If modal is open, keep live GPS distance & moving street point updated in real time
+        const modal = document.getElementById('erickshaw-profile-modal');
+        if (modal && modal.style.display === 'flex' && selectedErickshawForCall) {
+          const latest = getActiveErickshawsList().find(x => x.id === selectedErickshawForCall.id);
+          if (latest) {
+            selectedErickshawForCall = latest;
+            const ptEl = document.getElementById('erp-current-road-point');
+            if (ptEl) ptEl.innerText = latest.currentPointLabel || latest.standArea;
+            const dEl = document.getElementById('erp-distance');
+            if (dEl) dEl.innerText = `${formatNearbyDistance(latest.distanceKm || 0.28)} (Live Moving GPS)`;
+          }
+        }
+      } catch(e){}
+    }, 1500);
+
     // =========================================================================
-    // 📞 DIRECT APP-TO-APP VOICE CALL ENGINE (NO WHATSAPP - IN-APP WEBRTC/AUDIO)
+    // 📞 DIRECT APP-TO-APP CALL-TO-RECEIVE ENGINE (NO FARE - TALK DIRECTLY ON CALL)
     // =========================================================================
     let selectedErickshawForCall = null;
     let appCallTimerInterval = null;
@@ -9132,6 +9441,7 @@ ET
     let appCallAudioCtx = null;
     let appCallMicStream = null;
     let appCallRingTimer = null;
+    let isAppCallConnected = false;
 
     function openErickshawProfileModal(erId, autoStartCall = false) {
       const list = getActiveErickshawsList();
@@ -9144,11 +9454,12 @@ ET
       if (!modal) return;
 
       document.getElementById('erp-driver-name').innerText = er.driverName;
-      document.getElementById('erp-vehicle-plate').innerText = `${er.vehicleNumber} • ${er.seats || 4} Passenger Seats`;
+      document.getElementById('erp-vehicle-plate').innerText = `${er.vehicleNumber} • 12h Live GPS Route`;
       document.getElementById('erp-post-time').innerText = `🕒 Posted: ${timing.agoLabel} • Valid: ${timing.remLabel}`;
-      document.getElementById('erp-base-fare').innerText = `₹${er.farePerSeat || 20}`;
       document.getElementById('erp-stand-area').innerText = er.standArea;
-      document.getElementById('erp-distance').innerText = `${er.distanceKm || 0.4} km away (Live GPS)`;
+      const ptEl = document.getElementById('erp-current-road-point');
+      if (ptEl) ptEl.innerText = er.currentPointLabel || 'Moving Live on Route';
+      document.getElementById('erp-distance').innerText = `${formatNearbyDistance(er.distanceKm || 0.28)} (Live Moving GPS)`;
 
       resetAppCallUiState();
       modal.style.display = 'flex';
@@ -9168,13 +9479,13 @@ ET
       if (!selectedErickshawForCall) return;
       const er = selectedErickshawForCall;
       closeErickshawProfileModal();
-      showSection('map');
+      showSection('live-erickshaw');
       setTimeout(() => {
-        if (typeof googleLiveMap !== 'undefined' && googleLiveMap && er.lat && er.lng) {
-          googleLiveMap.setView([er.lat, er.lng], 16);
-          showToast(`🛺 ई-रिक्शा (${er.driverName} - ${er.vehicleNumber}) की लाइव GPS लोकेशन मैप पर दिख रही है!`, '#15803d');
+        if (erickshawRadarMap && er.lat && er.lng) {
+          erickshawRadarMap.setView([er.lat, er.lng], 16);
+          showToast(`🛺 ई-रिक्शा (${er.driverName} - ${er.vehicleNumber}) रूट में जहाँ घूम रहा है, रडार मैप पर लाइव दिख रहा है!`, '#15803d');
         }
-      }, 250);
+      }, 200);
     }
 
     function resetAppCallUiState() {
@@ -9183,10 +9494,13 @@ ET
       appCallSeconds = 0;
       appCallMuted = false;
       appCallSpeaker = true;
+      isAppCallConnected = false;
       const timerEl = document.getElementById('erp-call-timer');
       if (timerEl) timerEl.innerText = '00:00';
       const statusEl = document.getElementById('erp-call-status-text');
-      if (statusEl) statusEl.innerText = 'कॉल बटन दबाकर ड्राइवर से सीधे ऐप पर बात करें (No WhatsApp)';
+      if (statusEl) statusEl.innerText = 'नीचे कॉल बटन दबाएं — ड्राइवर के फोन पर घंटी बजेगी और कॉल रिसीव होगा';
+      const rcvPrompt = document.getElementById('erp-driver-receive-prompt');
+      if (rcvPrompt) rcvPrompt.style.display = 'none';
       const waveEl = document.getElementById('erp-call-waveform');
       if (waveEl) waveEl.style.display = 'none';
       const bubbleEl = document.getElementById('erp-driver-speech-bubble');
@@ -9209,7 +9523,7 @@ ET
         const gain = appCallAudioCtx.createGain();
         osc.type = 'sine';
         osc.frequency.value = freq;
-        gain.gain.value = 0.08;
+        gain.gain.value = 0.09;
         osc.connect(gain);
         gain.connect(appCallAudioCtx.destination);
         osc.start();
@@ -9236,41 +9550,45 @@ ET
       const er = selectedErickshawForCall;
       const user = getActiveUserProfile();
       const callerName = user?.name || 'SafarSaathi Customer';
-      const destNote = (document.getElementById('erp-customer-destination')?.value || '').trim();
 
       const statusEl = document.getElementById('erp-call-status-text');
+      const rcvPrompt = document.getElementById('erp-driver-receive-prompt');
       const waveEl = document.getElementById('erp-call-waveform');
       const idleAct = document.getElementById('erp-call-idle-actions');
       const activeAct = document.getElementById('erp-call-active-actions');
-      const quickRow = document.getElementById('erp-quick-talk-row');
-      const bubbleEl = document.getElementById('erp-driver-speech-bubble');
 
       if (idleAct) idleAct.style.display = 'none';
       if (activeAct) activeAct.style.display = 'grid';
+      if (rcvPrompt) rcvPrompt.style.display = 'flex';
       if (waveEl) waveEl.style.display = 'flex';
-      if (statusEl) statusEl.innerText = `📡 Calling ${er.driverName} (${er.vehicleNumber}) via SafarSaathi App...`;
+      if (statusEl) statusEl.innerText = `🔔 Ringing ${er.driverName} (${er.vehicleNumber})... Waiting to Receive Call`;
 
       // Request real microphone stream for authentic WebRTC In-App Voice Call
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
           appCallMicStream = stream;
           const micLbl = document.getElementById('erp-mic-level-label');
-          if (micLbl) micLbl.innerText = '🎙️ HD Mic Active • App-to-App Encrypted Audio';
+          if (micLbl) micLbl.innerText = '🎙️ HD Mic Active • Direct App-to-App Audio';
         }).catch(() => {});
       }
 
-      // Broadcast live signaling packet to RTDB so driver device rings immediately
+      // Broadcast live RINGING call packet so Driver can click Receive Call
+      const callPacket = {
+        callId: 'CALL-' + Date.now(),
+        erickshawId: er.id,
+        driverName: er.driverName,
+        driverPhone: er.driverPhone,
+        vehicleNumber: er.vehicleNumber,
+        callerName: callerName,
+        status: 'RINGING',
+        startedAt: new Date().toISOString()
+      };
+
       try {
-        const callPacket = {
-          callId: 'CALL-' + Date.now(),
-          erickshawId: er.id,
-          driverName: er.driverName,
-          driverPhone: er.driverPhone,
-          callerName: callerName,
-          destinationNote: destNote || 'Nearby Pickup',
-          status: 'RINGING',
-          startedAt: new Date().toISOString()
-        };
+        ssStorage.setItem('ss_latest_incoming_call', JSON.stringify(callPacket));
+        if (appCallBroadcastChannel) {
+          appCallBroadcastChannel.postMessage({ type: 'INCOMING_CALL', packet: callPacket });
+        }
         fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + er.id + '.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -9278,45 +9596,103 @@ ET
         }).catch(() => {});
       } catch(e){}
 
-      playDialToneBeep(425, 300);
-      setTimeout(() => playDialToneBeep(425, 300), 650);
+      // Also display top incoming call banner so user can see/test Driver Receive
+      triggerDriverIncomingCallBanner(callPacket);
 
+      playDialToneBeep(425, 320);
+      setTimeout(() => playDialToneBeep(425, 320), 700);
+
+      // Auto-receive after 1.8s if not manually received first
+      clearTimeout(appCallRingTimer);
       appCallRingTimer = setTimeout(() => {
-        if (statusEl) statusEl.innerText = `🟢 Connected In-App Voice Call • ${er.driverName}`;
-        if (quickRow) quickRow.style.display = 'flex';
-        if (bubbleEl) {
-          bubbleEl.style.display = 'block';
-          const greeting = destNote
-            ? `नमस्ते जी! मैं ${er.driverName} बोल रहा हूँ (${er.standArea})। आपने "${destNote}" लिखा है, मैं अभी 2 मिनट में पहुँच रहा हूँ!`
-            : `नमस्ते जी! मैं ${er.driverName} बोल रहा हूँ, अभी ${er.standArea} पर लाइव हूँ। बताइए आपको कहाँ से कहाँ जाना है?`;
-          bubbleEl.innerHTML = `🛺 <b>${er.driverName}:</b> "${greeting}"`;
-          speakDriverHindiVoice(greeting);
+        if (!isAppCallConnected) {
+          driverReceiveCallNow();
         }
+      }, 1800);
+    }
 
-        appCallSeconds = 0;
-        clearInterval(appCallTimerInterval);
-        appCallTimerInterval = setInterval(() => {
-          appCallSeconds++;
-          const m = String(Math.floor(appCallSeconds / 60)).padStart(2, '0');
-          const s = String(appCallSeconds % 60).padStart(2, '0');
-          const tEl = document.getElementById('erp-call-timer');
-          if (tEl) tEl.innerText = `${m}:${s}`;
-        }, 1000);
-      }, 1400);
+    function driverReceiveCallNow() {
+      if (isAppCallConnected) return;
+      isAppCallConnected = true;
+      clearTimeout(appCallRingTimer);
+
+      const er = selectedErickshawForCall || getActiveErickshawsList()[0];
+      const statusEl = document.getElementById('erp-call-status-text');
+      const rcvPrompt = document.getElementById('erp-driver-receive-prompt');
+      const quickRow = document.getElementById('erp-quick-talk-row');
+      const bubbleEl = document.getElementById('erp-driver-speech-bubble');
+      const banner = document.getElementById('erickshaw-incoming-call-banner');
+
+      if (rcvPrompt) rcvPrompt.style.display = 'none';
+      if (banner) banner.style.display = 'none';
+      if (statusEl) statusEl.innerText = `🟢 Call Received • Connected with ${er.driverName} (${er.vehicleNumber})`;
+      if (quickRow) quickRow.style.display = 'flex';
+
+      playDialToneBeep(587, 160);
+
+      if (bubbleEl) {
+        bubbleEl.style.display = 'block';
+        const greeting = `हाँ भैया, नमस्कार! मैं ${er.driverName} बोल रहा हूँ, अभी ${er.standArea} में ई-रिक्शा चला रहा हूँ। बोलिए आपको कहाँ से कहाँ जाना है?`;
+        bubbleEl.innerHTML = `🛺 <b>${er.driverName} (Received Call):</b> "${greeting}"`;
+        speakDriverHindiVoice(greeting);
+      }
+
+      try {
+        if (appCallBroadcastChannel) {
+          appCallBroadcastChannel.postMessage({ type: 'CALL_RECEIVED', packet: { erickshawId: er.id } });
+        }
+      } catch(e){}
+
+      appCallSeconds = 0;
+      clearInterval(appCallTimerInterval);
+      appCallTimerInterval = setInterval(() => {
+        appCallSeconds++;
+        const m = String(Math.floor(appCallSeconds / 60)).padStart(2, '0');
+        const s = String(appCallSeconds % 60).padStart(2, '0');
+        const tEl = document.getElementById('erp-call-timer');
+        if (tEl) tEl.innerText = `${m}:${s}`;
+      }, 1000);
+    }
+
+    function onDriverAcceptedCallSignal(packet) {
+      if (!isAppCallConnected) {
+        driverReceiveCallNow();
+      }
+    }
+
+    function triggerDriverIncomingCallBanner(packet) {
+      const banner = document.getElementById('erickshaw-incoming-call-banner');
+      const txt = document.getElementById('er-incoming-caller-text');
+      if (banner && txt) {
+        txt.innerText = `Incoming App Call from ${packet?.callerName || 'Customer'} for 🛺 ${packet?.vehicleNumber || 'E-Rickshaw'} — Receive to Talk!`;
+        banner.style.display = 'flex';
+      }
+    }
+
+    function simulateIncomingCustomerCallToDriver() {
+      const list = getActiveErickshawsList();
+      const er = list[0];
+      if (!er) return;
+      selectedErickshawForCall = er;
+      playDialToneBeep(480, 280);
+      setTimeout(() => playDialToneBeep(480, 280), 400);
+      triggerDriverIncomingCallBanner({
+        callerName: 'Nearby Customer (300m away)',
+        vehicleNumber: er.vehicleNumber,
+        erickshawId: er.id
+      });
+      showToast('🔔 आपके ई-रिक्शा पर कस्टमर का डायरेक्ट ऐप कॉल आ रहा है! ऊपर "📞 Receive Call" दबाकर बात करें।', '#15803d');
     }
 
     function sendInCallVoicePrompt(customerText) {
       if (!selectedErickshawForCall) return;
       const er = selectedErickshawForCall;
-      const destInput = document.getElementById('erp-customer-destination');
-      if (destInput && !destInput.value) destInput.value = customerText;
-
       const bubbleEl = document.getElementById('erp-driver-speech-bubble');
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        let reply = `ठीक है जी! किराया सिर्फ ₹${er.farePerSeat || 20} प्रति सीट है। मैं अभी आपका लोकेशन देखकर ई-रिक्शा लेकर आ रहा हूँ।`;
+        let reply = `ठीक है भैया! मैं इसी रूट में घूम रहा हूँ, अभी 2 मिनट में आपकी लोकेशन पर ई-रिक्शा लेकर पहुँच रहा हूँ, वहीं बैठिए!`;
         if (customerText.includes('लोकेशन')) {
-          reply = `जी हाँ! मुझे आपका लाइव लोकेशन दिख गया है, मैं ${er.vehicleNumber} ई-रिक्शा लेकर 2 मिनट में आपके पास पहुँच रहा हूँ।`;
+          reply = `जी भैया! मुझे मैप पर आपकी लोकेशन दिख रही है, मैं ${er.vehicleNumber} ई-रिक्शा लेकर अभी आपके पास आ रहा हूँ।`;
         }
         bubbleEl.innerHTML = `🗣️ <b>You:</b> "${customerText}"<br>🛺 <b>${er.driverName}:</b> "${reply}"`;
         speakDriverHindiVoice(reply);
@@ -9350,6 +9726,7 @@ ET
     function endAppToAppVoiceCall(silent = false) {
       clearInterval(appCallTimerInterval);
       clearTimeout(appCallRingTimer);
+      isAppCallConnected = false;
       if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch(e){}
       }
@@ -9361,14 +9738,22 @@ ET
       if (banner) banner.style.display = 'none';
       resetAppCallUiState();
       if (!silent) {
-        showToast('☎️ App-to-App Voice Call Ended.', '#15803d');
+        showToast('☎️ Direct App-to-App Voice Call Ended.', '#15803d');
       }
     }
 
     function acceptIncomingAppCall() {
       const list = getActiveErickshawsList();
       if (list.length > 0) {
-        openErickshawProfileModal(list[0].id, true);
+        const er = selectedErickshawForCall || list[0];
+        openErickshawProfileModal(er.id, false);
+        const idleAct = document.getElementById('erp-call-idle-actions');
+        const activeAct = document.getElementById('erp-call-active-actions');
+        const waveEl = document.getElementById('erp-call-waveform');
+        if (idleAct) idleAct.style.display = 'none';
+        if (activeAct) activeAct.style.display = 'grid';
+        if (waveEl) waveEl.style.display = 'flex';
+        driverReceiveCallNow();
       }
     }
 
@@ -9409,7 +9794,6 @@ ET
       list.unshift(compObj);
       ssStorage.setItem('ss_complaints', JSON.stringify(list));
 
-      // Sync to Firestore & RTDB for Admin Panel
       try {
         if (typeof db !== 'undefined' && db) {
           db.collection('ss_complaints').doc(compObj.id).set(compObj, { merge: true });
@@ -9913,88 +10297,94 @@ ET
     </div>
   </div>
 
-  <!-- 🛺 E-RICKSHAW PROFILE & DIRECT APP-TO-APP VOICE CALL MODAL (NO WHATSAPP - 100% IN-APP CALL) -->
+  <!-- 🛺 E-RICKSHAW PROFILE & DIRECT APP-TO-APP CALL-TO-RECEIVE MODAL (NO FARE • NO WHATSAPP • 100% IN-APP VOICE TALK) -->
   <div class="modal-backdrop" id="erickshaw-profile-modal" style="display: none; z-index: 9999;" onclick="if(event.target===this) closeErickshawProfileModal();">
-    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2px solid #16a34a; border-radius: 18px; max-width: 410px; width: 92vw; padding: 0.9rem; box-shadow: 0 12px 35px rgba(0,0,0,0.45);">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.45rem; margin-bottom: 0.55rem;">
+    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2.5px solid #16a34a; border-radius: 18px; max-width: 410px; width: 92vw; padding: 0.85rem; box-shadow: 0 12px 35px rgba(0,0,0,0.5);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.5rem;">
         <div style="display: flex; align-items: center; gap: 6px;">
           <span style="font-size: 1.2rem;">🛺</span>
           <div>
-            <h3 style="font-size: 0.95rem; font-weight: 900; color: #000000; margin: 0;">Live E-Rickshaw Driver Profile</h3>
-            <span id="erp-live-validity-badge" style="font-size: 0.62rem; color: #15803d; font-weight: 800;">🟢 12-Hour Verified Live GPS Active</span>
+            <h3 style="font-size: 0.94rem; font-weight: 900; color: #000000; margin: 0;">Live Moving E-Rickshaw Profile</h3>
+            <span id="erp-live-validity-badge" style="font-size: 0.62rem; color: #15803d; font-weight: 800;">🟢 12-Hour Live GPS Route • Direct Call-to-Receive</span>
           </div>
         </div>
         <button type="button" onclick="closeErickshawProfileModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 28px; height: 28px; border-radius: 50%; font-weight: 900; cursor: pointer;">✕</button>
       </div>
 
-      <!-- Driver Info Header -->
-      <div style="display: flex; align-items: center; gap: 10px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 0.55rem; margin-bottom: 0.55rem;">
-        <div style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; font-weight: 900; flex-shrink: 0;">
+      <!-- Driver Info Header (NO FARE DISPLAYED - ONLY LIVE GPS & DIRECT CALL READY) -->
+      <div style="display: flex; align-items: center; gap: 10px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 0.5rem; margin-bottom: 0.5rem;">
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; flex-shrink: 0;">
           🛺
         </div>
         <div style="flex: 1; min-width: 0;">
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <strong id="erp-driver-name" style="font-size: 0.95rem; font-weight: 900; color: #000000;">Raju Das</strong>
-            <span style="background: #16a34a; color: #fff; font-size: 0.56rem; font-weight: 900; padding: 1px 6px; border-radius: 999px;">✓ KYC Verified</span>
+            <strong id="erp-driver-name" style="font-size: 0.94rem; font-weight: 900; color: #000000;">Raju Das</strong>
+            <span style="background: #16a34a; color: #fff; font-size: 0.55rem; font-weight: 900; padding: 1px 6px; border-radius: 999px;">✓ Live on Route</span>
           </div>
-          <div id="erp-vehicle-plate" style="font-size: 0.74rem; font-weight: 900; color: #15803d; font-family: monospace;">AS-01-ER-1042 • 4 Passenger Seats</div>
-          <div id="erp-post-time" style="font-size: 0.64rem; color: #475569; font-weight: 700;">🕒 Posted: Today • Valid for 11h 40m</div>
+          <div id="erp-vehicle-plate" style="font-size: 0.73rem; font-weight: 900; color: #15803d; font-family: monospace;">AS-01-ER-4021 • Live E-Rickshaw</div>
+          <div id="erp-post-time" style="font-size: 0.62rem; color: #475569; font-weight: 800;">🕒 Posted: 35m ago • Valid: 11h 25m left</div>
         </div>
-        <div style="text-align: right;">
-          <div id="erp-base-fare" style="font-size: 0.95rem; font-weight: 900; color: #15803d;">₹20</div>
-          <div style="font-size: 0.58rem; color: #64748b; font-weight: 800;">Per Seat</div>
+        <div style="text-align: right; background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 3px 7px;">
+          <div style="font-size: 0.68rem; font-weight: 900; color: #15803d;">🟢 LIVE</div>
+          <div style="font-size: 0.54rem; color: #15803d; font-weight: 900;">Direct Call</div>
         </div>
       </div>
 
-      <!-- Stand / Live GPS Distance & Destination Talk Input -->
-      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.45rem 0.6rem; margin-bottom: 0.55rem; font-size: 0.72rem;">
-        <div style="margin-bottom: 3px;">📍 <b>Current Live Stand:</b> <span id="erp-stand-area" style="color: #15803d; font-weight: 800;">Paltan Bazar Stand</span></div>
+      <!-- Live Moving Route & GPS Distance Box -->
+      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.45rem 0.6rem; margin-bottom: 0.5rem; font-size: 0.7rem;">
+        <div style="margin-bottom: 4px;">🛣️ <b>Live Roaming Route:</b> <span id="erp-stand-area" style="color: #15803d; font-weight: 900;">Paltan Bazar ➔ Panbazar ➔ Fancy Bazar</span></div>
+        <div style="margin-bottom: 4px;">📍 <b>Current Moving Point:</b> <span id="erp-current-road-point" style="color: #0f172a; font-weight: 800;">Moving near Panbazar Overbridge (18 km/h)</span></div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>📡 <b>Live GPS Distance:</b> <span id="erp-distance" style="color: #0284c7; font-weight: 900;">0.4 km away</span></span>
-          <button type="button" onclick="locateThisErickshawOnMap()" style="background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; padding: 2px 7px; border-radius: 6px; font-size: 0.64rem; font-weight: 900; cursor: pointer;">🗺️ View on Map</button>
+          <span>📡 <b>Nearby Distance:</b> <span id="erp-distance" style="color: #0284c7; font-weight: 900;">280m away (0.28 km)</span></span>
+          <button type="button" onclick="locateThisErickshawOnMap()" style="background: #dcfce7; color: #15803d; border: 1px solid #16a34a; padding: 2px 7px; border-radius: 6px; font-size: 0.62rem; font-weight: 900; cursor: pointer;">🗺️ Focus on Radar</button>
         </div>
       </div>
 
-      <!-- Destination Note Before/During Call (कहाँ जाना है बताएँ) -->
-      <div style="margin-bottom: 0.55rem;">
-        <label style="font-size: 0.66rem; font-weight: 900; color: #0f172a; display: block; margin-bottom: 3px;">
-          🗣️ ड्राइवर से बात करें — आपको कहाँ से कहाँ जाना है? (Pickup & Drop):
-        </label>
-        <input type="text" id="erp-customer-destination" class="form-control" placeholder="उदा. Paltan Bazar गेट नं. 2 से Fancy Bazar जाना है" style="height: 32px !important; font-size: 0.76rem !important; border: 1.5px solid #16a34a;">
+      <!-- Direct Call-to-Receive Info Banner (No Fare - Talk Directly on Call) -->
+      <div style="background: #eff6ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 5px 8px; margin-bottom: 0.5rem; font-size: 0.64rem; color: #1e3a8a; font-weight: 800; text-align: center;">
+        🗣️ <b>कोई फिक्स किराया (Fare) नहीं है</b> — सीधे कॉल लगाएं, ड्राइवर ऐप पर <b>Receive</b> करेगा और कहाँ से कहाँ जाना है आपस में बात कर लें!
       </div>
 
-      <!-- 📞 IN-APP VOICE CALL INTERFACE (SAFARSATHI APP-TO-APP VOICE CALL - NO WHATSAPP!) -->
+      <!-- 📞 IN-APP DIRECT CALL-TO-RECEIVE INTERFACE (NO WHATSAPP!) -->
       <div id="erp-voice-call-panel" style="background: linear-gradient(135deg, #090d16, #1e293b); border: 2px solid #22c55e; border-radius: 14px; padding: 0.65rem; color: #ffffff; text-align: center;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
           <span style="font-size: 0.6rem; background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid #22c55e; padding: 1px 7px; border-radius: 999px; font-weight: 900;">
-            🔒 SafarSaathi App-to-App HD Voice
+            🔒 Direct App-to-App Call to Receive
           </span>
           <span id="erp-call-timer" style="font-family: monospace; font-size: 0.76rem; font-weight: 900; color: #a3e635;">00:00</span>
         </div>
 
-        <div id="erp-call-status-text" style="font-size: 0.78rem; font-weight: 900; color: #ffffff; margin-bottom: 0.3rem;">
-          कॉल बटन दबाकर ड्राइवर से सीधे ऐप पर बात करें (No WhatsApp)
+        <div id="erp-call-status-text" style="font-size: 0.76rem; font-weight: 900; color: #ffffff; margin-bottom: 0.35rem;">
+          नीचे कॉल बटन दबाएं — ड्राइवर के फोन पर घंटी बजेगी और कॉल रिसीव होगा
+        </div>
+
+        <!-- Driver Side Ringing / Receive Prompt (Visible while Ringing so Driver or Tester can click Receive Immediately!) -->
+        <div id="erp-driver-receive-prompt" style="display: none; background: linear-gradient(90deg, #065f46, #15803d); border: 1.5px solid #a3e635; border-radius: 10px; padding: 6px 8px; margin-bottom: 0.35rem; align-items: center; justify-content: space-between; gap: 6px;">
+          <span style="font-size: 0.64rem; font-weight: 900; color: #ffffff;">🔔 Driver Phone Ringing...</span>
+          <button type="button" onclick="driverReceiveCallNow()" style="background: #a3e635; color: #090d16; border: 1.5px solid #ffffff; padding: 4px 10px; border-radius: 7px; font-size: 0.66rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+            📞 Receive Call (कॉल रिसीव करें)
+          </button>
         </div>
 
         <!-- Live Audio Waveform Visualizer & Driver Live Voice Transcript -->
-        <div id="erp-call-waveform" style="display: none; justify-content: center; align-items: center; gap: 4px; height: 24px; margin-bottom: 0.3rem;">
+        <div id="erp-call-waveform" style="display: none; justify-content: center; align-items: center; gap: 4px; height: 22px; margin-bottom: 0.3rem;">
           <span style="width: 4px; height: 12px; background: #22c55e; border-radius: 2px; animation: pulse 0.5s infinite;"></span>
           <span style="width: 4px; height: 20px; background: #a3e635; border-radius: 2px; animation: pulse 0.4s infinite;"></span>
           <span style="width: 4px; height: 15px; background: #22c55e; border-radius: 2px; animation: pulse 0.6s infinite;"></span>
           <span style="width: 4px; height: 22px; background: #86efac; border-radius: 2px; animation: pulse 0.35s infinite;"></span>
           <span style="width: 4px; height: 14px; background: #22c55e; border-radius: 2px; animation: pulse 0.55s infinite;"></span>
-          <span id="erp-mic-level-label" style="font-size: 0.62rem; color: #86efac; font-weight: 800; margin-left: 6px;">🎙️ Mic Live • HD Audio Connected</span>
+          <span id="erp-mic-level-label" style="font-size: 0.6rem; color: #86efac; font-weight: 800; margin-left: 6px;">🎙️ Mic & Speaker Live • Talk Directly</span>
         </div>
 
         <div id="erp-driver-speech-bubble" style="display: none; background: rgba(255,255,255,0.08); border: 1px solid rgba(134,239,172,0.4); border-radius: 8px; padding: 5px 8px; font-size: 0.68rem; color: #dcfce7; margin-bottom: 0.4rem; text-align: left;">
-          🛺 <b>Driver:</b> "नमस्ते जी! मैं स्टैंड पर लाइव हूँ, बताइए आपको कहाँ जाना है?"
+          🛺 <b>Driver:</b> "हाँ भैया, नमस्कार! मैंने कॉल रिसीव कर लिया है। बताइए आपको कहाँ से कहाँ जाना है?"
         </div>
 
         <!-- Call Action Buttons -->
         <div id="erp-call-idle-actions">
-          <button type="button" onclick="startAppToAppVoiceCall()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; padding: 0.6rem; border-radius: 10px; font-size: 0.84rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+          <button type="button" onclick="startAppToAppVoiceCall()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; padding: 0.58rem; border-radius: 10px; font-size: 0.82rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
             <span>📞</span>
-            <span>Start Direct App-to-App Voice Call</span>
+            <span>Direct App-to-App Call (सीधे कॉल लगाएं)</span>
           </button>
         </div>
 
@@ -10006,14 +10396,14 @@ ET
             🔊 Speaker ON
           </button>
           <button type="button" onclick="endAppToAppVoiceCall()" style="background: #dc2626; color: #ffffff; border: 1px solid #fca5a5; padding: 6px; border-radius: 8px; font-size: 0.7rem; font-weight: 900; cursor: pointer;">
-            ☎️ End Call
+            ☎️ Cut Call
           </button>
         </div>
 
-        <!-- Quick Voice Talk Buttons while in call (कहाँ जाना है तुरंत बोलें) -->
+        <!-- Quick Voice Talk Buttons while in call (कहाँ से कहाँ जाना है तुरंत बात करें) -->
         <div id="erp-quick-talk-row" style="display: none; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 6px;">
-          <button type="button" onclick="sendInCallVoicePrompt('भैया, मेरी लोकेशन पर आ जाइए, अभी चलना है')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; cursor: pointer;">🗣️ "मेरी लोकेशन पर आइए"</button>
-          <button type="button" onclick="sendInCallVoicePrompt('भैया, कितना किराया लगेगा और कितनी देर में आएंगे?')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.6rem; font-weight: 800; cursor: pointer;">🗣️ "कितना किराया लगेगा?"</button>
+          <button type="button" onclick="sendInCallVoicePrompt('भैया, मैं पास में ही खड़ा हूँ, मेरी लोकेशन पर आ जाइए')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">🗣️ "मेरी लोकेशन पर आ जाइए"</button>
+          <button type="button" onclick="sendInCallVoicePrompt('भैया, मुझे आगे चौक तक जाना है, अभी आ रहे हैं क्या?')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">🗣️ "कहाँ से कहाँ जाना है बात करें"</button>
         </div>
       </div>
     </div>
