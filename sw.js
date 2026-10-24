@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v110-live-moving-erickshaw-no-fare)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v112-ola-map-driver-call-deal)
   Zero Stale Cache • Network-First No-Store • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v110-live-moving-erickshaw-no-fare';
+const CACHE_NAME = 'safarsaathi-v112-ola-map-driver-call-deal';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

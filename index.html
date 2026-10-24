@@ -42,7 +42,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V110_LIVE_MOVING_ERICKSHAW_NO_FARE';
+        const CURRENT_VERSION = 'SS_PROD_V112_OLA_MAP_DRIVER_CALL_DEAL';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -101,6 +101,8 @@
           let autoRaceH = Math.max(155, Math.min(Math.round(usableH - 185), 235));
           let autoBetPreviewH = Math.max(78, Math.min(Math.round(usableH - 340), 112));
           let autoProfVidH = Math.max(105, Math.min(Math.round(usableH - 255), 165));
+          let autoErRadarH = Math.max(145, Math.min(Math.round(usableH * 0.38), 205));
+          document.documentElement.style.setProperty('--auto-er-radar-height', `${autoErRadarH}px`);
 
           document.documentElement.style.setProperty('--auto-map-height', `${autoMapH}px`);
           document.documentElement.style.setProperty('--auto-chat-height', `${autoChatH}px`);
@@ -2247,34 +2249,14 @@
       </div>
     </section>
 
-    <!-- ==================== 8. 🟢 LIVE E-RICKSHAW (LIVE MOVING ROUTE RADAR + DIRECT CALL TO RECEIVE - NO FARE) ==================== -->
+    <!-- ==================== 8. 🟢 LIVE E-RICKSHAW (EXACT OLA/UBER MAP + DRIVER NAME & DIRECT CALL LIST - NO FARE) ==================== -->
     <section id="section-live-erickshaw" class="app-section" style="display: none;">
-      <div class="app-card" style="padding: 0.42rem 0.55rem !important;">
-        <!-- Compact Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.22rem; gap: 4px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <span class="pulse-dot"></span>
-              <h2 style="font-size: 0.86rem; font-weight: 900; color: #000000; margin: 0;">🛺 Live Moving E-Rickshaw Radar (12h)</h2>
-            </div>
-            <p style="font-size: 0.58rem; color: #15803d; font-weight: 800; margin: 1px 0 0 0;">
-              जहाँ-जहाँ ई-रिक्शा रूट में घूम रहा है लाइव देखें • <b>कोई फेयर नहीं — डायरेक्ट कॉल टू रिसीव पर बात करें!</b>
-            </p>
-          </div>
-          <div style="display: flex; gap: 4px; flex-shrink: 0;">
-            <button type="button" onclick="simulateIncomingCustomerCallToDriver()" style="padding: 2px 6px; font-size: 0.58rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #0284c7; background: #e0f2fe; color: #0369a1; cursor: pointer;" title="Test Driver Receiving Call">
-              📲 Test Receive
-            </button>
-            <button type="button" onclick="showSection('post-erickshaw')" style="padding: 2px 6px; font-size: 0.58rem; font-weight: 900; border-radius: 6px; border: 1.5px solid #15803d; background: #16a34a; color: #ffffff; cursor: pointer;">
-              ➕ Post ₹100
-            </button>
-          </div>
-        </div>
+      <div class="app-card" style="padding: 0 !important; overflow: hidden !important; border: 1.5px solid #cbd5e1 !important; border-radius: 16px !important; background: #ffffff !important; box-shadow: 0 4px 20px rgba(0,0,0,0.10) !important;">
 
-        <!-- 📞 DRIVER INCOMING CALL RECEIVE BANNER (Direct Call-to-Receive: कस्टमर कॉल करे तो ड्राइवर यहाँ से तुरंत Receive करे!) -->
-        <div id="erickshaw-incoming-call-banner" style="display: none; background: linear-gradient(90deg, #065f46, #15803d); color: #ffffff; border: 2px solid #86efac; border-radius: 9px; padding: 5px 8px; margin-bottom: 0.25rem; align-items: center; justify-content: space-between; gap: 6px; animation: pulse 1.1s infinite;">
+        <!-- 📞 DRIVER INCOMING CALL RECEIVE BANNER (Shown when a customer calls) -->
+        <div id="erickshaw-incoming-call-banner" style="display: none; background: linear-gradient(90deg, #065f46, #15803d); color: #ffffff; border-bottom: 2px solid #86efac; padding: 6px 10px; align-items: center; justify-content: space-between; gap: 6px; animation: pulse 1.1s infinite; z-index: 600;">
           <div style="font-size: 0.66rem; font-weight: 900; line-height: 1.2;">
-            🔔 <span id="er-incoming-caller-text">Incoming Customer Call on SafarSaathi App! (कहाँ जाना है बात करें)</span>
+            🔔 <span id="er-incoming-caller-text">Incoming Customer Call on SafarSaathi App!</span>
           </div>
           <div style="display: flex; gap: 4px; flex-shrink: 0;">
             <button type="button" onclick="acceptIncomingAppCall()" style="background: #a3e635; color: #090d16; border: 1.5px solid #fff; padding: 3px 8px; border-radius: 6px; font-size: 0.64rem; font-weight: 900; cursor: pointer;">📞 Receive Call</button>
@@ -2282,22 +2264,71 @@
           </div>
         </div>
 
-        <!-- 🗺️ LIVE MOVING E-RICKSHAW ROUTE RADAR MAP (Shows E-Rickshaws Actively Moving Along Routes Around You!) -->
-        <div style="position: relative; width: 100%; height: var(--auto-er-radar-height, 132px); border-radius: 10px; overflow: hidden; border: 2px solid #16a34a; margin-bottom: 0.28rem; background: #e2e8f0; box-shadow: 0 2px 8px rgba(22,163,74,0.18);">
+        <!-- 1. TOP HALF: LIVE MAP WITH TOP-DOWN MOVING VEHICLES & CONNECTING ROUTE LINE (EXACT SCREENSHOT STYLE) -->
+        <div style="position: relative; width: 100%; height: var(--auto-er-radar-height, 195px); background: #f1f5f9;">
           <div id="erickshaw-live-radar-map" style="width: 100%; height: 100%; z-index: 1;"></div>
-          <!-- Radar Live Overlay Pill -->
-          <div style="position: absolute; top: 5px; left: 6px; right: 6px; z-index: 500; display: flex; justify-content: space-between; align-items: center; pointer-events: none;">
-            <span id="er-radar-live-status-pill" style="background: rgba(9, 13, 22, 0.88); color: #86efac; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 999px; font-size: 0.56rem; font-weight: 900;">
-              🟢 6 E-Rickshaws Moving Live on Route Around You
+
+          <!-- Top-Left Back / Post E-Rickshaw Floating Buttons -->
+          <div style="position: absolute; top: 8px; left: 8px; right: 8px; z-index: 500; display: flex; justify-content: space-between; align-items: center; pointer-events: none;">
+            <span id="er-radar-live-status-pill" style="pointer-events: auto; background: rgba(255,255,255,0.95); color: #0f172a; border: 1.5px solid #cbd5e1; padding: 3px 9px; border-radius: 999px; font-size: 0.62rem; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: inline-flex; align-items: center; gap: 5px;">
+              <span class="pulse-dot"></span>
+              <span>6 Live Gaadi Nearby</span>
             </span>
-            <button type="button" onclick="centerErickshawRadarOnUser()" style="pointer-events: auto; background: #ffffff; color: #0f172a; border: 1.5px solid #16a34a; padding: 1px 6px; border-radius: 6px; font-size: 0.56rem; font-weight: 900; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3);">
-              🎯 My GPS
-            </button>
+            <div style="display: flex; gap: 5px; pointer-events: auto;">
+              <button type="button" onclick="simulateIncomingCustomerCallToDriver()" style="background: rgba(255,255,255,0.95); color: #0369a1; border: 1.5px solid #7dd3fc; padding: 3px 7px; border-radius: 999px; font-size: 0.58rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
+                📲 Test Receive
+              </button>
+              <button type="button" onclick="showSection('post-erickshaw')" style="background: #16a34a; color: #ffffff; border: 1.5px solid #15803d; padding: 3px 8px; border-radius: 999px; font-size: 0.58rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.18);">
+                ➕ Post ₹100 (12h)
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom-Right Map Recenter Button (Matches Screenshot's White Circle Button) -->
+          <button type="button" onclick="centerErickshawRadarOnUser()" title="Center on My GPS" style="position: absolute; bottom: 8px; right: 8px; z-index: 500; width: 32px; height: 32px; border-radius: 50%; background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.22);">
+            🎯
+          </button>
+        </div>
+
+        <!-- 2. MIDDLE PICKUP & SELECTED VEHICLE LOCATION BAR (EXACT SCREENSHOT STYLE WITH GREEN & RED DOTS + NOW BADGE) -->
+        <div style="background: #ffffff; padding: 6px 10px; border-top: 1px solid #e2e8f0; border-bottom: 4px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <div style="flex: 1; min-width: 0; position: relative; padding-left: 18px;">
+            <!-- Vertical connecting line between green & red dots -->
+            <div style="position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1.5px; background: #cbd5e1;"></div>
+            <!-- Green Dot Row (Your Live Location) -->
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+              <span style="position: absolute; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 2px #dcfce7;"></span>
+              <div id="er-user-pickup-address-text" style="font-size: 0.68rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                Your Live GPS Pickup Location, Guwahati Assam
+              </div>
+            </div>
+            <!-- Red Dot Row (Selected Live Vehicle & Route) -->
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="position: absolute; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 0 2px #fee2e2;"></span>
+              <div id="er-selected-driver-route-text" style="font-size: 0.68rem; font-weight: 900; color: #15803d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                Selected: Raju Das (AS-01-ER-4021) • Moving Nearby
+              </div>
+            </div>
+          </div>
+
+          <!-- Right "Now / Live" Box (Matches Screenshot) -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 3px 8px; text-align: center; flex-shrink: 0;">
+            <div style="font-size: 0.72rem; line-height: 1;">🕒</div>
+            <div style="font-size: 0.56rem; font-weight: 900; color: #0f172a; margin-top: 1px;">Live</div>
           </div>
         </div>
 
-        <!-- 6 Nearby Moving E-Rickshaws Compact 2-Column Grid (NO FARE - Direct Call-to-Receive!) -->
-        <div id="live-erickshaw-grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;"></div>
+        <!-- 3. BOTTOM HALF: SELECTABLE LIVE VEHICLES LIST (DRIVER NAME & DIRECT CALL OPTION INSTEAD OF FARE!) -->
+        <div id="live-erickshaw-grid-container" style="padding: 6px 8px; max-height: 195px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; background: #ffffff;"></div>
+
+        <!-- 4. BOTTOM ACTION BAR (SELECT ANY DRIVER & CALL DIRECTLY TO DEAL FARE) -->
+        <div style="padding: 6px 10px 8px 10px; background: #ffffff; border-top: 1px solid #e2e8f0;">
+          <button type="button" id="btn-call-selected-erickshaw-bottom" onclick="callCurrentlySelectedErickshaw()" style="width: 100%; background: #0f172a; color: #ffffff; border: none; border-radius: 10px; padding: 9px 12px; font-size: 0.78rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(15,23,42,0.25);">
+            <span>📞</span>
+            <span id="btn-call-selected-erickshaw-label">Call Raju Das • Deal Fare on Call</span>
+          </button>
+        </div>
+
       </div>
     </section>
 
@@ -3657,9 +3688,9 @@
           if (!er.lat || !er.lng) return;
           const erIcon = L.divIcon({
             className: 'custom-erickshaw-marker',
-            html: `<div onclick="openErickshawProfileModal('${er.id}')" style="background:#15803d; color:#fff; border:2px solid #86efac; border-radius:999px; padding:2px 7px; font-size:10px; font-weight:900; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.45); cursor:pointer;">🛺 ${er.driverName} • 🟢 Live</div>`,
-            iconSize: [115, 24],
-            iconAnchor: [57, 12]
+            html: `<div onclick="openErickshawProfileModal('${er.id}')">${getTopDownVehicleMapMarkerHtml(er.driverName, er.headingDeg || 45, false, 'erickshaw')}</div>`,
+            iconSize: [52, 52],
+            iconAnchor: [26, 26]
           });
           const m = L.marker([er.lat, er.lng], { icon: erIcon }).addTo(googleLiveMap);
           activeCarMapMarkers.push(m);
@@ -3921,22 +3952,12 @@
           }
         }
 
-        // Live Car See Animated Marker with Price Badge
+        // Live Car Top-Down Realistic Marker with Driver Name (No Fare Badge)
         const carIcon = L.divIcon({
           className: 'live-car-see-pin',
-          html: `
-            <div style="position:relative; width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-              <div style="position:absolute; width:40px; height:40px; border-radius:50%; background:rgba(22,163,74,0.28); animation:pulse 2s infinite;"></div>
-              <div style="width:30px; height:30px; background:#ffffff; border:2px solid #16a34a; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,0.3); font-size:17px;">
-                🚗
-              </div>
-              <div style="position:absolute; bottom:-12px; background:#15803d; color:#ffffff; font-size:9px; font-weight:900; padding:1px 5px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.25); white-space:nowrap; border:1px solid #86efac;">
-                ₹${fare}
-              </div>
-            </div>
-          `,
-          iconSize: [44, 44],
-          iconAnchor: [22, 22]
+          html: getTopDownVehicleMapMarkerHtml(r.driverName || 'Driver', (idx * 55) % 360, false, 'car'),
+          iconSize: [52, 52],
+          iconAnchor: [26, 26]
         });
 
         const carMarker = L.marker([carLat, carLng], { icon: carIcon }).addTo(googleLiveMap);
@@ -8874,17 +8895,17 @@ ET
 
 
     // =========================================================================
-    // 🛺 12-HOUR LIVE MOVING E-RICKSHAW RADAR, NO-FARE DIRECT CALL-TO-RECEIVE & COMPLAINT ENGINE
+    // 🛺 12-HOUR LIVE MOVING E-RICKSHAW RADAR (OLA/UBER MAP + DRIVER NAME & CALL LIST)
     // =========================================================================
     const ERICKSHAW_VALIDITY_MS = 12 * 60 * 60 * 1000; // Strictly 12 Hours Validity
     let erickshawRadarMap = null;
     let erickshawRadarRoadLayer = null;
     let erickshawRadarUserMarker = null;
-    let erickshawRadarUserCircle = null;
+    let erickshawRadarSelectedDestMarker = null;
+    let erickshawRadarConnectingLine = null;
     let erickshawRadarMarkers = {};
-    let erickshawRadarRouteLines = {};
-    let erickshawMovementTick = 0;
     let driverOwnErickshawWatchId = null;
+    let currentlySelectedErickshawId = 'ER-101';
     let appCallBroadcastChannel = null;
     try {
       if ('BroadcastChannel' in window) {
@@ -8901,7 +8922,62 @@ ET
       }
     } catch(e){}
 
-    // Helper: calculate distance in meters & km between two GPS points
+    // Top-Down 3D Realistic White Vehicle SVG Marker for Map (Matches Uploaded Screenshot!)
+    function getTopDownVehicleMapMarkerHtml(driverName, headingDeg = 45, isSelected = false, vType = 'erickshaw') {
+      const shortName = (driverName || 'Driver').split(' ')[0];
+      const ringBorder = isSelected ? '2.5px solid #16a34a' : '1.5px solid rgba(15,23,42,0.25)';
+      const badgeBg = isSelected ? '#16a34a' : '#0f172a';
+      return `
+        <div style="position:relative; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <div style="transform: rotate(${Math.round(headingDeg)}deg); transition: transform 0.6s linear; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.38));">
+            <svg width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Outer White Car/E-Rickshaw Body -->
+              <rect x="11" y="4" width="26" height="40" rx="9" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+              <!-- Green Electric EV Front Hood Accent -->
+              <path d="M13 11 C13 6.5 35 6.5 35 11 L34 14 L14 14 Z" fill="#22c55e"/>
+              <!-- Dark Glass Windshield -->
+              <path d="M14 15 L34 15 L32 22 L16 22 Z" fill="#1e293b"/>
+              <!-- White Roof Panel -->
+              <rect x="15" y="22" width="18" height="12" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+              <!-- Dark Rear Window -->
+              <path d="M16 34 L32 34 L34 39 L14 39 Z" fill="#334155"/>
+              <!-- Side Mirrors -->
+              <rect x="7" y="15" width="4" height="6" rx="2" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+              <rect x="37" y="15" width="4" height="6" rx="2" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div style="position:absolute; bottom:-6px; background:${badgeBg}; color:#ffffff; font-size:8.5px; font-weight:900; padding:1px 5px; border-radius:4px; white-space:nowrap; border:${ringBorder}; box-shadow:0 1px 4px rgba(0,0,0,0.3);">
+            ${shortName}
+          </div>
+        </div>
+      `;
+    }
+
+    // Side-Angle 3D Vehicle Illustration for the Selectable List Rows Below Map (Matches Screenshot Icons!)
+    function getSideVehicleIllustrationSvg(vType = 'erickshaw', isSelected = false) {
+      if (vType === 'auto') {
+        return `<svg viewBox="0 0 64 42" style="width:46px; height:30px;">
+          <ellipse cx="32" cy="37" rx="24" ry="3.5" fill="rgba(0,0,0,0.12)"/>
+          <path d="M12 12 C12 7 48 7 50 14 L54 27 L54 33 L10 33 Z" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+          <path d="M12 13 L50 13 L48 8 L15 8 Z" fill="#16a34a"/>
+          <rect x="16" y="15" width="14" height="10" rx="2" fill="#1e293b"/>
+          <rect x="33" y="15" width="13" height="10" rx="2" fill="#1e293b"/>
+          <path d="M10 27 L54 27 L54 32 L10 32 Z" fill="#22c55e"/>
+          <circle cx="17" cy="34" r="5" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+          <circle cx="47" cy="34" r="5" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+        </svg>`;
+      }
+      return `<svg viewBox="0 0 64 42" style="width:46px; height:30px;">
+        <ellipse cx="32" cy="37" rx="25" ry="3.5" fill="rgba(0,0,0,0.12)"/>
+        <path d="M10 24 L18 12 L46 12 L54 22 L56 32 L8 32 Z" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+        <path d="M19 14 L32 14 L32 22 L14 22 Z" fill="#1e293b"/>
+        <path d="M35 14 L45 14 L50 22 L35 22 Z" fill="#334155"/>
+        <path d="M9 26 L55 26 L55 30 L9 30 Z" fill="#22c55e"/>
+        <circle cx="17" cy="33" r="5.2" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+        <circle cx="47" cy="33" r="5.2" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+      </svg>`;
+    }
+
     function calcGpsDistanceKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -8918,17 +8994,21 @@ ET
         const meters = Math.max(45, Math.round(distKm * 1000));
         return `${meters}m away`;
       }
-      return `${distKm.toFixed(2)} km away`;
+      return `${distKm.toFixed(1)} km away`;
+    }
+
+    function formatEtaMinutes(distKm) {
+      const mins = Math.max(1, Math.round((distKm || 0.25) * 3.2));
+      return `${mins} min`;
     }
 
     function getBaseUserCenter() {
       if (typeof currentLiveCoords !== 'undefined' && currentLiveCoords && currentLiveCoords.lat && currentLiveCoords.lng) {
         return { lat: currentLiveCoords.lat, lng: currentLiveCoords.lng };
       }
-      return { lat: 26.1780, lng: 91.7510 }; // Default Guwahati Central Corridor
+      return { lat: 26.1355, lng: 91.8060 }; // Khanapara / Panjabari Guwahati Corridor (matching screenshot!)
     }
 
-    // 6 Nearby Live Moving E-Rickshaws with Multi-Point Road Routes Around the Customer
     function getDefaultNearbyErickshaws() {
       const now = Date.now();
       const c = getBaseUserCenter();
@@ -8938,17 +9018,18 @@ ET
           driverName: 'Raju Das',
           driverPhone: '9864102311',
           vehicleNumber: 'AS-01-ER-4021',
-          standArea: 'Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar Route',
-          currentPointLabel: 'Moving near Panbazar Rd (18 km/h)',
+          vehicleType: 'auto',
+          standArea: 'Khanapara ⇄ Science Museum ⇄ Six Mile',
+          currentPointLabel: 'Near Science Museum Road',
           routeOffsets: [
-            [0.0018, -0.0022, 'Paltan Bazar Station Rd'],
-            [0.0029, -0.0005, 'Panbazar Overbridge'],
-            [0.0038, 0.0018, 'Fancy Bazar Chowk'],
-            [0.0024, 0.0004, 'AT Road Crossing']
+            [0.0011, -0.0010, 'Khanapara Stand'],
+            [0.0022, -0.0022, 'Science Museum Rd'],
+            [0.0030, -0.0008, 'Vivanta Junction'],
+            [0.0016, 0.0004, 'NH-27 Service Lane']
           ],
-          lat: c.lat + 0.0018,
-          lng: c.lng - 0.0022,
-          postedAt: new Date(now - 35 * 60 * 1000).toISOString(),
+          lat: c.lat + 0.0011,
+          lng: c.lng - 0.0010,
+          postedAt: new Date(now - 25 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8956,17 +9037,18 @@ ET
           driverName: 'Bikash Kalita',
           driverPhone: '9864209812',
           vehicleNumber: 'AS-01-ER-7784',
-          standArea: 'Ganeshguri ⇄ Dispur ⇄ GS Road Route',
-          currentPointLabel: 'Moving on GS Road Service Lane (21 km/h)',
+          vehicleType: 'erickshaw',
+          standArea: 'Panjabari ⇄ Kalakshetra ⇄ Six Mile',
+          currentPointLabel: 'Moving near Kalakshetra Rd',
           routeOffsets: [
-            [-0.0024, 0.0028, 'Ganeshguri Chariali'],
-            [-0.0011, 0.0014, 'GS Road Bhangagarh'],
-            [-0.0004, 0.0035, 'Christian Basti Gate'],
-            [-0.0019, 0.0042, 'Dispur Supermarket Rd']
+            [0.0035, -0.0028, 'Vivanta Guwahati Rd'],
+            [0.0046, -0.0015, 'Panjabari Road'],
+            [0.0028, -0.0005, 'Six Mile Flyover'],
+            [0.0018, -0.0018, 'Khanapara Turning']
           ],
-          lat: c.lat - 0.0024,
-          lng: c.lng + 0.0028,
-          postedAt: new Date(now - 70 * 60 * 1000).toISOString(),
+          lat: c.lat + 0.0035,
+          lng: c.lng - 0.0028,
+          postedAt: new Date(now - 55 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8974,17 +9056,18 @@ ET
           driverName: 'Mominul Islam',
           driverPhone: '9864311540',
           vehicleNumber: 'AS-01-ER-2290',
-          standArea: 'Ulubari ⇄ Bhangagarh ⇄ Kachari Route',
-          currentPointLabel: 'Moving near Ulubari Flyover (16 km/h)',
+          vehicleType: 'auto',
+          standArea: 'Ganeshguri ⇄ Dispur ⇄ Supermarket',
+          currentPointLabel: 'Moving on GS Road Corridor',
           routeOffsets: [
-            [0.0009, 0.0026, 'Ulubari Chariali'],
-            [0.0022, 0.0011, 'Kachari Basti Road'],
-            [0.0005, -0.0012, 'Nepali Mandir Point'],
-            [-0.0008, 0.0015, 'B. Barooah College Rd']
+            [-0.0016, -0.0035, 'Dreamland Park Rd'],
+            [-0.0005, -0.0020, 'Khanapara Checkpost'],
+            [0.0008, -0.0014, 'GS Road Main'],
+            [-0.0012, -0.0006, 'Jansimalu Turn']
           ],
-          lat: c.lat + 0.0009,
-          lng: c.lng + 0.0026,
-          postedAt: new Date(now - 105 * 60 * 1000).toISOString(),
+          lat: c.lat - 0.0016,
+          lng: c.lng - 0.0035,
+          postedAt: new Date(now - 90 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -8992,17 +9075,18 @@ ET
           driverName: 'Dipankar Bora',
           driverPhone: '9864509921',
           vehicleNumber: 'AS-01-ER-6510',
-          standArea: 'Maligaon ⇄ Bharalumukh ⇄ Machkhowa Route',
-          currentPointLabel: 'Moving on MG Road Corridor (19 km/h)',
+          vehicleType: 'erickshaw',
+          standArea: 'Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar',
+          currentPointLabel: 'Moving on Station Road',
           routeOffsets: [
-            [0.0032, -0.0038, 'Machkhowa Point'],
-            [0.0015, -0.0048, 'Bharalumukh Bridge'],
-            [-0.0006, -0.0032, 'Santipur Main Road'],
-            [0.0020, -0.0025, 'AT Road Kumarpara']
+            [0.0019, -0.0009, 'Main Chowk'],
+            [0.0007, 0.0015, 'Bagrora Link Rd'],
+            [-0.0009, 0.0009, 'Highway Service Rd'],
+            [0.0005, -0.0011, 'Khanapara Circle']
           ],
-          lat: c.lat + 0.0032,
-          lng: c.lng - 0.0038,
-          postedAt: new Date(now - 140 * 60 * 1000).toISOString(),
+          lat: c.lat + 0.0019,
+          lng: c.lng - 0.0009,
+          postedAt: new Date(now - 130 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -9010,17 +9094,18 @@ ET
           driverName: 'Sanjay Nath',
           driverPhone: '9864711209',
           vehicleNumber: 'AS-02-ER-3318',
-          standArea: 'Rehabari ⇄ Ambari ⇄ Chandmari Route',
-          currentPointLabel: 'Moving near Rehabari Bilpar (17 km/h)',
+          vehicleType: 'auto',
+          standArea: 'Beltola Bazar ⇄ Survey ⇄ Basistha',
+          currentPointLabel: 'Moving near Beltola Tiniali',
           routeOffsets: [
-            [-0.0018, -0.0019, 'Rehabari Tiniali'],
-            [-0.0031, -0.0006, 'Solapara Main Road'],
-            [-0.0015, 0.0008, 'Ambari Flyover Turn'],
-            [-0.0005, -0.0024, 'Chatribari Chowk']
+            [0.0062, -0.0014, 'Sankaradeva Kalakshetra'],
+            [0.0048, -0.0002, 'Panjabari Main Rd'],
+            [0.0038, -0.0020, 'VIP Road Turn'],
+            [0.0052, -0.0028, 'Juripar Circle']
           ],
-          lat: c.lat - 0.0018,
-          lng: c.lng - 0.0019,
-          postedAt: new Date(now - 180 * 60 * 1000).toISOString(),
+          lat: c.lat + 0.0062,
+          lng: c.lng - 0.0014,
+          postedAt: new Date(now - 170 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         },
         {
@@ -9028,17 +9113,18 @@ ET
           driverName: 'Pranjal Gogoi',
           driverPhone: '9864883410',
           vehicleNumber: 'AS-01-ER-9012',
-          standArea: 'Beltola ⇄ Zoo Road ⇄ Silpukhuri Route',
-          currentPointLabel: 'Moving on Zoo Road Tiniali (20 km/h)',
+          vehicleType: 'erickshaw',
+          standArea: 'Maligaon ⇄ Jalukbari ⇄ Kamakhya Gate',
+          currentPointLabel: 'Moving on AT Road Route',
           routeOffsets: [
-            [0.0026, 0.0042, 'Silpukhuri Bazar Rd'],
-            [0.0012, 0.0052, 'Zoo Road Tiniali'],
-            [-0.0009, 0.0046, 'RG Baruah Road'],
-            [0.0019, 0.0031, 'Guwahati Club Circle']
+            [-0.0022, 0.0022, 'Bojora Link Road'],
+            [-0.0010, 0.0032, 'NH-27 Eastbound'],
+            [0.0006, 0.0020, 'Bagrora Point'],
+            [-0.0008, 0.0008, 'Byrnihat Turn']
           ],
-          lat: c.lat + 0.0026,
-          lng: c.lng + 0.0042,
-          postedAt: new Date(now - 215 * 60 * 1000).toISOString(),
+          lat: c.lat - 0.0022,
+          lng: c.lng + 0.0022,
+          postedAt: new Date(now - 210 * 60 * 1000).toISOString(),
           status: 'ACTIVE'
         }
       ];
@@ -9053,18 +9139,17 @@ ET
     }
 
     function getRemaining12HrText(isoDateStr) {
-      if (!isoDateStr) return { agoLabel: 'Just now', remLabel: '12h 00m left', expired: false };
+      if (!isoDateStr) return { agoLabel: 'Just now', remLabel: '12h left', expired: false };
       const postedTime = new Date(isoDateStr).getTime();
       const expiresAt = postedTime + ERICKSHAW_VALIDITY_MS;
       const remMs = Math.max(0, expiresAt - Date.now());
       const hrs = Math.floor(remMs / (3600 * 1000));
       const mins = Math.floor((remMs % (3600 * 1000)) / (60 * 1000));
       const agoMins = Math.max(1, Math.floor((Date.now() - postedTime) / 60000));
-      const agoLabel = agoMins < 60 ? `${agoMins}m ago` : `${Math.floor(agoMins / 60)}h ${agoMins % 60}m ago`;
+      const agoLabel = agoMins < 60 ? `${agoMins}m ago` : `${Math.floor(agoMins / 60)}h ago`;
       return { agoLabel, remLabel: `${hrs}h ${mins}m left`, expired: remMs <= 0 };
     }
 
-    // Compute live moving GPS position along each E-Rickshaw's route based on real time!
     function getActiveErickshawsList() {
       let stored = [];
       try {
@@ -9083,20 +9168,19 @@ ET
         }
       }
 
-      // Interpolate smooth live movement along route waypoints so E-Rickshaws visibly roam along the route
       const tSec = Date.now() / 1000;
       merged.forEach((er, idx) => {
         const offsets = er.routeOffsets || [
-          [0.0012, 0.0010, er.standArea || 'Main Route'],
-          [0.0024, -0.0008, er.standArea || 'Chowk Point'],
-          [-0.0010, -0.0015, er.standArea || 'Market Road'],
-          [-0.0005, 0.0018, er.standArea || 'Station Turn']
+          [0.0012, -0.0010, er.standArea || 'Main Route'],
+          [0.0024, -0.0018, er.standArea || 'Chowk Point'],
+          [0.0015, 0.0006, er.standArea || 'Market Road'],
+          [0.0005, -0.0004, er.standArea || 'Station Turn']
         ];
         const baseLat = er.baseLat || userCenter.lat;
         const baseLng = er.baseLng || userCenter.lng;
 
-        const cycleSpeed = 0.085 + (idx % 3) * 0.02; // Smooth road speed along waypoints
-        const phase = (tSec * cycleSpeed + idx * 1.3) % offsets.length;
+        const cycleSpeed = 0.065 + (idx % 3) * 0.015;
+        const phase = (tSec * cycleSpeed + idx * 1.1) % offsets.length;
         const wpIdx = Math.floor(phase);
         const nextWpIdx = (wpIdx + 1) % offsets.length;
         const frac = phase - wpIdx;
@@ -9108,14 +9192,15 @@ ET
           er.lat = baseLat + (wpA[0] + (wpB[0] - wpA[0]) * frac);
           er.lng = baseLng + (wpA[1] + (wpB[1] - wpA[1]) * frac);
         }
-        const speedKmh = 15 + ((idx * 3 + Math.floor(tSec / 4)) % 9);
-        er.currentPointLabel = `Moving: ${wpA[2]} ➔ ${wpB[2]} (${speedKmh} km/h)`;
-        er.routePolylineCoords = offsets.map(o => [baseLat + o[0], baseLng + o[1]]);
-        er.routePolylineCoords.push(er.routePolylineCoords[0]);
+
+        // Compute realistic road heading angle in degrees so top-down car icon points along its road!
+        const dLat = wpB[0] - wpA[0];
+        const dLng = wpB[1] - wpA[1];
+        er.headingDeg = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
+        er.currentPointLabel = `${wpA[2]} ➔ ${wpB[2]}`;
         er.distanceKm = calcGpsDistanceKm(userCenter.lat, userCenter.lng, er.lat, er.lng);
       });
 
-      // Sort by nearest E-Rickshaw first so customer immediately sees which E-Rickshaw is closest!
       merged.sort((a, b) => (a.distanceKm || 0) - (b.distanceKm || 0));
       return merged;
     }
@@ -9144,7 +9229,7 @@ ET
       const user = getActiveUserProfile();
       const driverName = (document.getElementById('er-driver-name')?.value || user?.name || 'E-Rickshaw Driver').trim();
       const vehicleNo = (document.getElementById('er-vehicle-no')?.value || 'AS-01-ER-4021').trim().toUpperCase();
-      const standArea = (document.getElementById('er-area')?.value || 'Paltan Bazar ⇄ Fancy Bazar Route').trim();
+      const standArea = (document.getElementById('er-area')?.value || 'Khanapara ⇄ Six Mile Route').trim();
       const utr = (document.getElementById('er-utr')?.value || '').trim();
 
       const utrCheck = validateStrictBankUtr(utr);
@@ -9160,16 +9245,17 @@ ET
         driverName: driverName,
         driverPhone: user?.phone || '9864000000',
         vehicleNumber: vehicleNo,
+        vehicleType: 'erickshaw',
         standArea: standArea,
         baseLat: c.lat,
         baseLng: c.lng,
-        lat: c.lat + 0.0005,
-        lng: c.lng + 0.0005,
+        lat: c.lat + 0.0008,
+        lng: c.lng - 0.0008,
         routeOffsets: [
-          [0.0005, 0.0005, standArea.split('⇄')[0]?.trim() || 'Start Point'],
-          [0.0018, 0.0016, 'Main Market Chowk'],
-          [0.0008, -0.0012, standArea.split('⇄')[1]?.trim() || 'Route Point'],
-          [-0.0007, 0.0004, 'Return Corridor']
+          [0.0008, -0.0008, standArea.split('⇄')[0]?.trim() || 'Start Point'],
+          [0.0020, -0.0016, 'Main Market Chowk'],
+          [0.0012, 0.0008, standArea.split('⇄')[1]?.trim() || 'Route Point'],
+          [-0.0005, -0.0004, 'Return Corridor']
         ],
         utrNumber: utr,
         platformFee: 100,
@@ -9183,8 +9269,8 @@ ET
       try { customList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){}
       customList.unshift(newEr);
       ssStorage.setItem('ss_erickshaws', JSON.stringify(customList));
+      currentlySelectedErickshawId = newEr.id;
 
-      // Start continuous 12-hour live GPS tracking of the driver's E-Rickshaw as it moves along the route!
       startDriverOwnErickshawLiveGpsWatch(newEr.id);
 
       try {
@@ -9202,7 +9288,7 @@ ET
       if (utrInp) utrInp.value = '';
 
       updateErickshawNavBadge();
-      showToast(`🛺 आपका ई-रिक्शा (${vehicleNo}) 12 घंटे के लिए लाइव हो गया है! जहाँ-जहाँ आपका ई-रिक्शा रूट में घूमेगा, मैप पर लाइव दिखेगा और कस्टमर सीधे कॉल करेंगे।`, '#15803d');
+      showToast(`🛺 आपका ई-रिक्शा (${vehicleNo}) 12 घंटे के लिए मैप पर लाइव हो गया है! कस्टमर अब आपका नाम सिलेक्ट करके सीधे कॉल करेंगे।`, '#15803d');
       showSection('live-erickshaw');
     }
 
@@ -9234,9 +9320,23 @@ ET
       if (badge) badge.innerText = list.length;
     }
 
-    // =========================================================================
-    // 🗺️ LIVE MOVING E-RICKSHAW RADAR MAP (INSIDE LIVE E-RICKSHAW TAB)
-    // =========================================================================
+    // Select a vehicle on the map or list -> highlights row, draws road route on map, updates bottom Call button
+    function selectErickshawOnRadar(erId, openCallDirectly = false) {
+      currentlySelectedErickshawId = erId;
+      renderLiveErickshaws();
+      if (openCallDirectly) {
+        openErickshawProfileModal(erId, true);
+      }
+    }
+
+    function callCurrentlySelectedErickshaw() {
+      const list = getActiveErickshawsList();
+      const chosen = list.find(x => x.id === currentlySelectedErickshawId) || list[0];
+      if (chosen) {
+        openErickshawProfileModal(chosen.id, true);
+      }
+    }
+
     function initOrUpdateErickshawRadarMap() {
       const mapContainer = document.getElementById('erickshaw-live-radar-map');
       if (!mapContainer || typeof L === 'undefined') return;
@@ -9259,92 +9359,94 @@ ET
         }, 80);
       }
 
-      // Draw User's Own Location Marker + Nearby Radar Circle
+      // 1. Green Pickup Dot for User's Location (Exact match to screenshot's Green Circle Dot!)
+      const greenPickupHtml = `<div style="width:18px; height:18px; border-radius:50%; background:#16a34a; border:3px solid #ffffff; box-shadow:0 0 0 2px #0f172a, 0 2px 6px rgba(0,0,0,0.4);"></div>`;
+      const greenIcon = L.divIcon({
+        className: 'ola-green-pickup-dot',
+        html: greenPickupHtml,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
+      });
       if (erickshawRadarUserMarker) {
         erickshawRadarUserMarker.setLatLng([c.lat, c.lng]);
+        erickshawRadarUserMarker.setIcon(greenIcon);
       } else {
-        const userIcon = L.divIcon({
-          className: 'er-radar-user-icon',
-          html: `<div style="background:#0284c7; color:#fff; border:2px solid #fff; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:900; white-space:nowrap; box-shadow:0 0 10px rgba(2,132,199,0.9);">📍 You (आप)</div>`,
-          iconSize: [64, 20],
-          iconAnchor: [32, 10]
-        });
-        erickshawRadarUserMarker = L.marker([c.lat, c.lng], { icon: userIcon, zIndexOffset: 900 }).addTo(erickshawRadarMap);
-      }
-
-      if (erickshawRadarUserCircle) {
-        erickshawRadarUserCircle.setLatLng([c.lat, c.lng]);
-      } else {
-        erickshawRadarUserCircle = L.circle([c.lat, c.lng], {
-          radius: 450,
-          color: '#16a34a',
-          weight: 1.5,
-          fillColor: '#22c55e',
-          fillOpacity: 0.08,
-          dashArray: '4,4'
-        }).addTo(erickshawRadarMap);
+        erickshawRadarUserMarker = L.marker([c.lat, c.lng], { icon: greenIcon, zIndexOffset: 900 }).addTo(erickshawRadarMap);
       }
 
       const list = getActiveErickshawsList().slice(0, 6);
-      const activeIds = new Set(list.map(x => x.id));
+      if (list.length > 0 && !list.some(x => x.id === currentlySelectedErickshawId)) {
+        currentlySelectedErickshawId = list[0].id;
+      }
+      const selectedEr = list.find(x => x.id === currentlySelectedErickshawId) || list[0];
 
-      // Remove stale markers
+      // 2. Draw Dark Road Route Line + Red Dot on Selected Vehicle (Exact match to screenshot!)
+      if (selectedEr) {
+        const midLat = (c.lat + selectedEr.lat) * 0.5 + 0.0004;
+        const midLng = (c.lng + selectedEr.lng) * 0.5 - 0.0009;
+        const roadPath = [
+          [c.lat, c.lng],
+          [midLat, midLng],
+          [selectedEr.lat, selectedEr.lng]
+        ];
+        if (erickshawRadarConnectingLine) {
+          erickshawRadarConnectingLine.setLatLngs(roadPath);
+        } else {
+          erickshawRadarConnectingLine = L.polyline(roadPath, {
+            color: '#1e293b',
+            weight: 4,
+            opacity: 0.92,
+            lineCap: 'round',
+            lineJoin: 'round'
+          }).addTo(erickshawRadarMap);
+        }
+
+        const redDotHtml = `<div style="width:16px; height:16px; border-radius:50%; background:#ef4444; border:3px solid #ffffff; box-shadow:0 0 0 2px #0f172a, 0 2px 6px rgba(0,0,0,0.4);"></div>`;
+        const redIcon = L.divIcon({
+          className: 'ola-red-dest-dot',
+          html: redDotHtml,
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
+        });
+        if (erickshawRadarSelectedDestMarker) {
+          erickshawRadarSelectedDestMarker.setLatLng([selectedEr.lat, selectedEr.lng]);
+          erickshawRadarSelectedDestMarker.setIcon(redIcon);
+        } else {
+          erickshawRadarSelectedDestMarker = L.marker([selectedEr.lat, selectedEr.lng], { icon: redIcon, zIndexOffset: 850 }).addTo(erickshawRadarMap);
+        }
+      }
+
+      // 3. Render Top-Down Rotating 3D White Vehicle Icons on the Map Roads
+      const activeIds = new Set(list.map(x => x.id));
       Object.keys(erickshawRadarMarkers).forEach(id => {
         if (!activeIds.has(id)) {
           try { erickshawRadarMap.removeLayer(erickshawRadarMarkers[id]); } catch(e){}
           delete erickshawRadarMarkers[id];
         }
       });
-      Object.keys(erickshawRadarRouteLines).forEach(id => {
-        if (!activeIds.has(id)) {
-          try { erickshawRadarMap.removeLayer(erickshawRadarRouteLines[id]); } catch(e){}
-          delete erickshawRadarRouteLines[id];
-        }
-      });
 
-      const colors = ['#15803d', '#0369a1', '#b45309', '#7e22ce', '#be123c', '#0f766e'];
-
-      list.forEach((er, idx) => {
-        const distTxt = formatNearbyDistance(er.distanceKm || 0.3);
-        const col = colors[idx % colors.length];
-
-        // Draw route polyline showing where this E-Rickshaw roams
-        if (er.routePolylineCoords && er.routePolylineCoords.length > 1) {
-          if (erickshawRadarRouteLines[er.id]) {
-            erickshawRadarRouteLines[er.id].setLatLngs(er.routePolylineCoords);
-          } else {
-            erickshawRadarRouteLines[er.id] = L.polyline(er.routePolylineCoords, {
-              color: col,
-              weight: 2.5,
-              opacity: 0.65,
-              dashArray: '5, 5'
-            }).addTo(erickshawRadarMap);
-          }
-        }
-
-        const markerHtml = `<div onclick="openErickshawProfileModal('${er.id}')" style="background:${col}; color:#ffffff; border:2px solid #86efac; border-radius:999px; padding:1px 6px; font-size:9px; font-weight:900; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.5); cursor:pointer; display:inline-flex; align-items:center; gap:3px;">
-          <span>🛺</span><span>${er.driverName.split(' ')[0]}</span><span style="color:#fde047;">(${distTxt.replace(' away','')})</span>
-        </div>`;
-
+      list.forEach((er) => {
+        const isSel = (selectedEr && er.id === selectedEr.id);
+        const markerHtml = `<div onclick="selectErickshawOnRadar('${er.id}', false)">${getTopDownVehicleMapMarkerHtml(er.driverName, er.headingDeg || 45, isSel, er.vehicleType)}</div>`;
         const icon = L.divIcon({
           className: 'er-moving-marker',
           html: markerHtml,
-          iconSize: [105, 20],
-          iconAnchor: [52, 10]
+          iconSize: [52, 52],
+          iconAnchor: [26, 26]
         });
 
         if (erickshawRadarMarkers[er.id]) {
           erickshawRadarMarkers[er.id].setLatLng([er.lat, er.lng]);
           erickshawRadarMarkers[er.id].setIcon(icon);
+          erickshawRadarMarkers[er.id].setZIndexOffset(isSel ? 1000 : 500);
         } else {
-          erickshawRadarMarkers[er.id] = L.marker([er.lat, er.lng], { icon: icon }).addTo(erickshawRadarMap);
+          erickshawRadarMarkers[er.id] = L.marker([er.lat, er.lng], { icon: icon, zIndexOffset: isSel ? 1000 : 500 }).addTo(erickshawRadarMap);
         }
       });
 
       const pill = document.getElementById('er-radar-live-status-pill');
       if (pill && list.length > 0) {
-        const nearest = formatNearbyDistance(list[0].distanceKm || 0.25);
-        pill.innerText = `🟢 ${list.length} Live E-Rickshaws Moving on Route • Nearest: ${nearest}`;
+        pill.innerHTML = `<span class="pulse-dot"></span><span>${list.length} Live Gaadi Moving on Map</span>`;
       }
     }
 
@@ -9372,39 +9474,75 @@ ET
       updateErickshawNavBadge();
       initOrUpdateErickshawRadarMap();
 
-      container.innerHTML = list.map((er) => {
+      if (list.length > 0 && !list.some(x => x.id === currentlySelectedErickshawId)) {
+        currentlySelectedErickshawId = list[0].id;
+      }
+      const selectedEr = list.find(x => x.id === currentlySelectedErickshawId) || list[0];
+
+      // Update Middle Location Bar & Bottom Action Button
+      const pickupAddrEl = document.getElementById('er-user-pickup-address-text');
+      if (pickupAddrEl) {
+        const roadTxt = (typeof currentLiveCoords !== 'undefined' && currentLiveCoords && currentLiveCoords.roadName)
+          ? currentLiveCoords.roadName
+          : 'Khanapara / GS Road, Guwahati Assam India';
+        pickupAddrEl.innerText = roadTxt;
+      }
+      const selRouteEl = document.getElementById('er-selected-driver-route-text');
+      if (selRouteEl && selectedEr) {
+        selRouteEl.innerText = `${selectedEr.driverName} (${selectedEr.vehicleNumber}) • ${selectedEr.standArea}`;
+      }
+      const botBtnLbl = document.getElementById('btn-call-selected-erickshaw-label');
+      if (botBtnLbl && selectedEr) {
+        botBtnLbl.innerText = `Call ${selectedEr.driverName} (${selectedEr.vehicleNumber}) • Deal Fare`;
+      }
+
+      // Render Ola/Uber Screenshot Style Vertical List:
+      // Left: Vehicle Icon + "1 min" | Middle: Driver Name + Vehicle & Route | Right: NO FARE -> Direct Call Button!
+      container.innerHTML = list.map((er, idx) => {
+        const isSel = (selectedEr && er.id === selectedEr.id);
+        const etaMin = formatEtaMinutes(er.distanceKm || (0.2 + idx * 0.15));
+        const distMeters = formatNearbyDistance(er.distanceKm || (0.2 + idx * 0.15));
         const timing = getRemaining12HrText(er.postedAt);
-        const distLabel = formatNearbyDistance(er.distanceKm || 0.3);
         return `
-          <div onclick="openErickshawProfileModal('${er.id}')" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.32rem 0.42rem; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.1); cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; justify-content: space-between; align-items: center; gap: 2px; margin-bottom: 1px;">
-                <span style="font-size: 0.56rem; font-weight: 900; background: #dcfce7; color: #15803d; padding: 1px 4px; border-radius: 4px; border: 1px solid #86efac;">
-                  🛺 ${er.vehicleNumber}
+          <div onclick="selectErickshawOnRadar('${er.id}', false)" style="background: ${isSel ? '#f0fdf4' : '#ffffff'}; border: ${isSel ? '2px solid #16a34a' : '1px solid #e2e8f0'}; border-radius: 12px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; box-shadow: ${isSel ? '0 3px 10px rgba(22,163,74,0.14)' : '0 1px 3px rgba(0,0,0,0.04)'}; transition: all 0.14s ease;">
+            <!-- Left: 3D Vehicle Icon + ETA Minute (Exact Screenshot Style) -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 54px; flex-shrink: 0;">
+              ${getSideVehicleIllustrationSvg(er.vehicleType || (idx % 2 === 0 ? 'auto' : 'erickshaw'), isSel)}
+              <span style="font-size: 0.62rem; font-weight: 900; color: #0f172a; margin-top: 1px;">${etaMin}</span>
+            </div>
+
+            <!-- Middle: Driver Name + Vehicle Plate & Live Roaming Route -->
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <strong style="font-size: 0.84rem; font-weight: 900; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  ${er.driverName}
+                </strong>
+                <span style="font-size: 0.56rem; font-weight: 900; background: #dcfce7; color: #15803d; padding: 1px 5px; border-radius: 4px; border: 1px solid #86efac; flex-shrink: 0;">
+                  ${er.vehicleNumber}
                 </span>
-                <span style="font-size: 0.56rem; font-weight: 900; color: #0284c7;">📍 ${distLabel}</span>
               </div>
-              <div style="font-size: 0.7rem; font-weight: 900; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                👤 ${er.driverName}
+              <div style="font-size: 0.64rem; color: #475569; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
+                ${er.standArea}
               </div>
-              <div style="font-size: 0.56rem; color: #15803d; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                🛣️ ${er.currentPointLabel || er.standArea}
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.52rem; color: #64748b; font-weight: 800; margin-top: 1px;">
-                <span>🕒 ${timing.agoLabel}</span>
-                <span style="color: #15803d;">⏳ ${timing.remLabel}</span>
+              <div style="font-size: 0.55rem; color: #15803d; font-weight: 800; margin-top: 1px;">
+                📍 ${distMeters} • ⏳ ${timing.remLabel}
               </div>
             </div>
-            <button type="button" onclick="event.stopPropagation(); openErickshawProfileModal('${er.id}', true);" style="margin-top: 3px; width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 6px; padding: 3px 4px; font-size: 0.58rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 3px;">
-              <span>📞</span>
-              <span>Direct Call to Receive</span>
-            </button>
+
+            <!-- Right: NO FARE! Driver Name & Direct In-App Call Button to Deal Fare -->
+            <div style="display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0;">
+              <button type="button" onclick="event.stopPropagation(); selectErickshawOnRadar('${er.id}', true);" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 8px; padding: 6px 11px; font-size: 0.68rem; font-weight: 900; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(22,163,74,0.3);">
+                <span>📞</span>
+                <span>Call</span>
+              </button>
+              <span style="font-size: 0.52rem; color: #64748b; font-weight: 800; margin-top: 2px;">Deal Fare on Call</span>
+            </div>
           </div>
         `;
       }).join('');
     }
 
-    // Continuous 1.5-second real-time loop so E-Rickshaws visibly move along their routes on the radar map & main map!
+    // Continuous 1.5-second real-time loop so vehicles visibly move on the map
     setInterval(() => {
       try {
         const secLiveEr = document.getElementById('section-live-erickshaw');
@@ -9415,7 +9553,6 @@ ET
         if (secMap && secMap.style.display !== 'none' && typeof updateMapLiveCarRadar === 'function') {
           updateMapLiveCarRadar();
         }
-        // If modal is open, keep live GPS distance & moving street point updated in real time
         const modal = document.getElementById('erickshaw-profile-modal');
         if (modal && modal.style.display === 'flex' && selectedErickshawForCall) {
           const latest = getActiveErickshawsList().find(x => x.id === selectedErickshawForCall.id);
