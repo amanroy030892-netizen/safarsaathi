@@ -1,8 +1,8 @@
 /*
-  SafarSaathi AI Auto-Purge Service Worker (Version: v105-smooth-voice-guide)
+  SafarSaathi AI Auto-Purge Service Worker (Version: v53-car-racing-gaming-zone)
   Zero Stale Cache • Network-First • Chrome & Safari Compatible
 */
-const CACHE_NAME = 'safarsaathi-v105-smooth-voice-guide';
+const CACHE_NAME = 'safarsaathi-v53-car-racing-gaming-zone';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -18,8 +18,10 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
+
+  // Always fetch fresh from network to prevent stale data
   event.respondWith(
-    fetch(event.request, { cache: 'no-store' }).catch(() => {
+    fetch(event.request).catch(() => {
       return caches.match(event.request);
     })
   );

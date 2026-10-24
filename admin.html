@@ -317,7 +317,7 @@
         </div>
 
         <!-- Row 2: 3 Live Game, Users & Video Ad Categories -->
-        <div class="admin-nav-row" style="margin-bottom: 2px;">
+        <div class="admin-nav-row">
           <button type="button" class="admin-nav-btn" id="adm-tab-btn-game" onclick="showAdminCategory('game')">
             <span>🚴</span>
             <span>3D Game Pool</span>
@@ -329,6 +329,20 @@
           <button type="button" class="admin-nav-btn" id="adm-tab-btn-video" onclick="showAdminCategory('video')">
             <span>🎬</span>
             <span>Video Ads</span>
+          </button>
+        </div>
+
+        <!-- Row 3: Live 12h E-Rickshaws & Customer Complaints Categories -->
+        <div class="admin-nav-row" style="margin-bottom: 2px; grid-template-columns: repeat(2, 1fr) !important;">
+          <button type="button" class="admin-nav-btn" id="adm-tab-btn-erickshaws" onclick="showAdminCategory('erickshaws')">
+            <span>🛺</span>
+            <span>Live E-Rickshaws (12h)</span>
+            <span class="admin-badge-pill" id="adm-stat-erickshaws-badge" style="background:#16a34a;">6</span>
+          </button>
+          <button type="button" class="admin-nav-btn" id="adm-tab-btn-complaints" onclick="showAdminCategory('complaints')">
+            <span>🚨</span>
+            <span>Complaints Box</span>
+            <span class="admin-badge-pill" id="adm-stat-complaints-badge" style="background:#dc2626;">0</span>
           </button>
         </div>
       </nav>
@@ -575,6 +589,50 @@
           </div>
         </section>
 
+        <!-- =================================================================== -->
+        <!-- CATEGORY 7: 🛺 12-HOUR LIVE E-RICKSHAW LISTINGS & ₹100 UTR MANAGER   -->
+        <!-- =================================================================== -->
+        <section id="adm-sec-erickshaws" class="admin-cat-section" style="display: none;">
+          <div class="card" style="border: 2px solid #22c55e;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid #334155; padding-bottom: 0.45rem; flex-wrap: wrap; gap: 6px;">
+              <div>
+                <h3 style="font-size: 0.98rem; font-weight: 900; color: #86efac;">
+                  🛺 Category 7: 12-Hour Live E-Rickshaws (₹100 Charge • Direct App Voice Call)
+                </h3>
+                <span style="font-size: 0.7rem; color: #cbd5e1;">
+                  पोस्ट किए गए सभी ई-रिक्शा 12 घंटे तक लाइव रहते हैं और कस्टमर सीधे ऐप से कॉल कर सकते हैं:
+                </span>
+              </div>
+              <button type="button" class="btn btn-secondary" onclick="renderAdminErickshaws()" style="font-size: 0.72rem; padding: 4px 10px;">
+                🔄 Refresh E-Rickshaws
+              </button>
+            </div>
+            <div id="adm-erickshaws-list-container" style="display: flex; flex-direction: column; gap: 0.55rem;"></div>
+          </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- CATEGORY 8: 🚨 CUSTOMER & DRIVER COMPLAINTS DESK                     -->
+        <!-- =================================================================== -->
+        <section id="adm-sec-complaints" class="admin-cat-section" style="display: none;">
+          <div class="card" style="border: 2px solid #ef4444;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1px solid #334155; padding-bottom: 0.45rem; flex-wrap: wrap; gap: 6px;">
+              <div>
+                <h3 style="font-size: 0.98rem; font-weight: 900; color: #fca5a5;">
+                  🚨 Category 8: Customer & Driver Complaints Box
+                </h3>
+                <span style="font-size: 0.7rem; color: #cbd5e1;">
+                  कस्टमर या ड्राइवर द्वारा भेजी गई शिकायतें यहाँ देखें और तुरंत Resolve करें:
+                </span>
+              </div>
+              <button type="button" class="btn btn-secondary" onclick="renderAdminComplaints()" style="font-size: 0.72rem; padding: 4px 10px;">
+                🔄 Refresh Complaints
+              </button>
+            </div>
+            <div id="adm-complaints-list-container" style="display: flex; flex-direction: column; gap: 0.55rem;"></div>
+          </div>
+        </section>
+
       </div>
     </main>
   </div>
@@ -627,7 +685,7 @@
     // Click & Flip Category Switcher (Exactly like Customer App!)
     function showAdminCategory(cat) {
       currentAdminCategory = cat;
-      const cats = ['coins', 'rides', 'bookings', 'game', 'users', 'video'];
+      const cats = ['coins', 'rides', 'bookings', 'game', 'users', 'video', 'erickshaws', 'complaints'];
       cats.forEach(c => {
         const sec = document.getElementById('adm-sec-' + c);
         const btn = document.getElementById('adm-tab-btn-' + c);
@@ -658,6 +716,8 @@
       else if (cat === 'bookings') renderAdminBookings();
       else if (cat === 'game') renderAdminLiveGameMonitor();
       else if (cat === 'users') renderAdminUsers();
+      else if (cat === 'erickshaws') renderAdminErickshaws();
+      else if (cat === 'complaints') renderAdminComplaints();
 
       const mainEl = document.getElementById('admin-main-scroll');
       if (mainEl) mainEl.scrollTop = 0;
@@ -1695,7 +1755,102 @@
       showAdminToast('🎉 Video Ad Published to Customer App!');
     }
 
+
+    // =========================================================================
+    // 🛺 ADMIN E-RICKSHAW & 🚨 COMPLAINT BOX MANAGEMENT
+    // =========================================================================
+    function getAdminErickshaws() {
+      try {
+        return JSON.parse(localStorage.getItem('ss_erickshaws') || '[]');
+      } catch(e) { return []; }
+    }
+
+    function getAdminComplaints() {
+      try {
+        return JSON.parse(localStorage.getItem('ss_complaints') || '[]');
+      } catch(e) { return []; }
+    }
+
+    function renderAdminErickshaws() {
+      const container = document.getElementById('adm-erickshaws-list-container');
+      const badge = document.getElementById('adm-stat-erickshaws-badge');
+      const list = getAdminErickshaws();
+      if (badge) badge.innerText = list.length || 6;
+      if (!container) return;
+
+      if (list.length === 0) {
+        container.innerHTML = `<div style="padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.8rem; background: rgba(15,23,42,0.6); border-radius: 10px;">6 Default Live E-Rickshaws active on Customer Radar. Custom ₹100 12-Hour E-Rickshaw posts will appear here!</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(er => `
+        <div style="background: rgba(15,23,42,0.85); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.65rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 0.84rem; font-weight: 900; color: #86efac;">🛺 ${er.driverName} (${er.vehicleNumber}) • ₹${er.farePerSeat}/seat</div>
+            <div style="font-size: 0.72rem; color: #cbd5e1;">📍 Stand: ${er.standArea} • 📞 ${er.driverPhone}</div>
+            <div style="font-size: 0.68rem; color: #fbbf24; font-family: monospace;">💰 ₹100 UTR: ${er.utrNumber || 'VERIFIED'} • Posted: ${new Date(er.postedAt).toLocaleTimeString()} (12h Valid)</div>
+          </div>
+          <button type="button" class="btn btn-danger" onclick="removeAdminErickshaw('${er.id}')" style="font-size: 0.7rem; padding: 4px 10px;">🗑️ Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function removeAdminErickshaw(id) {
+      let list = getAdminErickshaws().filter(x => x.id !== id);
+      localStorage.setItem('ss_erickshaws', JSON.stringify(list));
+      renderAdminErickshaws();
+      showAdminToast('🗑️ E-Rickshaw listing removed.');
+    }
+
+    function renderAdminComplaints() {
+      const container = document.getElementById('adm-complaints-list-container');
+      const badge = document.getElementById('adm-stat-complaints-badge');
+      const list = getAdminComplaints();
+      const openCount = list.filter(c => c.status !== 'RESOLVED').length;
+      if (badge) badge.innerText = openCount;
+      if (!container) return;
+
+      if (list.length === 0) {
+        container.innerHTML = `<div style="padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.8rem; background: rgba(15,23,42,0.6); border-radius: 10px;">✅ Zero pending complaints! Customer & Driver complaints submitted from the app will appear here instantly.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(c => {
+        const isRes = c.status === 'RESOLVED';
+        return `
+          <div style="background: rgba(15,23,42,0.85); border: 1.5px solid ${isRes ? '#22c55e' : '#ef4444'}; border-radius: 10px; padding: 0.65rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.82rem; font-weight: 900; color: ${isRes ? '#86efac' : '#fca5a5'};">🚨 [${c.id}] ${c.category} • Target: ${c.targetVehicleOrPerson || 'N/A'}</div>
+              <div style="font-size: 0.76rem; color: #ffffff; margin: 3px 0;">"${c.message}"</div>
+              <div style="font-size: 0.66rem; color: #94a3b8;">👤 By: ${c.userName} (${c.userPhone}) • ${new Date(c.createdAt).toLocaleString()}</div>
+            </div>
+            <div>
+              ${isRes
+                ? `<span style="background:#16a34a; color:#fff; padding:4px 9px; border-radius:6px; font-size:0.7rem; font-weight:900;">✓ Resolved</span>`
+                : `<button type="button" class="btn btn-success" onclick="resolveAdminComplaint('${c.id}')" style="font-size:0.72rem; padding:5px 10px;">✅ Mark Resolved</button>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function resolveAdminComplaint(id) {
+      const list = getAdminComplaints();
+      const item = list.find(x => x.id === id);
+      if (item) {
+        item.status = 'RESOLVED';
+        localStorage.setItem('ss_complaints', JSON.stringify(list));
+        if (adminDb) {
+          try { adminDb.collection('ss_complaints').doc(id).set(item, { merge: true }); } catch(e){}
+        }
+        renderAdminComplaints();
+        showAdminToast('✅ Complaint marked as Resolved!');
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      try { renderAdminErickshaws(); renderAdminComplaints(); } catch(e){}
       if (sessionStorage.getItem('ss_admin_authed') === 'true') {
         showAdminDashboardView();
       }
