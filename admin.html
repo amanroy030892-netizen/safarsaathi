@@ -506,7 +506,7 @@
             </div>
 
             <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 10px; padding: 0.65rem; font-size: 0.74rem; color: #cbd5e1; line-height: 1.5;">
-              <div>✅ <b>नियम 1 (Lowest Bet Wins):</b> CYCLE A, CYCLE B, CYCLE C में से जिस साइकिल पर सबसे कम कुल बेट होती है, वही साइकिल आखिरी स्लो-मोशन फिनिश में #1 जीतती है।</div>
+              <div>✅ <b>नियम 1 (Lowest Bet Wins):</b> Rider A, Rider B, Rider C (LowestBetBikeRace) में से जिस साइकिल पर सबसे कम कुल बेट होती है, वही साइकिल आखिरी स्लो-मोशन फिनिश में #1 जीतती है।</div>
               <div>✅ <b>नियम 2 (Exact 2.0x Payout):</b> विजेता साइकिल पर कस्टमर ने जितना लगाया है, उसका सीधा <b>2 गुना (Bet × 2)</b> मिलता है (जैसे ₹50 लगाया तो ₹100)।</div>
               <div>✅ <b>नियम 3 (Customer Own Bet Visibility):</b> कस्टमर को अपनी खुद की लगाई हुई बेट हर साइकिल कार्ड पर साफ़ दिखती है, जबकि सर्वर का कुल पूल गुप्त रहता है।</div>
             </div>
@@ -1291,8 +1291,8 @@
       }
       const winningIdx = lowestCandidates[Math.abs(roundId) % lowestCandidates.length];
 
-      const names = ['CYCLE A • HighT', 'CYCLE B • Tunez', 'CYCLE C • Digger'];
-      const colors = ['#ef4444', '#84cc16', '#f59e0b'];
+      const names = ['Rider A (Cyan MTB)', 'Rider B (Lime MTB)', 'Rider C (Orange MTB)'];
+      const colors = ['#06b6d4', '#84cc16', '#f59e0b'];
 
       box.innerHTML = [0, 1, 2].map(i => {
         const isWin = (i === winningIdx);

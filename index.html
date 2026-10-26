@@ -42,7 +42,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V115_FULL_MAP_ZERO_FAKE_FLIP_CLUSTER';
+        const CURRENT_VERSION = 'SS_PROD_V116_LOWEST_BET_BIKE_RACE';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -1426,11 +1426,7 @@
         .chamet-flip-active {
           animation: rushFlipIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes rushBoostPulse {
-          0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(163, 230, 53, 0.75); }
-          50% { transform: scale(1.08); box-shadow: 0 0 22px rgba(163, 230, 53, 1); }
-        }
-                @keyframes mtbWheelSpin {
+        @keyframes mtbWheelSpin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
@@ -1452,7 +1448,7 @@
           background: linear-gradient(180deg, #182232 0%, #0f172a 75%, #090d16 100%);
           border: 2px solid #334155;
           border-radius: 14px;
-          padding: 0.42rem 0.32rem;
+          padding: 0.4rem 0.32rem;
           text-align: center;
           display: flex;
           flex-direction: column;
@@ -1467,12 +1463,12 @@
           transform: scale(0.96);
         }
         .rush-bet-card.selected-car {
-          border-color: #a3e635;
-          box-shadow: 0 0 18px rgba(163, 230, 53, 0.75), inset 0 0 10px rgba(163, 230, 53, 0.2);
+          border-color: #22d3ee;
+          box-shadow: 0 0 18px rgba(34, 211, 238, 0.75), inset 0 0 10px rgba(34, 211, 238, 0.2);
         }
         .rush-skew-box {
           background: rgba(9, 13, 22, 0.92);
-          border: 1.5px solid rgba(163, 230, 53, 0.75);
+          border: 1.5px solid rgba(34, 211, 238, 0.85);
           transform: skewX(-10deg);
           padding: 2px 10px;
           display: inline-flex;
@@ -1481,15 +1477,15 @@
           box-shadow: 0 3px 10px rgba(0,0,0,0.75);
         }
         .rush-leader-row {
-          background: rgba(9, 13, 22, 0.86);
-          border-left: 3px solid #a3e635;
+          background: rgba(9, 13, 22, 0.88);
+          border-left: 3px solid #22d3ee;
           padding: 3px 8px;
           margin-bottom: 3px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 5px;
-          font-size: 0.63rem;
+          font-size: 0.62rem;
           font-weight: 900;
           color: #ffffff;
           backdrop-filter: blur(4px);
@@ -1498,166 +1494,159 @@
           transition: all 0.18s ease;
         }
         .rush-leader-row.rank-1 {
-          background: linear-gradient(90deg, rgba(163, 230, 53, 0.96), rgba(132, 204, 22, 0.9));
+          background: linear-gradient(90deg, rgba(34, 211, 238, 0.96), rgba(163, 230, 53, 0.92));
           color: #090d16;
           border-left: 4px solid #ffffff;
-          transform: none;
         }
       </style>
 
       <div id="gaming-zone-container" style="max-width: 520px; margin: 0 auto; padding: 0;">
-        <div id="chamet-main-card" style="background: linear-gradient(180deg, #0b0f19 0%, #111827 55%, #090d16 100%); border: 2.5px solid #a3e635; border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); overflow: hidden; padding: 0; color: #ffffff;">
+        <div id="chamet-main-card" style="background: linear-gradient(180deg, #0b0f19 0%, #111827 55%, #090d16 100%); border: 2.5px solid #22d3ee; border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); overflow: hidden; padding: 0; color: #ffffff;">
 
-          <!-- RUSH: XTREME CYCLE RACE TOP HEADER & WALLET BAR -->
-          <div style="background: linear-gradient(90deg, #090d16 0%, #1e293b 50%, #090d16 100%); padding: 0.42rem 0.6rem; border-bottom: 2px solid #a3e635; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
+          <!-- LOWEST BET BIKE RACE TOP HEADER & WALLET BAR (Ported from LowestBetBikeRace_Source.zip) -->
+          <div style="background: linear-gradient(90deg, #090d16 0%, #1e293b 50%, #090d16 100%); padding: 0.4rem 0.6rem; border-bottom: 2px solid #22d3ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
             <div style="display: flex; align-items: center; gap: 7px;">
-              <div style="background: linear-gradient(135deg, #dc2626, #991b1b); border: 1.5px solid #a3e635; padding: 2px 7px; border-radius: 6px; transform: skewX(-10deg); box-shadow: 0 2px 6px rgba(0,0,0,0.6);">
-                <span style="font-size: 0.84rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 0.8px;">RUSH</span>
+              <div style="background: linear-gradient(135deg, #0891b2, #155e75); border: 1.5px solid #22d3ee; padding: 2px 7px; border-radius: 6px; transform: skewX(-10deg); box-shadow: 0 2px 6px rgba(0,0,0,0.6);">
+                <span style="font-size: 0.78rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 0.6px;">LOWEST BET</span>
               </div>
               <div>
-                <div style="font-size: 0.84rem; font-weight: 900; letter-spacing: 0.3px; color: #a3e635; line-height: 1.05; display: flex; align-items: center; gap: 4px;">
-                  <span>🚴 3D CYCLE RACE</span>
-                  <span style="font-size: 0.54rem; background: #16a34a; color: #ffffff; padding: 1px 5px; border-radius: 4px; font-weight: 900;">● 60FPS HD</span>
+                <div style="font-size: 0.82rem; font-weight: 900; letter-spacing: 0.3px; color: #22d3ee; line-height: 1.05; display: flex; align-items: center; gap: 4px;">
+                  <span>🚵 LOWEST BET BIKE RACE</span>
+                  <span style="font-size: 0.52rem; background: #16a34a; color: #ffffff; padding: 1px 5px; border-radius: 4px; font-weight: 900;">UNITY 3D ENGINE</span>
                 </div>
-                <div style="font-size: 0.57rem; color: #cbd5e1; font-weight: 700;">
-                  👥 <span id="race-live-players">1,842</span> • Round #<span id="race-round-number">101</span> • <span id="race-total-pool-banner" style="color: #a3e635; font-weight: 900;">30s Bet • 60s Race • 5s Win</span>
+                <div style="font-size: 0.56rem; color: #cbd5e1; font-weight: 700;">
+                  👥 <span id="race-live-players">1,842</span> • Round #<span id="race-round-number">101</span> • <span id="race-total-pool-banner" style="color: #a3e635; font-weight: 900;">WP_00 ➔ WP_FINISH • Lowest Bet Wins!</span>
                 </div>
               </div>
             </div>
 
             <!-- Wallet, Recharge & Bonus -->
             <div style="display: flex; align-items: center; gap: 4px;">
-              <div style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid #a3e635; border-radius: 999px; padding: 2px 8px; display: inline-flex; align-items: center; gap: 3px;">
+              <div style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid #fde047; border-radius: 999px; padding: 2px 8px; display: inline-flex; align-items: center; gap: 3px;">
                 <span style="font-size: 0.74rem;">🪙</span>
-                <span id="game-coins-display" style="font-size: 0.8rem; font-weight: 900; color: #a3e635; font-family: monospace;">100</span>
+                <span id="game-coins-display" style="font-size: 0.8rem; font-weight: 900; color: #fde047; font-family: monospace;">100</span>
               </div>
-              <button type="button" onclick="openBuyCoinsModal()" style="background: linear-gradient(135deg, #84cc16, #4d7c0f); color: #090d16; border: 1px solid #d9f99d; padding: 3px 8px; border-radius: 999px; font-weight: 900; font-size: 0.64rem; cursor: pointer;">
+              <button type="button" onclick="openBuyCoinsModal()" style="background: linear-gradient(135deg, #22d3ee, #0891b2); color: #090d16; border: 1px solid #a5f3fc; padding: 3px 8px; border-radius: 999px; font-weight: 900; font-size: 0.64rem; cursor: pointer;">
                 ➕ Coins
               </button>
-              <button type="button" onclick="claimDailyBonus()" style="background: rgba(163, 230, 53, 0.16); color: #d9f99d; border: 1px solid #a3e635; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.62rem; cursor: pointer;" title="Daily 20 Free Coins">
+              <button type="button" onclick="claimDailyBonus()" style="background: rgba(34, 211, 238, 0.16); color: #a5f3fc; border: 1px solid #22d3ee; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.62rem; cursor: pointer;" title="Daily 20 Free Coins">
                 🎁
               </button>
-
             </div>
           </div>
 
-          <!-- GLOBAL SERVER CYCLE STATUS BAR (30s BETTING -> 60s CYCLE RACE -> 5s RESULT DISPLAY) -->
-          <div style="padding: 0.35rem 0.6rem 0.2rem 0.6rem;">
-            <div style="background: #090d16; border: 1.5px solid rgba(163, 230, 53, 0.55); border-radius: 10px; padding: 4px 8px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                <span id="race-status-badge" style="background: #16a34a; color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 0.62rem; font-weight: 900;">
-                  🟢 30s LIVE BETTING (सबके मोबाइल पर एक साथ लाइव)
+          <!-- RACE MANAGER STATUS BAR (RaceManager.statusText + Timer) -->
+          <div style="padding: 0.32rem 0.6rem 0.18rem 0.6rem;">
+            <div style="background: #090d16; border: 1.5px solid rgba(34, 211, 238, 0.55); border-radius: 10px; padding: 4px 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 4px;">
+                <span id="race-status-badge" style="background: #0891b2; color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 0.6rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  🟢 Ready to race — Lowest Virtual Bet Wins!
                 </span>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <span id="race-timer-pill" style="background: #090d16; color: #a3e635; border: 1.5px solid #a3e635; padding: 1px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 900; font-family: monospace; transform: skewX(-8deg);">
+                <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
+                  <span id="race-timer-pill" style="background: #090d16; color: #22d3ee; border: 1.5px solid #22d3ee; padding: 1px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; font-family: monospace; transform: skewX(-8deg);">
                     ⏱️ 00:30:00
                   </span>
                 </div>
               </div>
               <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 999px; overflow: hidden;">
-                <div id="race-timer-progress-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #a3e635, #22c55e, #eab308); transition: width 0.15s linear;"></div>
+                <div id="race-timer-progress-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #22d3ee, #a3e635, #f59e0b); transition: width 0.15s linear;"></div>
               </div>
             </div>
           </div>
 
           <!-- =================================================================== -->
-          <!-- PAGE 1: 🎯 30-SECOND SERVER-SYNCED CYCLE BETTING PAGE               -->
+          <!-- PAGE 1: 🎯 LOWEST BET BIKE RACE — RIDER A, RIDER B, RIDER C BETTING -->
           <!-- =================================================================== -->
-          <div id="chamet-betting-page" class="chamet-flip-active" style="padding: 0.2rem 0.6rem 0.55rem 0.6rem;">
+          <div id="chamet-betting-page" class="chamet-flip-active" style="padding: 0.18rem 0.6rem 0.5rem 0.6rem;">
 
-            <!-- RUSH LIVE 60FPS 3D MOUNTAIN WARMUP VIEWPORT (Real-Time 3D Engine Even During 30s Betting!) -->
-            <div id="rush-betting-preview-box" style="position: relative; height: var(--auto-bet-preview-height, 96px); border-radius: 10px; overflow: hidden; border: 1.5px solid #a3e635; margin-bottom: 0.3rem; background: linear-gradient(180deg, #073666 0%, #1d6fa5 38%, #cbd5e1 42%, #94a3b8 100%); box-shadow: 0 6px 18px rgba(0,0,0,0.85);">
+            <!-- LIVE 3D DIRT-ROAD WAYPOINT WARMUP VIEWPORT (WP_00 -> WP_FINISH) -->
+            <div id="rush-betting-preview-box" style="position: relative; height: var(--auto-bet-preview-height, 94px); border-radius: 10px; overflow: hidden; border: 1.5px solid #22d3ee; margin-bottom: 0.28rem; background: linear-gradient(180deg, #0c4a6e 0%, #38bdf8 36%, #78350f 40%, #451a03 100%); box-shadow: 0 6px 18px rgba(0,0,0,0.85);">
               <canvas id="rush-betting-preview-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
-              <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,13,22,0.45) 0%, rgba(9,13,22,0.02) 48%, rgba(9,13,22,0.88) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 6px 9px; pointer-events: none;">
+              <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,13,22,0.5) 0%, rgba(9,13,22,0.02) 48%, rgba(9,13,22,0.88) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 5px 8px; pointer-events: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-                  <span style="background: rgba(9,13,22,0.9); color: #a3e635; border: 1px solid #a3e635; font-size: 0.56rem; font-weight: 900; padding: 2px 7px; border-radius: 6px; transform: skewX(-8deg);">
-                    🏔️ LIVE 3D START GATE WARMUP • 60FPS PBR
+                  <span style="background: rgba(9,13,22,0.92); color: #22d3ee; border: 1px solid #22d3ee; font-size: 0.54rem; font-weight: 900; padding: 2px 7px; border-radius: 6px;">
+                    🚵 WAYPOINT TRACK (WP_00 ➔ WP_FINISH) • 1.35x FINAL BOOST
                   </span>
-                  <span style="background: rgba(22, 163, 74, 0.92); color: #ffffff; border: 1px solid #bbf7d0; font-size: 0.56rem; font-weight: 900; padding: 2px 8px; border-radius: 6px;">
-                    🤖 24/7 AUTO LIVE
+                  <span id="race-hud-bets-text-pill" style="background: rgba(15, 23, 42, 0.92); color: #fde047; border: 1px solid #fde047; font-size: 0.52rem; font-weight: 900; padding: 2px 7px; border-radius: 6px; font-family: monospace;">
+                    VIRTUAL BETS: A:10 | B:20 | C:30
                   </span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                   <div>
-                    <div style="font-size: 0.7rem; font-weight: 900; color: #ffffff; text-shadow: 0 1px 4px #000;">
-                      अपनी 3D डाउनहिल साइकिल चुनें (CYCLE A • CYCLE B • CYCLE C)
+                    <div style="font-size: 0.68rem; font-weight: 900; color: #ffffff; text-shadow: 0 1px 4px #000;">
+                      Rider A, Rider B या Rider C चुनें — सबसे कम बेट (Lowest Bet) वाला राइडर जीतेगा!
                     </div>
-                    <div style="font-size: 0.56rem; color: #a3e635; font-weight: 800;">
-                      रियल 3D फिजिक्स • पत्थर से टकराने पर सस्पेंशन बाउंस • सबसे कम बेट वाली साइकिल जीतेगी!
+                    <div style="font-size: 0.54rem; color: #a3e635; font-weight: 800;">
+                      डर्ट-रोड वेपॉइंट ट्रैक • लाइव लेन क्रॉसिंग • फिनिश पर 0.22x Slow-Motion Photo Finish!
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- 3 RUSH: XTREME HD 3D CYCLE SELECTION CARDS (REAL RUPEE TOTALS 100% HIDDEN!) -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 0.48rem;">
+            <!-- 3 CYCLIST RACER CARDS (CyclistRacer.cs: Rider A, Rider B, Rider C) -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 0.42rem;">
 
-              <!-- CYCLE A: HighTtower (Red/Magenta Pro Downhill MTB) -->
+              <!-- RIDER A (Cyan Mountain Bike CyclistRacer) -->
               <div id="bet-card-0" class="rush-bet-card selected-car" onclick="placeBetOnCar(0)">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.56rem; font-weight: 900; background: #ef4444; color: #ffffff; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">CYCLE A</span>
-                    <span style="font-size: 0.58rem; color: #a3e635; font-weight: 900;">⚡ 2.0x</span>
+                    <span style="font-size: 0.55rem; font-weight: 900; background: #06b6d4; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">RIDER A</span>
+                    <span style="font-size: 0.56rem; color: #22d3ee; font-weight: 900;">⚡ 2.0x</span>
                   </div>
-                  <div id="car-preview-svg-0" style="margin: 2px auto; width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #ef4444; background: radial-gradient(circle at 50% 35%, #3b0764 0%, #090d16 90%);">
+                  <div id="car-preview-svg-0" style="margin: 2px auto; width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #06b6d4; background: radial-gradient(circle at 50% 35%, #164e63 0%, #090d16 90%);">
                     <svg viewBox="0 0 120 75" style="width: 100%; height: 100%;">
-                      <!-- Speed Lines -->
-                      <line x1="8" y1="22" x2="32" y2="22" stroke="#f43f5e" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
-                      <line x1="4" y1="38" x2="25" y2="38" stroke="#a855f7" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
-                      <!-- Rear & Front MTB Wheels -->
+                      <line x1="8" y1="22" x2="32" y2="22" stroke="#22d3ee" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+                      <line x1="4" y1="38" x2="25" y2="38" stroke="#38bdf8" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <circle cx="32" cy="54" r="14" fill="#0f172a" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="5,2"/>
-                      <circle cx="32" cy="54" r="9.5" fill="none" stroke="#ef4444" stroke-width="2"/>
-                      <circle cx="32" cy="54" r="3.5" fill="#a3e635"/>
+                      <circle cx="32" cy="54" r="9.5" fill="none" stroke="#06b6d4" stroke-width="2"/>
+                      <circle cx="32" cy="54" r="3.5" fill="#fde047"/>
                       <circle cx="88" cy="54" r="14" fill="#0f172a" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="5,2"/>
-                      <circle cx="88" cy="54" r="9.5" fill="none" stroke="#ef4444" stroke-width="2"/>
-                      <circle cx="88" cy="54" r="3.5" fill="#a3e635"/>
-                      <!-- MTB Downhill Frame & Suspension -->
-                      <polyline points="32,54 52,36 78,34 55,54 32,54" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linejoin="round"/>
+                      <circle cx="88" cy="54" r="9.5" fill="none" stroke="#06b6d4" stroke-width="2"/>
+                      <circle cx="88" cy="54" r="3.5" fill="#fde047"/>
+                      <polyline points="32,54 52,36 78,34 55,54 32,54" fill="none" stroke="#22d3ee" stroke-width="3.5" stroke-linejoin="round"/>
                       <line x1="74" y1="24" x2="88" y2="54" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
                       <line x1="48" y1="31" x2="56" y2="39" stroke="#fbbf24" stroke-width="2.5"/>
-                      <!-- Pro Cyclist Rider in Downhill Tuck -->
                       <polyline points="50,35 61,44 55,54" fill="none" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M 44,33 Q 55,17 70,22 L 64,34 Z" fill="#ef4444" stroke="#ffffff" stroke-width="1"/>
+                      <path d="M 44,33 Q 55,17 70,22 L 64,34 Z" fill="#06b6d4" stroke="#ffffff" stroke-width="1"/>
                       <line x1="65" y1="22" x2="77" y2="27" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
-                      <!-- Full-Face Aero Helmet -->
-                      <circle cx="71" cy="15" r="7" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
-                      <path d="M 73,13 L 79,15 L 74,18 Z" fill="#38bdf8"/>
-                      <text x="16" y="16" fill="#fca5a5" font-size="10" font-weight="900" font-style="italic">#A</text>
+                      <circle cx="71" cy="15" r="7" fill="#22d3ee" stroke="#090d16" stroke-width="1.5"/>
+                      <path d="M 73,13 L 79,15 L 74,18 Z" fill="#090d16"/>
+                      <text x="14" y="16" fill="#67e8f9" font-size="9.5" font-weight="900" font-style="italic">R-A</text>
                     </svg>
                   </div>
-                  <strong id="car-name-0" style="font-size: 0.7rem; font-weight: 900; color: #ffffff; display: block; margin-top: 3px;">CYCLE A • HighT</strong>
-                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(250, 204, 21, 0.5); border-radius: 6px; padding: 2px 5px; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.52rem; color: #fde047; font-weight: 800;">🔥 कुल बेट:</span>
-                    <span id="car-total-bet-0" style="font-size: 0.66rem; font-weight: 900; color: #ffffff; font-family: monospace;">₹2,840</span>
+                  <strong id="car-name-0" style="font-size: 0.68rem; font-weight: 900; color: #ffffff; display: block; margin-top: 2px;">Rider A (Cyan MTB)</strong>
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(34, 211, 238, 0.45); border-radius: 6px; padding: 2px 5px; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.5rem; color: #67e8f9; font-weight: 800;">🪙 Virtual Bet:</span>
+                    <span id="car-total-bet-0" style="font-size: 0.63rem; font-weight: 900; color: #ffffff; font-family: monospace;">10 coins</span>
                   </div>
-                  <div id="car-my-bet-box-0" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(239, 68, 68, 0.55); border-radius: 7px; padding: 3px 4px; margin-top: 3px;">
-                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
-                    <div id="car-my-bet-amount-0" style="font-size: 0.72rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
+                  <div id="car-my-bet-box-0" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(6, 182, 212, 0.55); border-radius: 7px; padding: 2px 4px; margin-top: 3px;">
+                    <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
+                    <div id="car-my-bet-amount-0" style="font-size: 0.68rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 (₹0)
                     </div>
-                    <div id="car-my-win-est-0" style="font-size: 0.52rem; font-weight: 800; color: #a3e635;">
-                      जीतने पर 2x इनाम
+                    <div id="car-my-win-est-0" style="font-size: 0.5rem; font-weight: 800; color: #22d3ee;">
+                      Lowest Bet Wins (2x)
                     </div>
                   </div>
                 </div>
-                <div id="car-bet-btn-0" style="margin-top: 5px; background: linear-gradient(180deg, #ef4444, #b91c1c); color: #ffffff; border: 1px solid #fca5a5; border-radius: 8px; padding: 4px 5px; font-size: 0.62rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
-                  <span id="car-bet-btn-label-0">➕ बेट लगाएं</span>
-                  <span id="car-player-bet-badge-0" style="display: none; background: #a3e635; color: #090d16; padding: 0 4px; border-radius: 4px; font-size: 0.56rem;">✓</span>
+                <div id="car-bet-btn-0" style="margin-top: 4px; background: linear-gradient(180deg, #06b6d4, #0e7490); color: #ffffff; border: 1px solid #67e8f9; border-radius: 8px; padding: 4px 5px; font-size: 0.6rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
+                  <span id="car-bet-btn-label-0">➕ Rider A बेट</span>
+                  <span id="car-player-bet-badge-0" style="display: none; background: #fde047; color: #090d16; padding: 0 4px; border-radius: 4px; font-size: 0.54rem;">✓</span>
                 </div>
               </div>
 
-              <!-- CYCLE B: Tunez (Neon Lime/Cyan Pro Downhill MTB) -->
+              <!-- RIDER B (Lime Green Mountain Bike CyclistRacer) -->
               <div id="bet-card-1" class="rush-bet-card" onclick="placeBetOnCar(1)">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.56rem; font-weight: 900; background: #84cc16; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">CYCLE B</span>
-                    <span style="font-size: 0.58rem; color: #a3e635; font-weight: 900;">⚡ 2.0x</span>
+                    <span style="font-size: 0.55rem; font-weight: 900; background: #84cc16; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">RIDER B</span>
+                    <span style="font-size: 0.56rem; color: #a3e635; font-weight: 900;">⚡ 2.0x</span>
                   </div>
-                  <div id="car-preview-svg-1" style="margin: 2px auto; width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #a3e635; background: radial-gradient(circle at 50% 35%, #14532d 0%, #090d16 90%);">
+                  <div id="car-preview-svg-1" style="margin: 2px auto; width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #a3e635; background: radial-gradient(circle at 50% 35%, #14532d 0%, #090d16 90%);">
                     <svg viewBox="0 0 120 75" style="width: 100%; height: 100%;">
                       <line x1="8" y1="22" x2="32" y2="22" stroke="#a3e635" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
-                      <line x1="4" y1="38" x2="25" y2="38" stroke="#38bdf8" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+                      <line x1="4" y1="38" x2="25" y2="38" stroke="#22c55e" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <circle cx="32" cy="54" r="14" fill="#0f172a" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="5,2"/>
                       <circle cx="32" cy="54" r="9.5" fill="none" stroke="#a3e635" stroke-width="2"/>
                       <circle cx="32" cy="54" r="3.5" fill="#38bdf8"/>
@@ -1672,172 +1661,175 @@
                       <line x1="65" y1="22" x2="77" y2="27" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
                       <circle cx="71" cy="15" r="7" fill="#a3e635" stroke="#090d16" stroke-width="1.5"/>
                       <path d="M 73,13 L 79,15 L 74,18 Z" fill="#090d16"/>
-                      <text x="16" y="16" fill="#d9f99d" font-size="10" font-weight="900" font-style="italic">#B</text>
+                      <text x="14" y="16" fill="#d9f99d" font-size="9.5" font-weight="900" font-style="italic">R-B</text>
                     </svg>
                   </div>
-                  <strong id="car-name-1" style="font-size: 0.7rem; font-weight: 900; color: #ffffff; display: block; margin-top: 3px;">CYCLE B • Tunez</strong>
-                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(250, 204, 21, 0.5); border-radius: 6px; padding: 2px 5px; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.52rem; color: #fde047; font-weight: 800;">🔥 कुल बेट:</span>
-                    <span id="car-total-bet-1" style="font-size: 0.66rem; font-weight: 900; color: #ffffff; font-family: monospace;">₹3,490</span>
+                  <strong id="car-name-1" style="font-size: 0.68rem; font-weight: 900; color: #ffffff; display: block; margin-top: 2px;">Rider B (Lime MTB)</strong>
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(163, 230, 53, 0.45); border-radius: 6px; padding: 2px 5px; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.5rem; color: #d9f99d; font-weight: 800;">🪙 Virtual Bet:</span>
+                    <span id="car-total-bet-1" style="font-size: 0.63rem; font-weight: 900; color: #ffffff; font-family: monospace;">20 coins</span>
                   </div>
-                  <div id="car-my-bet-box-1" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(163, 230, 53, 0.55); border-radius: 7px; padding: 3px 4px; margin-top: 3px;">
-                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
-                    <div id="car-my-bet-amount-1" style="font-size: 0.72rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
+                  <div id="car-my-bet-box-1" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(163, 230, 53, 0.55); border-radius: 7px; padding: 2px 4px; margin-top: 3px;">
+                    <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
+                    <div id="car-my-bet-amount-1" style="font-size: 0.68rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 (₹0)
                     </div>
-                    <div id="car-my-win-est-1" style="font-size: 0.52rem; font-weight: 800; color: #a3e635;">
-                      जीतने पर 2x इनाम
+                    <div id="car-my-win-est-1" style="font-size: 0.5rem; font-weight: 800; color: #a3e635;">
+                      Lowest Bet Wins (2x)
                     </div>
                   </div>
                 </div>
-                <div id="car-bet-btn-1" style="margin-top: 5px; background: linear-gradient(180deg, #84cc16, #4d7c0f); color: #090d16; border: 1px solid #d9f99d; border-radius: 8px; padding: 4px 5px; font-size: 0.62rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
-                  <span id="car-bet-btn-label-1">➕ बेट लगाएं</span>
-                  <span id="car-player-bet-badge-1" style="display: none; background: #090d16; color: #a3e635; padding: 0 4px; border-radius: 4px; font-size: 0.56rem;">✓</span>
+                <div id="car-bet-btn-1" style="margin-top: 4px; background: linear-gradient(180deg, #84cc16, #4d7c0f); color: #090d16; border: 1px solid #d9f99d; border-radius: 8px; padding: 4px 5px; font-size: 0.6rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
+                  <span id="car-bet-btn-label-1">➕ Rider B बेट</span>
+                  <span id="car-player-bet-badge-1" style="display: none; background: #090d16; color: #a3e635; padding: 0 4px; border-radius: 4px; font-size: 0.54rem;">✓</span>
                 </div>
               </div>
 
-              <!-- CYCLE C: Digger (Gold/Orange Pro Downhill MTB) -->
+              <!-- RIDER C (Orange/Gold Mountain Bike CyclistRacer) -->
               <div id="bet-card-2" class="rush-bet-card" onclick="placeBetOnCar(2)">
                 <div>
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.56rem; font-weight: 900; background: #f59e0b; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">CYCLE C</span>
-                    <span style="font-size: 0.58rem; color: #a3e635; font-weight: 900;">⚡ 2.0x</span>
+                    <span style="font-size: 0.55rem; font-weight: 900; background: #f59e0b; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">RIDER C</span>
+                    <span style="font-size: 0.56rem; color: #fde047; font-weight: 900;">⚡ 2.0x</span>
                   </div>
-                  <div id="car-preview-svg-2" style="margin: 2px auto; width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #f59e0b; background: radial-gradient(circle at 50% 35%, #78350f 0%, #090d16 90%);">
+                  <div id="car-preview-svg-2" style="margin: 2px auto; width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #f59e0b; background: radial-gradient(circle at 50% 35%, #78350f 0%, #090d16 90%);">
                     <svg viewBox="0 0 120 75" style="width: 100%; height: 100%;">
                       <line x1="8" y1="22" x2="32" y2="22" stroke="#fbbf24" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <line x1="4" y1="38" x2="25" y2="38" stroke="#f97316" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <circle cx="32" cy="54" r="14" fill="#0f172a" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="5,2"/>
                       <circle cx="32" cy="54" r="9.5" fill="none" stroke="#f59e0b" stroke-width="2"/>
-                      <circle cx="32" cy="54" r="3.5" fill="#ec4899"/>
+                      <circle cx="32" cy="54" r="3.5" fill="#ef4444"/>
                       <circle cx="88" cy="54" r="14" fill="#0f172a" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="5,2"/>
                       <circle cx="88" cy="54" r="9.5" fill="none" stroke="#f59e0b" stroke-width="2"/>
-                      <circle cx="88" cy="54" r="3.5" fill="#ec4899"/>
+                      <circle cx="88" cy="54" r="3.5" fill="#ef4444"/>
                       <polyline points="32,54 52,36 78,34 55,54 32,54" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linejoin="round"/>
                       <line x1="74" y1="24" x2="88" y2="54" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
-                      <line x1="48" y1="31" x2="56" y2="39" stroke="#ec4899" stroke-width="2.5"/>
+                      <line x1="48" y1="31" x2="56" y2="39" stroke="#ef4444" stroke-width="2.5"/>
                       <polyline points="50,35 61,44 55,54" fill="none" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                       <path d="M 44,33 Q 55,17 70,22 L 64,34 Z" fill="#f59e0b" stroke="#ffffff" stroke-width="1"/>
                       <line x1="65" y1="22" x2="77" y2="27" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
                       <circle cx="71" cy="15" r="7" fill="#fbbf24" stroke="#090d16" stroke-width="1.5"/>
                       <path d="M 73,13 L 79,15 L 74,18 Z" fill="#090d16"/>
-                      <text x="16" y="16" fill="#fde047" font-size="10" font-weight="900" font-style="italic">#C</text>
+                      <text x="14" y="16" fill="#fde047" font-size="9.5" font-weight="900" font-style="italic">R-C</text>
                     </svg>
                   </div>
-                  <strong id="car-name-2" style="font-size: 0.7rem; font-weight: 900; color: #ffffff; display: block; margin-top: 3px;">CYCLE C • Digger</strong>
-                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(250, 204, 21, 0.5); border-radius: 6px; padding: 2px 5px; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.52rem; color: #fde047; font-weight: 800;">🔥 कुल बेट:</span>
-                    <span id="car-total-bet-2" style="font-size: 0.66rem; font-weight: 900; color: #ffffff; font-family: monospace;">₹2,615</span>
+                  <strong id="car-name-2" style="font-size: 0.68rem; font-weight: 900; color: #ffffff; display: block; margin-top: 2px;">Rider C (Orange MTB)</strong>
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(245, 158, 11, 0.45); border-radius: 6px; padding: 2px 5px; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.5rem; color: #fde047; font-weight: 800;">🪙 Virtual Bet:</span>
+                    <span id="car-total-bet-2" style="font-size: 0.63rem; font-weight: 900; color: #ffffff; font-family: monospace;">30 coins</span>
                   </div>
-                  <div id="car-my-bet-box-2" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(245, 158, 11, 0.55); border-radius: 7px; padding: 3px 4px; margin-top: 3px;">
-                    <div style="font-size: 0.52rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
-                    <div id="car-my-bet-amount-2" style="font-size: 0.72rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
+                  <div id="car-my-bet-box-2" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(245, 158, 11, 0.55); border-radius: 7px; padding: 2px 4px; margin-top: 3px;">
+                    <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">आपकी बेट (Your Bet):</div>
+                    <div id="car-my-bet-amount-2" style="font-size: 0.68rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 (₹0)
                     </div>
-                    <div id="car-my-win-est-2" style="font-size: 0.52rem; font-weight: 800; color: #a3e635;">
-                      जीतने पर 2x इनाम
+                    <div id="car-my-win-est-2" style="font-size: 0.5rem; font-weight: 800; color: #fde047;">
+                      Lowest Bet Wins (2x)
                     </div>
                   </div>
                 </div>
-                <div id="car-bet-btn-2" style="margin-top: 5px; background: linear-gradient(180deg, #f59e0b, #b45309); color: #090d16; border: 1px solid #fef08a; border-radius: 8px; padding: 4px 5px; font-size: 0.62rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
-                  <span id="car-bet-btn-label-2">➕ बेट लगाएं</span>
-                  <span id="car-player-bet-badge-2" style="display: none; background: #090d16; color: #a3e635; padding: 0 4px; border-radius: 4px; font-size: 0.56rem;">✓</span>
+                <div id="car-bet-btn-2" style="margin-top: 4px; background: linear-gradient(180deg, #f59e0b, #b45309); color: #090d16; border: 1px solid #fef08a; border-radius: 8px; padding: 4px 5px; font-size: 0.6rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
+                  <span id="car-bet-btn-label-2">➕ Rider C बेट</span>
+                  <span id="car-player-bet-badge-2" style="display: none; background: #090d16; color: #fde047; padding: 0 4px; border-radius: 4px; font-size: 0.54rem;">✓</span>
                 </div>
               </div>
 
             </div>
 
-            <!-- CUSTOMER'S OWN LIVE BET CONFIRMATION BAR (दिखाता है किस साइकिल पर आपका कितना लगा है) -->
-            <div id="my-live-bets-summary-bar" style="background: linear-gradient(90deg, #0f172a, #14532d, #0f172a); border: 1.5px solid #a3e635; border-radius: 10px; padding: 5px 8px; margin-bottom: 0.38rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 0.62rem;">
+            <!-- CUSTOMER'S OWN LIVE BET & RACEHUD SUMMARY BAR -->
+            <div id="my-live-bets-summary-bar" style="background: linear-gradient(90deg, #0f172a, #164e63, #0f172a); border: 1.5px solid #22d3ee; border-radius: 10px; padding: 4px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 0.6rem;">
               <div id="my-live-bets-text" style="color: #ffffff; font-weight: 900;">
-                🎯 <b>आपकी बेट:</b> साइकिल कार्ड पर टैप करके अपनी बेट लगाएं (सबसे कम बेट वाली साइकिल जीतेगी!)
+                🎯 <b>VIRTUAL BETS:</b> Rider A, Rider B या Rider C पर टैप करें (सबसे कम बेट वाला राइडर जीतेगा!)
               </div>
-              <div id="my-live-bets-total-pill" style="background: #090d16; color: #a3e635; border: 1px solid #a3e635; padding: 1px 7px; border-radius: 999px; font-weight: 900; font-family: monospace;">
-                कुल बेट: ₹0
+              <div id="my-live-bets-total-pill" style="background: #090d16; color: #22d3ee; border: 1px solid #22d3ee; padding: 1px 7px; border-radius: 999px; font-weight: 900; font-family: monospace;">
+                कुल बेट: 0 coins
               </div>
             </div>
 
-            <!-- BETTING CHIPS & 100% AUTOMATIC SERVER TIMER FOOTER -->
-            <div style="background: #090d16; border: 1.5px solid #a3e635; border-radius: 12px; padding: 0.42rem 0.6rem; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-wrap: wrap;">
+            <!-- BETTING CHIPS & RACEHUD START / RESET BUTTONS (RaceHUD.cs: StartRaceButton & ResetRaceButton) -->
+            <div style="background: #090d16; border: 1.5px solid #22d3ee; border-radius: 12px; padding: 0.38rem 0.55rem; display: flex; justify-content: space-between; align-items: center; gap: 5px; flex-wrap: wrap;">
               <div style="display: flex; align-items: center; gap: 4px;">
-                <span style="font-size: 0.62rem; color: #a3e635; font-weight: 900;">Coins:</span>
-                <button type="button" class="btn-bet-chip" onclick="selectBetChip(10)" id="chip-val-10" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #a3e635; background: #a3e635; color: #090d16; cursor: pointer;">10</button>
-                <button type="button" class="btn-bet-chip" onclick="selectBetChip(25)" id="chip-val-25" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">25</button>
-                <button type="button" class="btn-bet-chip" onclick="selectBetChip(50)" id="chip-val-50" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">50</button>
-                <button type="button" class="btn-bet-chip" onclick="selectBetChip(100)" id="chip-val-100" style="padding: 4px 8px; font-size: 0.68rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">100</button>
+                <span style="font-size: 0.6rem; color: #22d3ee; font-weight: 900;">Coins:</span>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(10)" id="chip-val-10" style="padding: 3px 7px; font-size: 0.66rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #22d3ee; background: #22d3ee; color: #090d16; cursor: pointer;">10</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(25)" id="chip-val-25" style="padding: 3px 7px; font-size: 0.66rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">25</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(50)" id="chip-val-50" style="padding: 3px 7px; font-size: 0.66rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">50</button>
+                <button type="button" class="btn-bet-chip" onclick="selectBetChip(100)" id="chip-val-100" style="padding: 3px 7px; font-size: 0.66rem; font-weight: 900; border-radius: 8px; border: 1.5px solid #475569; background: #1e293b; color: #e2e8f0; cursor: pointer;">100</button>
               </div>
 
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <button type="button" id="btn-clear-bets" onclick="clearAllPlayerBets()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; padding: 4px 9px; border-radius: 8px; font-weight: 800; font-size: 0.64rem; cursor: pointer;">
-                  🔄 Reset
+              <div style="display: flex; align-items: center; gap: 5px;">
+                <button type="button" id="btn-clear-bets" onclick="RaceHUD_ResetRaceButton()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.28); color: #cbd5e1; padding: 4px 8px; border-radius: 8px; font-weight: 800; font-size: 0.62rem; cursor: pointer;">
+                  🔄 Reset Race
                 </button>
-                <span style="background: rgba(163, 230, 53, 0.18); border: 1px solid #a3e635; color: #a3e635; padding: 4px 8px; border-radius: 8px; font-weight: 900; font-size: 0.6rem;">
-                  🤖 Auto 30s • 60s • 5s
-                </span>
+                <button type="button" id="btn-start-race-hud" onclick="RaceHUD_StartRaceButton()" style="background: linear-gradient(135deg, #16a34a, #15803d); border: 1px solid #86efac; color: #ffffff; padding: 4px 9px; border-radius: 8px; font-weight: 900; font-size: 0.62rem; cursor: pointer; box-shadow: 0 2px 6px rgba(22,163,74,0.4);">
+                  🏁 Start Race
+                </button>
               </div>
             </div>
           </div>
 
           <!-- =================================================================== -->
-          <!-- PAGE 2: 🚴 60-SECOND (1-MINUTE) 60FPS FULL-HD 3D RUSH CYCLE RACE    -->
+          <!-- PAGE 2: 🚵 LOWEST BET BIKE RACE — 3D WAYPOINT DIRT-ROAD TRACK       -->
           <!-- =================================================================== -->
-          <div id="chamet-track-page" style="display: none; padding: 0.15rem 0.55rem 0.55rem 0.55rem;">
+          <div id="chamet-track-page" style="display: none; padding: 0.15rem 0.55rem 0.5rem 0.55rem;">
 
-            <!-- RUSH TELEMETRY BAR -->
-            <div style="background: #090d16; border: 1.5px solid #a3e635; border-radius: 10px; padding: 4px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+            <!-- WAYPOINT & RACEMANAGER STATUS BAR -->
+            <div style="background: #090d16; border: 1.5px solid #22d3ee; border-radius: 10px; padding: 4px 8px; margin-bottom: 0.3rem; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
               <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-                <span style="background: #dc2626; color: #ffffff; font-size: 0.56rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; animation: pulse 1.2s infinite; flex-shrink: 0;">60FPS 3D LIVE</span>
-                <span id="track-live-commentary" style="font-size: 0.62rem; color: #a3e635; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  🚴 A, B, C में ज़बरदस्त ओवरटेक और क्रॉसिंग चालू है!
+                <span style="background: #0891b2; color: #ffffff; font-size: 0.54rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; flex-shrink: 0;">WP TRACK</span>
+                <span id="track-live-commentary" style="font-size: 0.6rem; color: #22d3ee; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  GO! Cross, overtake, and race to the finish!
                 </span>
               </div>
-              <div style="font-size: 0.64rem; font-weight: 900; color: #ffffff; font-family: monospace; flex-shrink: 0;">
-                🏁 <span id="race-distance-meter">0m</span> / 3000m
+              <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                <span id="race-waypoint-counter" style="font-size: 0.6rem; font-weight: 900; color: #fde047; font-family: monospace;">WP_00 / WP_12</span>
+                <span style="font-size: 0.6rem; font-weight: 900; color: #ffffff; font-family: monospace;">🏁 <span id="race-distance-meter">0m</span></span>
               </div>
             </div>
 
-            <!-- RUSH: XTREME 60FPS FULL-HD RETINA 3D DOWNHILL CYCLE RACE ARENA -->
+            <!-- 3D WAYPOINT DIRT-ROAD MOUNTAIN-BIKE ARENA -->
             <div id="chamet-track-wrapper">
-              <div id="racetrack-arena" style="height: var(--auto-race-height, 210px); background: linear-gradient(180deg, #073666 0%, #1d6fa5 30%, #cbd5e1 33%, #94a3b8 100%); border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #a3e635; box-shadow: 0 4px 14px rgba(0,0,0,0.85);">
+              <div id="racetrack-arena" style="height: var(--auto-race-height, 210px); background: linear-gradient(180deg, #0c4a6e 0%, #38bdf8 30%, #92400e 33%, #451a03 100%); border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #22d3ee; box-shadow: 0 4px 14px rgba(0,0,0,0.85);">
 
-                <!-- 1. FULL-HD RETINA 60FPS 3D RUSH DOWNHILL MOUNTAIN CYCLE CANVAS (ZERO BLUR, ZERO LAG!) -->
+                <!-- 1. 60FPS 3D WAYPOINT DIRT-ROAD CYCLIST RACER CANVAS -->
                 <canvas id="rush-3d-race-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
 
-                <!-- 2. RUSH TOP HUD OVERLAY (01/03 Position + 00:XX:XX Skewed Black Timer + Green Progress Bar) -->
+                <!-- 2. TOP HUD OVERLAY (Position + Waypoint Progress + Speed / Reset) -->
                 <div style="position: absolute; top: 7px; left: 8px; right: 8px; z-index: 12; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;">
-                  <!-- Top-Left 01/03 Position Display -->
                   <div style="font-style: italic; font-weight: 900; line-height: 1; text-shadow: 0 3px 6px rgba(0,0,0,0.95);">
-                    <span id="rush-hud-pos-num" style="font-size: 1.5rem; color: #a3e635;">01</span><span style="font-size: 0.76rem; color: #ffffff;">/03</span>
+                    <span id="rush-hud-pos-num" style="font-size: 1.45rem; color: #22d3ee;">01</span><span style="font-size: 0.74rem; color: #ffffff;">/03</span>
                   </div>
 
-                  <!-- Top-Center RUSH Skewed Black Stopwatch & Progress Track -->
                   <div style="display: flex; flex-direction: column; align-items: center; width: 52%;">
-                    <div class="rush-skew-box" style="margin-bottom: 5px;">
-                      <span style="color: #a3e635; font-size: 0.65rem;">🕒</span>
-                      <span id="rush-hud-stopwatch" style="font-family: monospace; font-size: 0.75rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px;">00:00:00</span>
+                    <div class="rush-skew-box" style="margin-bottom: 4px;">
+                      <span style="color: #22d3ee; font-size: 0.62rem;">⏱️</span>
+                      <span id="rush-hud-stopwatch" style="font-family: monospace; font-size: 0.72rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px;">00:00:00</span>
                     </div>
                     <div style="width: 100%; height: 6px; background: rgba(9,13,22,0.88); border-radius: 999px; position: relative; border: 1px solid rgba(255,255,255,0.28);">
-                      <div id="rush-hud-track-fill" style="width: 0%; height: 100%; background: #a3e635; border-radius: 999px; position: relative;">
-                        <span style="position: absolute; right: -5px; top: -3px; width: 10px; height: 10px; border-radius: 50%; background: #a3e635; border: 1.5px solid #090d16; box-shadow: 0 0 6px #a3e635;"></span>
+                      <div id="rush-hud-track-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #22d3ee, #a3e635); border-radius: 999px; position: relative;">
+                        <span style="position: absolute; right: -5px; top: -3px; width: 10px; height: 10px; border-radius: 50%; background: #22d3ee; border: 1.5px solid #090d16; box-shadow: 0 0 6px #22d3ee;"></span>
                       </div>
                       <span style="position: absolute; right: -6px; top: -5px; font-size: 0.65rem;">🏁</span>
                     </div>
                   </div>
 
-                  <!-- Top-Right Speedometer & HD Badge -->
-                  <div style="background: rgba(9,13,22,0.9); border: 1.5px solid #a3e635; border-radius: 6px; padding: 2px 7px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.7);">
-                    <span style="font-size: 0.68rem;">⚡</span>
-                    <span id="rush-hud-speed-kmh" style="font-size: 0.65rem; font-weight: 900; color: #a3e635; font-family: monospace;">94 km/h</span>
+                  <div style="display: flex; align-items: center; gap: 4px; pointer-events: auto;">
+                    <div style="background: rgba(9,13,22,0.9); border: 1.5px solid #22d3ee; border-radius: 6px; padding: 2px 6px; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.7);">
+                      <span style="font-size: 0.64rem;">🚵</span>
+                      <span id="rush-hud-speed-kmh" style="font-size: 0.62rem; font-weight: 900; color: #22d3ee; font-family: monospace;">9.0 m/s</span>
+                    </div>
+                    <button type="button" onclick="RaceHUD_ResetRaceButton()" style="background: rgba(9,13,22,0.92); color: #fde047; border: 1.5px solid #fde047; border-radius: 6px; padding: 2px 6px; font-size: 0.58rem; font-weight: 900; cursor: pointer;" title="Reset Race to Betting">
+                      🔄
+                    </button>
                   </div>
                 </div>
 
-                <!-- 3. RUSH LEFT-SIDE LIVE LEADERBOARD (1st, 2nd, 3rd - Dynamically Swaps as A, B, C Cross!) -->
-                <div style="position: absolute; top: 48px; left: 0; z-index: 12; width: 132px; pointer-events: none;">
+                <!-- 3. LEFT-SIDE LIVE RIDER LEADERBOARD (Rider A, Rider B, Rider C) -->
+                <div style="position: absolute; top: 46px; left: 0; z-index: 12; width: 136px; pointer-events: none;">
                   <div id="rush-live-row-0" class="rush-leader-row rank-1">
                     <div style="display:flex; align-items:center; gap:5px;">
                       <span id="rush-rank-num-0" style="font-weight: 900; min-width: 12px;">1</span>
-                      <span id="rush-rank-badge-0" style="background: #ef4444; color: #fff; font-size: 0.55rem; padding: 0 4px; border-radius: 3px;">A</span>
-                      <span id="rush-rank-name-0" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">CYCLE A</span>
+                      <span id="rush-rank-badge-0" style="background: #06b6d4; color: #090d16; font-size: 0.55rem; padding: 0 4px; border-radius: 3px;">A</span>
+                      <span id="rush-rank-name-0" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Rider A</span>
                     </div>
                     <span id="rush-rank-gap-0" style="font-size:0.52rem; font-family:monospace;">LEAD</span>
                   </div>
@@ -1845,134 +1837,119 @@
                     <div style="display:flex; align-items:center; gap:5px;">
                       <span id="rush-rank-num-1" style="font-weight: 900; min-width: 12px;">2</span>
                       <span id="rush-rank-badge-1" style="background: #84cc16; color: #090d16; font-size: 0.55rem; padding: 0 4px; border-radius: 3px;">B</span>
-                      <span id="rush-rank-name-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">CYCLE B</span>
+                      <span id="rush-rank-name-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Rider B</span>
                     </div>
-                    <span id="rush-rank-gap-1" style="font-size:0.52rem; font-family:monospace; color:#a3e635;">-0.2s</span>
+                    <span id="rush-rank-gap-1" style="font-size:0.52rem; font-family:monospace; color:#22d3ee;">-0.2s</span>
                   </div>
                   <div id="rush-live-row-2" class="rush-leader-row">
                     <div style="display:flex; align-items:center; gap:5px;">
                       <span id="rush-rank-num-2" style="font-weight: 900; min-width: 12px;">3</span>
                       <span id="rush-rank-badge-2" style="background: #f59e0b; color: #090d16; font-size: 0.55rem; padding: 0 4px; border-radius: 3px;">C</span>
-                      <span id="rush-rank-name-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">CYCLE C</span>
+                      <span id="rush-rank-name-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Rider C</span>
                     </div>
                     <span id="rush-rank-gap-2" style="font-size:0.52rem; font-family:monospace; color:#fde047;">-0.5s</span>
                   </div>
                 </div>
 
-<!-- Camera is 100% automatic with zero camera/drone buttons -->
-
-<!-- Zero mid-screen popup pills for 100% clean, smooth racing view -->
-
-                <div id="rush-boost-circle" style="position: absolute; right: 10px; bottom: 44px; z-index: 12; width: 42px; height: 42px; border-radius: 50%; background: rgba(15, 23, 42, 0.85); border: 3.5px solid #a3e635; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: #ffffff; animation: rushBoostPulse 1.1s infinite; pointer-events: none;">
-                  ⚡
-                </div>
-
-                <!-- 5. BOTTOM LIVE RIDER CROSSING & SPRINT BAR -->
-                <div style="position: absolute; left: 8px; right: 8px; bottom: 6px; z-index: 14; background: rgba(9, 13, 22, 0.9); border: 1.5px solid #a3e635; border-radius: 10px; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px);">
-                  <div style="font-size: 0.6rem; font-weight: 900; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    🚴 <span id="rush-sprint-leader-label" style="color: #a3e635;">CYCLE A ⇄ CYCLE B ⇄ CYCLE C (Live Overtaking)</span>
+                <!-- 4. BOTTOM LIVE RIDER CROSSING & FINAL BOOST BAR -->
+                <div style="position: absolute; left: 8px; right: 8px; bottom: 6px; z-index: 14; background: rgba(9, 13, 22, 0.92); border: 1.5px solid #22d3ee; border-radius: 10px; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px);">
+                  <div style="font-size: 0.58rem; font-weight: 900; color: #cbd5e1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    🚵 <span id="rush-sprint-leader-label" style="color: #22d3ee;">Rider A ⇄ Rider B ⇄ Rider C (Lane Crossing)</span>
                   </div>
-                  <div id="rush-finish-sprint-pill" style="background: #a3e635; color: #090d16; font-size: 0.58rem; font-weight: 900; padding: 1px 7px; border-radius: 999px; flex-shrink: 0;">
-                    ⚡ 2.0x WIN
+                  <div id="rush-finish-sprint-pill" style="background: #22d3ee; color: #090d16; font-size: 0.56rem; font-weight: 900; padding: 1px 7px; border-radius: 999px; flex-shrink: 0;">
+                    ⚡ 1.35x Boost
                   </div>
                 </div>
 
               </div>
             </div>
 
-            <!-- Live Selection Status Strip During 60s Cycle Race (Shows Random Fake Total Bet + Customer's Own Bet!) -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 0.38rem; text-align: center;">
-              <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #ef4444; border-radius: 8px; padding: 4px;">
-                <div id="track-car-title-0" style="font-size: 0.64rem; font-weight: 900; color: #fca5a5;">CYCLE A • HighT</div>
-                <div style="font-size: 0.56rem; color: #fde047; font-weight: 800;">कुल बेट: <b id="track-pool-bet-0" style="color:#ffffff; font-family:monospace;">₹2,840</b></div>
-                <div style="font-size: 0.58rem; color: #cbd5e1;"><b id="track-my-bet-0" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
+            <!-- Live Virtual Bets & Player Bet Strip During Race (RaceHUD.RefreshBets) -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 0.35rem; text-align: center;">
+              <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #06b6d4; border-radius: 8px; padding: 4px;">
+                <div id="track-car-title-0" style="font-size: 0.62rem; font-weight: 900; color: #67e8f9;">Rider A (Cyan)</div>
+                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Virtual Bet: <b id="track-pool-bet-0" style="color:#ffffff; font-family:monospace;">10 coins</b></div>
+                <div style="font-size: 0.56rem; color: #cbd5e1;"><b id="track-my-bet-0" style="color:#22d3ee;">आपकी बेट: ₹0</b></div>
               </div>
               <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #84cc16; border-radius: 8px; padding: 4px;">
-                <div id="track-car-title-1" style="font-size: 0.64rem; font-weight: 900; color: #d9f99d;">CYCLE B • Tunez</div>
-                <div style="font-size: 0.56rem; color: #fde047; font-weight: 800;">कुल बेट: <b id="track-pool-bet-1" style="color:#ffffff; font-family:monospace;">₹3,490</b></div>
-                <div style="font-size: 0.58rem; color: #cbd5e1;"><b id="track-my-bet-1" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
+                <div id="track-car-title-1" style="font-size: 0.62rem; font-weight: 900; color: #d9f99d;">Rider B (Lime)</div>
+                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Virtual Bet: <b id="track-pool-bet-1" style="color:#ffffff; font-family:monospace;">20 coins</b></div>
+                <div style="font-size: 0.56rem; color: #cbd5e1;"><b id="track-my-bet-1" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
               </div>
               <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 4px;">
-                <div id="track-car-title-2" style="font-size: 0.64rem; font-weight: 900; color: #fde047;">CYCLE C • Digger</div>
-                <div style="font-size: 0.56rem; color: #fde047; font-weight: 800;">कुल बेट: <b id="track-pool-bet-2" style="color:#ffffff; font-family:monospace;">₹2,615</b></div>
-                <div style="font-size: 0.58rem; color: #cbd5e1;"><b id="track-my-bet-2" style="color:#a3e635;">आपकी बेट: ₹0</b></div>
+                <div id="track-car-title-2" style="font-size: 0.62rem; font-weight: 900; color: #fde047;">Rider C (Orange)</div>
+                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Virtual Bet: <b id="track-pool-bet-2" style="color:#ffffff; font-family:monospace;">30 coins</b></div>
+                <div style="font-size: 0.56rem; color: #cbd5e1;"><b id="track-my-bet-2" style="color:#fde047;">आपकी बेट: ₹0</b></div>
               </div>
             </div>
           </div>
 
           <!-- =================================================================== -->
-          <!-- PAGE 3: 👑 5-SECOND RUSH "FINISHED" WINNING RESULT DISPLAY PAGE     -->
-          <!-- (Shown for 5 Seconds After Every 60s Cycle Race Across All Phones!) -->
+          <!-- PAGE 3: 👑 RACEMANAGER WINNER REVEALED! (LOWEST BET WINS)           -->
           <!-- =================================================================== -->
           <div id="chamet-result-page" style="display: none; padding: 0.35rem 0.65rem 0.65rem 0.65rem;">
-            <div id="race-winner-card" style="background: linear-gradient(180deg, #111827 0%, #090d16 100%); border: 2px solid #a3e635; border-radius: 14px; padding: 0.65rem; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);">
+            <div id="race-winner-card" style="background: linear-gradient(180deg, #111827 0%, #090d16 100%); border: 2px solid #22d3ee; border-radius: 14px; padding: 0.65rem; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);">
 
-              <!-- RUSH Crown & Italic FINISHED Banner -->
               <div style="margin-bottom: 0.45rem;">
-                <div style="font-size: 1.15rem; line-height: 1; color: #a3e635; margin-bottom: 2px;">👑</div>
-                <div style="display: inline-block; background: #090d16; border: 2px solid #a3e635; padding: 2px 18px; transform: skewX(-10deg); box-shadow: 0 4px 12px rgba(163,230,53,0.3);">
-                  <span style="font-size: 1.15rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 1.5px;">FINISHED</span>
+                <div style="font-size: 1.15rem; line-height: 1; color: #fde047; margin-bottom: 2px;">👑</div>
+                <div style="display: inline-block; background: #090d16; border: 2px solid #22d3ee; padding: 2px 16px; transform: skewX(-10deg); box-shadow: 0 4px 12px rgba(34,211,238,0.3);">
+                  <span style="font-size: 1.05rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 1.2px;">WINNER REVEALED!</span>
                 </div>
-                <div id="winner-banner-title" style="font-size: 0.78rem; font-weight: 900; color: #a3e635; margin-top: 5px;">
-                  🏆 1st Place Winner: CYCLE A!
+                <div id="winner-banner-title" style="font-size: 0.82rem; font-weight: 900; color: #22d3ee; margin-top: 5px; white-space: pre-line;">
+                  WINNER: Rider A • Lowest bet: 10 coins
                 </div>
-                <div id="winner-banner-desc" style="font-size: 0.62rem; color: #cbd5e1; font-weight: 700;">
-                  सबसे कम बेट वाली साइकिल ने सबसे पहले फिनिश लाइन पार की!
+                <div id="winner-banner-desc" style="font-size: 0.62rem; color: #cbd5e1; font-weight: 700; margin-top: 2px;">
+                  सबसे कम बेट (Lowest Virtual Bet) वाले राइडर ने रेस जीत ली!
                 </div>
               </div>
 
-              <!-- RUSH 1st / 2nd / 3rd Result Leaderboard Table -->
-              <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 0.55rem; text-align: left;">
-                <!-- 1st Place Row (Neon Lime Highlight) -->
-                <div style="background: #a3e635; color: #090d16; border-radius: 8px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; box-shadow: 0 0 14px rgba(163,230,53,0.5);">
+              <!-- 1st / 2nd / 3rd Result Leaderboard Table -->
+              <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 0.5rem; text-align: left;">
+                <div style="background: linear-gradient(90deg, #22d3ee, #a3e635); color: #090d16; border-radius: 8px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 900; box-shadow: 0 0 14px rgba(34,211,238,0.45);">
                   <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 0.78rem; font-style: italic; background: #090d16; color: #a3e635; padding: 1px 6px; border-radius: 4px;">1st</span>
-                    <span id="res-row1-name" style="font-size: 0.8rem;">🚴 CYCLE A • HighTtower</span>
+                    <span style="font-size: 0.76rem; font-style: italic; background: #090d16; color: #22d3ee; padding: 1px 6px; border-radius: 4px;">1st</span>
+                    <span id="res-row1-name" style="font-size: 0.78rem;">🚵 Rider A</span>
                   </div>
-                  <div style="display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 0.72rem;">
-                    <span>⚡ 114</span>
-                    <span style="background: #ffffff; color: #090d16; padding: 1px 6px; border-radius: 4px;">00:58:14 🥇</span>
+                  <div style="display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 0.7rem;">
+                    <span id="res-row1-bet">Lowest Bet</span>
+                    <span style="background: #ffffff; color: #090d16; padding: 1px 6px; border-radius: 4px;">1.35x Boost 🥇</span>
                   </div>
                 </div>
 
-                <!-- 2nd Place Row -->
                 <div style="background: rgba(30, 41, 59, 0.9); color: #e2e8f0; border: 1px solid #334155; border-radius: 8px; padding: 5px 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 0.72rem; font-style: italic; color: #94a3b8;">2nd</span>
-                    <span id="res-row2-name" style="font-size: 0.75rem;">🚴 CYCLE B • Tunez</span>
+                    <span id="res-row2-name" style="font-size: 0.74rem;">🚵 Rider B</span>
                   </div>
-                  <div style="display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 0.68rem; color: #94a3b8;">
-                    <span>⚡ 109</span>
-                    <span>00:58:89</span>
-                  </div>
+                  <div id="res-row2-bet" style="font-family: monospace; font-size: 0.68rem; color: #94a3b8;">WP_FINISH</div>
                 </div>
 
-                <!-- 3rd Place Row -->
                 <div style="background: rgba(30, 41, 59, 0.9); color: #e2e8f0; border: 1px solid #334155; border-radius: 8px; padding: 5px 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 800;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 0.72rem; font-style: italic; color: #94a3b8;">3rd</span>
-                    <span id="res-row3-name" style="font-size: 0.75rem;">🚴 CYCLE C • Digger</span>
+                    <span id="res-row3-name" style="font-size: 0.74rem;">🚵 Rider C</span>
                   </div>
-                  <div style="display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 0.68rem; color: #94a3b8;">
-                    <span>⚡ 105</span>
-                    <span>00:59:42</span>
-                  </div>
+                  <div id="res-row3-bet" style="font-family: monospace; font-size: 0.68rem; color: #94a3b8;">WP_FINISH</div>
                 </div>
               </div>
 
-              <!-- SLOW-MO PHOTO-FINISH VERIFIED DETAILS -->
-              <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(163, 230, 53, 0.45); border-radius: 8px; padding: 5px 8px; margin-bottom: 0.45rem; text-align: left; font-size: 0.58rem; color: #e2e8f0; line-height: 1.4;">
-                <div id="res-detail-line-1">• <b>विजेता नियम (Lowest Bet):</b> सबसे कम बेट वाली साइकिल #1 जीती!</div>
-                <div id="res-detail-line-2">• <b>स्लो-मो ओवरटेक:</b> फिनिश लाइन से पहले 114.8 km/h की रफ़्तार से क्रॉस किया</div>
-                <div id="res-detail-line-3">• <b>फ़ोटो-फ़िनिश अंतर:</b> +0.42 मीटर आगे लाल लेज़र लाइन पार की!</div>
+              <!-- LOWEST BET BIKE RACE RULE DETAILS -->
+              <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(34, 211, 238, 0.45); border-radius: 8px; padding: 5px 8px; margin-bottom: 0.45rem; text-align: left; font-size: 0.58rem; color: #e2e8f0; line-height: 1.4;">
+                <div id="res-detail-line-1">• <b>Lowest Bet Rule:</b> सबसे कम बेट (virtualBet) वाला राइडर विजेता घोषित हुआ!</div>
+                <div id="res-detail-line-2">• <b>Final Waypoint Surge:</b> आख़िरी वेपॉइंट पर 1.35x बूस्ट के साथ सबसे आगे निकला!</div>
+                <div id="res-detail-line-3">• <b>Slow-Motion Reveal:</b> 0.22x स्लो-मोशन फ़ोटो-फ़िनिश में जीत कन्फ़र्म हुई!</div>
               </div>
 
-              <!-- REWARD & MULTIPLIER GAUGE BOX -->
-              <div style="font-size: 0.62rem; font-weight: 900; color: #94a3b8; letter-spacing: 1px; margin-bottom: 3px;">REWARD (2.0x • दोगुना इनाम):</div>
+              <div style="font-size: 0.62rem; font-weight: 900; color: #94a3b8; letter-spacing: 1px; margin-bottom: 3px;">REWARD (2.0x • दोगुना कॉइन्स इनाम):</div>
               <div id="winner-payout-box" style="margin-bottom: 0.4rem;"></div>
 
-              <div style="background: rgba(163, 230, 53, 0.14); border: 1px solid #a3e635; border-radius: 999px; padding: 4px 10px; display: inline-block; font-size: 0.63rem; color: #a3e635; font-weight: 900;">
-                ⏳ <span id="result-5s-countdown-text">5s</span> में अगला 30s बेटिंग राउंड अपने आप शुरू होगा...
+              <div style="display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <div style="background: rgba(34, 211, 238, 0.14); border: 1px solid #22d3ee; border-radius: 999px; padding: 4px 10px; display: inline-block; font-size: 0.62rem; color: #22d3ee; font-weight: 900;">
+                  ⏳ <span id="result-5s-countdown-text">5s</span> में अगला राउंड शुरू होगा...
+                </div>
+                <button type="button" onclick="RaceHUD_ResetRaceButton()" style="background: #22d3ee; color: #090d16; border: none; border-radius: 999px; padding: 4px 10px; font-size: 0.62rem; font-weight: 900; cursor: pointer;">
+                  🔄 Play Again Now
+                </button>
               </div>
             </div>
           </div>
@@ -6259,21 +6236,44 @@ ET
     }
 
 
-                        // =========================================================================
-    // 🚴 SAFARSAATHI RUSH: XTREME 24/7 SERVER-SYNCED 60FPS FULL-HD 3D CYCLE RACE ENGINE
-    // 🌐 Global 95-Second Server Cycle:
-    //    • 0s  -> 30s (30 Seconds): Live Betting Phase (All Servers & Phones Synced)
-    //    • 30s -> 90s (60 Seconds): 1-Minute 60FPS Full-HD 3D RUSH Downhill Cycle Race
-    //      (Continuous A, B, C Up & Down Overtaking, Lane Crossing, Wooden Ramps & Snow Track)
-    //    • 90s -> 95s (5 Seconds) : Winning Result ("FINISHED" Leaderboard) Display (2x Payout)
-    // 🏆 Shared Cloud Bet Pool Across All Phones • Lowest Total Real Bet Cycle Always Wins!
+    // =========================================================================
+    // 🚵 LOWEST BET BIKE RACE — UNITY 3D ENGINE PORT (CyclistRacer + RaceManager + RaceHUD)
+    // Ported directly from LowestBetBikeRace_Source.zip:
+    //   • CyclistRacer.cs:
+    //       riderName ("Rider A", "Rider B", "Rider C"), virtualBet (10, 20, 30),
+    //       riderColor (Cyan, Lime, Orange), waypoints (WP_00 .. WP_FINISH),
+    //       baseSpeed = 9f, speedVariation = 1.2f, turnSpeed = 7f,
+    //       laneWidth = 2.2f, laneChangeSpeed = 2.5f, finishDistance = 1.3f,
+    //       finalBoostMultiplier = 1.35f (lowest-bet rider surges ahead near final waypoints!)
+    //   • RaceManager.cs:
+    //       slowMotionScale = 0.22f, slowMotionDuration = 3.5f, finishCameraHold = 2f,
+    //       statusText ("Ready to race" -> "GO! Cross, overtake, and race to the finish!"
+    //                   -> "PHOTO FINISH! SLOW MOTION..." -> "WINNER REVEALED!"),
+    //       resultText ("WINNER: " + winner.riderName + "\nLowest bet: " + winner.virtualBet + " coins")
+    //   • RaceHUD.cs:
+    //       StartRaceButton(), ResetRaceButton(), RefreshBets() ("VIRTUAL BETS\nRider A: ... coins")
     // =========================================================================
     const LIVE_GAME_RTDB_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_live_game';
     const BETTING_DURATION_SEC = 30;
     const RACE_DURATION_SEC = 60;
     const RESULT_DURATION_SEC = 5;
-    const FULL_CYCLE_SEC = BETTING_DURATION_SEC + RACE_DURATION_SEC + RESULT_DURATION_SEC; // 95 seconds total
+    const FULL_CYCLE_SEC = BETTING_DURATION_SEC + RACE_DURATION_SEC + RESULT_DURATION_SEC; // 95 seconds global cycle
     const FULL_CYCLE_MS = FULL_CYCLE_SEC * 1000;
+
+    // Exact Unity C# Constants from CyclistRacer.cs & RaceManager.cs
+    const UNITY_CYCLIST_CONFIG = {
+      baseSpeed: 9.0,
+      speedVariation: 1.2,
+      turnSpeed: 7.0,
+      laneWidth: 2.2,
+      laneChangeSpeed: 2.5,
+      finishDistance: 1.3,
+      finalBoostMultiplier: 1.35,
+      slowMotionScale: 0.22,
+      slowMotionDuration: 3.5,
+      finishCameraHold: 2.0,
+      totalWaypoints: 13 // WP_00, WP_01, ... WP_11, WP_FINISH (13 waypoints along dirt-road track)
+    };
 
     function toggleGamingZone() {
       const secGaming = document.getElementById('section-gaming');
@@ -6287,37 +6287,40 @@ ET
 
     const CAR_MODELS_POOL = [
       {
-        id: 'cycle_a',
-        code: 'CYCLE A',
+        id: 'rider_a',
+        code: 'Rider A',
         shortLetter: 'A',
-        riderTag: 'HighTtower',
-        name: 'CYCLE A • HighTtower',
-        badgeColor: '#ef4444',
-        secondaryColor: '#a855f7',
-        rimColor: '#f43f5e',
-        helmetColor: '#ef4444',
-        textColor: '#ffffff'
+        riderTag: 'Cyan MTB',
+        name: 'Rider A',
+        defaultVirtualBet: 10,
+        badgeColor: '#06b6d4',
+        secondaryColor: '#38bdf8',
+        rimColor: '#22d3ee',
+        helmetColor: '#22d3ee',
+        textColor: '#090d16'
       },
       {
-        id: 'cycle_b',
-        code: 'CYCLE B',
+        id: 'rider_b',
+        code: 'Rider B',
         shortLetter: 'B',
-        riderTag: 'Tunez',
-        name: 'CYCLE B • Tunez',
+        riderTag: 'Lime MTB',
+        name: 'Rider B',
+        defaultVirtualBet: 20,
         badgeColor: '#84cc16',
-        secondaryColor: '#06b6d4',
+        secondaryColor: '#22c55e',
         rimColor: '#a3e635',
         helmetColor: '#a3e635',
         textColor: '#090d16'
       },
       {
-        id: 'cycle_c',
-        code: 'CYCLE C',
+        id: 'rider_c',
+        code: 'Rider C',
         shortLetter: 'C',
-        riderTag: 'Digger',
-        name: 'CYCLE C • Digger',
+        riderTag: 'Orange MTB',
+        name: 'Rider C',
+        defaultVirtualBet: 30,
         badgeColor: '#f59e0b',
-        secondaryColor: '#ec4899',
+        secondaryColor: '#ef4444',
         rimColor: '#fbbf24',
         helmetColor: '#fbbf24',
         textColor: '#090d16'
@@ -6326,9 +6329,9 @@ ET
 
     let currentRaceCars = [...CAR_MODELS_POOL];
     let activeGlobalRoundId = 0;
-    let currentFakeBaseBets = [3001, 3002, 3003];
+    let currentFakeBaseBets = [10, 20, 30];
     let sharedCloudRoundBets = [0, 0, 0];
-    let currentPoolBets = [3001, 3002, 3003];
+    let currentPoolBets = [10, 20, 30];
     let currentPlayerBets = [0, 0, 0];
     let selectedHighlightCar = 0;
     let selectedBetChip = 10;
@@ -6344,6 +6347,14 @@ ET
     let lastLeaderCycleIdx = -1;
     let lastOvertakeSoundMs = 0;
     let audioCtx = null;
+
+    // Manual/Instant Race Override State (Triggered by RaceHUD.StartRaceButton / ResetRaceButton)
+    let manualRaceOverride = {
+      active: false,
+      phase: 'betting', // 'race' | 'result'
+      startMs: 0,
+      manualRoundId: 9001
+    };
 
     function getAudioContext() {
       if (!audioCtx) {
@@ -6410,9 +6421,6 @@ ET
       });
     }
 
-    
-
-
     function toggleRoadTrackVisibility() {
       isRoadTrackHiddenByUser = !isRoadTrackHiddenByUser;
       const trackWrap = document.getElementById('chamet-track-wrapper');
@@ -6470,38 +6478,32 @@ ET
     }
 
     // =========================================================================
-    // 🌐 MULTI-DEVICE SHARED CLOUD BET POOL SYNC & LOWEST-BET-WINS ENGINE
-    // • Rule 1: Customer's OWN bet on each cycle is 100% visible (before & during race).
-    // • Rule 2: Other players' server pool stays hidden ("🔒 गुप्त").
-    // • Rule 3: Whichever cycle has the LOWEST total real bet ALWAYS WINS!
-    // • Rule 4: Winning payout is strictly 2.0x (Bet × 2) — never more, never less!
+    // 🌐 LOWEST-BET-WINS VIRTUAL BET POOL & CLOUD SYNC (RaceManager + RaceHUD)
+    //   • Default starter virtualBet values from README.md: Rider A = 10, Rider B = 20, Rider C = 30
+    //     rotated deterministically per round when no player bets are placed, or using real player/cloud bets!
+    //   • Whichever rider has the lowest virtualBet ALWAYS wins!
     // =========================================================================
     let lockedWinnerByRound = {};
     window._settledGameRoundsSet = window._settledGameRoundsSet || new Set();
 
     function getDeterministicBaseBets(roundId) {
       const rot = Math.abs(roundId) % 3;
-      if (rot === 0) return [3001, 3002, 3003];
-      if (rot === 1) return [3003, 3001, 3002];
-      return [3002, 3003, 3001];
+      if (rot === 0) return [10, 20, 30];
+      if (rot === 1) return [30, 10, 20];
+      return [20, 30, 10];
     }
 
-    // Generates realistic random fake total bet amounts for all 3 cycles (CYCLE A, B, C)
-    // that tick up live during the 30s betting window without affecting the real lowest-bet winner!
-    function getFakeDisplayPoolBets(roundId, elapsedMs) {
-      const r = Math.abs(parseInt(roundId, 10) || 101);
-      const sec = Math.max(0, Math.min(30, Math.floor((elapsedMs || 0) / 1000)));
-      const base0 = 1850 + ((r * 317 + 190) % 1450);
-      const base1 = 2140 + ((r * 523 + 470) % 1580);
-      const base2 = 1975 + ((r * 739 + 810) % 1520);
-      const inc0 = sec * (42 + ((r * 13) % 35)) + ((sec * 15) % 25);
-      const inc1 = sec * (48 + ((r * 19) % 38)) + ((sec * 25) % 30);
-      const inc2 = sec * (45 + ((r * 29) % 34)) + ((sec * 35) % 20);
-      return [
-        base0 + inc0 + (parseInt(currentPlayerBets[0], 10) || 0),
-        base1 + inc1 + (parseInt(currentPlayerBets[1], 10) || 0),
-        base2 + inc2 + (parseInt(currentPlayerBets[2], 10) || 0)
-      ];
+    function getEffectiveVirtualBets(roundId) {
+      const base = getDeterministicBaseBets(roundId || activeGlobalRoundId || 101);
+      const totalReal = (currentPoolBets[0] || 0) + (currentPoolBets[1] || 0) + (currentPoolBets[2] || 0);
+      if (totalReal > 0) {
+        return [
+          (parseInt(currentPoolBets[0], 10) || 0),
+          (parseInt(currentPoolBets[1], 10) || 0),
+          (parseInt(currentPoolBets[2], 10) || 0)
+        ];
+      }
+      return base;
     }
 
     function recalculateCurrentPoolBets() {
@@ -6623,21 +6625,26 @@ ET
       updateAllCoinDisplays();
     }
 
+    // RaceHUD.RefreshBets() implementation from RaceHUD.cs
     function updateBetsDisplay() {
       const myTotalBet = (currentPlayerBets[0] || 0) + (currentPlayerBets[1] || 0) + (currentPlayerBets[2] || 0);
-      const cycleElapsedMs = Date.now() % FULL_CYCLE_MS;
-      const fakePools = getFakeDisplayPoolBets(activeGlobalRoundId || Math.floor(Date.now() / FULL_CYCLE_MS), cycleElapsedMs);
+      const virtualBets = getEffectiveVirtualBets(activeGlobalRoundId);
+
+      // Update RaceHUD.betsText pill ("VIRTUAL BETS: Rider A: X coins ...")
+      const hudBetsPill = document.getElementById('race-hud-bets-text-pill');
+      if (hudBetsPill) {
+        hudBetsPill.innerText = `VIRTUAL BETS: A:${virtualBets[0]} | B:${virtualBets[1]} | C:${virtualBets[2]} coins`;
+      }
 
       for (let i = 0; i < 3; i++) {
         const myBet = parseInt(currentPlayerBets[i], 10) || 0;
         const myPotential2x = myBet * 2;
-        const cycleCode = currentRaceCars[i] ? currentRaceCars[i].code : ('CYCLE ' + (i + 1));
-        const fakePoolFormatted = '₹' + fakePools[i].toLocaleString('en-IN');
+        const riderCode = currentRaceCars[i] ? currentRaceCars[i].code : ('Rider ' + String.fromCharCode(65 + i));
+        const vBetText = `${virtualBets[i]} coins`;
 
         const poolEl = document.getElementById('car-total-bet-' + i);
-        if (poolEl) poolEl.innerText = fakePoolFormatted;
+        if (poolEl) poolEl.innerText = vBetText;
 
-        // 1. Update Customer's Own Bet Amount & 2x Win Estimate on Betting Card
         const myBetAmtEl = document.getElementById('car-my-bet-amount-' + i);
         const myWinEstEl = document.getElementById('car-my-win-est-' + i);
         const myBetBoxEl = document.getElementById('car-my-bet-box-' + i);
@@ -6646,48 +6653,47 @@ ET
 
         if (myBetAmtEl) {
           if (myBet > 0) {
-            myBetAmtEl.innerHTML = `✅ 🪙 ${myBet} (₹${myBet} लगा है)`;
-            myBetAmtEl.style.color = '#a3e635';
+            myBetAmtEl.innerHTML = `✅ 🪙 ${myBet} coins`;
+            myBetAmtEl.style.color = '#22d3ee';
           } else {
-            myBetAmtEl.innerHTML = `🪙 0 (₹0)`;
+            myBetAmtEl.innerHTML = `🪙 0 coins`;
             myBetAmtEl.style.color = '#94a3b8';
           }
         }
 
         if (myWinEstEl) {
           if (myBet > 0) {
-            myWinEstEl.innerHTML = `🏆 2x जीत: <b style="color:#fde047;">🪙 ${myPotential2x} (₹${myPotential2x})</b>`;
+            myWinEstEl.innerHTML = `🏆 2x Win: <b style="color:#fde047;">🪙 ${myPotential2x} coins</b>`;
           } else {
-            myWinEstEl.innerHTML = `जीतने पर 2x इनाम`;
+            myWinEstEl.innerHTML = `Lowest Bet Wins (2x)`;
           }
         }
 
         if (myBetBoxEl) {
-          myBetBoxEl.style.background = myBet > 0 ? 'rgba(20, 83, 45, 0.78)' : 'rgba(9, 13, 22, 0.95)';
-          myBetBoxEl.style.borderColor = myBet > 0 ? '#a3e635' : 'rgba(148, 163, 184, 0.35)';
+          myBetBoxEl.style.background = myBet > 0 ? 'rgba(8, 145, 178, 0.32)' : 'rgba(9, 13, 22, 0.95)';
+          myBetBoxEl.style.borderColor = myBet > 0 ? '#22d3ee' : 'rgba(148, 163, 184, 0.35)';
         }
 
         if (btnLabelEl) {
-          btnLabelEl.innerText = myBet > 0 ? `✓ ₹${myBet} लगा (+₹${selectedBetChip})` : `➕ ${cycleCode} (₹${selectedBetChip})`;
+          btnLabelEl.innerText = myBet > 0 ? `✓ ${myBet} (+${selectedBetChip})` : `➕ ${riderCode} (+${selectedBetChip})`;
         }
 
         if (badgeEl) {
           if (myBet > 0) {
             badgeEl.style.display = 'inline-block';
-            badgeEl.innerText = `₹${myBet}`;
+            badgeEl.innerText = `${myBet}`;
           } else {
             badgeEl.style.display = 'none';
           }
         }
 
-        // 2. Update Live Race Track Strip (During 60s Race) so customer sees Fake Pool + Their Own Bet!
         const trackPoolEl = document.getElementById('track-pool-bet-' + i);
-        if (trackPoolEl) trackPoolEl.innerText = fakePoolFormatted;
+        if (trackPoolEl) trackPoolEl.innerText = vBetText;
 
         const trackMyEl = document.getElementById('track-my-bet-' + i);
         if (trackMyEl) {
-          trackMyEl.innerText = myBet > 0 ? `✅ आपकी बेट: ₹${myBet} (2x=₹${myPotential2x})` : 'आपकी बेट: ₹0';
-          trackMyEl.style.color = myBet > 0 ? '#a3e635' : '#94a3b8';
+          trackMyEl.innerText = myBet > 0 ? `✅ आपकी बेट: ${myBet} (2x=${myPotential2x})` : 'आपकी बेट: 0 coins';
+          trackMyEl.style.color = myBet > 0 ? '#22d3ee' : '#94a3b8';
         }
 
         const card = document.getElementById('bet-card-' + i);
@@ -6700,20 +6706,19 @@ ET
         }
       }
 
-      // 3. Update Customer's Live Bet Confirmation Summary Bar
       const sumTextEl = document.getElementById('my-live-bets-text');
       const sumPillEl = document.getElementById('my-live-bets-total-pill');
       if (sumTextEl) {
         if (myTotalBet > 0) {
-          sumTextEl.innerHTML = `✅ <b>आपकी लगी बेट:</b> <span style="color:#fca5a5;">A: ₹${currentPlayerBets[0]}</span> • <span style="color:#d9f99d;">B: ₹${currentPlayerBets[1]}</span> • <span style="color:#fde047;">C: ₹${currentPlayerBets[2]}</span>`;
+          sumTextEl.innerHTML = `✅ <b>VIRTUAL BETS:</b> <span style="color:#67e8f9;">Rider A: ${virtualBets[0]}</span> • <span style="color:#d9f99d;">Rider B: ${virtualBets[1]}</span> • <span style="color:#fde047;">Rider C: ${virtualBets[2]}</span>`;
         } else {
-          sumTextEl.innerHTML = `🎯 <b>आपकी बेट:</b> अभी ₹0 लगा है — नीचे चिप चुनकर साइकिल पर टैप करें`;
+          sumTextEl.innerHTML = `🎯 <b>VIRTUAL BETS:</b> Rider A: ${virtualBets[0]} | Rider B: ${virtualBets[1]} | Rider C: ${virtualBets[2]} coins (Lowest Bet Wins!)`;
         }
       }
       if (sumPillEl) {
-        sumPillEl.innerText = `कुल बेट: ₹${myTotalBet}`;
-        sumPillEl.style.background = myTotalBet > 0 ? '#a3e635' : '#090d16';
-        sumPillEl.style.color = myTotalBet > 0 ? '#090d16' : '#a3e635';
+        sumPillEl.innerText = `आपकी बेट: ${myTotalBet} coins`;
+        sumPillEl.style.background = myTotalBet > 0 ? '#22d3ee' : '#090d16';
+        sumPillEl.style.color = myTotalBet > 0 ? '#090d16' : '#22d3ee';
       }
     }
 
@@ -6723,9 +6728,9 @@ ET
         const el = document.getElementById('chip-val-' + c);
         if (el) {
           const match = (c === val);
-          el.style.background = match ? '#a3e635' : '#1e293b';
+          el.style.background = match ? '#22d3ee' : '#1e293b';
           el.style.color = match ? '#090d16' : '#e2e8f0';
-          el.style.borderColor = match ? '#a3e635' : '#475569';
+          el.style.borderColor = match ? '#22d3ee' : '#475569';
         }
       });
       updateBetsDisplay();
@@ -6733,7 +6738,7 @@ ET
 
     function placeBetOnCar(carIndex) {
       if (isRaceRunning) {
-        showToast('⏳ लाइव साइकिल रेस चल रही है! अगले 30s बेटिंग राउंड में बेट लगाएं।', '#dc2626');
+        showToast('⏳ रेस चालू है! रेस खत्म होने पर या Reset दबाकर बेट लगाएं।', '#dc2626');
         return;
       }
 
@@ -6762,9 +6767,9 @@ ET
       playCoinSound();
       updateBetsDisplay();
 
-      const cycName = currentRaceCars[carIndex] ? currentRaceCars[carIndex].code : ('CYCLE ' + (carIndex + 1));
+      const cycName = currentRaceCars[carIndex] ? currentRaceCars[carIndex].code : ('Rider ' + (carIndex + 1));
       const newCycleBet = currentPlayerBets[carIndex];
-      showToast(`✅ ${cycName} पर ₹${chipAmt} लग गया! (इस साइकिल पर आपकी कुल बेट: ₹${newCycleBet} • जीतने पर 2x = ₹${newCycleBet * 2})`, '#15803d');
+      showToast(`✅ ${cycName} पर ${chipAmt} coins बेट लग गई! (आपकी कुल बेट: ${newCycleBet} coins • जीतने पर 2x = ${newCycleBet * 2} coins)`, '#0891b2');
     }
 
     function clearAllPlayerBets() {
@@ -6789,49 +6794,72 @@ ET
       showToast(`✓ आपकी सभी बेट रीसेट हो गईं और +🪙 ${totalRefund} कॉइन्स वॉलेट में वापस आ गए!`, '#15803d');
     }
 
-    // 🏆 STRICT LOWEST-BET-WINS RULE ("जो रूल था लास्ट/सबसे कम बिट वाला जीतेगा")
+    // RaceHUD.StartRaceButton() & RaceHUD.ResetRaceButton() from RaceHUD.cs
+    function RaceHUD_StartRaceButton() {
+      if (isRaceRunning && currentPhaseMode === 'track') {
+        showToast('🚵 रेस पहले से चल रही है!', '#0891b2');
+        return;
+      }
+      manualRaceOverride.active = true;
+      manualRaceOverride.phase = 'race';
+      manualRaceOverride.startMs = Date.now();
+      manualRaceOverride.manualRoundId = (activeGlobalRoundId || Math.floor(Date.now() / FULL_CYCLE_MS)) + 10000;
+      isRaceRunning = true;
+      lastLeaderCycleIdx = -1;
+      playCountdownSound(true);
+      switchChametGameView('track');
+      showToast('🏁 GO! Cross, overtake, and race to the finish! (Lowest Bet Wins)', '#16a34a');
+    }
+
+    function RaceHUD_ResetRaceButton() {
+      if (manualRaceOverride.active) {
+        manualRaceOverride.active = false;
+        manualRaceOverride.phase = 'betting';
+      }
+      if (!isRaceRunning) {
+        clearAllPlayerBets();
+      } else {
+        isRaceRunning = false;
+        switchChametGameView('betting');
+        updateBetsDisplay();
+        showToast('🔄 Ready to race — रेस रीसेट हो गई!', '#0891b2');
+      }
+    }
+
+    // 🏆 RaceManager.cs & CyclistRacer.IsLowestBetRider():
+    // "The game rule: the smallest virtual bet wins, regardless of the temporary race order."
     function getWinningCarIndexForCurrentRound() {
-      // If race has started and winner is already locked for this round, return the locked winner
-      if (isRaceRunning && lockedWinnerByRound[activeGlobalRoundId] !== undefined) {
-        return lockedWinnerByRound[activeGlobalRoundId];
+      const rKey = manualRaceOverride.active ? manualRaceOverride.manualRoundId : activeGlobalRoundId;
+      if (isRaceRunning && lockedWinnerByRound[rKey] !== undefined) {
+        return lockedWinnerByRound[rKey];
       }
 
       recalculateCurrentPoolBets();
-      const realBets = [
-        Math.max(0, parseInt(currentPoolBets[0], 10) || 0),
-        Math.max(0, parseInt(currentPoolBets[1], 10) || 0),
-        Math.max(0, parseInt(currentPoolBets[2], 10) || 0)
-      ];
+      const virtualBets = getEffectiveVirtualBets(activeGlobalRoundId);
+      const minBetAmount = Math.min(virtualBets[0], virtualBets[1], virtualBets[2]);
 
-      // Find the minimum bet amount across CYCLE A, CYCLE B, CYCLE C
-      const minBetAmount = Math.min(realBets[0], realBets[1], realBets[2]);
-
-      // Collect all cycle indices that share this exact minimum (lowest) bet
       const lowestCandidates = [];
       for (let i = 0; i < 3; i++) {
-        if (realBets[i] === minBetAmount) {
+        if (virtualBets[i] === minBetAmount) {
           lowestCandidates.push(i);
         }
       }
 
-      // If only 1 cycle has the lowest bet (e.g. A=100, B=50, C=10 -> C=10 is lowest), it 100% wins!
-      // If 2 or 3 cycles are tied for the lowest bet (e.g. A=50, B=0, C=0 -> B & C tied at 0),
-      // pick deterministically among ONLY the lowest-bet candidates!
       const winningCarIndex = lowestCandidates[Math.abs(activeGlobalRoundId) % lowestCandidates.length];
       if (isRaceRunning) {
-        lockedWinnerByRound[activeGlobalRoundId] = winningCarIndex;
+        lockedWinnerByRound[rKey] = winningCarIndex;
       }
       return winningCarIndex;
     }
+
     // =========================================================================
-    // 🏔️ HYPER-REALISTIC 60FPS FULL-HD 3D PBR RUSH DOWNHILL MOUNTAIN ENGINE
-    // • Procedural fBm Photorealistic Snow-Capped Himalayan/Alpine Panorama
-    // • 3D Shaded Banked Snow Track, Ice Specular Glints, Dual Tire Ruts & Cedar Ramps
-    // • Real 3D Track Obstacles (Granite Boulders, Ice Moguls, Log Drops) with
-    //   Dual-Crown Fork Compression, Airborne Bounce, Snow/Gravel Particle Spray,
-    //   15% Speed Drop & Perlin-Style Camera Shake (Zero Ragdoll / Never Falls!)
-    // • Anatomically Shaded 3D Pro Cyclists + Kashima Gold Fork + Disc Brakes
-    // • 3 Camera Modes: Chase 3D Cam, GoPro FPV Helmet Cam, Helicopter Drone Cam
+    // 🚵 3D WAYPOINT DIRT-ROAD MOUNTAIN-BIKE RENDERER (LowestBetBikeRace Unity Port)
+    //   • Wide dirt-road track with ordered waypoints: WP_00, WP_01, ... WP_FINISH
+    //   • Three CyclistRacer riders (Rider A = Cyan, Rider B = Lime, Rider C = Orange)
+    //   • Frequent lateral lane changes (laneWidth = 2.2f, laneChangeSpeed = 2.5f,
+    //     laneTimer = 0.45s..1.25s) creating visible crossings and overtakes
+    //   • Final waypoint boost (finalBoostMultiplier = 1.35f) for IsLowestBetRider()
+    //   • Slow-motion finish (slowMotionScale = 0.22f for slowMotionDuration = 3.5s)
     // =========================================================================
     let rushCanvasCtx = null;
     let rushCanvasW = 0;
@@ -6839,41 +6867,11 @@ ET
     let rushPreviewCtx = null;
     let rushPreviewW = 0;
     let rushPreviewH = 0;
-    let rushCameraMode = 0; // 0 = Chase 3D, 1 = GoPro Helmet POV, 2 = Drone Wide
-    let isManualDemoRaceActive = false;
-    let manualDemoStartMs = 0;
+    let rushCameraMode = 0;
     let lastBounceSoundMs = 0;
     let lastFreehubTickMs = 0;
-
-    // Offscreen Procedural Photorealistic Mountain Panorama Cache
     let offscreenMountainPano = null;
-    let snowParticles3D = [];
-    for (let i = 0; i < 65; i++) {
-      snowParticles3D.push({
-        x: Math.random() * 2 - 1,
-        y: Math.random(),
-        z: Math.random() * 45 + 2,
-        r: Math.random() * 1.8 + 0.8,
-        vx: (Math.random() - 0.5) * 0.4
-      });
-    }
 
-    // Deterministic 3D Track Obstacles (Rocks, Ice Moguls, Timber Drops) every ~38m
-    const TRACK_OBSTACLES_3D = [];
-    for (let d = 55; d < 2920; d += 38) {
-      const idx = Math.floor(d / 38);
-      const laneChoices = [-0.52, 0.0, 0.52, -0.28, 0.28];
-      const laneX = laneChoices[(idx * 7 + 3) % laneChoices.length];
-      const kind = (idx % 3 === 0) ? 'boulder' : ((idx % 3 === 1) ? 'log_drop' : 'ice_rock');
-      TRACK_OBSTACLES_3D.push({
-        distM: d + ((idx * 13) % 11),
-        laneX: laneX,
-        kind: kind,
-        size: 0.85 + ((idx * 5) % 4) * 0.12
-      });
-    }
-
-    // Universal Cross-Browser Rounded Rectangle Path Helper (100% iOS Safari / WebKit / Android Safe!)
     function drawSafeRoundRect(ctx, x, y, w, h, r) {
       const width = Math.max(0.5, Number(w) || 0.5);
       const height = Math.max(0.5, Number(h) || 0.5);
@@ -6889,12 +6887,6 @@ ET
       ctx.quadraticCurveTo(x, y, x + rad, y);
       ctx.closePath();
     }
-    if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
-      CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-        const rad = Array.isArray(r) ? r[0] : r;
-        drawSafeRoundRect(this, x, y, w, h, rad);
-      };
-    }
 
     let lastSlowMoHeartbeatMs = 0;
     function playSlowMoHeartbeatAndLaserSound(slowMoPhase) {
@@ -6903,7 +6895,6 @@ ET
       if (now - lastSlowMoHeartbeatMs < 620) return;
       lastSlowMoHeartbeatMs = now;
       try {
-        // Dramatic heartbeat pulse during the automatic end-moment Drone Finish Shot
         playTone(110, 'sine', 0.14, 0.16);
         setTimeout(() => playTone(165, 'triangle', 0.12, 0.14), 120);
         if (slowMoPhase >= 0.70 && slowMoPhase <= 0.85) {
@@ -6912,42 +6903,22 @@ ET
       } catch(e){}
     }
 
-    // Real-time Web Audio MTB Freehub Ratchet & Suspension Impact Synthesizer
-    function playRealisticMtbPhysicsSound(speedKmh, isBounceHit) {
+    function playRealisticMtbPhysicsSound(speedKmh) {
       if (!gameSoundEnabled) return;
       const secGaming = document.getElementById('section-gaming');
       if (!secGaming || secGaming.style.display === 'none') return;
       const now = Date.now();
-
       try {
         const ctx = getAudioContext();
         if (!ctx) return;
-
-        // 1. Suspension Air-Shock & Rock Bounce Thump
-        if (isBounceHit && now - lastBounceSoundMs > 550) {
-          lastBounceSoundMs = now;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(135, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(38, ctx.currentTime + 0.14);
-          gain.gain.setValueAtTime(0.18, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.15);
-        }
-
-        // 2. Subtle High-Speed MTB Freehub Ratchet Click
-        const clickInterval = Math.max(55, Math.round(6500 / Math.max(60, speedKmh)));
+        const clickInterval = Math.max(60, Math.round(6500 / Math.max(60, speedKmh)));
         if (now - lastFreehubTickMs >= clickInterval) {
           lastFreehubTickMs = now;
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(1480 + (now % 180), ctx.currentTime);
-          gain.gain.setValueAtTime(0.018, ctx.currentTime);
+          osc.frequency.setValueAtTime(1420 + (now % 160), ctx.currentTime);
+          gain.gain.setValueAtTime(0.016, ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.0008, ctx.currentTime + 0.018);
           osc.connect(gain);
           gain.connect(ctx.destination);
@@ -6957,7 +6928,6 @@ ET
       } catch (e) {}
     }
 
-    // Build Photorealistic Procedural fBm Mountain Range & Atmospheric Sky Panorama Once
     function getPhotorealisticMountainPanorama() {
       if (offscreenMountainPano) return offscreenMountainPano;
       const pw = 960;
@@ -6967,38 +6937,17 @@ ET
       c.height = ph;
       const g = c.getContext('2d');
 
-      // 1. Physical Rayleigh/Mie Sky Gradient
       const sky = g.createLinearGradient(0, 0, 0, ph * 0.78);
-      sky.addColorStop(0, '#041326');
-      sky.addColorStop(0.28, '#073666');
-      sky.addColorStop(0.62, '#1d6fa5');
-      sky.addColorStop(0.88, '#93c5fd');
-      sky.addColorStop(1, '#e0f2fe');
+      sky.addColorStop(0, '#082f49');
+      sky.addColorStop(0.32, '#0284c7');
+      sky.addColorStop(0.68, '#38bdf8');
+      sky.addColorStop(1, '#bae6fd');
       g.fillStyle = sky;
       g.fillRect(0, 0, pw, ph);
 
-      // 2. Soft Volumetric Cirrus & Alpine Clouds
-      for (let i = 0; i < 28; i++) {
-        const cx = (i * 137) % pw;
-        const cy = 18 + ((i * 43) % 58);
-        const rw = 55 + ((i * 29) % 85);
-        const rh = 8 + ((i * 13) % 14);
-        const cg = g.createRadialGradient(cx, cy, 2, cx, cy, rw);
-        cg.addColorStop(0, 'rgba(255, 255, 255, 0.28)');
-        cg.addColorStop(0.5, 'rgba(224, 242, 254, 0.12)');
-        cg.addColorStop(1, 'rgba(224, 242, 254, 0)');
-        g.fillStyle = cg;
-        g.beginPath();
-        g.ellipse(cx, cy, rw, rh, 0, 0, Math.PI * 2);
-        g.fill();
-      }
-
-      // Deterministic 1D/2D Ridged Noise Helper for Craggy Himalayan Peaks
       function ridgedHeight(x, freq, seed) {
-        let v = 0;
-        let amp = 1.0;
-        let f = freq;
-        for (let oct = 0; oct < 5; oct++) {
+        let v = 0, amp = 1.0, f = freq;
+        for (let oct = 0; oct < 4; oct++) {
           const n = Math.sin(x * f + seed * (oct + 1) * 1.7) * 0.6 + Math.cos(x * f * 1.63 - seed * 0.9) * 0.4;
           const ridge = 1.0 - Math.abs(n);
           v += (ridge * ridge) * amp;
@@ -7008,62 +6957,20 @@ ET
         return v;
       }
 
-      // 3. Render 3 Depth Layers of Photorealistic Snow/Granite Mountains with Directional Sun Shading
       const layers = [
-        { baseH: ph * 0.72, scaleH: 64, freq: 0.009, seed: 1.4, sunSnow: '#f8fafc', shadeSnow: '#64748b', rockCol: '#1e293b', fogAlpha: 0.38 },
-        { baseH: ph * 0.80, scaleH: 54, freq: 0.013, seed: 4.8, sunSnow: '#ffffff', shadeSnow: '#475569', rockCol: '#0f172a', fogAlpha: 0.22 },
-        { baseH: ph * 0.88, scaleH: 38, freq: 0.019, seed: 9.2, sunSnow: '#f1f5f9', shadeSnow: '#334155', rockCol: '#090d16', fogAlpha: 0.10 }
+        { baseH: ph * 0.74, scaleH: 60, freq: 0.009, seed: 1.4, sunCol: '#cbd5e1', shadeCol: '#475569' },
+        { baseH: ph * 0.84, scaleH: 45, freq: 0.014, seed: 4.8, sunCol: '#92400e', shadeCol: '#451a03' },
+        { baseH: ph * 0.91, scaleH: 30, freq: 0.020, seed: 9.2, sunCol: '#15803d', shadeCol: '#064e3b' }
       ];
 
       layers.forEach((L) => {
-        const heights = new Float32Array(pw + 1);
-        for (let x = 0; x <= pw; x++) {
-          // Seamless wrap around pw
-          const angle = (x / pw) * Math.PI * 2;
-          const nx = Math.cos(angle) * 150 + Math.sin(angle) * 150;
+        for (let x = 0; x < pw; x += 2) {
           const hVal = ridgedHeight(x, L.freq, L.seed);
-          heights[x] = L.baseH - hVal * L.scaleH;
+          const yTop = L.baseH - hVal * L.scaleH;
+          const nextH = L.baseH - ridgedHeight(x + 2, L.freq, L.seed) * L.scaleH;
+          g.fillStyle = (nextH - yTop < 0.1) ? L.sunCol : L.shadeCol;
+          g.fillRect(x, yTop, 2.5, ph - yTop);
         }
-
-        // Draw vertical terrain columns with sunlit vs shadowed facet normals & rock strata!
-        for (let x = 0; x < pw; x++) {
-          const yTop = heights[x];
-          const slope = heights[x + 1] - yTop; // negative = facing right (sunlit), positive = facing left (shadowed)
-          const isSunlit = slope < 0.15;
-          const isSteepCliff = Math.abs(slope) > 1.35;
-
-          const colGrad = g.createLinearGradient(x, yTop, x, ph);
-          if (isSteepCliff) {
-            colGrad.addColorStop(0, isSunlit ? '#94a3b8' : L.rockCol);
-            colGrad.addColorStop(0.35, L.rockCol);
-            colGrad.addColorStop(1, '#090d16');
-          } else if (isSunlit) {
-            colGrad.addColorStop(0, L.sunSnow);
-            colGrad.addColorStop(0.45, '#cbd5e1');
-            colGrad.addColorStop(0.85, '#475569');
-            colGrad.addColorStop(1, L.rockCol);
-          } else {
-            colGrad.addColorStop(0, L.shadeSnow);
-            colGrad.addColorStop(0.5, '#334155');
-            colGrad.addColorStop(1, '#090d16');
-          }
-          g.fillStyle = colGrad;
-          g.fillRect(x, yTop, 1.5, ph - yTop);
-
-          // Add diagonal snow-chute / couloir striations on mountain face
-          const striation = Math.sin(x * 0.18 + yTop * 0.12);
-          if (striation > 0.65) {
-            g.fillStyle = isSunlit ? 'rgba(255,255,255,0.45)' : 'rgba(148,163,184,0.22)';
-            g.fillRect(x, yTop + 4, 1.2, (ph - yTop) * 0.55);
-          }
-        }
-
-        // Atmospheric Valley Mist Layer
-        const mist = g.createLinearGradient(0, L.baseH - 25, 0, ph);
-        mist.addColorStop(0, 'rgba(224, 242, 254, 0)');
-        mist.addColorStop(1, `rgba(224, 242, 254, ${L.fogAlpha})`);
-        g.fillStyle = mist;
-        g.fillRect(0, L.baseH - 25, pw, ph - (L.baseH - 25));
       });
 
       offscreenMountainPano = c;
@@ -7078,9 +6985,7 @@ ET
       const cw = canvas.clientWidth || (canvas.parentElement ? canvas.parentElement.clientWidth : 0);
       const ch = canvas.clientHeight || (canvas.parentElement ? canvas.parentElement.clientHeight : 0);
       if (!rushCanvasCtx || !rushCanvasW || (cw >= 100 && Math.abs(cw - rushCanvasW) > 4) || (now - lastCanvasSizeCheckMs > 900)) {
-        if (cw >= 100 && ch >= 60) {
-          lastCanvasSizeCheckMs = now;
-        }
+        if (cw >= 100 && ch >= 60) lastCanvasSizeCheckMs = now;
         const cssW = Math.max(280, Math.round(cw || 360));
         const cssH = Math.max(150, Math.round(ch || 205));
         const dpr = Math.min(window.devicePixelRatio || 1.75, 1.75);
@@ -7106,11 +7011,9 @@ ET
       const cw = canvas.clientWidth || (canvas.parentElement ? canvas.parentElement.clientWidth : 0);
       const ch = canvas.clientHeight || (canvas.parentElement ? canvas.parentElement.clientHeight : 0);
       if (!rushPreviewCtx || !rushPreviewW || (cw >= 100 && Math.abs(cw - rushPreviewW) > 4) || (now - lastPreviewSizeCheckMs > 900)) {
-        if (cw >= 100 && ch >= 45) {
-          lastPreviewSizeCheckMs = now;
-        }
+        if (cw >= 100 && ch >= 45) lastPreviewSizeCheckMs = now;
         const cssW = Math.max(260, Math.round(cw || 350));
-        const cssH = Math.max(76, Math.round(ch || 96));
+        const cssH = Math.max(76, Math.round(ch || 94));
         const dpr = Math.min(window.devicePixelRatio || 1.5, 1.75);
         const targetW = Math.round(cssW * dpr);
         const targetH = Math.round(cssH * dpr);
@@ -7126,67 +7029,65 @@ ET
       return rushPreviewCtx;
     }
 
-    // Track geometry helper: lateral S-curves and vertical alpine drops
     function getTrackCurveX(distM) {
-      return Math.sin(distM * 0.0085) * 46 + Math.cos(distM * 0.019) * 20;
+      return Math.sin(distM * 0.0085) * 44 + Math.cos(distM * 0.019) * 18;
     }
 
     function getTrackElevationY(distM) {
-      return Math.sin(distM * 0.015) * 15 + Math.cos(distM * 0.032) * 9;
+      return Math.sin(distM * 0.015) * 13 + Math.cos(distM * 0.032) * 8;
     }
 
-    function isWoodenRampZone(distM) {
-      const mod = ((distM % 420) + 420) % 420;
-      return (mod >= 140 && mod <= 285) || (distM >= 2780 && distM <= 3020);
-    }
-
-    // Compute deterministic, continuous Up-and-Down (zRel), Left-Right Crossing (xLane),
-    // AND Dramatic Slow-Motion Finish-Line Overtake (51.0s -> 60.0s) for Cycles A, B, C!
+    // =========================================================================
+    // CyclistRacer.Update() Waypoint & Lane-Crossing Kinematics Port
+    //   • laneWidth = 2.2f, laneChangeSpeed = 2.5f
+    //   • baseSpeed = 9f, speedVariation = 1.2f
+    //   • IsLowestBetRider() gets finalBoostMultiplier = 1.35f at final waypoints!
+    // =========================================================================
     function computeCyclistTelemetry(tSec, winningIndex, roundSeed, cameraWorldDist) {
       const other1 = (winningIndex + 1) % 3;
       const other2 = (winningIndex + 2) % 3;
       const seedPhase = (roundSeed % 17) * 0.45;
+      const virtualBets = getEffectiveVirtualBets(roundSeed);
 
-      // Transition into the Slow-Mo Finish Setup (47.5s -> 51.0s) and then execute the
-      // Dramatic Slow-Motion Overtake (51.0s -> 59.5s) right in front of the 3000m Finish Line!
-      const preSprintBlend = Math.max(0, Math.min(1, (tSec - 47.0) / 4.0));
+      // Final waypoint surge (CurrentWaypointIndex >= lastWaypointIndex - 1 -> finalBoostMultiplier = 1.35f)
+      const preSprintBlend = Math.max(0, Math.min(1, (tSec - 46.5) / 4.0));
       const smoothPre = preSprintBlend * preSprintBlend * (3 - 2 * preSprintBlend);
-      const slowMoOvertakeProgress = Math.max(0, Math.min(1, (tSec - 51.0) / 7.8));
+      const slowMoOvertakeProgress = Math.max(0, Math.min(1, (tSec - 50.5) / 8.0));
       const smoothOvertake = slowMoOvertakeProgress * slowMoOvertakeProgress * (3 - 2 * slowMoOvertakeProgress);
 
       const riders = [0, 1, 2].map(idx => {
         const phi = idx * 2.094395 + seedPhase;
-        const waveZ1 = Math.sin(tSec * 0.78 + phi) * 5.2;
-        const waveZ2 = Math.cos(tSec * 1.45 - phi * 1.3) * 3.1;
-        const waveZ3 = Math.sin(tSec * 2.35 + idx * 2.1) * 1.6;
+        // Speed variation around baseSpeed = 9.0 m/s (+-1.2 m/s) creating natural forward/backward lead changes
+        const waveZ1 = Math.sin(tSec * 0.82 + phi) * 5.2;
+        const waveZ2 = Math.cos(tSec * 1.48 - phi * 1.3) * 3.1;
+        const waveZ3 = Math.sin(tSec * 2.35 + idx * 2.1) * 1.5;
         let battleZ = 18.2 + waveZ1 + waveZ2 + waveZ3;
 
-        // At 51.0s (start of Slow-Mo): other1 is slightly ahead (19.6m), winningIndex is in 2nd (17.2m) pulling out of slipstream!
-        // By 58.8s (Finish Laser Line): winningIndex surges ahead to 22.8m (#1), other1 is at 18.2m (#2, -0.42m tire gap), other2 is at 14.5m (#3)!
         let climaxZ = 16.0;
         if (idx === winningIndex) {
-          climaxZ = 17.2 * (1 - smoothOvertake) + 22.8 * smoothOvertake;
+          // IsLowestBetRider() surges ahead with finalBoostMultiplier = 1.35f!
+          climaxZ = 17.0 * (1 - smoothOvertake) + 23.0 * smoothOvertake;
         } else if (idx === other1) {
-          climaxZ = 19.6 * (1 - smoothOvertake) + 18.2 * smoothOvertake;
+          climaxZ = 19.5 * (1 - smoothOvertake) + 18.2 * smoothOvertake;
         } else {
           climaxZ = 16.0 * (1 - smoothOvertake) + 14.5 * smoothOvertake;
         }
 
-        let zRel = battleZ * (1 - smoothPre) + climaxZ * smoothPre;
+        const zRel = battleZ * (1 - smoothPre) + climaxZ * smoothPre;
 
-        const laneWave1 = Math.sin(tSec * 0.92 + idx * 2.094 + seedPhase) * 0.64;
-        const laneWave2 = Math.cos(tSec * 1.68 - idx * 2.094) * 0.24;
-        let battleX = Math.max(-0.76, Math.min(0.76, laneWave1 + laneWave2));
+        // CyclistRacer.ChooseNewLane(): targetLaneOffset in [-laneWidth, +laneWidth], moved via laneChangeSpeed = 2.5f
+        const laneWave1 = Math.sin(tSec * 0.96 + idx * 2.094 + seedPhase) * 0.66;
+        const laneWave2 = Math.cos(tSec * 1.72 - idx * 2.094) * 0.25;
+        const battleX = Math.max(-0.78, Math.min(0.78, laneWave1 + laneWave2));
 
         const dLaneDt = (
-          0.92 * Math.cos(tSec * 0.92 + idx * 2.094 + seedPhase) * 0.64 -
-          1.68 * Math.sin(tSec * 1.68 - idx * 2.094) * 0.24
+          0.96 * Math.cos(tSec * 0.96 + idx * 2.094 + seedPhase) * 0.66 -
+          1.72 * Math.sin(tSec * 1.72 - idx * 2.094) * 0.25
         ) * (1 - smoothPre * 0.7);
 
         let finalX = 0.0;
         if (idx === winningIndex) {
-          // Winner pulls out from right slipstream (+0.38) into center finish lane (0.0) during Slow-Mo overtake!
-          finalX = 0.38 * (1 - smoothOvertake) + 0.0 * smoothOvertake;
+          finalX = 0.36 * (1 - smoothOvertake) + 0.0 * smoothOvertake;
         } else if (idx === other1) {
           finalX = -0.18 * (1 - smoothOvertake) + (-0.54) * smoothOvertake;
         } else {
@@ -7194,141 +7095,60 @@ ET
         }
 
         const xLane = battleX * (1 - smoothPre) + finalX * smoothPre;
-        const slowMoCrossLean = (idx === winningIndex && tSec >= 51.0 && tSec <= 56.5) ? -14.0 * Math.sin(slowMoOvertakeProgress * Math.PI) : 0;
-        const leanDeg = Math.max(-25, Math.min(25, dLaneDt * 23 * (1 - smoothPre) + slowMoCrossLean));
+        const slowMoCrossLean = (idx === winningIndex && tSec >= 50.5 && tSec <= 56.5) ? -14.0 * Math.sin(slowMoOvertakeProgress * Math.PI) : 0;
+        const leanDeg = Math.max(-24, Math.min(24, dLaneDt * 22 * (1 - smoothPre) + slowMoCrossLean));
 
         const dZDt = (
-          0.78 * Math.cos(tSec * 0.78 + phi) * 5.2 -
-          1.45 * Math.sin(tSec * 1.45 - phi * 1.3) * 3.1
+          0.82 * Math.cos(tSec * 0.82 + phi) * 5.2 -
+          1.48 * Math.sin(tSec * 1.48 - phi * 1.3) * 3.1
         );
-        const isBoosting = (idx === winningIndex && tSec >= 50.5) || (tSec < 50.5 && dZDt > 2.2);
-        const isCrossing = Math.abs(dLaneDt) > 0.48;
+        const isLowest = (idx === winningIndex);
+        const isFinalWaypointBoost = (isLowest && tSec >= 48.0);
+        const isBoosting = isFinalWaypointBoost || (tSec < 48.0 && dZDt > 2.2);
+        const isCrossing = Math.abs(dLaneDt) > 0.46;
 
-        // 100% Ultra-Smooth Suspension Glide (Zero sudden vertical jumps, zero speed jerks, zero shake!)
-        const obstacleBounceHeight = 0;
-        const forkCompress = 0;
-        const hitObstacleNow = false;
+        // CurrentSpeed in m/s from CyclistRacer.cs (baseSpeed = 9f, finalBoostMultiplier = 1.35f -> 12.15 m/s)
+        const baseSpd = UNITY_CYCLIST_CONFIG.baseSpeed + Math.sin(tSec * 1.8 + idx) * UNITY_CYCLIST_CONFIG.speedVariation;
+        const speedMs = isFinalWaypointBoost ? (baseSpd * UNITY_CYCLIST_CONFIG.finalBoostMultiplier) : baseSpd;
 
         return {
           idx,
           car: currentRaceCars[idx],
+          virtualBet: virtualBets[idx],
+          isLowestBet: isLowest,
+          isFinalWaypointBoost,
+          speedMs,
           zRel,
           xLane,
           leanDeg,
           isBoosting,
           isCrossing,
-          dZDt,
-          obstacleBounceHeight,
-          forkCompress,
-          hitObstacleNow
+          dZDt
         };
       });
 
       return riders;
     }
 
-    // Draw a 3D Granite Boulder, Ice Mogul, or Timber Drop Obstacle on the Track
-    function draw3DTrackObstacle(ctx, sx, sy, scale, ob) {
-      const s = scale * ob.size * 1.35;
-      ctx.save();
-      ctx.translate(sx, sy);
-
-      // Ground Contact Shadow
-      ctx.fillStyle = 'rgba(9, 13, 22, 0.48)';
-      ctx.beginPath();
-      ctx.ellipse(2 * s, 3 * s, 18 * s, 5.5 * s, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      if (ob.kind === 'boulder') {
-        // Faceted 3D Alpine Granite Boulder with Snow Cap
-        const rGrad = ctx.createLinearGradient(-14 * s, -18 * s, 14 * s, 4 * s);
-        rGrad.addColorStop(0, '#94a3b8');
-        rGrad.addColorStop(0.45, '#475569');
-        rGrad.addColorStop(1, '#0f172a');
-        ctx.fillStyle = rGrad;
-        ctx.beginPath();
-        ctx.moveTo(-15 * s, 2 * s);
-        ctx.lineTo(-12 * s, -11 * s);
-        ctx.lineTo(-3 * s, -17 * s);
-        ctx.lineTo(9 * s, -14 * s);
-        ctx.lineTo(15 * s, -4 * s);
-        ctx.lineTo(13 * s, 3 * s);
-        ctx.closePath();
-        ctx.fill();
-
-        // Snow Frost Cap on Top Facet
-        ctx.fillStyle = '#f8fafc';
-        ctx.beginPath();
-        ctx.moveTo(-11 * s, -10 * s);
-        ctx.lineTo(-3 * s, -17 * s);
-        ctx.lineTo(9 * s, -14 * s);
-        ctx.lineTo(3 * s, -8 * s);
-        ctx.closePath();
-        ctx.fill();
-      } else if (ob.kind === 'log_drop') {
-        // 3D Timber Log Kicker Ramp
-        const lGrad = ctx.createLinearGradient(0, -11 * s, 0, 3 * s);
-        lGrad.addColorStop(0, '#b45309');
-        lGrad.addColorStop(0.5, '#78350f');
-        lGrad.addColorStop(1, '#451a03');
-        ctx.fillStyle = lGrad;
-        ctx.strokeStyle = '#fde047';
-        ctx.lineWidth = Math.max(0.8, 1.2 * s);
-        ctx.beginPath();
-        drawSafeRoundRect(ctx, -20 * s, -9 * s, 40 * s, 11 * s, 4 * s);
-        ctx.fill();
-        ctx.stroke();
-      } else {
-        // Specular Blue-White Glacier Ice Berm / Rock
-        const iGrad = ctx.createLinearGradient(-12 * s, -14 * s, 12 * s, 2 * s);
-        iGrad.addColorStop(0, '#ffffff');
-        iGrad.addColorStop(0.5, '#7dd3fc');
-        iGrad.addColorStop(1, '#0369a1');
-        ctx.fillStyle = iGrad;
-        ctx.beginPath();
-        ctx.moveTo(-14 * s, 2 * s);
-        ctx.lineTo(-7 * s, -13 * s);
-        ctx.lineTo(2 * s, -15 * s);
-        ctx.lineTo(14 * s, -6 * s);
-        ctx.lineTo(12 * s, 2 * s);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      ctx.restore();
-    }
-
-    // Draw a Photorealistic Multi-Tiered 3D Conifer Pine Tree with Bark, Boughs & Snow
-    function drawRealistic3DPineTree(ctx, tx, ty, treeScale, side) {
+    function drawRealistic3DPineTree(ctx, tx, ty, treeScale) {
       ctx.save();
       ctx.translate(tx, ty);
       const s = treeScale;
-
-      // 1. Soft Directional Cast Shadow on Snow
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.30)';
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.28)';
       ctx.beginPath();
-      ctx.ellipse(-12 * s, 3 * s, 20 * s, 5.5 * s, -0.15, 0, Math.PI * 2);
+      ctx.ellipse(-10 * s, 3 * s, 18 * s, 5 * s, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // 2. Shaded Cylindrical Cedar Trunk
-      const trunkGrad = ctx.createLinearGradient(-3.5 * s, 0, 3.5 * s, 0);
-      trunkGrad.addColorStop(0, '#271206');
-      trunkGrad.addColorStop(0.5, '#5c2d16');
-      trunkGrad.addColorStop(1, '#7c3f1d');
-      ctx.fillStyle = trunkGrad;
-      ctx.fillRect(-3.2 * s, -16 * s, 6.4 * s, 17 * s);
+      ctx.fillStyle = '#5c2d16';
+      ctx.fillRect(-3 * s, -15 * s, 6 * s, 16 * s);
 
-      // 3. Four Overlapping 3D Conifer Bough Tiers with Left-Shadow / Right-Sunlight & Snow Caps
       const tiers = [
-        { yBot: -11 * s, yTop: -32 * s, halfW: 21 * s },
-        { yBot: -23 * s, yTop: -44 * s, halfW: 17 * s },
-        { yBot: -35 * s, yTop: -55 * s, halfW: 13 * s },
-        { yBot: -46 * s, yTop: -65 * s, halfW: 8.5 * s }
+        { yBot: -11 * s, yTop: -32 * s, halfW: 20 * s },
+        { yBot: -23 * s, yTop: -44 * s, halfW: 16 * s },
+        { yBot: -35 * s, yTop: -56 * s, halfW: 11 * s }
       ];
-
       tiers.forEach(t => {
-        // Shadowed Left Foliage Side
-        ctx.fillStyle = '#062e16';
+        ctx.fillStyle = '#064e3b';
         ctx.beginPath();
         ctx.moveTo(0, t.yTop);
         ctx.lineTo(-t.halfW, t.yBot);
@@ -7336,7 +7156,6 @@ ET
         ctx.closePath();
         ctx.fill();
 
-        // Sunlit Right Foliage Side
         ctx.fillStyle = '#15803d';
         ctx.beginPath();
         ctx.moveTo(0, t.yTop);
@@ -7344,50 +7163,25 @@ ET
         ctx.lineTo(0, t.yBot - 2 * s);
         ctx.closePath();
         ctx.fill();
-
-        // Heavy Alpine Snow Drifts resting on Upper Branches
-        const snowGrad = ctx.createLinearGradient(-t.halfW * 0.6, t.yTop, t.halfW * 0.6, t.yBot);
-        snowGrad.addColorStop(0, '#ffffff');
-        snowGrad.addColorStop(1, '#cbd5e1');
-        ctx.fillStyle = snowGrad;
-        ctx.beginPath();
-        ctx.moveTo(0, t.yTop);
-        ctx.lineTo(-t.halfW * 0.62, t.yTop + (t.yBot - t.yTop) * 0.52);
-        ctx.lineTo(-t.halfW * 0.18, t.yTop + (t.yBot - t.yTop) * 0.42);
-        ctx.lineTo(t.halfW * 0.22, t.yTop + (t.yBot - t.yTop) * 0.48);
-        ctx.lineTo(t.halfW * 0.68, t.yTop + (t.yBot - t.yTop) * 0.54);
-        ctx.closePath();
-        ctx.fill();
       });
-
       ctx.restore();
     }
 
-    // Draw an Ultra-Realistic 3D Articulated Pro Downhill Cyclist + Kashima MTB
-    function drawRealistic3DCyclist(ctx, screenX, screenY, scale, rider, rankOneBased, tSec, onRampJump) {
+    // Draw 3D CyclistRacer Mountain Biker (Rider A = Cyan, Rider B = Lime, Rider C = Orange)
+    function drawRealistic3DCyclist(ctx, screenX, screenY, scale, rider, rankOneBased, tSec) {
       ctx.save();
       ctx.translate(screenX, screenY);
 
-      const rampBounce = 0;
-      const totalAirY = (rider.obstacleBounceHeight * scale) + rampBounce;
-      const forkSquash = (rider.forkCompress || 0) * 4.5 * scale;
-      ctx.translate(0, -totalAirY + forkSquash * 0.5);
-
-      // 1. Dual-Layer Realistic Ground Contact Shadow + Ambient Occlusion
-      ctx.save();
-      ctx.translate(0, totalAirY - forkSquash * 0.5);
-      const shadowScale = Math.max(0.55, 1.0 - (totalAirY / (45 * scale)));
-      const umbraGrad = ctx.createRadialGradient(0, 3 * scale, 2 * scale, 0, 3 * scale, 26 * scale * shadowScale);
+      // 1. Ground Contact Shadow
+      const umbraGrad = ctx.createRadialGradient(0, 3 * scale, 2 * scale, 0, 3 * scale, 25 * scale);
       umbraGrad.addColorStop(0, 'rgba(9, 13, 22, 0.78)');
       umbraGrad.addColorStop(0.55, 'rgba(9, 13, 22, 0.35)');
       umbraGrad.addColorStop(1, 'rgba(9, 13, 22, 0)');
       ctx.fillStyle = umbraGrad;
       ctx.beginPath();
-      ctx.ellipse(0, 3 * scale, 26 * scale * shadowScale, 8.5 * scale * shadowScale, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 3 * scale, 25 * scale, 8 * scale, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.restore();
 
-      // Dynamic 3D Banking / Leaning Angle on Turns & Overtaking
       const leanRad = (rider.leanDeg * Math.PI) / 180;
       ctx.rotate(leanRad);
 
@@ -7396,26 +7190,25 @@ ET
       const accentColor = rider.car.secondaryColor;
       const rimColor = rider.car.rimColor;
 
-      // 2. 3D Snow / Gravel Roost Particle Plume & Obstacle Impact Spray
-      const particleCount = rider.hitObstacleNow ? 9 : 4;
-      for (let p = 0; p < particleCount; p++) {
+      // 2. Dirt-Road Dust Plume
+      for (let p = 0; p < 4; p++) {
         const seed = p * 3.7 + rider.idx * 1.9;
-        const life = ((tSec * (rider.hitObstacleNow ? 38 : 26) + p * 4.2) % 18);
-        const px = Math.sin(tSec * 14 + seed) * (rider.hitObstacleNow ? 15 : 8) * s;
-        const py = (4 + life * 1.15) * s;
-        const pr = Math.max(0.8, (3.4 - life * 0.15) * s);
-        ctx.fillStyle = (p % 3 === 0 && rider.hitObstacleNow) ? 'rgba(148, 163, 184, 0.9)' : 'rgba(255, 255, 255, 0.85)';
+        const life = ((tSec * 24 + p * 4.2) % 16);
+        const px = Math.sin(tSec * 12 + seed) * 7 * s;
+        const py = (4 + life * 1.1) * s;
+        const pr = Math.max(0.8, (3.2 - life * 0.14) * s);
+        ctx.fillStyle = 'rgba(217, 119, 6, 0.55)';
         ctx.beginPath();
         ctx.arc(px, py, pr, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Nitro / Slipstream Boost Exhaust Cone
+      // FinalBoostMultiplier = 1.35x Flame Exhaust Cone for Lowest-Bet Rider
       if (rider.isBoosting) {
         const flameGrad = ctx.createLinearGradient(0, -12 * s, 0, 28 * s);
-        flameGrad.addColorStop(0, 'rgba(163, 230, 53, 0.95)');
-        flameGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.75)');
-        flameGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+        flameGrad.addColorStop(0, 'rgba(34, 211, 238, 0.95)');
+        flameGrad.addColorStop(0.5, 'rgba(163, 230, 53, 0.75)');
+        flameGrad.addColorStop(1, 'rgba(163, 230, 53, 0)');
         ctx.fillStyle = flameGrad;
         ctx.beginPath();
         ctx.moveTo(-7.5 * s, -6 * s);
@@ -7425,138 +7218,61 @@ ET
         ctx.fill();
       }
 
-      // 3. Front Wheel & Gold Kashima Dual-Crown Fox 40 Fork (Visible Ahead of Frame)
+      // 3. Front Wheel & Dual-Crown Suspension Fork
       ctx.fillStyle = '#090d16';
       ctx.beginPath();
       drawSafeRoundRect(ctx, -3.6 * s, -34 * s, 7.2 * s, 17 * s, 3.5 * s);
       ctx.fill();
 
-      // Gold Kashima Fork Stanchions (Left & Right Tubes)
-      const kashimaGrad = ctx.createLinearGradient(-10 * s, -44 * s, 10 * s, -24 * s);
-      kashimaGrad.addColorStop(0, '#fef08a');
-      kashimaGrad.addColorStop(0.5, '#eab308');
-      kashimaGrad.addColorStop(1, '#a16207');
-      ctx.strokeStyle = kashimaGrad;
+      ctx.strokeStyle = '#eab308';
       ctx.lineWidth = Math.max(1.5, 2.5 * s);
       ctx.beginPath();
-      ctx.moveTo(-6.5 * s, -43 * s + forkSquash);
+      ctx.moveTo(-6.5 * s, -43 * s);
       ctx.lineTo(-4.2 * s, -22 * s);
-      ctx.moveTo(6.5 * s, -43 * s + forkSquash);
+      ctx.moveTo(6.5 * s, -43 * s);
       ctx.lineTo(4.2 * s, -22 * s);
       ctx.stroke();
 
-      // 4. Anatomically Shaded 3D Rider Legs, Knee Guards & MTB Shoes (180-deg Crank Kinematics)
+      // 4. Rider Legs Pedaling
       const pedalAngle = tSec * 15.8 + rider.idx * 2.1;
       const leftPedalY = Math.sin(pedalAngle) * 8.0 * s;
       const rightPedalY = Math.sin(pedalAngle + Math.PI) * 8.0 * s;
 
-      function drawRiderLeg(sideSign, pedalY) {
+      [-1, 1].forEach(sideSign => {
+        const pedalY = (sideSign === -1) ? leftPedalY : rightPedalY;
         const hipX = sideSign * 8.2 * s;
-        const hipY = -36 * s + forkSquash * 0.4;
+        const hipY = -36 * s;
         const kneeX = sideSign * 11.2 * s;
         const kneeY = (-22.5 * s) + pedalY * 0.52;
         const footX = sideSign * 7.2 * s;
         const footY = (-9.5 * s) + pedalY;
 
-        // Upper Thigh (3D Shaded Racing Pants)
         ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = Math.max(2.5, 6.8 * s);
+        ctx.lineWidth = Math.max(2.5, 6.5 * s);
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(hipX, hipY);
         ctx.lineTo(kneeX, kneeY);
-        ctx.stroke();
-
-        // Thigh Highlight Stripe
-        ctx.strokeStyle = bikeColor;
-        ctx.lineWidth = Math.max(1, 1.8 * s);
-        ctx.beginPath();
-        ctx.moveTo(hipX + sideSign * 1.5 * s, hipY + 2 * s);
-        ctx.lineTo(kneeX + sideSign * 1.2 * s, kneeY - 2 * s);
-        ctx.stroke();
-
-        // Lower Calf
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = Math.max(2.2, 5.4 * s);
-        ctx.beginPath();
-        ctx.moveTo(kneeX, kneeY);
         ctx.lineTo(footX, footY);
         ctx.stroke();
 
-        // Hardshell 3D Knee/Shin Guard (Fox/POC Armor)
-        ctx.fillStyle = '#334155';
-        ctx.strokeStyle = accentColor;
-        ctx.lineWidth = Math.max(0.8, 1.2 * s);
-        ctx.beginPath();
-        ctx.arc(kneeX, kneeY, 3.4 * s, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        // FiveTen Pro MTB Flat-Pedal Shoe & Alloy Pedal
-        ctx.fillStyle = '#f8fafc';
-        ctx.strokeStyle = '#090d16';
-        ctx.lineWidth = Math.max(0.8, 1.1 * s);
-        ctx.beginPath();
-        drawSafeRoundRect(ctx, footX - 3.2 * s, footY - 2.2 * s, 6.4 * s, 4.4 * s, 1.8 * s);
-        ctx.fill();
-        ctx.stroke();
-
-        // Red/Lime Shoe Heel Tab
         ctx.fillStyle = bikeColor;
-        ctx.fillRect(footX - 1.8 * s, footY - 1.5 * s, 3.6 * s, 2.0 * s);
-      }
+        ctx.beginPath();
+        ctx.arc(kneeX, kneeY, 3.2 * s, 0, Math.PI * 2);
+        ctx.fill();
+      });
 
-      drawRiderLeg(-1, leftPedalY);
-      drawRiderLeg(1, rightPedalY);
-
-      // 5. 3D Hydroformed Carbon Downhill Frame, Disc Brake Rotor, Rear Shock & Knobby Tire
-      // Silver Steel Disc Brake Rotor on Left Hub + Red Brembo/Shimano Caliper
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.lineWidth = Math.max(1, 1.6 * s);
-      ctx.beginPath();
-      ctx.ellipse(-4.8 * s, -8.5 * s, 1.8 * s, 6.5 * s, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(-6.2 * s, -11 * s, 2.2 * s, 3.5 * s);
-
-      // Rear Swingarm & Chainstays
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = Math.max(1.4, 2.4 * s);
-      ctx.beginPath();
-      ctx.moveTo(-6.2 * s, -7 * s);
-      ctx.lineTo(-3.2 * s, -22 * s);
-      ctx.moveTo(6.2 * s, -7 * s);
-      ctx.lineTo(3.2 * s, -22 * s);
-      ctx.stroke();
-
-      // Main Carbon Seatmast & Seatstays with Metallic Clearcoat Gradient
-      const frameGrad = ctx.createLinearGradient(-7 * s, -34 * s, 7 * s, -8 * s);
-      frameGrad.addColorStop(0, '#ffffff');
-      frameGrad.addColorStop(0.3, bikeColor);
-      frameGrad.addColorStop(1, '#090d16');
-      ctx.strokeStyle = frameGrad;
-      ctx.lineWidth = Math.max(1.8, 3.5 * s);
+      // 5. Rear MTB Frame & Knobby Dirt Tire
+      ctx.strokeStyle = bikeColor;
+      ctx.lineWidth = Math.max(1.8, 3.4 * s);
       ctx.beginPath();
       ctx.moveTo(-5.8 * s, -7.5 * s);
-      ctx.lineTo(-2.2 * s, -31 * s + forkSquash * 0.5);
-      ctx.lineTo(2.2 * s, -31 * s + forkSquash * 0.5);
+      ctx.lineTo(-2.2 * s, -31 * s);
+      ctx.lineTo(2.2 * s, -31 * s);
       ctx.lineTo(5.8 * s, -7.5 * s);
       ctx.stroke();
 
-      // Rear Coil Shock (Yellow/Lime Piggyback Coil)
-      ctx.strokeStyle = '#a3e635';
-      ctx.lineWidth = Math.max(1.6, 3.0 * s);
-      ctx.beginPath();
-      ctx.moveTo(0, -18 * s);
-      ctx.lineTo(0, -30 * s + forkSquash * 0.6);
-      ctx.stroke();
-
-      // Fat 3D Knobby Downhill Rear Tire (29x2.5" Maxxis Minion DHR Style)
-      const tireGrad = ctx.createLinearGradient(-5.5 * s, 0, 5.5 * s, 0);
-      tireGrad.addColorStop(0, '#020617');
-      tireGrad.addColorStop(0.5, '#1e293b');
-      tireGrad.addColorStop(1, '#020617');
-      ctx.fillStyle = tireGrad;
+      ctx.fillStyle = '#0f172a';
       ctx.strokeStyle = rimColor;
       ctx.lineWidth = Math.max(1.4, 2.2 * s);
       ctx.beginPath();
@@ -7564,98 +7280,34 @@ ET
       ctx.fill();
       ctx.stroke();
 
-      // 3D Curved Knobby Tread Blocks on Rear Tire
-      const treadShift = (tSec * 48) % 5.5;
-      ctx.fillStyle = '#090d16';
-      ctx.strokeStyle = '#64748b';
-      ctx.lineWidth = Math.max(0.8, 1.2 * s);
-      for (let ty = -18.5 + treadShift; ty < 2.5; ty += 5.0) {
-        ctx.beginPath();
-        ctx.moveTo(-4.6 * s, ty * s);
-        ctx.lineTo(-1.2 * s, (ty - 1.2) * s);
-        ctx.moveTo(1.2 * s, (ty - 1.2) * s);
-        ctx.lineTo(4.6 * s, ty * s);
-        ctx.stroke();
-      }
-
-      // 6. Wide 800mm Carbon Downhill Handlebars, Brake Levers, Cables & Articulated Arms
-      const barY = -44 * s + forkSquash * 0.7;
+      // 6. Wide MTB Handlebars & Rider Arms
+      const barY = -44 * s;
       ctx.strokeStyle = '#cbd5e1';
       ctx.lineWidth = Math.max(1.8, 3.0 * s);
       ctx.beginPath();
-      ctx.moveTo(-21.5 * s, barY);
-      ctx.quadraticCurveTo(0, barY - 2.5 * s, 21.5 * s, barY);
+      ctx.moveTo(-21 * s, barY);
+      ctx.quadraticCurveTo(0, barY - 2.5 * s, 21 * s, barY);
       ctx.stroke();
 
-      // Braided Hydraulic Brake Cables Arching from Bars
-      ctx.strokeStyle = 'rgba(226, 232, 240, 0.65)';
-      ctx.lineWidth = Math.max(0.8, 1.1 * s);
-      ctx.beginPath();
-      ctx.moveTo(-14 * s, barY);
-      ctx.quadraticCurveTo(-5 * s, barY - 8 * s, 0, barY + 4 * s);
-      ctx.moveTo(14 * s, barY);
-      ctx.quadraticCurveTo(5 * s, barY - 8 * s, 0, barY + 4 * s);
-      ctx.stroke();
-
-      // Lock-On Handlebar Grips & Racing Gloves
-      ctx.strokeStyle = bikeColor;
-      ctx.lineWidth = Math.max(2.4, 4.4 * s);
-      ctx.beginPath();
-      ctx.moveTo(-22 * s, barY);
-      ctx.lineTo(-15.5 * s, barY);
-      ctx.moveTo(15.5 * s, barY);
-      ctx.lineTo(22 * s, barY);
-      ctx.stroke();
-
-      // Articulated Rider Arms (Shoulders -> Hardshell Elbow Pads -> Forearms -> Gloves)
-      const shoulderY = -51.5 * s + forkSquash * 0.5;
-      const elbowY = -47.0 * s + forkSquash * 0.6;
       [-1, 1].forEach(side => {
-        // Upper Arm Sleeve
         ctx.strokeStyle = bikeColor;
-        ctx.lineWidth = Math.max(2.2, 4.8 * s);
+        ctx.lineWidth = Math.max(2.2, 4.6 * s);
         ctx.beginPath();
-        ctx.moveTo(side * 12.2 * s, shoulderY);
-        ctx.lineTo(side * 18.2 * s, elbowY);
+        ctx.moveTo(side * 12 * s, -51.5 * s);
+        ctx.lineTo(side * 18 * s, -47 * s);
+        ctx.lineTo(side * 18.5 * s, barY);
         ctx.stroke();
-
-        // Forearm
-        ctx.strokeStyle = '#f8fafc';
-        ctx.lineWidth = Math.max(2.0, 4.0 * s);
-        ctx.beginPath();
-        ctx.moveTo(side * 18.2 * s, elbowY);
-        ctx.lineTo(side * 18.8 * s, barY);
-        ctx.stroke();
-
-        // Black Hardshell Elbow Pad
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath();
-        ctx.arc(side * 18.2 * s, elbowY, 2.6 * s, 0, Math.PI * 2);
-        ctx.fill();
       });
 
-      // 7. 3D Contoured Rider Hips, Armored Downhill Jersey, Spine Protector & Number Plate
-      const torsoTopY = -54 * s + forkSquash * 0.45;
-      const torsoBotY = -35.5 * s + forkSquash * 0.45;
-
-      // Armored Kevlar Shorts / Hips
-      const hipGrad = ctx.createLinearGradient(-11 * s, torsoBotY - 3 * s, 11 * s, torsoBotY + 7 * s);
-      hipGrad.addColorStop(0, '#1e293b');
-      hipGrad.addColorStop(0.5, '#090d16');
-      hipGrad.addColorStop(1, '#1e293b');
-      ctx.fillStyle = hipGrad;
-      ctx.beginPath();
-      drawSafeRoundRect(ctx, -11.2 * s, torsoBotY - 3.5 * s, 22.4 * s, 9.5 * s, 4.2 * s);
-      ctx.fill();
-
-      // 3D Shaded Jersey Torso with Cylindrical Lighting
+      // 7. Rider Torso (Tinted with riderColor as in CyclistRacer.Awake)
+      const torsoTopY = -54 * s;
+      const torsoBotY = -35.5 * s;
       const jerseyGrad = ctx.createLinearGradient(-14 * s, torsoTopY, 14 * s, torsoBotY);
-      jerseyGrad.addColorStop(0, '#0f172a');
-      jerseyGrad.addColorStop(0.22, bikeColor);
-      jerseyGrad.addColorStop(0.68, accentColor);
-      jerseyGrad.addColorStop(1, '#ffffff');
+      jerseyGrad.addColorStop(0, bikeColor);
+      jerseyGrad.addColorStop(0.7, accentColor);
+      jerseyGrad.addColorStop(1, '#0f172a');
       ctx.fillStyle = jerseyGrad;
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = Math.max(1, 1.3 * s);
       ctx.beginPath();
       ctx.moveTo(-13.5 * s, torsoTopY + 2 * s);
@@ -7666,47 +7318,24 @@ ET
       ctx.fill();
       ctx.stroke();
 
-      // Articulated Spine Protector Armor Segments along Upper Back
-      ctx.fillStyle = 'rgba(9, 13, 22, 0.55)';
-      for (let seg = 0; seg < 3; seg++) {
-        ctx.beginPath();
-        drawSafeRoundRect(ctx, -3.8 * s, torsoTopY + (2.2 + seg * 2.5) * s, 7.6 * s, 1.8 * s, 0.9 * s);
-        ctx.fill();
-      }
-
-      // Official UCI / Red-Bull Style Race Number Plate on Lower Back (#A / #B / #C)
+      // Back Number Plate (R-A / R-B / R-C)
       ctx.fillStyle = '#ffffff';
       ctx.strokeStyle = '#090d16';
-      ctx.lineWidth = Math.max(1, 1.4 * s);
+      ctx.lineWidth = Math.max(1, 1.3 * s);
       ctx.beginPath();
-      drawSafeRoundRect(ctx, -7.5 * s, torsoBotY - 12.5 * s, 15 * s, 10.5 * s, 2.2 * s);
+      drawSafeRoundRect(ctx, -8 * s, torsoBotY - 12.5 * s, 16 * s, 10.5 * s, 2.2 * s);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#090d16';
-      ctx.font = `italic 900 ${Math.max(8, Math.round(9.2 * s))}px sans-serif`;
+      ctx.font = `italic 900 ${Math.max(8, Math.round(9 * s))}px sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`0${rider.idx + 1}${rider.car.shortLetter}`, 0, torsoBotY - 7.1 * s);
+      ctx.fillText(`R-${rider.car.shortLetter}`, 0, torsoBotY - 7.1 * s);
 
-      // 8. 3D Full-Face Carbon Downhill Helmet, Neck Brace, Visor & Iridescent Goggle Strap
-      const headY = -61.5 * s + forkSquash * 0.45;
-      // Leatt Neck Brace Collar
-      ctx.fillStyle = '#1e293b';
-      ctx.strokeStyle = '#a3e635';
-      ctx.lineWidth = Math.max(0.8, 1.2 * s);
-      ctx.beginPath();
-      drawSafeRoundRect(ctx, -8.5 * s, torsoTopY - 2.2 * s, 17 * s, 3.4 * s, 1.5 * s);
-      ctx.fill();
-      ctx.stroke();
-
-      // 3D Spherical Shaded Full-Face Helmet Shell
-      const helmGrad = ctx.createRadialGradient(2.8 * s, headY - 3 * s, 1.2 * s, 0, headY, 9.5 * s);
-      helmGrad.addColorStop(0, '#ffffff');
-      helmGrad.addColorStop(0.35, rider.car.helmetColor);
-      helmGrad.addColorStop(0.85, bikeColor);
-      helmGrad.addColorStop(1, '#090d16');
-      ctx.fillStyle = helmGrad;
+      // 8. Full-Face MTB Helmet
+      const headY = -61.5 * s;
+      ctx.fillStyle = rider.car.helmetColor;
       ctx.strokeStyle = '#090d16';
       ctx.lineWidth = Math.max(1.1, 1.6 * s);
       ctx.beginPath();
@@ -7714,40 +7343,22 @@ ET
       ctx.fill();
       ctx.stroke();
 
-      // Top Aero Visor Peak
-      ctx.fillStyle = '#090d16';
-      ctx.beginPath();
-      ctx.moveTo(-6.5 * s, headY - 6.5 * s);
-      ctx.quadraticCurveTo(0, headY - 12.2 * s, 6.5 * s, headY - 6.5 * s);
-      ctx.closePath();
-      ctx.fill();
-
-      // Wrap-Around Goggle Strap & Rear Exhaust Fin
-      ctx.fillStyle = '#090d16';
-      ctx.fillRect(-8.6 * s, headY - 1.8 * s, 17.2 * s, 3.6 * s);
-      const strapGrad = ctx.createLinearGradient(-6 * s, 0, 6 * s, 0);
-      strapGrad.addColorStop(0, '#38bdf8');
-      strapGrad.addColorStop(0.5, '#a3e635');
-      strapGrad.addColorStop(1, '#f43f5e');
-      ctx.fillStyle = strapGrad;
-      ctx.fillRect(-5.8 * s, headY - 1.1 * s, 11.6 * s, 2.2 * s);
-
       ctx.restore();
 
-      // 9. Floating RUSH 3D Broadcast Telemetry Tag Above Rider (Expands with Detailed Win Telemetry in Slow-Mo!)
+      // 9. Floating CyclistRacer HUD Tag Above Rider (riderName + virtualBet + 1.35x Boost)
       const isSlowMoTag = (rider.isSlowMoActive === true);
-      const tagY = screenY - totalAirY - (isSlowMoTag ? 84 : 79) * scale;
+      const tagY = screenY - (isSlowMoTag ? 84 : 78) * scale;
       const tagScale = Math.max(0.68, Math.min(1.12, scale * 0.86));
       ctx.save();
       ctx.translate(screenX, tagY);
       ctx.scale(tagScale, tagScale);
 
       const isFirst = (rankOneBased === 1);
-      const tagW = isSlowMoTag ? 128 : 92;
-      const tagH = isSlowMoTag ? 28 : 20;
+      const tagW = isSlowMoTag ? 132 : 104;
+      const tagH = isSlowMoTag ? 28 : 22;
 
-      ctx.transform(1, 0, -0.14, 1, 0, 0);
-      ctx.fillStyle = isFirst ? 'rgba(163, 230, 53, 0.96)' : 'rgba(9, 13, 22, 0.94)';
+      ctx.transform(1, 0, -0.12, 1, 0, 0);
+      ctx.fillStyle = isFirst ? 'rgba(34, 211, 238, 0.96)' : 'rgba(9, 13, 22, 0.94)';
       ctx.strokeStyle = isFirst ? '#ffffff' : bikeColor;
       ctx.lineWidth = isFirst ? 2.2 : 1.5;
       ctx.beginPath();
@@ -7768,113 +7379,32 @@ ET
 
       ctx.fillStyle = isFirst ? '#090d16' : '#ffffff';
       ctx.textAlign = 'left';
-      const statusIcon = rider.hitObstacleNow ? '🪨' : (rider.isBoosting ? '⚡' : (rider.isCrossing ? '⇄' : ''));
+      const statusIcon = rider.isFinalWaypointBoost ? '🚀1.35x' : (rider.isCrossing ? '⇄' : '');
       if (isSlowMoTag) {
         ctx.font = '900 9.5px sans-serif';
         ctx.fillText(`${rider.car.code} ${statusIcon}`, -tagW / 2 + 27, -4.5);
         ctx.font = '800 8px monospace';
-        ctx.fillStyle = isFirst ? '#14532d' : '#a3e635';
-        const detailSub = isFirst ? '114.8km/h • +0.42m WIN' : (rankOneBased === 2 ? '109.4km/h • -0.42m' : '105.1km/h • -1.18m');
-        ctx.fillText(detailSub, -tagW / 2 + 27, 6.2);
+        ctx.fillStyle = isFirst ? '#0f172a' : '#fde047';
+        ctx.fillText(`Bet: ${rider.virtualBet}c ${rider.isLowestBet ? '★LOWEST' : ''}`, -tagW / 2 + 27, 6.2);
       } else {
-        ctx.font = '900 10px sans-serif';
-        ctx.fillText(`${rider.car.code} ${statusIcon}`, -tagW / 2 + 27, 0.5);
+        ctx.font = '900 9.5px sans-serif';
+        ctx.fillText(`${rider.car.code} (${rider.virtualBet}c) ${statusIcon}`, -tagW / 2 + 27, 0.5);
       }
 
       ctx.restore();
     }
 
-    // Draw GoPro First-Person Cockpit Overlay (Handlebars, Hydraulic Brakes, Kashima Fork & Front Tire)
-    function drawGoProCockpitOverlay(ctx, W, H, tSec, camCurve, speedKmh, anyBounce) {
-      ctx.save();
-      const swayX = Math.sin(tSec * 7.5) * 6 - (camCurve * 0.18);
-      const swayY = Math.abs(Math.cos(tSec * 14.5)) * 4 + (anyBounce ? Math.sin(tSec * 55) * 6 : 0);
-      ctx.translate(W * 0.5 + swayX, H + swayY);
-
-      // Knobby Front Tire Spinning Dead-Center Below Handlebars
-      ctx.fillStyle = '#0f172a';
-      ctx.strokeStyle = '#a3e635';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      drawSafeRoundRect(ctx, -11, -54, 22, 58, 8);
-      ctx.fill();
-      ctx.stroke();
-
-      // Gold Kashima Dual-Crown Fork Tubes
-      ctx.strokeStyle = '#eab308';
-      ctx.lineWidth = 7;
-      ctx.beginPath();
-      ctx.moveTo(-26, 4);
-      ctx.lineTo(-19, -46);
-      ctx.moveTo(26, 4);
-      ctx.lineTo(19, -46);
-      ctx.stroke();
-
-      // Wide 800mm Carbon Handlebar Across Bottom of Screen
-      const barGrad = ctx.createLinearGradient(-160, -44, 160, -32);
-      barGrad.addColorStop(0, '#090d16');
-      barGrad.addColorStop(0.5, '#334155');
-      barGrad.addColorStop(1, '#090d16');
-      ctx.strokeStyle = barGrad;
-      ctx.lineWidth = 11;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(-165, -24);
-      ctx.quadraticCurveTo(0, -52, 165, -24);
-      ctx.stroke();
-
-      // Left & Right Racing Gloves + Hydraulic Brake Levers
-      [-1, 1].forEach(side => {
-        // Brake Lever Blade
-        ctx.strokeStyle = '#cbd5e1';
-        ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.moveTo(side * 95, -38);
-        ctx.lineTo(side * 128, -49);
-        ctx.stroke();
-
-        // Gloved Hand
-        ctx.fillStyle = '#ef4444';
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        drawSafeRoundRect(ctx, side * 125 - 18, -42, 36, 24, 7);
-        ctx.fill();
-        ctx.stroke();
-      });
-
-      // Stem Digital Cycle Computer
-      ctx.fillStyle = '#090d16';
-      ctx.strokeStyle = '#a3e635';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      drawSafeRoundRect(ctx, -24, -55, 48, 22, 5);
-      ctx.fill();
-      ctx.stroke();
-      ctx.fillStyle = '#a3e635';
-      ctx.font = '900 10px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${speedKmh}KMH`, 0, -41);
-
-      ctx.restore();
-    }
-
-    // Core Reusable 3D Mountain World Renderer (100% Automatic 3D Race Cam -> Automatic End-Moment Drone Finish Shot!)
+    // Core 3D Dirt-Road Waypoint Track Renderer (WP_00 -> WP_FINISH)
     function render3DMountainWorldOnContext(ctx, W, H, raceElapsedSec, cameraWorldDist, riders, rankedRiders, isWarmupPreview) {
-      rushCameraMode = 0; // Always automatic; never manual GoPro cockpit
       const isAutoDroneFinishShot = (!isWarmupPreview && raceElapsedSec >= 50.0);
       const droneBlend = isAutoDroneFinishShot ? Math.min(1.0, (raceElapsedSec - 50.0) / 2.2) : 0.0;
-      // In Automatic End-Moment Drone Shot, camera elevates (higher horizon) and zooms into the 3 neck-and-neck cycles at the finish line!
-      const slowMoZoom = isAutoDroneFinishShot ? (1.0 + droneBlend * 0.22) : 1.0;
-      const fovScale = slowMoZoom;
-      // 100% Rock-Steady Gimbal Horizon & Zero Camera Shake!
+      const fovScale = isAutoDroneFinishShot ? (1.0 + droneBlend * 0.22) : 1.0;
       const horizonY = H * (0.30 - droneBlend * 0.08);
       const camCurve = getTrackCurveX(cameraWorldDist);
-      const bouncingRider = false;
 
       ctx.save();
 
-      // 1. Draw Photorealistic Procedural Mountain Panorama & Skybox (Smooth Sub-Pixel Panning)
+      // 1. Mountain Skybox
       const pano = getPhotorealisticMountainPanorama();
       const panoH = Math.max(24, Math.ceil(horizonY + 24));
       const scrollOffset = ((camCurve * 1.2) % pano.width + pano.width) % pano.width;
@@ -7883,29 +7413,16 @@ ET
       ctx.drawImage(pano, -shiftPx - 8, -8, drawW, panoH + 8);
       ctx.drawImage(pano, drawW - shiftPx - 8, -8, drawW, panoH + 8);
 
-      // Golden-White Alpine Sun & Anamorphic Lens Flare
-      const sunX = W * 0.76 - (camCurve * 0.32);
-      const sunY = horizonY * 0.38;
-      const sunBloom = ctx.createRadialGradient(sunX, sunY, 2, sunX, sunY, 74);
-      sunBloom.addColorStop(0, 'rgba(255, 255, 255, 0.98)');
-      sunBloom.addColorStop(0.22, 'rgba(254, 249, 195, 0.72)');
-      sunBloom.addColorStop(0.55, 'rgba(56, 189, 248, 0.22)');
-      sunBloom.addColorStop(1, 'rgba(56, 189, 248, 0)');
-      ctx.fillStyle = sunBloom;
-      ctx.beginPath();
-      ctx.arc(sunX, sunY, 74, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 2. Snowy Valley Base Below Horizon
-      const snowSlopeGrad = ctx.createLinearGradient(0, horizonY, 0, H);
-      snowSlopeGrad.addColorStop(0, '#cbd5e1');
-      snowSlopeGrad.addColorStop(0.45, '#e2e8f0');
-      snowSlopeGrad.addColorStop(1, '#94a3b8');
-      ctx.fillStyle = snowSlopeGrad;
+      // 2. Grassy / Dirt Valley Base Below Horizon
+      const valleyGrad = ctx.createLinearGradient(0, horizonY, 0, H);
+      valleyGrad.addColorStop(0, '#14532d');
+      valleyGrad.addColorStop(0.45, '#166534');
+      valleyGrad.addColorStop(1, '#064e3b');
+      ctx.fillStyle = valleyGrad;
       ctx.fillRect(-10, horizonY, W + 20, H - horizonY + 15);
 
-      // 3. Render 3D Perspective Track Slices from Far (z = 66m) to Near (z = 1.2m)
-      const numSlices = isWarmupPreview ? 36 : 56;
+      // 3. Render 3D Perspective Wide Dirt-Road Track Slices & Waypoint Gates (WP_00 .. WP_FINISH)
+      const numSlices = isWarmupPreview ? 36 : 54;
       const maxZ = 66.0;
       const minZ = 1.2;
 
@@ -7917,8 +7434,8 @@ ET
 
         const sy = horizonY + (H - horizonY + 30) * persp + dElev;
         const sx = (W * 0.5) + dCurve * (1.22 - persp * 0.5);
-        const halfTrackW = (W * 0.54) * persp + 8;
-        return { sx, sy, halfTrackW, persp, worldZ, zRel, dCurve };
+        const halfTrackW = (W * 0.55) * persp + 8;
+        return { sx, sy, halfTrackW, persp, worldZ, zRel };
       }
 
       for (let sIdx = numSlices; sIdx >= 1; sIdx--) {
@@ -7926,42 +7443,18 @@ ET
         const zNear = minZ + ((sIdx - 1) / numSlices) * (maxZ - minZ);
         const pFar = projectSlice(zFar);
         const pNear = projectSlice(zNear);
-
         const segIndex = Math.floor(pNear.worldZ / 5.0);
-        const isWood = isWoodenRampZone(pNear.worldZ);
 
-        // Outer 3D Banked Snow Berms & Cliff Shoulders
-        const bermGrad = ctx.createLinearGradient(0, pFar.sy, W, pNear.sy);
-        bermGrad.addColorStop(0, (segIndex % 2 === 0) ? '#94a3b8' : '#cbd5e1');
-        bermGrad.addColorStop(0.5, '#f8fafc');
-        bermGrad.addColorStop(1, (segIndex % 2 === 0) ? '#e2e8f0' : '#ffffff');
-        ctx.fillStyle = bermGrad;
-        ctx.beginPath();
-        ctx.moveTo(-10, pFar.sy);
-        ctx.lineTo(W + 10, pFar.sy);
-        ctx.lineTo(W + 10, pNear.sy);
-        ctx.lineTo(-10, pNear.sy);
-        ctx.closePath();
-        ctx.fill();
+        // Wide Dirt-Road Surface (README.md: "Create a track with a wide dirt-road surface")
+        const dirtGrad = ctx.createLinearGradient(pNear.sx - pNear.halfTrackW, pNear.sy, pNear.sx + pNear.halfTrackW, pNear.sy);
+        const cLeft = (segIndex % 2 === 0) ? '#78350f' : '#713f12';
+        const cMid = (segIndex % 2 === 0) ? '#b45309' : '#92400e';
+        const cRight = (segIndex % 2 === 0) ? '#92400e' : '#78350f';
+        dirtGrad.addColorStop(0, cLeft);
+        dirtGrad.addColorStop(0.5, cMid);
+        dirtGrad.addColorStop(1, cRight);
 
-        // Main 3D Track Surface with Directional Cross-Slope PBR Shading
-        const roadGrad = ctx.createLinearGradient(pNear.sx - pNear.halfTrackW, pNear.sy, pNear.sx + pNear.halfTrackW, pNear.sy);
-        if (isWood) {
-          const cDark = (segIndex % 2 === 0) ? '#5c1f09' : '#431407';
-          const cMid = (segIndex % 2 === 0) ? '#9a3412' : '#7c2d12';
-          const cLit = (segIndex % 2 === 0) ? '#c2410c' : '#9a3412';
-          roadGrad.addColorStop(0, cDark);
-          roadGrad.addColorStop(0.5, cMid);
-          roadGrad.addColorStop(1, cLit);
-        } else {
-          const sLeft = (segIndex % 2 === 0) ? '#cbd5e1' : '#bfdbfe';
-          const sCenter = (segIndex % 2 === 0) ? '#f1f5f9' : '#e2e8f0';
-          const sRight = (segIndex % 2 === 0) ? '#ffffff' : '#f8fafc';
-          roadGrad.addColorStop(0, sLeft);
-          roadGrad.addColorStop(0.48, sCenter);
-          roadGrad.addColorStop(1, sRight);
-        }
-        ctx.fillStyle = roadGrad;
+        ctx.fillStyle = dirtGrad;
         ctx.beginPath();
         ctx.moveTo(pFar.sx - pFar.halfTrackW, pFar.sy);
         ctx.lineTo(pFar.sx + pFar.halfTrackW, pFar.sy);
@@ -7970,47 +7463,19 @@ ET
         ctx.closePath();
         ctx.fill();
 
-        // Wooden Plank Seams & Glowing Neon Chevron Boost Strips
-        if (isWood) {
-          ctx.strokeStyle = 'rgba(25, 10, 4, 0.55)';
-          ctx.lineWidth = Math.max(0.6, 1.2 * pNear.persp);
+        // Dirt-Road Lane-Crossing Tracks (laneWidth = 2.2f)
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.22)';
+        ctx.lineWidth = Math.max(1, 2.5 * pNear.persp);
+        [-0.45, 0.0, 0.45].forEach(laneOff => {
           ctx.beginPath();
-          ctx.moveTo(pNear.sx - pNear.halfTrackW, pNear.sy);
-          ctx.lineTo(pNear.sx + pNear.halfTrackW, pNear.sy);
+          ctx.moveTo(pFar.sx + pFar.halfTrackW * laneOff, pFar.sy);
+          ctx.lineTo(pNear.sx + pNear.halfTrackW * laneOff, pNear.sy);
           ctx.stroke();
+        });
 
-          if (segIndex % 4 === 0) {
-            ctx.strokeStyle = '#a3e635';
-            ctx.lineWidth = Math.max(1.4, 3.8 * pNear.persp);
-            ctx.beginPath();
-            ctx.moveTo(pNear.sx - pNear.halfTrackW * 0.32, pNear.sy);
-            ctx.lineTo(pFar.sx, pFar.sy);
-            ctx.lineTo(pNear.sx + pNear.halfTrackW * 0.32, pNear.sy);
-            ctx.stroke();
-          }
-        } else {
-          // Carved Dual MTB Tire Ruts & Specular Ice Patches on Snow Track
-          ctx.strokeStyle = 'rgba(100, 116, 139, 0.32)';
-          ctx.lineWidth = Math.max(1, 3.2 * pNear.persp);
-          [-0.52, 0.0, 0.52].forEach(laneOff => {
-            ctx.beginPath();
-            ctx.moveTo(pFar.sx + pFar.halfTrackW * laneOff, pFar.sy);
-            ctx.lineTo(pNear.sx + pNear.halfTrackW * laneOff, pNear.sy);
-            ctx.stroke();
-          });
-
-          // Specular Blue-White Ice Glint
-          if (segIndex % 5 === 0) {
-            ctx.fillStyle = 'rgba(186, 230, 253, 0.42)';
-            ctx.beginPath();
-            ctx.ellipse(pNear.sx + (segIndex % 3 - 1) * pNear.halfTrackW * 0.35, pNear.sy, 16 * pNear.persp, 2.8 * pNear.persp, 0, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-
-        // 3D Raised Snow/Safety Barrier Curbs & Orange Alpine B-Netting Stakes
-        const railColor = (segIndex % 2 === 0) ? '#a3e635' : '#090d16';
-        const railW = Math.max(1.8, 7.2 * pNear.persp);
+        // Track Edge Curbs (Cyan & Yellow-Green)
+        const railColor = (segIndex % 2 === 0) ? '#22d3ee' : '#090d16';
+        const railW = Math.max(1.8, 7.0 * pNear.persp);
         ctx.fillStyle = railColor;
         ctx.beginPath();
         ctx.moveTo(pFar.sx - pFar.halfTrackW - railW, pFar.sy);
@@ -8028,21 +7493,18 @@ ET
         ctx.closePath();
         ctx.fill();
 
-        // Clean, smooth high-speed alpine track surface (zero road-blocking boulders)
-
-        // Photorealistic 3D Conifer Pine Trees Along Track Edges
-        if (segIndex % 3 === 0 && sIdx > 3 && sIdx < 46) {
-          const treeScale = pNear.persp * 1.48;
+        if (segIndex % 3 === 0 && sIdx > 3 && sIdx < 45) {
+          const treeScale = pNear.persp * 1.45;
           [-1, 1].forEach(side => {
-            const tx = pNear.sx + side * (pNear.halfTrackW + 28 * treeScale);
+            const tx = pNear.sx + side * (pNear.halfTrackW + 26 * treeScale);
             if (tx > -35 && tx < W + 35) {
-              drawRealistic3DPineTree(ctx, tx, pNear.sy, treeScale, side);
+              drawRealistic3DPineTree(ctx, tx, pNear.sy, treeScale);
             }
           });
         }
 
-        // 3D Checkered Finish-Line Ground Carpet & Glowing Red Photo-Finish Laser Beam at 3000m!
-        if (Math.abs(pNear.worldZ - 3000) < 4.5 && sIdx > 1 && sIdx < 52) {
+        // WP_FINISH Checkered Line at 3000m
+        if (Math.abs(pNear.worldZ - 3000) < 4.5 && sIdx > 1 && sIdx < 50) {
           const numChecks = 12;
           const totalW = pNear.halfTrackW * 2;
           const cellW = totalW / numChecks;
@@ -8053,64 +7515,53 @@ ET
             ctx.fillStyle = (c % 2 === 0) ? '#ffffff' : '#090d16';
             ctx.fillRect(pNear.sx - pNear.halfTrackW + c * cellW, pNear.sy - stripH * 0.45, cellW + 0.5, stripH * 0.55);
           }
-          // Glowing Red Photo-Finish Laser Line Across Track
-          ctx.save();
-          ctx.strokeStyle = '#ef4444';
-          ctx.shadowColor = '#ef4444';
-          ctx.shadowBlur = 10;
-          ctx.lineWidth = Math.max(2, 4.2 * pNear.persp);
-          ctx.beginPath();
-          ctx.moveTo(pNear.sx - pNear.halfTrackW, pNear.sy);
-          ctx.lineTo(pNear.sx + pNear.halfTrackW, pNear.sy);
-          ctx.stroke();
-          ctx.restore();
         }
 
-        // 3D Overhead Red-Bull / RUSH Archway Checkpoints & Final Checkered Finish Arch
-        const isFinishArch = Math.abs(pNear.worldZ - 3000) < 3.2;
-        const isStartArch = isWarmupPreview && Math.abs((pNear.worldZ % 120) - 45) < 3.2;
-        const isRushCheckpoint = !isFinishArch && !isStartArch && (Math.abs((pNear.worldZ % 450) - 80) < 2.8);
+        // Ordered Waypoint Arches: WP_00, WP_01, ... WP_FINISH every 250m along the 3000m track!
+        const wpDistStep = 250;
+        const nearestWpIdx = Math.round(pNear.worldZ / wpDistStep);
+        const isWaypointArch = (nearestWpIdx >= 0 && nearestWpIdx <= 12 && Math.abs(pNear.worldZ - nearestWpIdx * wpDistStep) < 3.0);
 
-        if ((isFinishArch || isStartArch || isRushCheckpoint) && sIdx > 2 && sIdx < 48) {
-          const archH = 98 * pNear.persp;
+        if (isWaypointArch && sIdx > 2 && sIdx < 46) {
+          const isFinishWp = (nearestWpIdx === 12);
+          const archH = 92 * pNear.persp;
           const leftX = pNear.sx - pNear.halfTrackW;
           const rightX = pNear.sx + pNear.halfTrackW;
           const baseY = pNear.sy;
-          const pillarW = Math.max(3.5, 12 * pNear.persp);
+          const pillarW = Math.max(3.5, 11 * pNear.persp);
 
-          ctx.fillStyle = isFinishArch ? '#090d16' : '#b91c1c';
+          ctx.fillStyle = isFinishWp ? '#090d16' : '#0e7490';
           ctx.fillRect(leftX - pillarW * 0.5, baseY - archH, pillarW, archH);
           ctx.fillRect(rightX - pillarW * 0.5, baseY - archH, pillarW, archH);
 
-          const beamH = Math.max(9, 23 * pNear.persp);
-          ctx.fillStyle = isFinishArch ? '#a3e635' : '#090d16';
-          ctx.strokeStyle = '#a3e635';
+          const beamH = Math.max(9, 22 * pNear.persp);
+          ctx.fillStyle = isFinishWp ? '#22d3ee' : '#090d16';
+          ctx.strokeStyle = '#22d3ee';
           ctx.lineWidth = Math.max(1.2, 2.0 * pNear.persp);
           ctx.fillRect(leftX - pillarW * 0.5, baseY - archH, (rightX - leftX) + pillarW, beamH);
           ctx.strokeRect(leftX - pillarW * 0.5, baseY - archH, (rightX - leftX) + pillarW, beamH);
 
-          ctx.fillStyle = isFinishArch ? '#090d16' : '#a3e635';
-          ctx.font = `italic 900 ${Math.max(8, Math.round(13.5 * pNear.persp))}px sans-serif`;
+          ctx.fillStyle = isFinishWp ? '#090d16' : '#22d3ee';
+          ctx.font = `italic 900 ${Math.max(8, Math.round(13 * pNear.persp))}px monospace`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          const archLabel = isFinishArch ? '🏁 FINISH LINE 🏁' : (isStartArch ? '⚡ RUSH 3D START GATE ⚡' : 'RUSH 3D CHECKPOINT');
-          ctx.fillText(archLabel, pNear.sx, baseY - archH + beamH * 0.52);
+          const wpName = isFinishWp ? '🏁 WP_FINISH (1.35x SURGE) 🏁' : `📍 WP_${String(nearestWpIdx).padStart(2, '0')} WAYPOINT`;
+          ctx.fillText(wpName, pNear.sx, baseY - archH + beamH * 0.52);
         }
       }
 
-      // 4. Render the 3 Pro Cyclists (CYCLE A, CYCLE B, CYCLE C) in True Back-to-Front Z-Order!
+      // 4. Render the 3 CyclistRacer Objects in Back-to-Front Z-Order
       rankedRiders.forEach((rider, rankZeroBased) => {
-        // In GoPro Helmet POV mode, if rider is the closest trailing bike, keep all 3 visible ahead in perspective
-        const zAdj = (rushCameraMode === 1 && !isWarmupPreview) ? rider.zRel + 3.5 : rider.zRel;
-        const pRider = projectSlice(zAdj);
+        const pRider = projectSlice(rider.zRel);
         const riderScreenX = pRider.sx + rider.xLane * (pRider.halfTrackW * 0.72);
         const riderScreenY = pRider.sy;
         const riderScale = Math.max(0.54, Math.min(1.42, pRider.persp * 2.1));
-        const onWoodJump = isWoodenRampZone(pRider.worldZ);
 
+        // RaceManager.cs: Time.timeScale = slowMotionScale (0.22f) during photo finish!
         const animClockSec = (!isWarmupPreview && raceElapsedSec >= 50.0)
-          ? (50.0 + (raceElapsedSec - 50.0) * 0.20)
+          ? (50.0 + (raceElapsedSec - 50.0) * UNITY_CYCLIST_CONFIG.slowMotionScale)
           : raceElapsedSec;
+
         drawRealistic3DCyclist(
           ctx,
           riderScreenX,
@@ -8118,183 +7569,24 @@ ET
           riderScale,
           rider,
           rankZeroBased + 1,
-          animClockSec,
-          onWoodJump
+          animClockSec
         );
       });
 
-      // 5. Real-Time 3D Falling Alpine Snowflakes & Wind Speed Streaks
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.82)';
-      for (let i = 0; i < snowParticles3D.length; i++) {
-        const sp = snowParticles3D[i];
-        const zNow = ((sp.z - raceElapsedSec * 24) % 45 + 45) % 45 + 1.5;
-        const pScale = 14.0 / (zNow + 4.0);
-        const sx = W * 0.5 + (sp.x + Math.sin(raceElapsedSec * 1.5 + i) * 0.12) * W * 0.45 * pScale;
-        const sy = horizonY * 0.4 + sp.y * H * 0.75 * pScale;
-        if (sx >= 0 && sx <= W && sy >= 0 && sy <= H) {
-          ctx.beginPath();
-          ctx.arc(sx, sy, Math.max(0.8, sp.r * pScale * 0.9), 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // 6. GoPro First-Person Cockpit Overlay when in GoPro POV Mode!
-      if (rushCameraMode === 1 && !isWarmupPreview) {
-        const liveSpd = Math.round(96 + Math.sin(raceElapsedSec * 2.7) * 14);
-        drawGoProCockpitOverlay(ctx, W, H, raceElapsedSec, camCurve, liveSpd, !!bouncingRider);
-      }
-
-      // 7. Cinematic ACES Vignette
-      const vigGrad = ctx.createRadialGradient(W * 0.5, H * 0.5, W * 0.34, W * 0.5, H * 0.5, W * 0.75);
-      vigGrad.addColorStop(0, 'rgba(9, 13, 22, 0)');
-      vigGrad.addColorStop(1, 'rgba(9, 13, 22, 0.38)');
-      ctx.fillStyle = vigGrad;
-      ctx.fillRect(-10, -10, W + 20, H + 20);
-
-      // 8. 🔬 CINEMATIC 0.20x ULTRA SLOW-MO PHOTO-FINISH SIDE-ZOOM CAM & DETAILED WIN ANALYSIS OVERLAY (51.0s -> 60.0s)
+      // 5. PHOTO FINISH! SLOW MOTION (0.22x Scale) Overlay from RaceManager.cs
       if (!isWarmupPreview && raceElapsedSec >= 50.0) {
-        const slowMoProg = Math.min(1.0, (raceElapsedSec - 51.0) / 9.0);
+        const slowMoProg = Math.min(1.0, (raceElapsedSec - 50.0) / 10.0);
         const winnerR = rankedRiders[0];
         const secondR = rankedRiders[1];
-        const thirdR = rankedRiders[2];
 
-        // Golden Slow-Mo Border Frame Pulse
         ctx.save();
-        ctx.strokeStyle = '#a3e635';
+        ctx.strokeStyle = '#22d3ee';
         ctx.lineWidth = 3;
         ctx.strokeRect(2, 2, W - 4, H - 4);
 
-        // Side-Angle Photo-Finish Zoom PiP Box (Top-Center, showing side view of front tires crossing the Red Finish Laser!)
-        const pipW = Math.min(236, W * 0.54);
-        const pipH = 82;
-        const pipX = (W - pipW) * 0.5;
-        const pipY = 44;
-
-        // PiP Background & Grid
-        ctx.fillStyle = 'rgba(9, 13, 22, 0.94)';
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 1.8;
-        ctx.beginPath();
-        drawSafeRoundRect(ctx, pipX, pipY, pipW, pipH, 8);
-        ctx.fill();
-        ctx.stroke();
-
-        // PiP Header Bar
-        ctx.fillStyle = 'rgba(245, 158, 11, 0.22)';
-        ctx.fillRect(pipX + 1, pipY + 1, pipW - 2, 16);
-        ctx.fillStyle = '#fde047';
-        ctx.font = '900 8.5px sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('🚁 AUTO DRONE DRAW-FINISH SHOT (0.20x SLOW-MO)', pipX + 6, pipY + 11.5);
-
-        // Snow Track Surface inside PiP
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(pipX + 2, pipY + 62, pipW - 4, 18);
-
-        // Vertical Red Photo-Finish Laser Line on Right Side of PiP
-        const laserX = pipX + pipW * 0.78;
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 2.2;
-        ctx.setLineDash([3, 2]);
-        ctx.beginPath();
-        ctx.moveTo(laserX, pipY + 18);
-        ctx.lineTo(laserX, pipY + pipH - 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.fillStyle = '#ef4444';
-        ctx.font = '900 7.5px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('🏁3000m', laserX - 2, pipY + 25);
-
-        // Draw the 3 Bikes in Side-Profile inside the PiP (moving left-to-right in 0.20x Slow-Mo!)
-        // Normalize their X positions relative to the Finish Laser Line so the user sees the overtake & tire crossing!
-        const zMax = Math.max(riders[0].zRel, riders[1].zRel, riders[2].zRel);
-        const sideOrder = [...riders].sort((a, b) => a.zRel - b.zRel); // draw back-to-front
-
-        let winnerFrontWheelX = 0;
-        let secondFrontWheelX = 0;
-
-        sideOrder.forEach((rObj) => {
-          const isWinBike = (rObj.idx === winnerR.idx);
-          const isSecBike = (rObj.idx === secondR.idx);
-          const relDiff = rObj.zRel - zMax; // 0 for leader, negative for trailing bikes
-          // Leader front tire reaches laserX at slowMoProg = 0.72 and crosses it!
-          const leadFrontX = pipX + 48 + slowMoProg * (pipW * 0.64);
-          const bikeCenterX = leadFrontX + relDiff * 6.2 - 14;
-          const bikeBaseY = pipY + (isWinBike ? 64 : (isSecBike ? 60 : 56));
-
-          const frontWheelX = bikeCenterX + 13;
-          const rearWheelX = bikeCenterX - 13;
-          if (isWinBike) winnerFrontWheelX = frontWheelX + 7;
-          if (isSecBike) secondFrontWheelX = frontWheelX + 7;
-
-          // Wheels (Side View with Slow-Mo Spokes)
-          [rearWheelX, frontWheelX].forEach(wx => {
-            ctx.strokeStyle = rObj.car.badgeColor;
-            ctx.lineWidth = 2.0;
-            ctx.beginPath();
-            ctx.arc(wx, bikeBaseY, 6.5, 0, Math.PI * 2);
-            ctx.stroke();
-            // Slow-mo rotating spoke line
-            const spkAng = raceElapsedSec * 2.8 + rObj.idx;
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(wx - Math.cos(spkAng) * 5.5, bikeBaseY - Math.sin(spkAng) * 5.5);
-            ctx.lineTo(wx + Math.cos(spkAng) * 5.5, bikeBaseY + Math.sin(spkAng) * 5.5);
-            ctx.stroke();
-          });
-
-          // Side Bike Frame & Rider Silhouette
-          ctx.strokeStyle = rObj.car.badgeColor;
-          ctx.lineWidth = 2.2;
-          ctx.beginPath();
-          ctx.moveTo(rearWheelX, bikeBaseY);
-          ctx.lineTo(bikeCenterX - 2, bikeBaseY - 9);
-          ctx.lineTo(frontWheelX - 3, bikeBaseY - 10);
-          ctx.lineTo( bikeCenterX, bikeBaseY );
-          ctx.closePath();
-          ctx.stroke();
-
-          // Rider Back & Helmet in Aero Tuck
-          ctx.fillStyle = rObj.car.badgeColor;
-          ctx.beginPath();
-          ctx.arc(bikeCenterX + 5, bikeBaseY - 15, 3.8, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Cycle Label (#A / #B / #C)
-          ctx.fillStyle = '#ffffff';
-          ctx.font = '900 8px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(rObj.car.shortLetter, rearWheelX - 6, bikeBaseY - 4);
-        });
-
-        // Draw Live Yellow Win-Margin Ruler between #1 Front Tire and #2 Front Tire!
-        if (winnerFrontWheelX > secondFrontWheelX + 2) {
-          const rulerY = pipY + 36;
-          ctx.strokeStyle = '#fde047';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(secondFrontWheelX, rulerY);
-          ctx.lineTo(winnerFrontWheelX, rulerY);
-          ctx.moveTo(secondFrontWheelX, rulerY - 3);
-          ctx.lineTo(secondFrontWheelX, rulerY + 18);
-          ctx.moveTo(winnerFrontWheelX, rulerY - 3);
-          ctx.lineTo(winnerFrontWheelX, rulerY + 22);
-          ctx.stroke();
-
-          const gapMeters = Math.min(0.42, Math.max(0.05, ((winnerFrontWheelX - secondFrontWheelX) / 42) * 0.42)).toFixed(2);
-          ctx.fillStyle = '#fde047';
-          ctx.font = '900 8px monospace';
-          ctx.textAlign = 'center';
-          ctx.fillText(`+${gapMeters}m LEAD`, (winnerFrontWheelX + secondFrontWheelX) * 0.5, rulerY - 3);
-        }
-
-        // Bottom Detailed Slow-Mo Win Breakdown Strip on Canvas
         const detailBarY = H - 62;
         ctx.fillStyle = 'rgba(9, 13, 22, 0.92)';
-        ctx.strokeStyle = '#a3e635';
+        ctx.strokeStyle = '#22d3ee';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         drawSafeRoundRect(ctx, 8, detailBarY, W - 16, 24, 6);
@@ -8305,12 +7597,10 @@ ET
         ctx.font = '900 9.5px sans-serif';
         ctx.textAlign = 'center';
         let detailMsg = '';
-        if (slowMoProg < 0.38) {
-          detailMsg = `🎬 SLOW-MO (0.20x): देखिये ${winnerR.car.code} ने स्लिपस्ट्रीम से निकलकर ${secondR.car.code} को कैसे क्रॉस किया!`;
-        } else if (slowMoProg < 0.75) {
-          detailMsg = `🔬 टायर ज़ूम: ${winnerR.car.code} (114.8 km/h) का अगला टायर ${secondR.car.code} से +0.42m आगे निकल रहा है!`;
+        if (slowMoProg < 0.45) {
+          detailMsg = `🎬 PHOTO FINISH! SLOW MOTION (0.22x): ${winnerR.car.code} (Lowest Bet: ${winnerR.virtualBet}c) gets 1.35x final boost!`;
         } else {
-          detailMsg = `🏁 PHOTO-FINISH VERIFIED: ${winnerR.car.code} के अगले टायर ने सबसे पहले 3000m लाल लेज़र लाइन पार की!`;
+          detailMsg = `🏁 WP_FINISH REVEAL: WINNER ${winnerR.car.code} (Lowest bet: ${winnerR.virtualBet} coins) surges ahead of ${secondR.car.code}!`;
         }
         ctx.fillText(detailMsg, W * 0.5, detailBarY + 15);
         ctx.restore();
@@ -8319,7 +7609,6 @@ ET
       ctx.restore();
     }
 
-    // Live 3D Warmup Viewport Renderer for the 30-Second Betting Page (with live MTB freehub & bounce audio!)
     let lastFakePoolTickSec = -1;
     function renderBettingWarmupPreview() {
       try {
@@ -8337,15 +7626,11 @@ ET
         const winIdx = getWinningCarIndexForCurrentRound();
         const riders = computeCyclistTelemetry(tSec % 40, winIdx, activeGlobalRoundId, warmupDist);
         const rankedRiders = [...riders].sort((a, b) => b.zRel - a.zRel);
-        const anyWarmupBounce = riders.some(r => r.hitObstacleNow);
-        playRealisticMtbPhysicsSound(82, anyWarmupBounce);
+        playRealisticMtbPhysicsSound(78);
         render3DMountainWorldOnContext(ctx, rushPreviewW, rushPreviewH, tSec, warmupDist, riders, rankedRiders, true);
-      } catch (err) {
-        console.warn('Warmup preview canvas warning:', err);
-      }
+      } catch (err) {}
     }
 
-    // Main 60FPS 3D Scene Renderer (with Automatic 0.20x Slow-Motion Photo-Finish Climax in Final 9 Seconds!)
     function renderLiveCycleRaceFrame(raceElapsedMs, winningIndex) {
       const totalDurationMs = RACE_DURATION_SEC * 1000;
       const raceElapsedSec = Math.max(0, Math.min(60, raceElapsedMs / 1000));
@@ -8355,8 +7640,6 @@ ET
       const isSlowMoClimax = (raceElapsedSec >= 50.0);
       const slowMoPhase = isSlowMoClimax ? Math.min(1.0, (raceElapsedSec - 50.0) / 10.0) : 0.0;
 
-      // Continuous, zero-jump world distance along the 3000m mountain course:
-      // 0s..50s -> 0m..2920m at full speed; 50s..60s -> 2920m..2956m in smooth 0.20x Slow-Mo across the 3000m Finish Arch!
       const cameraWorldDist = isSlowMoClimax
         ? (2920.0 + slowMoPhase * 36.0)
         : ((raceElapsedSec / 50.0) * 2920.0);
@@ -8370,31 +7653,28 @@ ET
       const thirdRider = rankedRiders[2];
 
       if (leaderRider.idx !== lastLeaderCycleIdx) {
-        if (lastLeaderCycleIdx !== -1) {
-          playOvertakeWhooshSound();
-        }
+        if (lastLeaderCycleIdx !== -1) playOvertakeWhooshSound();
         lastLeaderCycleIdx = leaderRider.idx;
       }
 
-      const liveSpeed = isSlowMoClimax
-        ? 115
-        : Math.round(94 + Math.sin(raceElapsedSec * 2.7) * 14);
-      const anyBounceHit = riders.some(r => r.hitObstacleNow);
-
       if (isSlowMoClimax) {
         playSlowMoHeartbeatAndLaserSound(slowMoPhase);
-        playRealisticMtbPhysicsSound(32, false);
+        playRealisticMtbPhysicsSound(32);
       } else {
-        playRealisticMtbPhysicsSound(liveSpeed, anyBounceHit);
+        playRealisticMtbPhysicsSound(92);
       }
 
-      // Throttle DOM text updates to ~10Hz (every 95ms) so mobile browser layout never stutters during 60FPS Canvas rendering!
+      // Compute CurrentWaypointIndex (0 .. 12 -> WP_00 .. WP_FINISH)
+      const currentWpIdx = Math.min(12, Math.floor((progress / 100) * 12));
+      const wpLabel = (currentWpIdx >= 12) ? 'WP_FINISH' : `WP_${String(currentWpIdx).padStart(2, '0')} / WP_12`;
+
       const nowHudMs = Date.now();
       if (!window._lastHudDomUpdateMs || (nowHudMs - window._lastHudDomUpdateMs >= 95)) {
         window._lastHudDomUpdateMs = nowHudMs;
         const timerPill = document.getElementById('race-timer-pill');
         const progBar = document.getElementById('race-timer-progress-bar');
         const distEl = document.getElementById('race-distance-meter');
+        const wpEl = document.getElementById('race-waypoint-counter');
         const commEl = document.getElementById('track-live-commentary');
         const rushStopwatch = document.getElementById('rush-hud-stopwatch');
         const rushTrackFill = document.getElementById('rush-hud-track-fill');
@@ -8406,6 +7686,7 @@ ET
         if (timerPill) timerPill.innerText = `⏱️ ${formatRushTimer(secondsLeft)}`;
         if (progBar) progBar.style.width = `${Math.max(0, 100 - progress)}%`;
         if (distEl) distEl.innerText = `${Math.min(3000, Math.round(progress * 30))}m`;
+        if (wpEl) wpEl.innerText = wpLabel;
         if (rushStopwatch) rushStopwatch.innerText = formatRushTimer(raceElapsedSec);
         if (rushTrackFill) rushTrackFill.style.width = `${progress.toFixed(1)}%`;
 
@@ -8413,13 +7694,14 @@ ET
         const trackedIdx = myTrackedIdx >= 0 ? myTrackedIdx : selectedHighlightCar;
         const myRank = rankedRiders.findIndex(r => r.idx === trackedIdx) + 1;
         if (rushPosNum) rushPosNum.innerText = `0${myRank > 0 ? myRank : 1}`;
-        if (rushSpeedEl) rushSpeedEl.innerText = `${liveSpeed} km/h`;
+        if (rushSpeedEl) rushSpeedEl.innerText = `${leaderRider.speedMs.toFixed(1)} m/s`;
 
+        // Exact RaceManager.statusText messages from RaceManager.cs
         if (commEl) {
           if (isSlowMoClimax) {
-            commEl.innerText = `🔬 0.20x SLOW-MO FINISH: देखिये कैसे ${currentRaceCars[winningIndex].code} (+0.42m) टायर आगे निकाल कर जीत रही है!`;
+            commEl.innerText = `PHOTO FINISH! SLOW MOTION... (${currentRaceCars[winningIndex].code} 1.35x Final Boost!)`;
           } else {
-            commEl.innerText = `🔥 ${leaderRider.car.code} अभी #1 लीड पर! ${secondRider.car.code} और ${thirdRider.car.code} स्मूद क्रॉस कर रहे हैं!`;
+            commEl.innerText = `GO! Cross, overtake, and race to the finish! (${leaderRider.car.code} Leading at ${wpLabel})`;
           }
         }
 
@@ -8427,10 +7709,10 @@ ET
         const gap13 = ((leaderRider.zRel - thirdRider.zRel) * 0.045).toFixed(2);
 
         if (sprintLabel) {
-          sprintLabel.innerText = `🥇 ${leaderRider.car.code} ⇄ 🥈 ${secondRider.car.code} (-${gap12}s) ⇄ 🥉 ${thirdRider.car.code}`;
+          sprintLabel.innerText = `🥇 ${leaderRider.car.code} (${leaderRider.virtualBet}c) ⇄ 🥈 ${secondRider.car.code} ⇄ 🥉 ${thirdRider.car.code}`;
         }
         if (sprintPill) {
-          sprintPill.innerText = raceElapsedSec >= 48.5 ? `🏁 #1: ${currentRaceCars[winningIndex].code}` : `⏱️ ${Math.ceil(secondsLeft)}s बचा है`;
+          sprintPill.innerText = isSlowMoClimax ? `🚀 1.35x Boost: ${currentRaceCars[winningIndex].code}` : `⏱️ ${Math.ceil(secondsLeft)}s`;
         }
 
         for (let rankIdx = 0; rankIdx < 3; rankIdx++) {
@@ -8439,7 +7721,7 @@ ET
           const nameEl = document.getElementById('rush-rank-name-' + rankIdx);
           const badgeEl = document.getElementById('rush-rank-badge-' + rankIdx);
           const gapEl = document.getElementById('rush-rank-gap-' + rankIdx);
-          if (nameEl) nameEl.innerText = cyc.code;
+          if (nameEl) nameEl.innerText = `${cyc.code} (${rObj.virtualBet}c)`;
           if (badgeEl) {
             badgeEl.innerText = cyc.shortLetter;
             badgeEl.style.background = cyc.badgeColor;
@@ -8453,7 +7735,6 @@ ET
         }
       }
 
-      // Render 3D Mountain Track Canvas (Protected by try/catch so HUD timers never freeze)
       try {
         const secGaming = document.getElementById('section-gaming');
         if (secGaming && secGaming.style.display !== 'none') {
@@ -8462,13 +7743,13 @@ ET
             render3DMountainWorldOnContext(ctx, rushCanvasW, rushCanvasH, raceElapsedSec, cameraWorldDist, riders, rankedRiders, false);
           }
         }
-      } catch (err) {
-        console.warn('Race canvas frame warning:', err);
-      }
+      } catch (err) {}
     }
 
     // =========================================================================
-    // 👑 5-SECOND RUSH "FINISHED" WINNING RESULT SCREEN RENDERER (2x PAYOUT)
+    // 👑 RACEMANAGER WINNER REVEAL SCREEN (RaceManager.cs WatchRace coroutine)
+    //   • resultText.text = "WINNER: " + winner.riderName + "\nLowest bet: " + winner.virtualBet + " coins"
+    //   • statusText.text = "WINNER REVEALED!"
     // =========================================================================
     function settleAndRenderResultPhase(roundId, winningIndex, resultSecLeft) {
       const other1 = (winningIndex + 1) % 3;
@@ -8476,31 +7757,37 @@ ET
       const winnerCar = currentRaceCars[winningIndex];
       const secondCar = currentRaceCars[other1];
       const thirdCar = currentRaceCars[other2];
+      const virtualBets = getEffectiveVirtualBets(activeGlobalRoundId);
 
       const countText = document.getElementById('result-5s-countdown-text');
       if (countText) countText.innerText = `${resultSecLeft}s`;
 
-      // Populate RUSH 1st, 2nd, 3rd Leaderboard Rows & Detailed Slow-Mo Win Breakdown
       const r1 = document.getElementById('res-row1-name');
       const r2 = document.getElementById('res-row2-name');
       const r3 = document.getElementById('res-row3-name');
-      if (r1) r1.innerText = `🚴 ${winnerCar.name}`;
-      if (r2) r2.innerText = `🚴 ${secondCar.name}`;
-      if (r3) r3.innerText = `🚴 ${thirdCar.name}`;
+      const b1 = document.getElementById('res-row1-bet');
+      const b2 = document.getElementById('res-row2-bet');
+      const b3 = document.getElementById('res-row3-bet');
+
+      if (r1) r1.innerText = `🚵 ${winnerCar.name}`;
+      if (r2) r2.innerText = `🚵 ${secondCar.name}`;
+      if (r3) r3.innerText = `🚵 ${thirdCar.name}`;
+      if (b1) b1.innerText = `Lowest Bet: ${virtualBets[winningIndex]} coins`;
+      if (b2) b2.innerText = `Bet: ${virtualBets[other1]} coins`;
+      if (b3) b3.innerText = `Bet: ${virtualBets[other2]} coins`;
 
       const dl1 = document.getElementById('res-detail-line-1');
       const dl2 = document.getElementById('res-detail-line-2');
       const dl3 = document.getElementById('res-detail-line-3');
-      if (dl1) dl1.innerHTML = `• <b>विजेता नियम (Lowest Bet):</b> सर्वर पर सबसे कम बेट <b style="color:#a3e635;">${winnerCar.code}</b> पर थी, इसलिए यह #1 जीती!`;
-      if (dl2) dl2.innerHTML = `• <b>स्लो-मो ओवरटेक:</b> 2,925m पर <b style="color:#a3e635;">114.8 km/h</b> की रफ़्तार से ${secondCar.code} को क्रॉस किया`;
-      if (dl3) dl3.innerHTML = `• <b>फ़ोटो-फ़िनिश अंतर:</b> ${secondCar.code} के टायर से <b style="color:#fde047;">+0.42 मीटर (+0.038s)</b> आगे लाल लेज़र लाइन पार की!`;
+      if (dl1) dl1.innerHTML = `• <b>Lowest Bet Winner:</b> <b style="color:#22d3ee;">${winnerCar.code}</b> का virtualBet सबसे कम (<b>${virtualBets[winningIndex]} coins</b>) था, इसलिए यह #1 जीता!`;
+      if (dl2) dl2.innerHTML = `• <b>Final Waypoint Boost:</b> WP_11 से WP_FINISH पर <b style="color:#a3e635;">1.35x Boost</b> के साथ सबसे आगे निकला!`;
+      if (dl3) dl3.innerHTML = `• <b>Photo-Finish Slow-Mo:</b> 0.22x Slow Motion (3.5s) के बाद विजेता घोषित किया गया!`;
 
       if (settledRoundId === roundId) return;
       settledRoundId = roundId;
 
-      // Exact 2x Calculation on ONLY the winning cycle's bet!
       const playerBetOnWinner = Math.max(0, parseInt(currentPlayerBets[winningIndex], 10) || 0);
-      const exactWinPayout = playerBetOnWinner * 2; // Strictly 2x!
+      const exactWinPayout = playerBetOnWinner * 2;
 
       playWinFanfare();
 
@@ -8508,11 +7795,12 @@ ET
       const winDesc = document.getElementById('winner-banner-desc');
       const winPayoutBox = document.getElementById('winner-payout-box');
 
+      // Exact RaceManager.resultText string from RaceManager.cs
       if (winTitle) {
-        winTitle.innerText = `🏆 1st Place Winner: ${winnerCar.name}!`;
+        winTitle.innerText = `WINNER: ${winnerCar.name}\nLowest bet: ${virtualBets[winningIndex]} coins`;
       }
       if (winDesc) {
-        winDesc.innerText = `सबसे कम बेट (Lowest Bet) वाली ${winnerCar.code} ने साइकिल रेस जीत ली!`;
+        winDesc.innerText = `सबसे कम बेट (${virtualBets[winningIndex]} coins) वाले ${winnerCar.name} ने रेस जीत ली!`;
       }
 
       if (winPayoutBox) {
@@ -8524,24 +7812,24 @@ ET
             window._settledGameRoundsSet.add(roundId);
             ssStorage.setItem(creditKey, '1');
             setGameCoins(getGameCoins() + exactWinPayout);
-            showToast(`🎉 बधाई हो! आपकी बेट ₹${playerBetOnWinner} × 2 = +🪙 ${exactWinPayout} Coins आपके वॉलेट में जुड़ गए!`, '#15803d');
+            showToast(`🎉 WINNER: ${winnerCar.name}! आपकी बेट ${playerBetOnWinner} × 2 = +🪙 ${exactWinPayout} Coins वॉलेट में जुड़ गए!`, '#15803d');
           }
           winPayoutBox.innerHTML = `
-            <div style="background: rgba(163, 230, 53, 0.22); border: 2px solid #a3e635; border-radius: 10px; padding: 0.45rem 0.75rem; display: inline-block;">
-              <div style="font-size: 0.9rem; font-weight: 900; color: #a3e635;">
-                🎉 2x जीत: ₹${playerBetOnWinner} × 2 = +🪙 ${exactWinPayout} Coins!
+            <div style="background: rgba(34, 211, 238, 0.2); border: 2px solid #22d3ee; border-radius: 10px; padding: 0.42rem 0.7rem; display: inline-block;">
+              <div style="font-size: 0.88rem; font-weight: 900; color: #22d3ee;">
+                🎉 2x जीत: ${playerBetOnWinner} × 2 = +🪙 ${exactWinPayout} Coins!
               </div>
-              <div style="font-size: 0.66rem; font-weight: 800; color: #ffffff;">
-                आपने ${winnerCar.code} पर ₹${playerBetOnWinner} लगाया था • दोगुना इनाम (₹${exactWinPayout}) वॉलेट में जुड़ गया!
+              <div style="font-size: 0.64rem; font-weight: 800; color: #ffffff;">
+                आपने ${winnerCar.name} पर ${playerBetOnWinner} coins लगाया था • दोगुना इनाम वॉलेट में जुड़ गया!
               </div>
             </div>
           `;
         } else {
           const myTotalLost = (parseInt(currentPlayerBets[0], 10) || 0) + (parseInt(currentPlayerBets[1], 10) || 0) + (parseInt(currentPlayerBets[2], 10) || 0);
           winPayoutBox.innerHTML = `
-            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(163,230,53,0.4); border-radius: 8px; padding: 0.4rem 0.75rem; display: inline-block;">
-              <span style="font-size: 0.68rem; color: #a3e635; font-weight: 800;">
-                विजेता: <b>${winnerCar.name}</b> (इस पर आपकी बेट: ₹0 थी${myTotalLost > 0 ? ' • आपकी दूसरी साइकिल पर ₹' + myTotalLost + ' लगी थी' : ''})
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(34,211,238,0.4); border-radius: 8px; padding: 0.38rem 0.7rem; display: inline-block;">
+              <span style="font-size: 0.66rem; color: #22d3ee; font-weight: 800;">
+                WINNER: <b>${winnerCar.name}</b> (Lowest bet: ${virtualBets[winningIndex]} coins${myTotalLost > 0 ? ' • आपकी बेट दूसरे राइडर पर ' + myTotalLost + ' coins थी' : ''})
               </span>
             </div>
           `;
@@ -8552,12 +7840,11 @@ ET
     }
 
     // =========================================================================
-    // ⏱️ 24/7 MASTER GLOBAL SERVER CLOCK (30s BET + 60s RACE + 5s RESULT = 95s)
+    // ⏱️ MASTER GAME LOOP (Supports both 24/7 Global Sync AND Instant Start/Reset)
     // =========================================================================
     function tickGlobalLiveGame() {
       const nowMs = Date.now();
       const roundId = Math.floor(nowMs / FULL_CYCLE_MS);
-      const cycleElapsedMs = nowMs % FULL_CYCLE_MS;
 
       if (roundId !== activeGlobalRoundId) {
         syncToGlobalRound(roundId);
@@ -8567,13 +7854,25 @@ ET
       const timerPill = document.getElementById('race-timer-pill');
       const progBar = document.getElementById('race-timer-progress-bar');
 
-      const bettingEndMs = BETTING_DURATION_SEC * 1000; // 30,000ms
-      const raceEndMs = (BETTING_DURATION_SEC + RACE_DURATION_SEC) * 1000; // 90,000ms
+      let cycleElapsedMs = nowMs % FULL_CYCLE_MS;
+      let effectiveRoundId = roundId;
+
+      if (manualRaceOverride.active) {
+        const manualElapsed = nowMs - manualRaceOverride.startMs;
+        effectiveRoundId = manualRaceOverride.manualRoundId;
+        if (manualElapsed < RACE_DURATION_SEC * 1000) {
+          cycleElapsedMs = (BETTING_DURATION_SEC * 1000) + manualElapsed;
+        } else if (manualElapsed < (RACE_DURATION_SEC + RESULT_DURATION_SEC) * 1000) {
+          cycleElapsedMs = ((BETTING_DURATION_SEC + RACE_DURATION_SEC) * 1000) + (manualElapsed - RACE_DURATION_SEC * 1000);
+        } else {
+          manualRaceOverride.active = false;
+        }
+      }
+
+      const bettingEndMs = BETTING_DURATION_SEC * 1000;
+      const raceEndMs = (BETTING_DURATION_SEC + RACE_DURATION_SEC) * 1000;
 
       if (cycleElapsedMs < bettingEndMs) {
-        // =====================================================================
-        // PHASE 1: 30-SECOND GLOBAL BETTING PHASE (0s -> 30s) + LIVE 3D WARMUP
-        // =====================================================================
         isRaceRunning = false;
         switchChametGameView('betting');
 
@@ -8582,8 +7881,8 @@ ET
         const pct = Math.max(0, (remMs / bettingEndMs) * 100);
 
         if (statusBadge) {
-          statusBadge.innerText = `🟢 30s LIVE BETTING (${secLeft}s में 3D साइकिल रेस स्टार्ट)`;
-          statusBadge.style.background = '#16a34a';
+          statusBadge.innerText = `🟢 Ready to race (${secLeft}s में ऑटो स्टार्ट या 🏁 Start Race दबाएं)`;
+          statusBadge.style.background = '#0891b2';
           statusBadge.style.color = '#ffffff';
         }
         if (timerPill) timerPill.innerText = `⏱️ 00:${String(secLeft).padStart(2, '0')}:00`;
@@ -8599,12 +7898,10 @@ ET
           }
         }
       } else if (cycleElapsedMs < raceEndMs) {
-        // =====================================================================
-        // PHASE 2: 60-SECOND (1-MINUTE) 60FPS 3D RUSH CYCLE RACE (30s -> 90s)
-        // =====================================================================
         const raceElapsedMs = cycleElapsedMs - bettingEndMs;
         const raceRemMs = (RACE_DURATION_SEC * 1000) - raceElapsedMs;
         const secLeft = Math.max(1, Math.ceil(raceRemMs / 1000));
+        const isSlowMo = (raceElapsedMs >= 50000);
 
         if (!isRaceRunning) {
           isRaceRunning = true;
@@ -8619,17 +7916,20 @@ ET
         switchChametGameView('track');
 
         if (statusBadge) {
-          statusBadge.innerText = `🚴 1-MIN 3D CYCLE RACE (${secLeft}s • A, B, C Live Crossing)`;
-          statusBadge.style.background = '#a3e635';
-          statusBadge.style.color = '#090d16';
+          if (isSlowMo) {
+            statusBadge.innerText = `🎬 PHOTO FINISH! SLOW MOTION... (${secLeft}s)`;
+            statusBadge.style.background = '#f59e0b';
+            statusBadge.style.color = '#090d16';
+          } else {
+            statusBadge.innerText = `🚵 GO! Cross, overtake, and race to the finish! (${secLeft}s)`;
+            statusBadge.style.background = '#22d3ee';
+            statusBadge.style.color = '#090d16';
+          }
         }
 
         const winningIndex = getWinningCarIndexForCurrentRound();
         renderLiveCycleRaceFrame(raceElapsedMs, winningIndex);
       } else {
-        // =====================================================================
-        // PHASE 3: 5-SECOND WINNING RESULT DISPLAY PHASE (90s -> 95s)
-        // =====================================================================
         isRaceRunning = true;
         switchChametGameView('result');
 
@@ -8642,18 +7942,17 @@ ET
         const winnerCar = currentRaceCars[winningIndex];
 
         if (statusBadge) {
-          statusBadge.innerText = `👑 FINISHED • WINNER: ${winnerCar.code} (${resultSecLeft}s)`;
+          statusBadge.innerText = `👑 WINNER REVEALED! (${winnerCar.name} • ${resultSecLeft}s)`;
           statusBadge.style.background = '#eab308';
           statusBadge.style.color = '#090d16';
         }
         if (timerPill) timerPill.innerText = `🏆 00:0${resultSecLeft}:00`;
         if (progBar) progBar.style.width = `${pct}%`;
 
-        settleAndRenderResultPhase(roundId, winningIndex, resultSecLeft);
+        settleAndRenderResultPhase(effectiveRoundId, winningIndex, resultSecLeft);
       }
     }
 
-    // 60FPS Smooth Animation Loop when Gaming Zone is Open (Single unified loop = Zero frame jitter!)
     function startRush60FpsLoop() {
       if (rushRafId) cancelAnimationFrame(rushRafId);
       function frameLoop() {
@@ -8681,7 +7980,6 @@ ET
       if (!isGameInitialized) {
         isGameInitialized = true;
         if (globalGameTickTimer) clearInterval(globalGameTickTimer);
-        // Background timer ONLY ticks when Gaming Zone is hidden or tab is backgrounded
         globalGameTickTimer = setInterval(() => {
           const secGaming = document.getElementById('section-gaming');
           if (!secGaming || secGaming.style.display === 'none' || document.hidden) {
@@ -8701,9 +7999,7 @@ ET
         ensureRushCanvasReady();
         ensurePreviewCanvasReady();
         tickGlobalLiveGame();
-      } catch(e) {
-        console.warn('Game init tick notice:', e);
-      }
+      } catch(e) {}
     }
 
     setTimeout(() => {
