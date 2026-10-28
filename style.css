@@ -115,7 +115,7 @@
 
     /* Clean Company Details Footer inside scroll area */
     footer {
-      display: block !important;
+      display: none;
     }
 
     /* Modern Sticky Mobile Header with Full Safe-Area Clearance */

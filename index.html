@@ -42,7 +42,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V116_LOWEST_BET_BIKE_RACE';
+        const CURRENT_VERSION = 'SS_PROD_V117_ZERO_SCROLL_MAP_VIDEO_FIT';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -82,7 +82,7 @@
     })();
   </script>
 
-  <!-- 🤖 AI SMART AUTO SCREEN-FIT & VIEWPORT CALIBRATION ENGINE (Auto-Fits Any Mobile Model) -->
+  <!-- 🤖 AI SMART AUTO SCREEN-FIT & VIEWPORT CALIBRATION ENGINE (Auto-Fits Any Mobile Model — 100% Zero Scroll) -->
   <script>
     (function initAiAutoScreenFit() {
       function calibrateScreenFit() {
@@ -94,30 +94,54 @@
           document.documentElement.style.setProperty('--app-visible-height', `${winHeight}px`);
 
           const topBar = document.getElementById('app-top-header') || document.querySelector('.app-top-header');
-          const topBarH = topBar ? topBar.offsetHeight : 135;
+          const topBarH = topBar ? topBar.offsetHeight : 132;
           document.documentElement.style.setProperty('--app-top-bar-height', `${topBarH}px`);
 
-          const usableH = Math.max(winHeight - topBarH - 12, 180);
+          const mainEl = document.querySelector('main');
+          let availH = Math.max(winHeight - topBarH - 8, 220);
+          if (mainEl && mainEl.clientHeight > 0) {
+            const ms = window.getComputedStyle(mainEl);
+            const padY = (parseFloat(ms.paddingTop) || 0) + (parseFloat(ms.paddingBottom) || 0);
+            availH = Math.max(mainEl.clientHeight - Math.ceil(padY) - 2, 200);
+          }
+          const usableH = availH;
           document.documentElement.style.setProperty('--app-usable-height', `${usableH}px`);
 
-          // Auto-scale map, video ad, and gaming viewports for 100% ZERO-SCROLL screen fit!
-          let autoMapH = Math.max(240, Math.min(Math.round(usableH - 165), 370));
-          let autoChatH = Math.round(usableH * 0.44);
-          autoChatH = Math.max(125, Math.min(autoChatH, 220));
-          let autoRaceH = Math.max(155, Math.min(Math.round(usableH - 185), 235));
-          let autoBetPreviewH = Math.max(78, Math.min(Math.round(usableH - 340), 112));
-          let autoProfVidH = Math.max(105, Math.min(Math.round(usableH - 255), 165));
-          let autoErRadarH = Math.max(390, Math.min(Math.round(usableH - 12), 620));
-          document.documentElement.style.setProperty('--auto-er-radar-height', `${autoErRadarH}px`);
+          // 1. LIVE MAP + VIDEO AD BELOW MAP (#section-map: #google-live-map-div + #map-video-ad-box)
+          // Chrome inside #section-map .app-card (header + telemetry + corridor chips + paddings/borders) is ~100px
+          const hudEl = document.getElementById('active-ride-tracking-hud');
+          const hudH = (hudEl && hudEl.style.display !== 'none') ? (hudEl.offsetHeight + 6) : 0;
+          const mapChromeH = 102 + hudH;
+          const mapAndVidBudget = Math.max(availH - mapChromeH, 160);
+          let autoMapVidH = Math.max(66, Math.min(Math.round(mapAndVidBudget * 0.33), 135));
+          let autoMapH = Math.max(94, mapAndVidBudget - autoMapVidH);
+
+          // 2. GEMINI CHAT, GAMING ARENA, PROFILE VIDEO AD & LIVE E-RICKSHAW FULL MAP
+          let autoChatH = Math.max(115, Math.min(Math.round(availH * 0.44), 220));
+          let autoRaceH = Math.max(120, Math.min(Math.round(availH - 165), 240));
+          let autoBetPreviewH = Math.max(58, Math.min(Math.round(availH - 295), 115));
+          let autoProfVidH = Math.max(62, Math.min(Math.round(availH - 220), 165));
+          let autoErRadarH = Math.max(240, Math.min(Math.round(availH - 6), 640));
 
           document.documentElement.style.setProperty('--auto-map-height', `${autoMapH}px`);
+          document.documentElement.style.setProperty('--auto-map-vid-height', `${autoMapVidH}px`);
           document.documentElement.style.setProperty('--auto-chat-height', `${autoChatH}px`);
           document.documentElement.style.setProperty('--auto-race-height', `${autoRaceH}px`);
           document.documentElement.style.setProperty('--auto-bet-preview-height', `${autoBetPreviewH}px`);
           document.documentElement.style.setProperty('--auto-prof-vid-height', `${autoProfVidH}px`);
+          document.documentElement.style.setProperty('--auto-er-radar-height', `${autoErRadarH}px`);
 
           const mapEl = document.getElementById('google-live-map-div');
-          if (mapEl) mapEl.style.height = `${autoMapH}px`;
+          if (mapEl) {
+            mapEl.style.minHeight = '90px';
+            mapEl.style.height = `${autoMapH}px`;
+          }
+
+          const mapVidBox = document.getElementById('map-video-ad-box');
+          if (mapVidBox) {
+            mapVidBox.style.height = `${autoMapVidH}px`;
+            mapVidBox.style.maxHeight = `${autoMapVidH}px`;
+          }
 
           const chatEl = document.getElementById('gemini-chat-history');
           if (chatEl) chatEl.style.height = `${autoChatH}px`;
@@ -129,14 +153,84 @@
           if (betPrevEl) betPrevEl.style.height = `${autoBetPreviewH}px`;
 
           const profVidBox = document.getElementById('profile-home-video-ad-box');
-          if (profVidBox) profVidBox.style.height = `${autoProfVidH}px`;
+          if (profVidBox) {
+            profVidBox.style.height = `${autoProfVidH}px`;
+            profVidBox.style.maxHeight = `${autoProfVidH}px`;
+          }
+
+          const erMapPage = document.getElementById('er-full-map-page');
+          if (erMapPage) {
+            erMapPage.style.minHeight = '240px';
+            erMapPage.style.height = `${autoErRadarH}px`;
+          }
+          const erFlipPage = document.getElementById('er-overlap-flip-page');
+          if (erFlipPage) {
+            erFlipPage.style.minHeight = '240px';
+            erFlipPage.style.height = `${autoErRadarH}px`;
+          }
+
+          // 3. EXACT PIXEL-LOCK POST-PASS: Guarantee 0px vertical scroll on active section!
+          if (mainEl) {
+            const secMap = document.getElementById('section-map');
+            if (secMap && secMap.style.display !== 'none' && mapEl && mapVidBox) {
+              const over = secMap.offsetHeight - availH;
+              if (over > 0) {
+                const cutMap = Math.min(Math.ceil(over * 0.65), Math.max(0, autoMapH - 85));
+                const cutVid = Math.max(0, over - cutMap);
+                autoMapH = Math.max(85, autoMapH - cutMap);
+                autoMapVidH = Math.max(54, autoMapVidH - cutVid);
+                mapEl.style.height = `${autoMapH}px`;
+                mapVidBox.style.height = `${autoMapVidH}px`;
+                mapVidBox.style.maxHeight = `${autoMapVidH}px`;
+              }
+            }
+
+            const secProf = document.getElementById('section-profile');
+            if (secProf && secProf.style.display !== 'none' && profVidBox && profVidBox.style.display !== 'none') {
+              const over = secProf.offsetHeight - availH;
+              if (over > 0) {
+                autoProfVidH = Math.max(48, autoProfVidH - over - 2);
+                profVidBox.style.height = `${autoProfVidH}px`;
+                profVidBox.style.maxHeight = `${autoProfVidH}px`;
+              }
+            }
+
+            const secLiveEr = document.getElementById('section-live-erickshaw');
+            if (secLiveEr && secLiveEr.style.display !== 'none') {
+              const over = secLiveEr.offsetHeight - availH;
+              if (over > 0) {
+                autoErRadarH = Math.max(220, autoErRadarH - over - 2);
+                if (erMapPage) erMapPage.style.height = `${autoErRadarH}px`;
+                if (erFlipPage) erFlipPage.style.height = `${autoErRadarH}px`;
+              }
+            }
+
+            const secGaming = document.getElementById('section-gaming');
+            if (secGaming && secGaming.style.display !== 'none') {
+              const over = secGaming.offsetHeight - availH;
+              if (over > 0) {
+                if (betPrevEl && betPrevEl.offsetParent !== null) {
+                  autoBetPreviewH = Math.max(44, autoBetPreviewH - over - 2);
+                  betPrevEl.style.height = `${autoBetPreviewH}px`;
+                }
+                if (arenaEl && arenaEl.offsetParent !== null) {
+                  autoRaceH = Math.max(95, autoRaceH - over - 2);
+                  arenaEl.style.height = `${autoRaceH}px`;
+                }
+              }
+            }
+          }
 
           if (typeof googleLiveMap !== 'undefined' && googleLiveMap && typeof googleLiveMap.invalidateSize === 'function') {
             googleLiveMap.invalidateSize();
           }
+          if (typeof erickshawRadarMap !== 'undefined' && erickshawRadarMap && typeof erickshawRadarMap.invalidateSize === 'function') {
+            erickshawRadarMap.invalidateSize();
+          }
         } catch (e) {}
       }
 
+      window.calibrateScreenFit = calibrateScreenFit;
       calibrateScreenFit();
 
       window.addEventListener('resize', calibrateScreenFit);
@@ -248,7 +342,7 @@
       width: 100%;
       max-width: 900px;
       margin: 0 auto;
-      padding: 0.2rem 0.45rem 0.35rem 0.45rem;
+      padding: 0.15rem 0.4rem 0.15rem 0.4rem !important;
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
@@ -273,25 +367,25 @@
     .app-card {
       background: #ffffff !important;
       border: 1.5px solid #16a34a !important;
-      border-radius: 16px !important;
-      padding: 0.75rem 0.85rem !important;
-      margin-bottom: 0.45rem !important;
+      border-radius: 14px !important;
+      padding: 0.55rem 0.65rem !important;
+      margin-bottom: 0 !important;
       box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08) !important;
       box-sizing: border-box !important;
     }
 
     .form-group {
-      margin-bottom: 0.45rem !important;
+      margin-bottom: 0.35rem !important;
     }
     .form-control {
-      height: 38px !important;
-      padding: 0.45rem 0.75rem !important;
-      font-size: 0.88rem !important;
+      height: 34px !important;
+      padding: 0.35rem 0.65rem !important;
+      font-size: 0.84rem !important;
     }
 
     /* Clean Company Details Footer inside scroll area */
     footer {
-      display: block !important;
+      display: none;
     }
 
     /* Modern Sticky Mobile Header with Full Safe-Area Clearance */
@@ -1335,33 +1429,33 @@
     <!-- ==================== 4A. 🗺️ LIVE MAP SECTION (RESTORED IN 6-BUTTON GRID) ==================== -->
     <section id="section-map" class="app-section" style="display: none;">
       <div id="top-map-container" style="max-width: 900px; margin: 0 auto; padding: 0;">
-        <div class="app-card" style="padding: 0.65rem; border: 2px solid #16a34a; border-radius: 16px; box-shadow: 0 4px 18px rgba(22, 163, 74, 0.12);">
+        <div class="app-card" style="padding: 0.4rem 0.5rem !important; margin-bottom: 0 !important; border: 2px solid #16a34a; border-radius: 14px; box-shadow: 0 4px 18px rgba(22, 163, 74, 0.12);">
           <!-- Map Header Bar -->
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 0.45rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; gap: 4px; margin-bottom: 0.25rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.25rem;">
+            <div style="min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 5px;">
                 <span class="pulse-dot"></span>
-                <strong id="map-live-loc-title" style="font-size: 0.95rem; font-weight: 900; color: #000000;">Google Maps • Live Car See</strong>
+                <strong id="map-live-loc-title" style="font-size: 0.82rem; font-weight: 900; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Google Maps • Live Car See</strong>
               </div>
-              <div id="map-radar-count-badge" style="font-size: 0.7rem; color: #15803d; font-weight: 800; margin-top: 1px;">
+              <div id="map-radar-count-badge" style="font-size: 0.62rem; color: #15803d; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                 🟢 Scanning Live Cars on Assam Corridor...
               </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <button type="button" onclick="centerOnUserLiveGps(true, true)" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #16a34a; padding: 4px 9px; border-radius: 8px; font-size: 0.72rem; font-weight: 900; cursor: pointer;">
+            <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+              <button type="button" onclick="centerOnUserLiveGps(true, true)" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #16a34a; padding: 3px 7px; border-radius: 7px; font-size: 0.64rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
                 📍 My GPS
               </button>
-              <button type="button" id="btn-gmap-satellite" onclick="toggleGoogleMapSatelliteLayer()" style="background: #ffffff; color: #000000; border: 1.5px solid #cbd5e1; padding: 4px 9px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer;">
+              <button type="button" id="btn-gmap-satellite" onclick="toggleGoogleMapSatelliteLayer()" style="background: #ffffff; color: #000000; border: 1.5px solid #cbd5e1; padding: 3px 7px; border-radius: 7px; font-size: 0.64rem; font-weight: 800; cursor: pointer; white-space: nowrap;">
                 🛰️ Satellite
               </button>
-              <button type="button" onclick="showSection('live-cars')" style="background: #16a34a; color: #ffffff; border: 1.5px solid #15803d; padding: 4px 9px; border-radius: 8px; font-size: 0.72rem; font-weight: 900; cursor: pointer;">
+              <button type="button" onclick="showSection('live-cars')" style="background: #16a34a; color: #ffffff; border: 1.5px solid #15803d; padding: 3px 7px; border-radius: 7px; font-size: 0.64rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
                 🚗 Live List
               </button>
             </div>
           </div>
 
           <!-- Live GPS Telemetry Bar -->
-          <div id="map-coords-display" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px 8px; font-size: 0.7rem; color: #000000; margin-bottom: 0.45rem; font-weight: 700;">
+          <div id="map-coords-display" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 7px; padding: 2px 7px; font-size: 0.64rem; color: #000000; margin-bottom: 0.25rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             🟢 Initializing 1-Second Live GPS Radar...
           </div>
 
@@ -1397,20 +1491,19 @@
           </div>
 
           <!-- Interactive Google/Leaflet Map Canvas -->
-          <div id="google-live-map-div" style="width: 100%; height: var(--auto-map-height, 210px); min-height: 170px; border-radius: 12px; overflow: hidden; border: 2px solid #16a34a; position: relative; z-index: 1; background: #e2e8f0;"></div>
+          <div id="google-live-map-div" style="width: 100%; height: var(--auto-map-height, 195px); min-height: 90px; border-radius: 10px; overflow: hidden; border: 2px solid #16a34a; position: relative; z-index: 1; background: #e2e8f0;"></div>
 
           <!-- Corridor Quick Jump Chips -->
-          <div style="display: flex; gap: 5px; overflow-x: auto; padding: 6px 0 2px 0; scrollbar-width: none;">
-            <button type="button" onclick="jumpToCorridor('all'); centerOnUserLiveGps(true);" style="background: #16a34a; color: #ffffff; border: none; padding: 4px 10px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; white-space: nowrap; cursor: pointer;">All Assam Radar</button>
-            <button type="button" onclick="jumpToCorridor('shillong')" style="background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; padding: 4px 10px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; white-space: nowrap; cursor: pointer;">Guwahati ➔ Shillong</button>
-            <button type="button" onclick="jumpToCorridor('nagaon')" style="background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; padding: 4px 10px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; white-space: nowrap; cursor: pointer;">Guwahati ➔ Nagaon</button>
-            <button type="button" onclick="jumpToCorridor('jorhat')" style="background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; padding: 4px 10px; border-radius: 999px; font-size: 0.68rem; font-weight: 800; white-space: nowrap; cursor: pointer;">Guwahati ➔ Jorhat</button>
+          <div style="display: flex; gap: 4px; overflow-x: auto; padding: 4px 0 1px 0; scrollbar-width: none;">
+            <button type="button" onclick="jumpToCorridor('all'); centerOnUserLiveGps(true);" style="background: #16a34a; color: #ffffff; border: none; padding: 3px 8px; border-radius: 999px; font-size: 0.62rem; font-weight: 800; white-space: nowrap; cursor: pointer;">All Assam Radar</button>
+            <button type="button" onclick="jumpToCorridor('shillong')" style="background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; padding: 3px 8px; border-radius: 999px; font-size: 0.62rem; font-weight: 800; white-space: nowrap; cursor: pointer;">Guwahati ➔ Shillong</button>
+            <button type="button" onclick="jumpToCorridor('nagaon')" style="background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; padding: 3px 8px; border-radius: 999px; font-size: 0.62rem; font-weight: 800; white-space: nowrap; cursor: pointer;">Guwahati ➔ Nagaon</button>
+            <button type="button" onclick="jumpToCorridor('jorhat')" style="background: #f0fdf4; color: #15803d; border: 1px solid #16a34a; padding: 3px 8px; border-radius: 999px; font-size: 0.62rem; font-weight: 800; white-space: nowrap; cursor: pointer;">Guwahati ➔ Jorhat</button>
           </div>
 
-          <!-- Map Corridor Video Ad Player Below Map -->
-          <div id="map-video-ad-box" style="position: relative; margin-top: 0.4rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: min(20vh, 135px); max-height: 135px;">
+          <!-- Map Corridor Video Ad Player Below Map (100% Zero-Scroll Screen-Fit) -->
+          <div id="map-video-ad-box" style="position: relative; margin-top: 0.25rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; height: var(--auto-map-vid-height, 96px); max-height: var(--auto-map-vid-height, 96px);">
             <video id="map-video-player" data-video-src="map_ad.mp4" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
-
           </div>
         </div>
       </div>
@@ -1504,18 +1597,17 @@
         <div id="chamet-main-card" style="background: linear-gradient(180deg, #0b0f19 0%, #111827 55%, #090d16 100%); border: 2.5px solid #22d3ee; border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); overflow: hidden; padding: 0; color: #ffffff;">
 
           <!-- LOWEST BET BIKE RACE TOP HEADER & WALLET BAR (Ported from LowestBetBikeRace_Source.zip) -->
-          <div style="background: linear-gradient(90deg, #090d16 0%, #1e293b 50%, #090d16 100%); padding: 0.4rem 0.6rem; border-bottom: 2px solid #22d3ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
+          <div style="background: linear-gradient(90deg, #090d16 0%, #1e293b 50%, #090d16 100%); padding: 0.28rem 0.5rem; border-bottom: 1.5px solid #22d3ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; gap: 4px;">
             <div style="display: flex; align-items: center; gap: 7px;">
               <div style="background: linear-gradient(135deg, #0891b2, #155e75); border: 1.5px solid #22d3ee; padding: 2px 7px; border-radius: 6px; transform: skewX(-10deg); box-shadow: 0 2px 6px rgba(0,0,0,0.6);">
-                <span style="font-size: 0.78rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 0.6px;">LOWEST BET</span>
+                <span style="font-size: 0.64rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 0.4px; white-space: nowrap;">LOWEST BET</span>
               </div>
               <div>
                 <div style="font-size: 0.82rem; font-weight: 900; letter-spacing: 0.3px; color: #22d3ee; line-height: 1.05; display: flex; align-items: center; gap: 4px;">
-                  <span>🚵 LOWEST BET BIKE RACE</span>
-                  <span style="font-size: 0.52rem; background: #16a34a; color: #ffffff; padding: 1px 5px; border-radius: 4px; font-weight: 900;">UNITY 3D ENGINE</span>
+                  <span style="white-space: nowrap; font-size: 0.72rem;">🚵 LOWEST BET RACE</span>
                 </div>
                 <div style="font-size: 0.56rem; color: #cbd5e1; font-weight: 700;">
-                  👥 <span id="race-live-players">1,842</span> • Round #<span id="race-round-number">101</span> • <span id="race-total-pool-banner" style="color: #a3e635; font-weight: 900;">WP_00 ➔ WP_FINISH • Lowest Bet Wins!</span>
+                  👥 <span id="race-live-players">1,842</span> • Round #<span id="race-round-number">101</span> • <span id="race-total-pool-banner" style="color: #a3e635; font-weight: 900;">Lowest Bet Wins!</span>
                 </div>
               </div>
             </div>
@@ -1594,7 +1686,7 @@
                     <span style="font-size: 0.55rem; font-weight: 900; background: #06b6d4; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">RIDER A</span>
                     <span style="font-size: 0.56rem; color: #22d3ee; font-weight: 900;">⚡ 2.0x</span>
                   </div>
-                  <div id="car-preview-svg-0" style="margin: 2px auto; width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #06b6d4; background: radial-gradient(circle at 50% 35%, #164e63 0%, #090d16 90%);">
+                  <div id="car-preview-svg-0" style="margin: 2px auto; width: 100%; height: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #06b6d4; background: radial-gradient(circle at 50% 35%, #164e63 0%, #090d16 90%);">
                     <svg viewBox="0 0 120 75" style="width: 100%; height: 100%;">
                       <line x1="8" y1="22" x2="32" y2="22" stroke="#22d3ee" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <line x1="4" y1="38" x2="25" y2="38" stroke="#38bdf8" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
@@ -1643,7 +1735,7 @@
                     <span style="font-size: 0.55rem; font-weight: 900; background: #84cc16; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">RIDER B</span>
                     <span style="font-size: 0.56rem; color: #a3e635; font-weight: 900;">⚡ 2.0x</span>
                   </div>
-                  <div id="car-preview-svg-1" style="margin: 2px auto; width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #a3e635; background: radial-gradient(circle at 50% 35%, #14532d 0%, #090d16 90%);">
+                  <div id="car-preview-svg-1" style="margin: 2px auto; width: 100%; height: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #a3e635; background: radial-gradient(circle at 50% 35%, #14532d 0%, #090d16 90%);">
                     <svg viewBox="0 0 120 75" style="width: 100%; height: 100%;">
                       <line x1="8" y1="22" x2="32" y2="22" stroke="#a3e635" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <line x1="4" y1="38" x2="25" y2="38" stroke="#22c55e" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
@@ -1692,7 +1784,7 @@
                     <span style="font-size: 0.55rem; font-weight: 900; background: #f59e0b; color: #090d16; padding: 1px 6px; border-radius: 4px; transform: skewX(-8deg);">RIDER C</span>
                     <span style="font-size: 0.56rem; color: #fde047; font-weight: 900;">⚡ 2.0x</span>
                   </div>
-                  <div id="car-preview-svg-2" style="margin: 2px auto; width: 100%; height: 46px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #f59e0b; background: radial-gradient(circle at 50% 35%, #78350f 0%, #090d16 90%);">
+                  <div id="car-preview-svg-2" style="margin: 2px auto; width: 100%; height: 36px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; border: 1.5px solid #f59e0b; background: radial-gradient(circle at 50% 35%, #78350f 0%, #090d16 90%);">
                     <svg viewBox="0 0 120 75" style="width: 100%; height: 100%;">
                       <line x1="8" y1="22" x2="32" y2="22" stroke="#fbbf24" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
                       <line x1="4" y1="38" x2="25" y2="38" stroke="#f97316" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
@@ -2248,7 +2340,7 @@
         </div>
 
         <!-- ==================== PAGE 1: 100% FULL-SCREEN LIVE E-RICKSHAW MAP (NO DRIVER NAMES BELOW MAP) ==================== -->
-        <div id="er-full-map-page" style="position: relative; width: 100%; height: var(--auto-er-radar-height, 430px); min-height: 390px; background: #e2e8f0;">
+        <div id="er-full-map-page" style="position: relative; width: 100%; height: var(--auto-er-radar-height, 430px); min-height: 240px; background: #e2e8f0;">
           <div id="erickshaw-live-radar-map" style="width: 100%; height: 100%; z-index: 1;"></div>
 
           <!-- Top Floating Status Pill & Post ₹100 (12h) Button -->
@@ -2278,7 +2370,7 @@
         </div>
 
         <!-- ==================== PAGE 2: 3D FLIP PAGE FOR OVERLAPPING / CLICKED E-RICKSHAW OPTIONS ==================== -->
-        <div id="er-overlap-flip-page" style="display: none; width: 100%; height: var(--auto-er-radar-height, 430px); min-height: 390px; background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%); padding: 10px; box-sizing: border-box; flex-direction: column; justify-content: space-between; overflow-y: auto;">
+        <div id="er-overlap-flip-page" style="display: none; width: 100%; height: var(--auto-er-radar-height, 430px); min-height: 240px; background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%); padding: 10px; box-sizing: border-box; flex-direction: column; justify-content: space-between; overflow-y: auto;">
           <div>
             <!-- Flip Page Top Header -->
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 2px solid #86efac; margin-bottom: 8px;">
@@ -2363,7 +2455,7 @@
 
   
         <!-- ✨ SLIM GEMINI AI COPILOT PILL -->
-    <div style="max-width: 480px; margin: 0.35rem auto 0.25rem auto; display: flex; flex-direction: column; gap: 6px;">
+    <div id="gemini-page-dock-wrap" style="max-width: 480px; margin: 0.2rem auto 0.1rem auto; display: none; flex-direction: column; gap: 4px;">
       <div id="gemini-page-dock" onclick="openGeminiAiModal()" style="padding: 5px 12px; background: linear-gradient(135deg, #15803d, #16a34a); color: #ffffff; border: 1.5px solid #86efac; border-radius: 9999px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; width: 100%; box-shadow: 0 2px 8px rgba(22, 163, 74, 0.2); touch-action: manipulation;">
         <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
           <span style="font-size: 0.95rem;">✨</span>
@@ -3431,9 +3523,11 @@
       // 2. Hide footer & Gemini bottom dock on tabs to guarantee 100% ZERO-SCROLL screen fit!
       const pageFooter = document.getElementById('main-company-footer');
       const pageAiDock = document.getElementById('gemini-page-dock');
-      const isCleanFitTab = (tab === 'profile' || isMapTab || isGamingTab || tab === 'gemini-ai' || tab === 'ai' || tab === 'post-erickshaw' || tab === 'live-erickshaw' || tab === 'complaint');
-      if (pageFooter) pageFooter.style.display = isCleanFitTab ? 'none' : 'block';
-      if (pageAiDock) pageAiDock.style.display = isCleanFitTab ? 'none' : 'flex';
+      const pageAiDockWrap = document.getElementById('gemini-page-dock-wrap');
+      const isCleanFitTab = true;
+      if (pageFooter) pageFooter.style.display = 'none';
+      if (pageAiDock) pageAiDock.style.display = 'none';
+      if (pageAiDockWrap) pageAiDockWrap.style.display = 'none';
 
       // 3. Update active state across 6 navigation buttons (Map is in 6-button grid; Gaming is ONLY in top header)
       const btnMap = document.getElementById('btn-nav-map');
@@ -3504,8 +3598,16 @@
       stopActiveRideTracking(false);
 
       updateNavCounts();
+      if (typeof window.calibrateScreenFit === 'function') {
+        window.calibrateScreenFit();
+        setTimeout(window.calibrateScreenFit, 60);
+      }
       const mainEl = document.querySelector('main');
-      if (mainEl) mainEl.scrollTop = 0;
+      if (mainEl) {
+        const lockTabs = ['map', 'profile', 'live-erickshaw', 'post-erickshaw', 'complaint', 'gaming', 'gemini-ai', 'ai'];
+        mainEl.style.overflowY = lockTabs.includes(tab) ? 'hidden' : 'auto';
+        mainEl.scrollTop = 0;
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -5486,6 +5588,7 @@ ET
         if (submitBtn) submitBtn.innerText = '✨ Register & Verify Aadhaar AI ➔';
         if (fpLink) fpLink.style.display = 'none';
       }
+      if (typeof window.calibrateScreenFit === 'function') window.calibrateScreenFit();
     }
 
 
@@ -6475,6 +6578,7 @@ ET
       activeEl.classList.remove('chamet-flip-active');
       void activeEl.offsetWidth;
       activeEl.classList.add('chamet-flip-active');
+      if (typeof window.calibrateScreenFit === 'function') window.calibrateScreenFit();
     }
 
     // =========================================================================
