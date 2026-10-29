@@ -3,10 +3,25 @@
   "appName": "सफ़रसाथी",
   "webDir": ".",
   "bundledWebRuntime": false,
+  "backgroundColor": "#0f172a",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "cleartext": true
   },
   "android": {
-    "allowMixedContent": true
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true,
+    "useLegacyBridge": true
+  },
+  "plugins": {
+    "BackgroundRunner": {
+      "label": "com.safarsaathi.app.bg",
+      "src": "sw.js",
+      "event": "backgroundHeartbeat",
+      "repeat": true,
+      "interval": 1,
+      "autoStart": true
+    }
   }
 }

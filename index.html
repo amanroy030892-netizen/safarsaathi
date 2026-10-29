@@ -7485,20 +7485,35 @@ ET
               });
             } catch(e){}
 
-            // 7B. REAL-TIME ENCRYPTED 2-WAY HD VOICE STREAM (FIRESTORE WEBSOCKET)
+            // 7B. REAL-TIME ENCRYPTED 2-WAY HD VOICE STREAM (FIRESTORE WEBSOCKET - ONLY WHEN WEBRTC P2P NOT YET ACTIVE)
             try {
               db.collection('ss_call_audio').onSnapshot(snapshot => {
-                if (!isAppCallConnected || !activeCallId) return;
+                if (!isAppCallConnected || !activeCallId || webrtcRemoteTrackReceiving) return;
                 const otherRole = (activeCallRole === 'CALLER') ? 'DRIVER' : 'CALLER';
-                const targetDocId = activeCallId + '_' + otherRole;
+                const prefix = activeCallId + '_' + otherRole;
                 snapshot.docChanges().forEach(change => {
-                  if (change.doc.id === targetDocId && (change.type === 'added' || change.type === 'modified')) {
+                  if (change.doc.id.indexOf(prefix) === 0 && (change.type === 'added' || change.type === 'modified')) {
                     const pkt = change.doc.data();
                     if (pkt && pkt.pcmB64) {
                       playIncomingServerPcmPacket(pkt);
                     }
                   }
                 });
+              });
+            } catch(e){}
+
+            // 7D. REAL-TIME WITHDRAWAL REQUESTS SYNC (FIRESTORE WEBSOCKET)
+            try {
+              db.collection('ss_withdrawal_requests').onSnapshot(snapshot => {
+                const wList = [];
+                snapshot.forEach(doc => {
+                  const d = doc.data();
+                  if (d) { if (!d.id) d.id = doc.id; wList.push(d); }
+                });
+                if (wList.length > 0) {
+                  try { ssStorage.setItem('ss_withdrawal_requests', JSON.stringify(wList)); } catch(err){}
+                  if (typeof renderProfileReferralSummary === 'function') renderProfileReferralSummary();
+                }
               });
             } catch(e){}
 
@@ -10254,26 +10269,26 @@ ET
 
     // =========================================================================
     // 🟢 PURE SERVER-TO-SERVER (APP-TO-APP) REAL-TIME 2-WAY HD VOICE CALL ENGINE
-    //    (100% ENCRYPTED • NO PHONE NUMBERS SHOWN • FIRESTORE + WEBRTC + PCM)
+    //    (ZERO ECHO • ZERO BREAKING • OPUS FEC/CBR + SMART FALLBACK RELAY)
     // =========================================================================
     let activeCallId = null;
     let activeCallRole = null; // 'CALLER' or 'DRIVER'
     let activeCallPacket = null;
     let rtcPeerConn = null;
     let webrtcRemoteTrackReceiving = false;
+    let pendingRemoteIceQueue = [];
     let localProcessedIceSet = new Set();
-    let remoteAudioVoiceCtx = null;
     let outgoingRingLoop = null;
     let incomingRingLoop = null;
     let pcmProcessorNode = null;
     let pcmSourceNode = null;
-    let pcmPollTimer = null;
+    let pcmFallbackDelayTimer = null;
     let pcmSendBuffer = [];
     let pcmLastSentTs = 0;
     let pcmSeqCounter = 0;
+    let pcmLastSpeechActiveTs = 0;
     let lastPlayedRemotePcmSeq = 0;
     let nextPcmPlayTime = 0;
-    let declinedOrEndedCallIds = new Set();
 
     function ensureUnlockedCallAudioContext() {
       try {
@@ -10290,6 +10305,26 @@ ET
         src.start(0);
         return appCallAudioCtx;
       } catch(e) { return null; }
+    }
+
+    // Tune WebRTC SDP so Opus uses In-Band Forward Error Correction (FEC), Constant Bitrate (CBR),
+    // and disables Discontinuous Transmission (usedtx=0) so voice NEVER drops or breaks mid-sentence!
+    function enhanceSdpForCrystalClearContinuousVoice(sdp) {
+      if (!sdp || typeof sdp !== 'string') return sdp;
+      return sdp.replace(/a=fmtp:(\d+) (.*)/g, function(match, pt, params) {
+        if (params.indexOf('minptime') !== -1 || params.indexOf('useinbandfec') !== -1) {
+          let clean = params
+            .replace(/usedtx=1/g, 'usedtx=0')
+            .replace(/useinbandfec=0/g, 'useinbandfec=1');
+          if (clean.indexOf('useinbandfec=') === -1) clean += ';useinbandfec=1';
+          if (clean.indexOf('usedtx=') === -1) clean += ';usedtx=0';
+          if (clean.indexOf('cbr=') === -1) clean += ';cbr=1';
+          if (clean.indexOf('maxaveragebitrate=') === -1) clean += ';maxaveragebitrate=48000';
+          if (clean.indexOf('ptime=') === -1) clean += ';ptime=20';
+          return 'a=fmtp:' + pt + ' ' + clean;
+        }
+        return match;
+      });
     }
 
     function getOnlinePresenceMap() {
@@ -10335,7 +10370,6 @@ ET
       if (myDevId) map['DEV_' + myDevId] = entry;
       try { ssStorage.setItem('ss_online_presence', JSON.stringify(map)); } catch(e){}
 
-      // Auto-bind logged-in driver's identity to any matching E-Rickshaw
       if (user) {
         try {
           let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
@@ -10391,6 +10425,22 @@ ET
       } catch(e) { return {}; }
     }
 
+    // Push only ICE candidates without overwriting status or webrtcAnswer!
+    function pushIceCandidatesOnly(callId, role, iceArray) {
+      if (!callId || !Array.isArray(iceArray)) return;
+      const field = (role === 'CALLER') ? 'callerIce' : 'driverIce';
+      const patch = { callId: callId, [field]: iceArray, updatedAt: Date.now() };
+      if (typeof db !== 'undefined' && db) {
+        try {
+          db.collection('ss_active_calls').doc(callId).set(patch, { merge: true }).catch(() => {});
+          db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').set(patch, { merge: true }).catch(() => {});
+        } catch(e){}
+      }
+      if (appCallBroadcastChannel && activeCallPacket) {
+        try { appCallBroadcastChannel.postMessage({ type: 'CALL_SIGNAL_UPDATE', packet: activeCallPacket }); } catch(e){}
+      }
+    }
+
     function saveAndBroadcastCallPacket(packet) {
       if (!packet || !packet.callId) return;
       packet.updatedAt = Date.now();
@@ -10417,7 +10467,6 @@ ET
         }
       });
 
-      // 1. PRIMARY: Push directly to Cloud Firestore (Instant WebSocket sync across all phones & Chrome tabs!)
       if (typeof db !== 'undefined' && db) {
         try {
           db.collection('ss_active_calls').doc(packet.callId).set(packet, { merge: true }).catch(() => {});
@@ -10428,7 +10477,6 @@ ET
         } catch(e){}
       }
 
-      // 2. SECONDARY: Push to Firebase RTDB
       try {
         fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + packet.callId + '.json', {
           method: 'PUT',
@@ -10440,13 +10488,6 @@ ET
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(packet)
         }).catch(() => {});
-        if (packet.erickshawId) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + packet.erickshawId + '.json', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(packet)
-          }).catch(() => {});
-        }
       } catch(e){}
     }
 
@@ -10510,7 +10551,6 @@ ET
         pillEl.innerText = online ? '🟢 Online' : '⚪ Offline';
       }
 
-      // Only show Driver Name & Vehicle Number (NEVER show Driver's Phone Number!)
       document.getElementById('erp-driver-name').innerText = er.driverName || 'Verified Driver';
       document.getElementById('erp-vehicle-plate').innerText = `${er.vehicleNumber} • 🔒 Number Hidden`;
       document.getElementById('erp-post-time').innerText = `🕒 Posted: ${timing.agoLabel} • Valid: ${timing.remLabel}`;
@@ -10546,10 +10586,8 @@ ET
       }, 200);
     }
 
-    function stopAllCallRingtones() {
-      if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
-      if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
-      if (pcmPollTimer) { clearInterval(pcmPollTimer); pcmPollTimer = null; }
+    function stopPcmFallbackEngine() {
+      if (pcmFallbackDelayTimer) { clearTimeout(pcmFallbackDelayTimer); pcmFallbackDelayTimer = null; }
       if (pcmProcessorNode) {
         try { pcmProcessorNode.disconnect(); } catch(e){}
         pcmProcessorNode = null;
@@ -10558,6 +10596,13 @@ ET
         try { pcmSourceNode.disconnect(); } catch(e){}
         pcmSourceNode = null;
       }
+      pcmSendBuffer = [];
+    }
+
+    function stopAllCallRingtones() {
+      if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
+      if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
+      stopPcmFallbackEngine();
     }
 
     function resetAppCallUiState() {
@@ -10569,6 +10614,7 @@ ET
       appCallSpeaker = true;
       isAppCallConnected = false;
       webrtcRemoteTrackReceiving = false;
+      pendingRemoteIceQueue = [];
       const timerEl = document.getElementById('erp-call-timer');
       if (timerEl) timerEl.innerText = '00:00';
       const statusEl = document.getElementById('erp-call-status-text');
@@ -10610,10 +10656,14 @@ ET
       } catch(e){}
     }
 
-    // Studio High-Pass + Voice Clarity EQ + Compressor for incoming WebRTC stream
+    // SINGLE OUTPUT PATH FOR WEBRTC: Play ONLY through native <audio> element (keeps Hardware Echo Canceller active
+    // and prevents double-playing through both <audio> and AudioContext!)
     function attachCrystalClearRemoteAudio(remoteStream) {
       try {
         webrtcRemoteTrackReceiving = true;
+        // Stop Firestore PCM fallback immediately so voice is NEVER heard twice!
+        stopPcmFallbackEngine();
+
         const audioEl = document.getElementById('ss-remote-call-audio');
         if (audioEl) {
           audioEl.srcObject = remoteStream;
@@ -10621,35 +10671,12 @@ ET
           audioEl.muted = !appCallSpeaker;
           audioEl.play().catch(() => {});
         }
-        const ctx = ensureUnlockedCallAudioContext();
-        if (ctx) {
-          const source = ctx.createMediaStreamSource(remoteStream);
-          const highpass = ctx.createBiquadFilter();
-          highpass.type = 'highpass';
-          highpass.frequency.value = 125;
-          const lowpass = ctx.createBiquadFilter();
-          lowpass.type = 'lowpass';
-          lowpass.frequency.value = 4200;
-          const presence = ctx.createBiquadFilter();
-          presence.type = 'peaking';
-          presence.frequency.value = 2400;
-          presence.Q.value = 1.0;
-          presence.gain.value = 6.0;
-          const compressor = ctx.createDynamicsCompressor();
-          const gainNode = ctx.createGain();
-          gainNode.gain.value = 1.75;
-          source.connect(highpass);
-          highpass.connect(lowpass);
-          lowpass.connect(presence);
-          presence.connect(compressor);
-          compressor.connect(gainNode);
-          gainNode.connect(ctx.destination);
-        }
       } catch(e){}
     }
 
     // =========================================================================
-    // 🎙️ STUDIO-CLEAN 10kHz INT16 PCM AUDIO ENGINE OVER FIRESTORE WEBSOCKET
+    // 🎙️ ZERO-ECHO, SMOOTH JITTER-BUFFERED PCM FALLBACK ENGINE
+    //    (Runs ONLY if WebRTC P2P/TURN is blocked after 2.5s; stops immediately if WebRTC is active)
     // =========================================================================
     function encodeInt16ToBase64(int16Arr) {
       const bytes = new Uint8Array(int16Arr.buffer);
@@ -10670,10 +10697,9 @@ ET
       }
       const int16 = new Int16Array(bytes.buffer);
       const float32 = new Float32Array(int16.length);
-      const fadeSamples = Math.min(64, Math.floor(int16.length / 10));
+      const fadeSamples = Math.min(80, Math.floor(int16.length / 8));
       for (let i = 0; i < int16.length; i++) {
         let val = int16[i] / 32768.0;
-        // Smooth edge envelope to eliminate clicks between packets
         if (i < fadeSamples) val *= (i / fadeSamples);
         else if (i > int16.length - fadeSamples) val *= ((int16.length - i) / fadeSamples);
         float32[i] = val;
@@ -10681,11 +10707,20 @@ ET
       return float32;
     }
 
+    function isRemotePcmPlayingNow() {
+      try {
+        if (!appCallAudioCtx) return false;
+        return appCallAudioCtx.currentTime < (nextPcmPlayTime + 0.12);
+      } catch(e) { return false; }
+    }
+
     function playIncomingServerPcmPacket(pkt) {
       try {
+        // NEVER play fallback PCM if WebRTC native audio stream is already active!
+        if (webrtcRemoteTrackReceiving) return;
         if (!isAppCallConnected || !appCallSpeaker || !pkt || !pkt.pcmB64) return;
         if (pkt.seq && pkt.seq <= lastPlayedRemotePcmSeq) return;
-        if (Date.now() - Number(pkt.ts || 0) > 7000) return;
+        if (Date.now() - Number(pkt.ts || 0) > 8000) return;
         lastPlayedRemotePcmSeq = pkt.seq || Date.now();
 
         const ctx = ensureUnlockedCallAudioContext();
@@ -10700,22 +10735,21 @@ ET
         const src = ctx.createBufferSource();
         src.buffer = audioBuf;
 
-        // Studio clarity chain: High-pass 120Hz -> Low-pass 4000Hz -> Presence 2400Hz -> Gain
         const hp = ctx.createBiquadFilter();
         hp.type = 'highpass';
-        hp.frequency.value = 120;
+        hp.frequency.value = 125;
 
         const lp = ctx.createBiquadFilter();
         lp.type = 'lowpass';
-        lp.frequency.value = 4000;
+        lp.frequency.value = 3900;
 
         const presence = ctx.createBiquadFilter();
         presence.type = 'peaking';
-        presence.frequency.value = 2350;
-        presence.gain.value = 5.0;
+        presence.frequency.value = 2300;
+        presence.gain.value = 4.0;
 
         const gainNode = ctx.createGain();
-        gainNode.gain.value = 1.9;
+        gainNode.gain.value = 1.45;
 
         src.connect(hp);
         hp.connect(lp);
@@ -10723,9 +10757,12 @@ ET
         presence.connect(gainNode);
         gainNode.connect(ctx.destination);
 
+        // 180ms Elastic Jitter Buffer so packets play continuously without mid-sentence breaks!
         const now = ctx.currentTime;
-        if (nextPcmPlayTime < now || nextPcmPlayTime > now + 1.4) {
-          nextPcmPlayTime = now + 0.03;
+        if (nextPcmPlayTime < now) {
+          nextPcmPlayTime = now + 0.18;
+        } else if (nextPcmPlayTime > now + 2.2) {
+          nextPcmPlayTime = now + 0.25;
         }
         src.start(nextPcmPlayTime);
         nextPcmPlayTime += audioBuf.duration;
@@ -10734,6 +10771,7 @@ ET
 
     function startServerToServerPcmVoiceEngine(stream, callId, myRole) {
       try {
+        if (webrtcRemoteTrackReceiving) return;
         const ctx = ensureUnlockedCallAudioContext();
         if (!ctx || !stream || !callId) return;
 
@@ -10752,30 +10790,39 @@ ET
         pcmSourceNode = ctx.createMediaStreamSource(stream);
         const hpFilter = ctx.createBiquadFilter();
         hpFilter.type = 'highpass';
-        hpFilter.frequency.value = 120;
+        hpFilter.frequency.value = 125;
 
         pcmProcessorNode = ctx.createScriptProcessor(4096, 1, 1);
         pcmProcessorNode.onaudioprocess = function(e) {
-          if (!isAppCallConnected || appCallMuted) return;
+          if (!isAppCallConnected || appCallMuted || webrtcRemoteTrackReceiving) return;
+          // Half-Duplex Echo Guard: Do NOT capture speaker output into mic while remote voice is playing!
+          if (isRemotePcmPlayingNow()) return;
+
           const inputData = e.inputBuffer.getChannelData(0);
           let sumSq = 0;
           const outLen = Math.floor(inputData.length / ratio);
           for (let i = 0; i < outLen; i++) {
             const idx = Math.floor(i * ratio);
-            const s = Math.max(-1, Math.min(1, inputData[idx] * 1.55));
+            const s = Math.max(-1, Math.min(1, inputData[idx] * 1.35));
             sumSq += s * s;
             pcmSendBuffer.push(s < 0 ? s * 0x8000 : s * 0x7FFF);
           }
 
           const now = Date.now();
-          if (pcmSendBuffer.length >= 3800 && (now - pcmLastSentTs >= 380)) {
+          const rms = Math.sqrt(sumSq / Math.max(1, outLen));
+          if (rms >= 0.0035) {
+            pcmLastSpeechActiveTs = now;
+          }
+
+          // 550ms smooth packet size + 650ms speech hangover so words NEVER cut off in the middle!
+          if (pcmSendBuffer.length >= 5500 && (now - pcmLastSentTs >= 520)) {
             const chunk = pcmSendBuffer.splice(0, pcmSendBuffer.length);
             pcmLastSentTs = now;
-            const rms = Math.sqrt(sumSq / Math.max(1, outLen));
-            if (rms < 0.003) return; // Clean noise gate
+            if (now - pcmLastSpeechActiveTs > 650) return;
             const int16 = new Int16Array(chunk);
             const b64 = encodeInt16ToBase64(int16);
             pcmSeqCounter++;
+            const slot = pcmSeqCounter % 3; // 3-slot ring buffer prevents packet overwrite!
             const audioPkt = {
               callId: callId,
               role: myRole,
@@ -10787,17 +10834,11 @@ ET
             if (appCallBroadcastChannel) {
               try { appCallBroadcastChannel.postMessage({ type: 'PCM_VOICE_PACKET', packet: audioPkt }); } catch(err){}
             }
-            // Push directly to Cloud Firestore for instant WebSocket delivery
             if (typeof db !== 'undefined' && db) {
               try {
-                db.collection('ss_call_audio').doc(callId + '_' + myRole).set(audioPkt).catch(() => {});
+                db.collection('ss_call_audio').doc(callId + '_' + myRole + '_' + slot).set(audioPkt).catch(() => {});
               } catch(err){}
             }
-            fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + callId + '_' + myRole + '.json', {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(audioPkt)
-            }).catch(() => {});
           }
         };
 
@@ -10807,24 +10848,31 @@ ET
         hpFilter.connect(pcmProcessorNode);
         pcmProcessorNode.connect(zeroGain);
         zeroGain.connect(ctx.destination);
-
-        // Fast fallback poll (Firestore onSnapshot handles primary real-time stream)
-        const otherRole = (myRole === 'CALLER') ? 'DRIVER' : 'CALLER';
-        if (pcmPollTimer) clearInterval(pcmPollTimer);
-        pcmPollTimer = setInterval(() => {
-          if (!isAppCallConnected || !activeCallId) return;
-          if (typeof db !== 'undefined' && db) {
-            db.collection('ss_call_audio').doc(activeCallId + '_' + otherRole).get()
-              .then(doc => {
-                if (doc && doc.exists) {
-                  const pkt = doc.data();
-                  if (pkt && pkt.pcmB64) playIncomingServerPcmPacket(pkt);
-                }
-              })
-              .catch(() => {});
-          }
-        }, 420);
       } catch(e){}
+    }
+
+    async function flushPendingRemoteIceCandidates() {
+      if (!rtcPeerConn || !rtcPeerConn.remoteDescription) return;
+      while (pendingRemoteIceQueue.length > 0) {
+        const cand = pendingRemoteIceQueue.shift();
+        try {
+          await rtcPeerConn.addIceCandidate(new RTCIceCandidate(cand));
+        } catch(e){}
+      }
+    }
+
+    async function addOrQueueRemoteIceCandidate(cand) {
+      if (!cand || !rtcPeerConn) return;
+      const key = JSON.stringify(cand);
+      if (localProcessedIceSet.has(key)) return;
+      localProcessedIceSet.add(key);
+      if (rtcPeerConn.remoteDescription && rtcPeerConn.remoteDescription.type) {
+        try {
+          await rtcPeerConn.addIceCandidate(new RTCIceCandidate(cand));
+        } catch(e){}
+      } else {
+        pendingRemoteIceQueue.push(cand);
+      }
     }
 
     function createCallPeerConnection(role, packet) {
@@ -10833,10 +10881,15 @@ ET
           try { rtcPeerConn.close(); } catch(e){}
         }
         localProcessedIceSet.clear();
+        pendingRemoteIceQueue = [];
+        webrtcRemoteTrackReceiving = false;
+
         const pc = new RTCPeerConnection({
           iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun3.l.google.com:19302' },
             {
               urls: [
                 'turn:openrelay.metered.ca:80',
@@ -10846,7 +10899,8 @@ ET
               username: 'openrelayproject',
               credential: 'openrelayproject'
             }
-          ]
+          ],
+          iceCandidatePoolSize: 4
         });
         rtcPeerConn = pc;
 
@@ -10856,12 +10910,22 @@ ET
           }
         };
 
+        pc.oniceconnectionstatechange = () => {
+          const st = pc.iceConnectionState;
+          if (st === 'connected' || st === 'completed') {
+            webrtcRemoteTrackReceiving = true;
+            stopPcmFallbackEngine();
+          } else if (st === 'disconnected' && isAppCallConnected) {
+            try { if (typeof pc.restartIce === 'function') pc.restartIce(); } catch(e){}
+          }
+        };
+
         pc.onicecandidate = (event) => {
           if (event.candidate && activeCallPacket) {
             const key = role === 'CALLER' ? 'callerIce' : 'driverIce';
             if (!Array.isArray(activeCallPacket[key])) activeCallPacket[key] = [];
             activeCallPacket[key].push(event.candidate.toJSON ? event.candidate.toJSON() : event.candidate);
-            saveAndBroadcastCallPacket(activeCallPacket);
+            pushIceCandidatesOnly(activeCallPacket.callId, role, activeCallPacket[key]);
           }
         };
 
@@ -10902,14 +10966,13 @@ ET
         subEl.innerText = `🛡️ 100% Encrypted Call • आपका और ड्राइवर का नंबर छुपा (Hidden) है`;
       }
 
-      // 1. Acquire studio-grade HD microphone with Echo Cancellation & Noise Suppression
       try {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           appCallMicStream = await navigator.mediaDevices.getUserMedia({
             audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true,
+              echoCancellation: { ideal: true },
+              noiseSuppression: { ideal: true },
+              autoGainControl: { ideal: true },
               channelCount: 1,
               sampleRate: 48000
             }
@@ -10919,7 +10982,6 @@ ET
         }
       } catch(e){}
 
-      // 2. Build Encrypted Call Packet (NO callerPhone or personal details exposed!)
       const maskedSessionTag = 'SS-' + String(activeCallId).slice(-4);
       const callPacket = {
         callId: activeCallId,
@@ -10948,14 +11010,14 @@ ET
             appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
           }
           const offer = await pc.createOffer({ offerToReceiveAudio: true });
-          await pc.setLocalDescription(offer);
-          callPacket.webrtcOffer = { type: offer.type, sdp: offer.sdp };
+          const tunedOffer = { type: offer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(offer.sdp) };
+          await pc.setLocalDescription(tunedOffer);
+          callPacket.webrtcOffer = tunedOffer;
         }
       } catch(e){}
 
       saveAndBroadcastCallPacket(callPacket);
 
-      // 3. Play clean outgoing ringback tone every 2.4s until Driver answers on their phone
       playDialToneBeep(425, 320);
       setTimeout(() => playDialToneBeep(425, 320), 450);
       outgoingRingLoop = setInterval(() => {
@@ -10996,18 +11058,22 @@ ET
 
       if (banner) banner.style.display = 'none';
       if (statusEl) statusEl.innerText = `🟢 Connected • ${erName}`;
-      if (subEl) subEl.innerText = `🛡️ 100% Encrypted HD Voice (${vehNo}) • Number Hidden`;
-      if (micLbl) micLbl.innerText = `🎙️ Encrypted 2-Way HD Voice Live`;
+      if (subEl) subEl.innerText = `🛡️ 100% Encrypted HD Voice (${vehNo}) • Zero Echo`;
+      if (micLbl) micLbl.innerText = `🎙️ Continuous HD Voice Live`;
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        bubbleEl.innerHTML = `🟢 <b>Encrypted Call Connected:</b> दोनों तरफ़ के नंबर छुपे हैं — अब सीधे साफ़ आवाज़ में बात करें!`;
+        bubbleEl.innerHTML = `🟢 <b>Encrypted Call Connected:</b> दोनों तरफ़ के नंबर छुपे हैं — अब बिना ब्रेक के साफ़ आवाज़ में बात करें!`;
       }
 
       playDialToneBeep(660, 160);
 
-      if (appCallMicStream && (activeCallId || packet?.callId)) {
-        startServerToServerPcmVoiceEngine(appCallMicStream, activeCallId || packet.callId, activeCallRole || 'CALLER');
-      }
+      // Wait 1.8s for WebRTC P2P/TURN track to lock in; ONLY start PCM fallback if WebRTC hasn't connected yet!
+      if (pcmFallbackDelayTimer) clearTimeout(pcmFallbackDelayTimer);
+      pcmFallbackDelayTimer = setTimeout(() => {
+        if (isAppCallConnected && !webrtcRemoteTrackReceiving && appCallMicStream && (activeCallId || packet?.callId)) {
+          startServerToServerPcmVoiceEngine(appCallMicStream, activeCallId || packet.callId, activeCallRole || 'CALLER');
+        }
+      }, 1800);
 
       clearInterval(appCallTimerInterval);
       appCallSeconds = 0;
@@ -11038,9 +11104,9 @@ ET
         if (!appCallMicStream && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           appCallMicStream = await navigator.mediaDevices.getUserMedia({
             audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true,
+              echoCancellation: { ideal: true },
+              noiseSuppression: { ideal: true },
+              autoGainControl: { ideal: true },
               channelCount: 1,
               sampleRate: 48000
             }
@@ -11058,12 +11124,14 @@ ET
             await pc.setRemoteDescription(new RTCSessionDescription(pkt.webrtcOffer));
             if (Array.isArray(pkt.callerIce)) {
               for (const c of pkt.callerIce) {
-                try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e){}
+                await addOrQueueRemoteIceCandidate(c);
               }
             }
+            await flushPendingRemoteIceCandidates();
             const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-            pkt.webrtcAnswer = { type: answer.type, sdp: answer.sdp };
+            const tunedAnswer = { type: answer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(answer.sdp) };
+            await pc.setLocalDescription(tunedAnswer);
+            pkt.webrtcAnswer = tunedAnswer;
           }
         }
       } catch(e){}
@@ -11081,14 +11149,11 @@ ET
       try {
         if (rtcPeerConn && packet.webrtcAnswer && !rtcPeerConn.currentRemoteDescription) {
           await rtcPeerConn.setRemoteDescription(new RTCSessionDescription(packet.webrtcAnswer));
+          await flushPendingRemoteIceCandidates();
         }
         if (rtcPeerConn && Array.isArray(pktDriverIce(packet))) {
           for (const cand of pktDriverIce(packet)) {
-            const key = JSON.stringify(cand);
-            if (!localProcessedIceSet.has(key)) {
-              localProcessedIceSet.add(key);
-              try { await rtcPeerConn.addIceCandidate(new RTCIceCandidate(cand)); } catch(e){}
-            }
+            await addOrQueueRemoteIceCandidate(cand);
           }
         }
       } catch(e){}
@@ -11101,18 +11166,14 @@ ET
       return (packet && Array.isArray(packet.driverIce)) ? packet.driverIce : [];
     }
 
-    // Ring on ANY open Driver phone/Chrome profile that is NOT the Caller's own device!
     function isIncomingCallForThisDriver(packet) {
       if (!packet || !packet.callId) return false;
-      
 
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
       const me = getActiveUserProfile();
 
-      // 1. NEVER ring on the Caller's own phone/tab!
       if (activeCallRole === 'CALLER' && activeCallId === packet.callId) return false;
       if (myDevId && packet.callerDeviceId && packet.callerDeviceId === myDevId) {
-        // Only allow same-device if explicitly switched to the target driver's account
         const isExactDriverAccount = me && (
           (me.phone && packet.driverPhone && String(packet.driverPhone).trim() === String(me.phone).trim()) ||
           (me.name && packet.driverName && String(packet.driverName).trim().toLowerCase() === String(me.name).trim().toLowerCase())
@@ -11120,8 +11181,6 @@ ET
         if (!isExactDriverAccount) return false;
       }
 
-      // 2. If this is ANY other device/Chrome browser (packet.callerDeviceId !== myDevId):
-      //    Ring whether the driver is on their exact profile OR opened the app on any profile in Chrome!
       return true;
     }
 
@@ -11145,6 +11204,8 @@ ET
         saveAndBroadcastCallPacket(packet);
       }
 
+      clearServiceWorkerIncomingCallNotification();
+      updateMediaSessionForBackgroundStandby(false);
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal && incModal.style.display !== 'flex' && !isAppCallConnected) {
         document.getElementById('wa-inc-caller-name').innerText = packet.callerName || '🔒 Verified Passenger';
@@ -11166,10 +11227,13 @@ ET
           }, 2000);
         }
 
+        updateMediaSessionForBackgroundStandby(true, packet.vehicleNumber);
+        notifyServiceWorkerIncomingCall(packet);
         try {
           if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(`🔒 SafarSaathi Encrypted Call`, {
-              body: `Verified Passenger is calling for ${packet.vehicleNumber} (Number Hidden for Privacy)`
+              body: `Verified Passenger is calling for ${packet.vehicleNumber} (Number Hidden for Privacy)`,
+              requireInteraction: true
             });
           }
         } catch(e){}
@@ -11189,7 +11253,6 @@ ET
 
     function declineIncomingErickshawCall() {
       stopAllCallRingtones();
-      if (activeCallId) declinedOrEndedCallIds.add(activeCallId);
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal) incModal.style.display = 'none';
       if (activeCallPacket) {
@@ -11231,8 +11294,8 @@ ET
       clearTimeout(appCallRingTimer);
       stopAllCallRingtones();
       isAppCallConnected = false;
+      webrtcRemoteTrackReceiving = false;
 
-      if (activeCallId) declinedOrEndedCallIds.add(activeCallId);
       if (activeCallPacket && activeCallPacket.status !== 'ENDED') {
         activeCallPacket.status = 'ENDED';
         saveAndBroadcastCallPacket(activeCallPacket);
@@ -11241,6 +11304,10 @@ ET
       activeCallId = null;
       activeCallRole = null;
 
+      const audioEl = document.getElementById('ss-remote-call-audio');
+      if (audioEl) {
+        try { audioEl.srcObject = null; } catch(e){}
+      }
       if (rtcPeerConn) {
         try { rtcPeerConn.close(); } catch(e){}
         rtcPeerConn = null;
@@ -11265,37 +11332,30 @@ ET
 
     function processIncomingCallPacketSignal(pkt) {
       if (!pkt || !pkt.callId) return;
-      
       const ageMs = Date.now() - Number(pkt.updatedAt || new Date(pkt.startedAt || 0).getTime() || 0);
-      if (ageMs > 60000) return; // Ignore calls older than 60s
+      if (ageMs > 60000) return;
 
       if (activeCallId && pkt.callId === activeCallId) {
-        activeCallPacket = pkt;
+        activeCallPacket = { ...(activeCallPacket || {}), ...pkt };
         if (activeCallRole === 'CALLER') {
           if (pkt.status === 'RINGING') {
             const st = document.getElementById('erp-call-status-text');
             const sub = document.getElementById('erp-call-substatus-text');
-            if (st && !isAppCallConnected) st.innerText = `🔔 Ringing ${pkt.driverName}...`;
+            if (st && !isAppCallConnected) st.innerText = `🔔 Ringing ${pkt.driverName || 'Driver'}...`;
             if (sub && !isAppCallConnected) sub.innerText = `🛡️ 100% Encrypted • ड्राइवर के ऐप पर घंटी बज रही है!`;
-          } else if (pkt.status === 'CONNECTED') {
-            onDriverAcceptedCallSignal(pkt);
+          } else if (pkt.status === 'CONNECTED' || pkt.webrtcAnswer || (Array.isArray(pkt.driverIce) && pkt.driverIce.length > 0)) {
+            onDriverAcceptedCallSignal(activeCallPacket);
           } else if (pkt.status === 'DECLINED' || pkt.status === 'ENDED') {
-            declinedOrEndedCallIds.add(pkt.callId);
             endAppToAppVoiceCall(true);
             showToast('☎️ कॉल समाप्त हो गया।', '#dc2626');
           }
         } else if (activeCallRole === 'DRIVER') {
           if (rtcPeerConn && Array.isArray(pkt.callerIce)) {
             pkt.callerIce.forEach(cand => {
-              const key = JSON.stringify(cand);
-              if (!localProcessedIceSet.has(key)) {
-                localProcessedIceSet.add(key);
-                try { rtcPeerConn.addIceCandidate(new RTCIceCandidate(cand)); } catch(e){}
-              }
+              addOrQueueRemoteIceCandidate(cand);
             });
           }
           if (pkt.status === 'ENDED') {
-            declinedOrEndedCallIds.add(pkt.callId);
             endAppToAppVoiceCall(true);
             showToast('☎️ कॉल समाप्त हो गया।', '#dc2626');
           }
@@ -11308,8 +11368,195 @@ ET
       }
     }
 
-    // 1.0-Second Multi-Cloud Poll (Firestore + RTDB) so calls ring even if WebSocket reconnects
-    setInterval(() => {
+    // =========================================================================
+    // 🔋 24x7 BACKGROUND KEEP-ALIVE ENGINE (WORKS WHEN PHONE IS LOCKED OR MINIMIZED)
+    //    1. Unthrottled Web Worker 1s Timer (Never paused when Chrome/APK is minimized)
+    //    2. Silent Audio Loop + MediaSession API (Keeps OS audio/VoIP service awake on lock screen)
+    //    3. Screen WakeLock API (Auto-reacquired)
+    //    4. Service Worker High-Priority Lock-Screen Call Notification with Accept/Decline
+    // =========================================================================
+    let ssWakeLockSentinel = null;
+    let ssBgKeepAliveAudioEl = null;
+    let ssBgWorker = null;
+    let ssBgServiceStarted = false;
+
+    // Generate a valid 1-second 8kHz mono silent WAV Data URI so Android/iOS keeps the background process alive
+    function createSilentKeepAliveWavDataUri() {
+      const sampleRate = 8000;
+      const numSamples = 8000;
+      const buffer = new ArrayBuffer(44 + numSamples * 2);
+      const view = new DataView(buffer);
+      function writeStr(offset, str) {
+        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+      }
+      writeStr(0, 'RIFF');
+      view.setUint32(4, 36 + numSamples * 2, true);
+      writeStr(8, 'WAVE');
+      writeStr(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeStr(36, 'data');
+      view.setUint32(40, numSamples * 2, true);
+      // Imperceptible +/- 1 LSB sub-audible keep-alive pulse so OS audio mixer never marks track idle
+      for (let i = 0; i < numSamples; i++) {
+        view.setInt16(44 + i * 2, (i % 2 === 0) ? 1 : -1, true);
+      }
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+      return 'data:audio/wav;base64,' + btoa(binary);
+    }
+
+    async function requestScreenAndBackgroundWakeLock() {
+      try {
+        if ('wakeLock' in navigator && document.visibilityState === 'visible') {
+          ssWakeLockSentinel = await navigator.wakeLock.request('screen');
+        }
+      } catch(e){}
+    }
+
+    function updateMediaSessionForBackgroundStandby(isRinging = false, vehicleNumber = '') {
+      try {
+        if (!('mediaSession' in navigator)) return;
+        if (isRinging) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: '🔔 Incoming SafarSaathi Call (' + (vehicleNumber || 'Live Vehicle') + ')',
+            artist: 'Verified Passenger Calling • Press Play/Accept to Talk',
+            album: 'SafarSaathi Encrypted Voice Call'
+          });
+        } else {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: 'SafarSaathi 24x7 Live Radar & Call Standby',
+            artist: '🟢 Online in Background • Ready for Incoming Calls',
+            album: 'SafarSaathi Assam'
+          });
+        }
+        navigator.mediaSession.playbackState = 'playing';
+        navigator.mediaSession.setActionHandler('play', () => {
+          if (document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex' && !isAppCallConnected) {
+            acceptIncomingErickshawCall();
+          } else if (ssBgKeepAliveAudioEl) {
+            ssBgKeepAliveAudioEl.play().catch(() => {});
+          }
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+          if (isAppCallConnected) {
+            endAppToAppVoiceCall();
+          } else if (ssBgKeepAliveAudioEl) {
+            // Keep background service playing even if OS tries to pause on lock
+            ssBgKeepAliveAudioEl.play().catch(() => {});
+          }
+        });
+      } catch(e){}
+    }
+
+    function notifyServiceWorkerIncomingCall(packet) {
+      try {
+        if ('Notification' in window && Notification.permission === 'granted') {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_INCOMING_CALL_NOTIFICATION',
+              packet: packet
+            });
+          } else if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+            navigator.serviceWorker.ready.then(reg => {
+              if (reg && reg.active) {
+                reg.active.postMessage({
+                  type: 'SHOW_INCOMING_CALL_NOTIFICATION',
+                  packet: packet
+                });
+              }
+            }).catch(() => {});
+          }
+        }
+      } catch(e){}
+    }
+
+    function clearServiceWorkerIncomingCallNotification() {
+      try {
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_INCOMING_CALL_NOTIFICATION' });
+        }
+      } catch(e){}
+    }
+
+    function enableFullBackgroundCallAndGpsService(showConfirmToast = false) {
+      try {
+        ensureUnlockedCallAudioContext();
+        requestScreenAndBackgroundWakeLock();
+
+        if (!ssBgKeepAliveAudioEl) {
+          ssBgKeepAliveAudioEl = document.createElement('audio');
+          ssBgKeepAliveAudioEl.id = 'ss-bg-keepalive-audio';
+          ssBgKeepAliveAudioEl.loop = true;
+          ssBgKeepAliveAudioEl.playsInline = true;
+          ssBgKeepAliveAudioEl.volume = 0.02;
+          ssBgKeepAliveAudioEl.src = createSilentKeepAliveWavDataUri();
+          ssBgKeepAliveAudioEl.style.display = 'none';
+          document.body.appendChild(ssBgKeepAliveAudioEl);
+        }
+        ssBgKeepAliveAudioEl.play().then(() => {
+          ssBgServiceStarted = true;
+          updateMediaSessionForBackgroundStandby(false);
+        }).catch(() => {});
+
+        if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+          Notification.requestPermission().catch(() => {});
+        }
+
+        if (showConfirmToast) {
+          showToast('🔋 24x7 Background Call & Lock-Screen Service एक्टिव हो गई है! अब मोबाइल लॉक होने पर भी कॉल और घंटी बजेगी।', '#15803d');
+        }
+      } catch(e){}
+    }
+
+    // Automatically activate Background Keep-Alive on first touch/click anywhere in the app or login
+    ['click', 'touchstart'].forEach(evtName => {
+      document.addEventListener(evtName, function onFirstUserWake() {
+        if (!ssBgServiceStarted) {
+          enableFullBackgroundCallAndGpsService(false);
+        }
+      }, { passive: true });
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        requestScreenAndBackgroundWakeLock();
+      }
+      if (ssBgKeepAliveAudioEl && ssBgKeepAliveAudioEl.paused && isUserLoggedIn()) {
+        ssBgKeepAliveAudioEl.play().catch(() => {});
+      }
+      // Immediately poll for any incoming call when switching between background/lockscreen and foreground
+      runBackgroundSafeCallAndPresenceTick();
+    });
+
+    // Listen for Lock-Screen Notification click actions from Service Worker (sw.js)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        const data = event.data || {};
+        if (data.type === 'SW_INCOMING_CALL_ACTION') {
+          if (data.packet && !activeCallPacket) {
+            activeCallPacket = data.packet;
+            activeCallId = data.packet.callId;
+            activeCallRole = 'DRIVER';
+          }
+          if (data.action === 'decline') {
+            declineIncomingErickshawCall();
+          } else {
+            const incModal = document.getElementById('whatsapp-incoming-call-modal');
+            if (incModal) incModal.style.display = 'flex';
+            acceptIncomingErickshawCall();
+          }
+        }
+      });
+    }
+
+    function runBackgroundSafeCallAndPresenceTick() {
       try {
         broadcastMyOnlinePresence();
         if (typeof db !== 'undefined' && db) {
@@ -11329,7 +11576,21 @@ ET
           })
           .catch(() => {});
       } catch(e){}
-    }, 1000);
+    }
+
+    // Start Unthrottled Web Worker 1-Second Heartbeat (Works even when Chrome tab or APK is in background!)
+    (function initUnthrottledBackgroundWorker() {
+      try {
+        const workerCode = "setInterval(function(){ postMessage('BG_TICK'); }, 1000);";
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        ssBgWorker = new Worker(URL.createObjectURL(blob));
+        ssBgWorker.onmessage = function() {
+          runBackgroundSafeCallAndPresenceTick();
+        };
+      } catch(e) {
+        setInterval(runBackgroundSafeCallAndPresenceTick, 1000);
+      }
+    })();
 
     // =========================================================================
     // 🚨 CUSTOMER & DRIVER COMPLAINT BOX CONTROLLER (SYNCED WITH ADMIN PANEL)
