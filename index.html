@@ -1987,8 +1987,8 @@
           <!-- =================================================================== -->
           <!-- PAGE 3: 👑 RACEMANAGER WINNER REVEALED! (LOWEST BET WINS)           -->
           <!-- =================================================================== -->
-          <div id="chamet-result-page" style="display: none; padding: 0.35rem 0.65rem 0.65rem 0.65rem;">
-            <div id="race-winner-card" style="background: linear-gradient(180deg, #111827 0%, #090d16 100%); border: 2px solid #22d3ee; border-radius: 14px; padding: 0.65rem; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);">
+          <div id="chamet-result-page" style="display: none; padding: 0.2rem 0.5rem 0.3rem 0.5rem;">
+            <div id="race-winner-card" style="background: linear-gradient(180deg, #111827 0%, #090d16 100%); border: 2px solid #22d3ee; border-radius: 14px; padding: 0.4rem 0.5rem; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);">
 
               <div style="margin-bottom: 0.45rem;">
                 <div style="font-size: 1.15rem; line-height: 1; color: #fde047; margin-bottom: 2px;">👑</div>
@@ -2033,8 +2033,8 @@
                 </div>
               </div>
 
-              <!-- LOWEST BET BIKE RACE RULE DETAILS -->
-              <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(34, 211, 238, 0.45); border-radius: 8px; padding: 5px 8px; margin-bottom: 0.45rem; text-align: left; font-size: 0.58rem; color: #e2e8f0; line-height: 1.4;">
+              <!-- RACE RESULT SUMMARY -->
+              <div style="display: none;">
                 <div id="res-detail-line-1">• <b>Race Champion:</b> शानदार स्पीड के साथ फिनिश लाइन पार कर #1 विजेता बना!</div>
                 <div id="res-detail-line-2">• <b>Ride & Earn Coins:</b> हर राइड या पोस्ट कंप्लीट करने पर आपको +100 फ्री गेम कॉइन्स मिलते हैं!</div>
                 <div id="res-detail-line-3">• <b>2x Free Reward:</b> विजेता राइडर चुनने पर दोगुने गेमिंग कॉइन्स वॉलेट में जुड़ते हैं!</div>
@@ -3869,8 +3869,10 @@
       } else if (tab === 'profile') {
         renderProfileView();
       } else if (tab === 'post-erickshaw') {
+        start1SecondLiveGpsStream(false, false);
         preparePostErickshawForm();
       } else if (tab === 'live-erickshaw') {
+        start1SecondLiveGpsStream(true, false);
         closeErickshawOverlapFlipPage();
         renderLiveErickshaws();
       } else if (tab === 'complaint') {
@@ -4239,8 +4241,9 @@
       // 1. Initialize Leaflet Map with Google Maps Tiles if not already created
       if (!googleLiveMap && typeof L !== 'undefined') {
         // Center strictly on customer's live GPS coordinates if available, otherwise default Assam center
-        const initialCenter = currentLiveCoords ? [currentLiveCoords.lat, currentLiveCoords.lng] : [26.1445, 91.7362];
-        const initialZoom = currentLiveCoords ? 15 : 13;
+        const baseC = getBaseUserCenter();
+        const initialCenter = [baseC.lat, baseC.lng];
+        const initialZoom = 16;
 
         googleLiveMap = L.map('google-live-map-div', {
           zoomControl: true,
@@ -4679,11 +4682,26 @@
         lastUpdated: new Date().toISOString()
       };
 
+      try {
+        ssStorage.setItem('ss_last_live_gps', JSON.stringify({ lat, lng, roadName, ts: Date.now() }));
+      } catch(e){}
+
       updateCoordsDisplay(lat, lng, accuracy, roadName, aiSnap.isSnapped);
 
+      const isFirstRealLock = !window._hasLockedRealUserGpsOnce;
+      window._hasLockedRealUserGpsOnce = true;
+
       if (googleLiveMap && typeof L !== 'undefined') {
-        const shouldZoom = forceZoom || (isImprovement && rawAccuracy <= 60) || aiSnap.isSnapped;
+        const shouldZoom = forceZoom || isFirstRealLock || (isImprovement && rawAccuracy <= 60) || aiSnap.isSnapped;
         updateUserMarkerOnMap(lat, lng, accuracy, roadName, shouldZoom);
+      }
+
+      // Also immediately center & update the inDrive-style Live E-Rickshaw Radar Map on the user's real nearby location!
+      if (typeof erickshawRadarMap !== 'undefined' && erickshawRadarMap && typeof L !== 'undefined') {
+        if (forceZoom || isFirstRealLock) {
+          try { erickshawRadarMap.setView([lat, lng], 16); } catch(e){}
+        }
+        try { initOrUpdateErickshawRadarMap(); } catch(e){}
       }
 
       // Broadcast Driver Live Location every second if active
@@ -9155,8 +9173,9 @@ ET
     }
 
     setTimeout(() => {
+      try { start1SecondLiveGpsStream(false, false); } catch(e){}
       try { initCarRacingGame(); } catch(e){}
-    }, 400);
+    }, 300);
 
     // Daily Bonus: 20 Coins Free Every Day
     function claimDailyBonus() {
@@ -9457,9 +9476,16 @@ ET
 
     function getBaseUserCenter() {
       if (typeof currentLiveCoords !== 'undefined' && currentLiveCoords && currentLiveCoords.lat && currentLiveCoords.lng) {
-        return { lat: currentLiveCoords.lat, lng: currentLiveCoords.lng };
+        return { lat: currentLiveCoords.lat, lng: currentLiveCoords.lng, isRealGps: true, roadName: currentLiveCoords.roadName || 'Your Nearby Area' };
       }
-      return { lat: 26.1355, lng: 91.8060 }; // Khanapara / Panjabari Guwahati Corridor (matching screenshot!)
+      try {
+        const cached = JSON.parse(ssStorage.getItem('ss_last_live_gps') || 'null');
+        if (cached && cached.lat && cached.lng) {
+          return { lat: Number(cached.lat), lng: Number(cached.lng), isRealGps: true, roadName: cached.roadName || 'Your Nearby Area' };
+        }
+      } catch(e){}
+      // Default to Nagaon Town Center, Assam before first GPS lock
+      return { lat: 26.3464, lng: 92.6840, isRealGps: false, roadName: 'Nagaon Town Radar' };
     }
 
     // 100% REAL DATA ONLY — ZERO FAKE E-RICKSHAWS!
@@ -9818,7 +9844,7 @@ ET
                   </span>
                 </div>
                 <div style="font-size:0.68rem; color:#15803d; font-weight:800; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                  🛣️ Route: ${er.standArea}
+                  🟢 Live Nearby GPS (${distTxt})
                 </div>
                 <div style="font-size:0.58rem; color:#475569; font-weight:800; margin-top:2px;">
                   📍 ${distTxt} • 🕒 Posted ${timing.agoLabel} (${timing.remLabel})
@@ -9880,6 +9906,18 @@ ET
       }
     }
 
+    let erickshawRadarNearbyCircle = null;
+
+    function focusNearestLiveErickshaw() {
+      const list = getActiveErickshawsList();
+      if (list.length > 0 && erickshawRadarMap) {
+        const nearest = list[0];
+        erickshawRadarMap.setView([nearest.lat, nearest.lng], 16);
+      } else {
+        centerErickshawRadarOnUser();
+      }
+    }
+
     function initOrUpdateErickshawRadarMap() {
       const mapContainer = document.getElementById('erickshaw-live-radar-map');
       if (!mapContainer || typeof L === 'undefined') return;
@@ -9890,7 +9928,7 @@ ET
         erickshawRadarMap = L.map('erickshaw-live-radar-map', {
           zoomControl: true,
           attributionControl: false
-        }).setView([c.lat, c.lng], 15);
+        }).setView([c.lat, c.lng], 16);
 
         erickshawRadarRoadLayer = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
           maxZoom: 20,
@@ -9902,13 +9940,21 @@ ET
         }, 80);
       }
 
-      // 1. User's Live GPS Green Dot Marker
-      const greenPickupHtml = `<div style="width:18px; height:18px; border-radius:50%; background:#16a34a; border:3px solid #ffffff; box-shadow:0 0 0 2px #0f172a, 0 2px 6px rgba(0,0,0,0.4);" title="Your Live GPS Location"></div>`;
+      // 1. inDrive-Style User Live Location Pin + Pulsing Nearby Radar Zone Circle
+      const greenPickupHtml = `
+        <div style="position:relative; width:56px; height:56px; display:flex; align-items:center; justify-content:center;">
+          <div style="position:absolute; width:52px; height:52px; border-radius:50%; background:rgba(22,163,74,0.22); border:1.5px solid rgba(22,163,74,0.55); animation:pulse 1.4s infinite;"></div>
+          <div style="width:18px; height:18px; border-radius:50%; background:#16a34a; border:3px solid #ffffff; box-shadow:0 0 0 2px #0f172a, 0 2px 8px rgba(0,0,0,0.45); position:relative; z-index:2;"></div>
+          <div style="position:absolute; bottom:-8px; background:#0f172a; color:#86efac; font-size:8px; font-weight:900; padding:1px 5px; border-radius:4px; border:1px solid #22c55e; white-space:nowrap; z-index:3; box-shadow:0 1px 4px rgba(0,0,0,0.3);">
+            📍 आप यहाँ हैं
+          </div>
+        </div>
+      `;
       const greenIcon = L.divIcon({
         className: 'ola-green-pickup-dot',
         html: greenPickupHtml,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
+        iconSize: [56, 56],
+        iconAnchor: [28, 28]
       });
       if (erickshawRadarUserMarker) {
         erickshawRadarUserMarker.setLatLng([c.lat, c.lng]);
@@ -9916,6 +9962,22 @@ ET
       } else {
         erickshawRadarUserMarker = L.marker([c.lat, c.lng], { icon: greenIcon, zIndexOffset: 900 }).addTo(erickshawRadarMap);
       }
+
+      // Draw inDrive-style 450m Nearby Search Radar Circle around user's location
+      try {
+        if (erickshawRadarNearbyCircle) {
+          erickshawRadarNearbyCircle.setLatLng([c.lat, c.lng]);
+        } else {
+          erickshawRadarNearbyCircle = L.circle([c.lat, c.lng], {
+            radius: 450,
+            color: '#16a34a',
+            fillColor: '#86efac',
+            fillOpacity: 0.10,
+            weight: 1.5,
+            dashArray: '5, 5'
+          }).addTo(erickshawRadarMap);
+        }
+      } catch(e){}
 
       if (erickshawRadarConnectingLine) {
         try { erickshawRadarMap.removeLayer(erickshawRadarConnectingLine); } catch(e){}
@@ -9961,15 +10023,22 @@ ET
         }
       });
 
-      // Auto-fit bounds when E-Rickshaws appear so Passenger immediately sees both their location and the Live E-Rickshaw(s)!
+      // Keep the map locked onto the user's immediate nearby neighborhood (like inDrive)!
+      // Only fitBounds if there are nearby E-Rickshaws within 3.5 km of the user.
       if (list.length > 0 && erickshawRadarMap && window._lastFramedErCount !== list.length) {
         window._lastFramedErCount = list.length;
         try {
-          const pts = [[c.lat, c.lng]];
-          list.forEach(er => { if (er.lat && er.lng) pts.push([er.lat, er.lng]); });
-          if (pts.length > 1) {
-            const bounds = L.latLngBounds(pts);
-            erickshawRadarMap.fitBounds(bounds, { padding: [42, 42], maxZoom: 16 });
+          const nearbyPts = [[c.lat, c.lng]];
+          list.forEach(er => {
+            if (er.lat && er.lng && (er.distanceKm || 0) <= 3.5) {
+              nearbyPts.push([er.lat, er.lng]);
+            }
+          });
+          if (nearbyPts.length > 1) {
+            const bounds = L.latLngBounds(nearbyPts);
+            erickshawRadarMap.fitBounds(bounds, { padding: [45, 45], maxZoom: 16 });
+          } else {
+            erickshawRadarMap.setView([c.lat, c.lng], 16);
           }
         } catch(e){}
       } else if (list.length === 0) {
@@ -9978,20 +10047,21 @@ ET
 
       const pill = document.getElementById('er-radar-live-status-pill');
       const hintEl = document.getElementById('er-map-hint-text');
+      const areaLabel = c.roadName || 'आपके आस-पास का एरिया';
       if (pill) {
         if (list.length === 0) {
-          pill.innerHTML = `<span class="pulse-dot"></span><span>0 Live E-Rickshaw on Map</span>`;
+          pill.innerHTML = `<span class="pulse-dot"></span><span>📍 ${areaLabel}: 0 E-Rickshaw Nearby</span>`;
         } else {
           const nearest = list[0];
           const nearDist = formatNearbyDistance(nearest.distanceKm || 0.05);
-          pill.innerHTML = `<span class="pulse-dot"></span><span>${list.length} Live E-Rickshaw (${nearest.driverName} • ${nearDist})</span>`;
+          pill.innerHTML = `<span class="pulse-dot"></span><span onclick="focusNearestLiveErickshaw()" style="cursor:pointer;">🛺 ${list.length} Live Nearby (${nearest.driverName} • ${nearDist})</span>`;
         }
       }
       if (hintEl) {
         if (list.length === 0) {
-          hintEl.innerText = 'जब कोई ई-रिक्शा ड्राइवर मैप पर लाइव होगा तो वह हर 1 सेकंड में यहाँ मूव करता हुआ दिखेगा!';
+          hintEl.innerText = `📍 ${areaLabel} — आपके आस-पास का लाइव मैप खुला है। अभी पास में 0 ई-रिक्शा लाइव हैं (जैसे ही कोई ई-रिक्शा पास आएगा, यहाँ तुरंत दिखेगा)!`;
         } else {
-          hintEl.innerText = '🟢 हर 1 सेकंड में लाइव GPS अपडेट! मैप पर किसी भी ई-रिक्शा पर क्लिक करें — पेज फ्लिप होकर सभी ऑप्शन और डायरेक्ट कॉल आ जाएगा!';
+          hintEl.innerText = `🟢 आपके पास ${list.length} ई-रिक्शा लाइव हैं! किसी भी ई-रिक्शा पर टैप करके सीधे ड्राइवर को कॉल लगाएं।`;
         }
       }
     }
