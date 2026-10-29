@@ -1377,8 +1377,14 @@
             </div>
           </div>
 
+          <div style="background: #fefce8; border: 1.5px dashed #eab308; border-radius: 8px; padding: 6px 8px; margin-bottom: 0.55rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem;">
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 900; color: #854d0e; cursor: pointer; margin: 0;">
+              <input type="checkbox" id="df-use-referral-chk" style="width: 15px; height: 15px; accent-color: #16a34a;">
+              <span>🎁 इस कार पोस्ट पर ₹20 रेफरल बोनस यूज़ करें (-₹20 छूट)</span>
+            </label>
+          </div>
           <div class="form-group" style="margin-bottom: 0.85rem;">
-            <label>12-Digit Bank Payment UTR Number (₹100)*</label>
+            <label>12-Digit Bank Payment UTR Number*</label>
             <input type="text" id="df-utr" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="color: #000000; font-family: monospace; font-weight: 900; font-size: 1.05rem; border: 1.5px solid #16a34a; background: #ffffff;">
           </div>
 
@@ -1602,14 +1608,14 @@
           <div style="background: linear-gradient(90deg, #090d16 0%, #1e293b 50%, #090d16 100%); padding: 0.28rem 0.5rem; border-bottom: 1.5px solid #22d3ee; display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; gap: 4px;">
             <div style="display: flex; align-items: center; gap: 7px;">
               <div style="background: linear-gradient(135deg, #0891b2, #155e75); border: 1.5px solid #22d3ee; padding: 2px 7px; border-radius: 6px; transform: skewX(-10deg); box-shadow: 0 2px 6px rgba(0,0,0,0.6);">
-                <span style="font-size: 0.64rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 0.4px; white-space: nowrap;">LOWEST BET</span>
+                <span style="font-size: 0.64rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 0.4px; white-space: nowrap;">3D RACE</span>
               </div>
               <div>
                 <div style="font-size: 0.82rem; font-weight: 900; letter-spacing: 0.3px; color: #22d3ee; line-height: 1.05; display: flex; align-items: center; gap: 4px;">
-                  <span style="white-space: nowrap; font-size: 0.72rem;">🚵 LOWEST BET RACE</span>
+                  <span style="white-space: nowrap; font-size: 0.72rem;">🚵 MOUNTAIN BIKE 3D</span>
                 </div>
                 <div style="font-size: 0.56rem; color: #cbd5e1; font-weight: 700;">
-                  👥 <span id="race-live-players">1,842</span> • Round #<span id="race-round-number">101</span> • <span id="race-total-pool-banner" style="color: #a3e635; font-weight: 900;">Lowest Bet Wins!</span>
+                  👥 <span id="race-live-players">1,842</span> • Round #<span id="race-round-number">101</span> • <span id="race-total-pool-banner" style="color: #a3e635; font-weight: 900;">Free Play • +100 Coins/Ride</span>
                 </div>
               </div>
             </div>
@@ -1621,7 +1627,7 @@
                 <span id="game-coins-display" style="font-size: 0.8rem; font-weight: 900; color: #fde047; font-family: monospace;">100</span>
               </div>
               <button type="button" onclick="openBuyCoinsModal()" style="background: linear-gradient(135deg, #22d3ee, #0891b2); color: #090d16; border: 1px solid #a5f3fc; padding: 3px 8px; border-radius: 999px; font-weight: 900; font-size: 0.64rem; cursor: pointer;">
-                ➕ Coins
+                🎁 Free Coins
               </button>
               <button type="button" onclick="claimDailyBonus()" style="background: rgba(34, 211, 238, 0.16); color: #a5f3fc; border: 1px solid #22d3ee; padding: 3px 6px; border-radius: 999px; font-weight: 800; font-size: 0.62rem; cursor: pointer;" title="Daily 20 Free Coins">
                 🎁
@@ -1634,7 +1640,7 @@
             <div style="background: #090d16; border: 1.5px solid rgba(34, 211, 238, 0.55); border-radius: 10px; padding: 4px 8px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; gap: 4px;">
                 <span id="race-status-badge" style="background: #0891b2; color: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 0.6rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  🟢 Ready to race — Lowest Virtual Bet Wins!
+                  🟢 रेस तैयार है — अपना पसंदीदा राइडर चुनें!
                 </span>
                 <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
                   <span id="race-timer-pill" style="background: #090d16; color: #22d3ee; border: 1.5px solid #22d3ee; padding: 1px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 900; font-family: monospace; transform: skewX(-8deg);">
@@ -1659,19 +1665,19 @@
               <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,13,22,0.5) 0%, rgba(9,13,22,0.02) 48%, rgba(9,13,22,0.88) 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 5px 8px; pointer-events: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
                   <span style="background: rgba(9,13,22,0.92); color: #22d3ee; border: 1px solid #22d3ee; font-size: 0.54rem; font-weight: 900; padding: 2px 7px; border-radius: 6px;">
-                    🚵 WAYPOINT TRACK (WP_00 ➔ WP_FINISH) • 1.35x FINAL BOOST
+                    🚵 3D MOUNTAIN TRACK • PHOTO FINISH ARENA
                   </span>
                   <span id="race-hud-bets-text-pill" style="background: rgba(15, 23, 42, 0.92); color: #fde047; border: 1px solid #fde047; font-size: 0.52rem; font-weight: 900; padding: 2px 7px; border-radius: 6px; font-family: monospace;">
-                    VIRTUAL BETS: A:10 | B:20 | C:30
+                    LIVE TRACK: RIDER A • RIDER B • RIDER C
                   </span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                   <div>
                     <div style="font-size: 0.68rem; font-weight: 900; color: #ffffff; text-shadow: 0 1px 4px #000;">
-                      Rider A, Rider B या Rider C चुनें — सबसे कम बेट (Lowest Bet) वाला राइडर जीतेगा!
+                      Rider A, Rider B या Rider C चुनें — जीतने पर 2 गुना (2x) गेमिंग कॉइन्स पाएं!
                     </div>
                     <div style="font-size: 0.54rem; color: #a3e635; font-weight: 800;">
-                      डर्ट-रोड वेपॉइंट ट्रैक • लाइव लेन क्रॉसिंग • फिनिश पर 0.22x Slow-Motion Photo Finish!
+                      फ्री प्रैक्टिस कॉइन्स • हर राइड या पोस्ट कंप्लीट करने पर +100 Gaming Coins फ्री!
                     </div>
                   </div>
                 </div>
@@ -1720,7 +1726,7 @@
                       🪙 0 (₹0)
                     </div>
                     <div id="car-my-win-est-0" style="font-size: 0.5rem; font-weight: 800; color: #22d3ee;">
-                      Lowest Bet Wins (2x)
+                      Win 2x Game Coins
                     </div>
                   </div>
                 </div>
@@ -1769,7 +1775,7 @@
                       🪙 0 (₹0)
                     </div>
                     <div id="car-my-win-est-1" style="font-size: 0.5rem; font-weight: 800; color: #a3e635;">
-                      Lowest Bet Wins (2x)
+                      Win 2x Game Coins
                     </div>
                   </div>
                 </div>
@@ -1818,7 +1824,7 @@
                       🪙 0 (₹0)
                     </div>
                     <div id="car-my-win-est-2" style="font-size: 0.5rem; font-weight: 800; color: #fde047;">
-                      Lowest Bet Wins (2x)
+                      Win 2x Game Coins
                     </div>
                   </div>
                 </div>
@@ -1833,7 +1839,7 @@
             <!-- CUSTOMER'S OWN LIVE BET & RACEHUD SUMMARY BAR -->
             <div id="my-live-bets-summary-bar" style="background: linear-gradient(90deg, #0f172a, #164e63, #0f172a); border: 1.5px solid #22d3ee; border-radius: 10px; padding: 4px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 0.6rem;">
               <div id="my-live-bets-text" style="color: #ffffff; font-weight: 900;">
-                🎯 <b>VIRTUAL BETS:</b> Rider A, Rider B या Rider C पर टैप करें (सबसे कम बेट वाला राइडर जीतेगा!)
+                🎯 <b>SELECT RIDER:</b> Rider A, Rider B या Rider C पर टैप करके अपने फ्री कॉइन्स लगाएं!
               </div>
               <div id="my-live-bets-total-pill" style="background: #090d16; color: #22d3ee; border: 1px solid #22d3ee; padding: 1px 7px; border-radius: 999px; font-weight: 900; font-family: monospace;">
                 कुल बेट: 0 coins
@@ -1990,10 +1996,10 @@
                   <span style="font-size: 1.05rem; font-weight: 900; font-style: italic; color: #ffffff; letter-spacing: 1.2px;">WINNER REVEALED!</span>
                 </div>
                 <div id="winner-banner-title" style="font-size: 0.82rem; font-weight: 900; color: #22d3ee; margin-top: 5px; white-space: pre-line;">
-                  WINNER: Rider A • Lowest bet: 10 coins
+                  🏆 WINNER: Rider A
                 </div>
                 <div id="winner-banner-desc" style="font-size: 0.62rem; color: #cbd5e1; font-weight: 700; margin-top: 2px;">
-                  सबसे कम बेट (Lowest Virtual Bet) वाले राइडर ने रेस जीत ली!
+                  शानदार रेस फिनिश! विजेता राइडर को 2x गेम कॉइन्स मिले!
                 </div>
               </div>
 
@@ -2005,8 +2011,8 @@
                     <span id="res-row1-name" style="font-size: 0.78rem;">🚵 Rider A</span>
                   </div>
                   <div style="display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 0.7rem;">
-                    <span id="res-row1-bet">Lowest Bet</span>
-                    <span style="background: #ffffff; color: #090d16; padding: 1px 6px; border-radius: 4px;">1.35x Boost 🥇</span>
+                    <span id="res-row1-bet">1st Place</span>
+                    <span style="background: #ffffff; color: #090d16; padding: 1px 6px; border-radius: 4px;">Champion 🥇</span>
                   </div>
                 </div>
 
@@ -2029,9 +2035,9 @@
 
               <!-- LOWEST BET BIKE RACE RULE DETAILS -->
               <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(34, 211, 238, 0.45); border-radius: 8px; padding: 5px 8px; margin-bottom: 0.45rem; text-align: left; font-size: 0.58rem; color: #e2e8f0; line-height: 1.4;">
-                <div id="res-detail-line-1">• <b>Lowest Bet Rule:</b> सबसे कम बेट (virtualBet) वाला राइडर विजेता घोषित हुआ!</div>
-                <div id="res-detail-line-2">• <b>Final Waypoint Surge:</b> आख़िरी वेपॉइंट पर 1.35x बूस्ट के साथ सबसे आगे निकला!</div>
-                <div id="res-detail-line-3">• <b>Slow-Motion Reveal:</b> 0.22x स्लो-मोशन फ़ोटो-फ़िनिश में जीत कन्फ़र्म हुई!</div>
+                <div id="res-detail-line-1">• <b>Race Champion:</b> शानदार स्पीड के साथ फिनिश लाइन पार कर #1 विजेता बना!</div>
+                <div id="res-detail-line-2">• <b>Ride & Earn Coins:</b> हर राइड या पोस्ट कंप्लीट करने पर आपको +100 फ्री गेम कॉइन्स मिलते हैं!</div>
+                <div id="res-detail-line-3">• <b>2x Free Reward:</b> विजेता राइडर चुनने पर दोगुने गेमिंग कॉइन्स वॉलेट में जुड़ते हैं!</div>
               </div>
 
               <div style="font-size: 0.62rem; font-weight: 900; color: #94a3b8; letter-spacing: 1px; margin-bottom: 3px;">REWARD (2.0x • दोगुना कॉइन्स इनाम):</div>
@@ -2153,21 +2159,23 @@
             </div>
 
 
-            <!-- Row 3: Address & Compact 1-Tap Aadhaar Upload (Registration Only) -->
-            <div style="display: none; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.4rem;" id="reg-extra-row">
+            <!-- Row 3: Address, Referral Code & Aadhaar Upload (Registration Only) -->
+            <div style="display: none; grid-template-columns: 1fr 1fr 0.9fr; gap: 5px; margin-bottom: 0.35rem;" id="reg-extra-row">
               <div class="form-group" style="margin: 0;">
-                <label style="font-size: 0.68rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Address in Assam (स्थान / पता)*</label>
-                <input type="text" id="auth-input-address" class="form-control" placeholder="e.g. Paltan Bazar, Guwahati" style="height: 32px !important; font-size: 0.82rem; padding: 3px 8px;">
+                <label style="font-size: 0.64rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Address (पता)*</label>
+                <input type="text" id="auth-input-address" class="form-control" placeholder="Nagaon / Ghy" style="height: 31px !important; font-size: 0.78rem; padding: 2px 6px;">
               </div>
               <div class="form-group" style="margin: 0;">
-                <label style="font-size: 0.68rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Aadhaar Card Photo*</label>
-                <label for="auth-aadhaar-file" id="auth-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 32px; background: #f0fdf4; border: 1.5px dashed #16a34a; border-radius: 8px; color: #15803d; font-size: 0.72rem; font-weight: 800; cursor: pointer; padding: 0 6px; text-align: center; box-sizing: border-box; margin: 0;">
-                  📷 <span>Upload Aadhaar</span>
+                <label style="font-size: 0.64rem; font-weight: 800; color: #15803d; margin-bottom: 2px;">🎁 Referral Code</label>
+                <input type="text" id="auth-input-referral" class="form-control" maxlength="12" placeholder="Optional Mobile" style="height: 31px !important; font-size: 0.76rem; padding: 2px 6px; border: 1.5px dashed #16a34a;">
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 0.64rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Aadhaar KYC</label>
+                <label for="auth-aadhaar-file" id="auth-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 3px; height: 31px; background: #f0fdf4; border: 1.5px dashed #16a34a; border-radius: 8px; color: #15803d; font-size: 0.66rem; font-weight: 800; cursor: pointer; padding: 0 4px; text-align: center; box-sizing: border-box; margin: 0;">
+                  📷 <span>Aadhaar</span>
                 </label>
                 <input type="file" id="auth-aadhaar-file" accept="image/*" style="display: none;" onchange="handleAuthAadhaarScan(event)">
-                <div id="auth-aadhaar-preview-box" style="display: none; font-size: 0.62rem; color: #16a34a; font-weight: 900; text-align: center; margin-top: 1px;">
-                  ✓ Aadhaar Photo Attached
-                </div>
+                <div id="auth-aadhaar-preview-box" style="display: none; font-size: 0.58rem; color: #16a34a; font-weight: 900; text-align: center;">✓ Added</div>
               </div>
             </div>
           </div>
@@ -2239,7 +2247,17 @@
           </div>
 
           <!-- Dynamic Connected Vehicle Status Strip (Shows User's Active E-Rickshaws & Cars) -->
-          <div id="prof-connected-vehicles-strip" style="margin-bottom: 0.4rem;"></div>
+          <!-- 🎁 REFERRAL (₹100) & 10-RIDE (₹20 WITHDRAWAL UNLOCK) SUMMARY BAR -->
+          <div id="prof-referral-milestone-bar" onclick="openReferralAndRewardsModal()" style="background: linear-gradient(90deg, #fefce8, #f0fdf4); border: 1.5px solid #16a34a; border-radius: 9px; padding: 5px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 6px; cursor: pointer;">
+            <div style="font-size: 0.65rem; font-weight: 900; color: #0f172a; line-height: 1.25;">
+              🎁 <span>रेफरल वॉलेट: <b id="prof-ref-bal-txt" style="color:#15803d;">₹0</b> (₹20/ट्रिप छूट)</span> • 💸 <span>10-राइड अनलॉक: <b id="prof-unlock-bal-txt" style="color:#0284c7;">₹0</b> (<span id="prof-rides-count-txt">0/10</span> राइड)</span>
+            </div>
+            <span style="background: #16a34a; color: #ffffff; font-size: 0.62rem; font-weight: 900; padding: 3px 7px; border-radius: 6px; white-space: nowrap; flex-shrink: 0;">
+              📲 Refer & Withdraw ➔
+            </span>
+          </div>
+
+          <div id="prof-connected-vehicles-strip" style="margin-bottom: 0.35rem;"></div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
             <button type="button" class="btn btn-secondary" onclick="showSection('driver-fleet')" style="padding: 0.4rem 0.25rem; font-size: 0.68rem; font-weight: 900; color: #15803d; border-color: #16a34a;">
@@ -2290,63 +2308,50 @@
       </div>
     </section>
 
-    <!-- ==================== 7. 🛺 POST E-RICKSHAW (₹100 FOR 12 HOURS LIVE MOVING GPS - NO FARE) ==================== -->
+    <!-- ==================== 7. 🛺 POST E-RICKSHAW (NO ROUTE SELECTION • UTR CONFIRM -> 1s LIVE FOR 12 HOURS) ==================== -->
     <section id="section-post-erickshaw" class="app-section" style="display: none;">
-      <div class="app-card" style="padding: 0.55rem 0.65rem !important;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.3rem;">
+      <div class="app-card" style="padding: 0.6rem 0.7rem !important;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.35rem;">
           <div>
-            <h2 style="font-size: 0.94rem; font-weight: 900; color: #000000; margin: 0;">🛺 Post Live Moving E-Rickshaw (12 Hours)</h2>
-            <p style="font-size: 0.64rem; color: #15803d; font-weight: 800; margin: 1px 0 0 0;">
-              ₹100 / 12 घंटे • जहाँ-जहाँ ई-रिक्शा रूट में घूमेगा मैप पर लाइव दिखेगा • <b>कोई फेयर नहीं, डायरेक्ट कॉल टू रिसीव!</b>
+            <h2 style="font-size: 0.96rem; font-weight: 900; color: #000000; margin: 0;">🛺 Live E-Rickshaw Activation (12 Hours)</h2>
+            <p style="font-size: 0.65rem; color: #15803d; font-weight: 800; margin: 2px 0 0 0;">
+              कोई रूट या फेयर सेलेक्ट नहीं करना है • मोबाइल के लाइव GPS से जहाँ-जहाँ ई-रिक्शा चलेगा मैप पर दिखेगा!
             </p>
           </div>
           <span style="font-size: 0.63rem; background: #dcfce7; color: #15803d; border: 1px solid #16a34a; padding: 2px 7px; border-radius: 999px; font-weight: 900; white-space: nowrap;">🟢 12h Live GPS</span>
         </div>
 
-        <!-- Compact 2-Column E-Rickshaw Post Form (NO FARE INPUT - Direct Call Only!) -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.32rem;">
+        <!-- Compact 2-Column E-Rickshaw Post Form (ONLY Driver Name & Vehicle No - NO Route Selection!) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.38rem;">
           <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.65rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Driver Name*</label>
-            <input type="text" id="er-driver-name" class="form-control" placeholder="आपका नाम (Auto-filled)" style="height: 30px !important; font-size: 0.76rem !important; padding: 2px 7px !important;">
+            <label style="font-size: 0.66rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Driver Name*</label>
+            <input type="text" id="er-driver-name" class="form-control" placeholder="आपका नाम (Auto-filled)" style="height: 32px !important; font-size: 0.78rem !important; padding: 2px 8px !important;">
           </div>
           <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.65rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Vehicle No.*</label>
-            <input type="text" id="er-vehicle-no" class="form-control" value="AS-01-ER-4021" placeholder="e.g. AS-01-ER-4021" style="height: 30px !important; font-size: 0.76rem !important; padding: 2px 7px !important;">
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1.45fr 0.55fr; gap: 6px; margin-bottom: 0.32rem;">
-          <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.65rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">Live Roaming Route (किस रूट में ई-रिक्शा घूम रहा है)*</label>
-            <input type="text" id="er-area" class="form-control" value="Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar Route" placeholder="जहाँ-जहाँ ई-रिक्शा घूमेगा वह रूट" style="height: 30px !important; font-size: 0.75rem !important; padding: 2px 7px !important;">
-          </div>
-          <div class="form-group" style="margin: 0 !important;">
-            <label style="font-size: 0.65rem; font-weight: 800; color: #15803d; margin-bottom: 2px; display: block;">Call & GPS Mode</label>
-            <div style="height: 30px; background: #dcfce7; border: 1.5px solid #16a34a; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 900; color: #15803d; padding: 0 4px; text-align: center;">
-              📞 Direct Call (No Fare)
-            </div>
+            <label style="font-size: 0.66rem; font-weight: 800; color: #000000; margin-bottom: 2px; display: block;">E-Rickshaw Vehicle No.*</label>
+            <input type="text" id="er-vehicle-no" class="form-control" value="AS-01-ER-4021" placeholder="e.g. AS-01-ER-4021" style="height: 32px !important; font-size: 0.78rem !important; padding: 2px 8px !important;">
           </div>
         </div>
 
-        <!-- Quick Roaming Route Chips -->
-        <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.32rem;">
-          <button type="button" onclick="setErickshawStand('Paltan Bazar ⇄ Panbazar ⇄ Fancy Bazar Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Paltan–Fancy Route</button>
-          <button type="button" onclick="setErickshawStand('Ganeshguri ⇄ Dispur ⇄ Christian Basti Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Ganeshguri–Dispur</button>
-          <button type="button" onclick="setErickshawStand('Jalukbari ⇄ Maligaon ⇄ Kamakhya Gate Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Maligaon–Jalukbari</button>
-          <button type="button" onclick="setErickshawStand('Six Mile ⇄ Khanapara ⇄ Beltola Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Six Mile–Beltola</button>
-          <button type="button" onclick="setErickshawStand('Nagaon Town ⇄ Haibargaon ⇄ Dimaruguri Route')" style="padding: 2px 6px; font-size: 0.6rem; font-weight: 800; border-radius: 6px; border: 1px solid #16a34a; background: #f0fdf4; color: #15803d; cursor: pointer;">🛣️ Nagaon Route</button>
+        <!-- 🎁 Referral ₹20 Per-Trip Discount Option -->
+        <div id="er-referral-discount-box" style="background: #fefce8; border: 1.5px dashed #eab308; border-radius: 8px; padding: 5px 8px; margin-bottom: 0.38rem; display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.66rem;">
+          <label style="display: flex; align-items: center; gap: 6px; font-weight: 900; color: #854d0e; cursor: pointer; margin: 0;">
+            <input type="checkbox" id="er-use-referral-chk" onchange="updateErickshawFeeDisplay()" style="width: 15px; height: 15px; accent-color: #16a34a;">
+            <span>🎁 रेफरल बोनस से <b>₹20 छूट</b> यूज़ करें (Available: <b id="er-ref-avail-txt">₹0</b>)</span>
+          </label>
+          <span id="er-net-fee-pill" style="background: #16a34a; color: #fff; font-weight: 900; padding: 2px 7px; border-radius: 6px; font-size: 0.64rem;">Fee: ₹100</span>
         </div>
 
         <!-- Compact ₹100 Payment & QR Box -->
-        <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.38rem 0.5rem; margin-bottom: 0.32rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-          <img src="mitali_qr_compact.svg" alt="UPI QR" style="width: 52px; height: 52px; border-radius: 6px; border: 1px solid #16a34a; background: #fff; padding: 2px; flex-shrink: 0;">
+        <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.42rem 0.55rem; margin-bottom: 0.38rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <img src="mitali_qr_compact.svg" alt="UPI QR" style="width: 56px; height: 56px; border-radius: 6px; border: 1px solid #16a34a; background: #fff; padding: 2px; flex-shrink: 0;">
           <div style="flex: 1; min-width: 0;">
-            <div style="font-size: 0.7rem; font-weight: 900; color: #000000;">Pay ₹100 Live E-Rickshaw GPS Post (12 Hours)</div>
-            <div style="font-size: 0.6rem; color: #15803d; font-weight: 800; margin-bottom: 3px;">Jana Small Finance Bank • 6901027507@nyes • No Seat Fare Needed</div>
+            <div id="er-pay-heading-txt" style="font-size: 0.72rem; font-weight: 900; color: #000000;">Pay ₹100 for 12-Hour Live E-Rickshaw GPS</div>
+            <div style="font-size: 0.6rem; color: #15803d; font-weight: 800; margin-bottom: 4px;">Jana Small Finance Bank • 6901027507@nyes • +100 Free Game Coins!</div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
-              <a href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#5f259f; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.58rem; font-weight: 900; text-decoration: none;">PhonePe</a>
-              <a href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#1d4ed8; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.58rem; font-weight: 900; text-decoration: none;">GPay</a>
-              <a href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#16a34a; color:#fff; text-align:center; padding: 3px 4px; border-radius: 5px; font-size: 0.58rem; font-weight: 900; text-decoration: none;">UPI Pay</a>
+              <a id="er-upi-link-pp" href="phonepe://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#5f259f; color:#fff; text-align:center; padding: 4px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; text-decoration: none;">PhonePe</a>
+              <a id="er-upi-link-gp" href="tez://upi/pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#1d4ed8; color:#fff; text-align:center; padding: 4px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; text-decoration: none;">GPay</a>
+              <a id="er-upi-link-any" href="upi://pay?pa=6901027507@nyes&pn=Mitali%20Kalita&am=100&cu=INR&tn=SafarSaathi%20ERickshaw%2012Hr" style="background:#16a34a; color:#fff; text-align:center; padding: 4px; border-radius: 5px; font-size: 0.6rem; font-weight: 900; text-decoration: none;">UPI Pay</a>
             </div>
           </div>
         </div>
@@ -2354,11 +2359,11 @@
         <!-- 12-Digit UTR + Submit Row -->
         <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: end;">
           <div>
-            <label style="font-size: 0.63rem; font-weight: 900; color: #000000; display: block; margin-bottom: 2px;">12-Digit Bank UTR Number (₹100)*</label>
-            <input type="text" id="er-utr" class="form-control" maxlength="12" placeholder="Enter 12-digit UTR" style="height: 31px !important; font-family: monospace; font-weight: 900; font-size: 0.82rem !important; border: 1.5px solid #16a34a;">
+            <label style="font-size: 0.64rem; font-weight: 900; color: #000000; display: block; margin-bottom: 2px;">12-Digit Bank UTR Number*</label>
+            <input type="text" id="er-utr" class="form-control" maxlength="12" placeholder="Enter 12-digit UTR" style="height: 34px !important; font-family: monospace; font-weight: 900; font-size: 0.85rem !important; border: 1.5px solid #16a34a;">
           </div>
-          <button type="button" class="btn btn-primary" onclick="submitErickshawPost()" style="height: 31px; padding: 0 11px; font-size: 0.74rem; font-weight: 900; border-radius: 8px; white-space: nowrap;">
-            🛺 Start 12h Live GPS ➔
+          <button type="button" class="btn btn-primary" onclick="submitErickshawPost()" style="height: 34px; padding: 0 12px; font-size: 0.76rem; font-weight: 900; border-radius: 8px; white-space: nowrap;">
+            🛺 Submit UTR & Go Live ➔
           </button>
         </div>
       </div>
@@ -2573,6 +2578,12 @@
         <div id="bm-upi-buttons-box"></div>
       </div>
 
+      <div style="background: #fefce8; border: 1.5px dashed #eab308; border-radius: 8px; padding: 6px 8px; margin-bottom: 0.55rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem;">
+        <label style="display: flex; align-items: center; gap: 6px; font-weight: 900; color: #854d0e; cursor: pointer; margin: 0;">
+          <input type="checkbox" id="bm-use-referral-chk" onchange="updateBookingFareCalculation()" style="width: 15px; height: 15px; accent-color: #16a34a;">
+          <span>🎁 इस ट्रिप पर ₹20 रेफरल बोनस यूज़ करें (-₹20 छूट)</span>
+        </label>
+      </div>
       <div class="form-group" style="margin-bottom: 0.85rem;">
         <label>12-Digit Bank Payment UTR Number*</label>
         <input type="text" id="bm-utr-input" class="form-control" maxlength="12" placeholder="e.g. 987654321012" style="font-family: monospace; color: #fbbf24; font-weight: 800; font-size: 1rem; border: 1.5px solid var(--primary);">
@@ -3251,6 +3262,9 @@
           try { renderProfileView(); } catch(e){}
         } else if (data.type === 'ERICKSHAWS_UPDATED' && Array.isArray(data.erickshaws)) {
           mergeIncomingCloudErickshaws(data.erickshaws, true);
+        } else if (data.type === 'WITHDRAWALS_UPDATED' && Array.isArray(data.withdrawalRequests)) {
+          ssStorage.setItem('ss_withdrawal_requests', JSON.stringify(data.withdrawalRequests));
+          try { renderProfileReferralSummary(); } catch(e){}
         } else if (data.type === 'COMPLAINTS_UPDATED' && Array.isArray(data.complaints)) {
           ssStorage.setItem('ss_complaints', JSON.stringify(data.complaints));
           try { if (typeof renderMyComplaints === 'function') renderMyComplaints(); } catch(e){}
@@ -3550,6 +3564,7 @@
               if (Array.isArray(sData.rides) && sData.rides.length > 0) mergeIncomingCloudRides(sData.rides, true);
               if (Array.isArray(sData.bookings) && sData.bookings.length > 0) mergeIncomingCloudBookings(sData.bookings);
               if (Array.isArray(sData.coinRequests) && sData.coinRequests.length > 0) processSyncedCoinRequests(sData.coinRequests);
+              if (Array.isArray(sData.withdrawalRequests) && sData.withdrawalRequests.length > 0) { ssStorage.setItem('ss_withdrawal_requests', JSON.stringify(sData.withdrawalRequests)); try { renderProfileReferralSummary(); } catch(e){} }
               if (sData.users && typeof sData.users === 'object') {
                 const localU = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
                 ssStorage.setItem('ss_users_db', JSON.stringify({ ...localU, ...sData.users }));
@@ -5613,8 +5628,23 @@ ET
         timestamp: new Date().toISOString()
       };
 
+      const bmRefChk = document.getElementById('bm-use-referral-chk');
+      if (bmRefChk && bmRefChk.checked && tryApply20ReferralDiscount()) {
+        booking.referralDiscountUsed = 20;
+        booking.totalFare = Math.max(0, totalFare - 20);
+        bmRefChk.checked = false;
+      }
+
       bookings.unshift(booking);
       broadcastBookingsEverywhere(bookings);
+
+      // 1. Award +100 Free Gaming Coins for Ride Completion!
+      awardRideOrPostGameCoins(100, 'राइड कंप्लीट करने पर');
+      // 2. Complete Referral (Credits ₹100 to Referrer on 1st Ride!)
+      if (user && user.phone) {
+        triggerReferralFirstActionCompletion(user.phone);
+        incrementPassengerRideCountAndUnlock20(user.phone);
+      }
 
       selectedRideForBooking.seatsAvailable = Math.max(0, (selectedRideForBooking.seatsAvailable || 1) - seatsCount);
       broadcastRidesLocally(rides);
@@ -5768,18 +5798,27 @@ ET
         utrNumber: utr,
         liveLat: c.lat,
         liveLng: c.lng,
-        status: 'ACTIVE',
+        status: 'PENDING_APPROVAL',
         adminUtrStatus: 'PENDING_ADMIN_CONFIRMATION',
         verifiedByAdmin: false,
         postedAt: new Date().toISOString(),
-        approvedAt: new Date().toISOString(),
         lastUpdated: Date.now()
       };
+
+      const dfRefChk = document.getElementById('df-use-referral-chk');
+      if (dfRefChk && dfRefChk.checked && tryApply20ReferralDiscount()) {
+        newRide.referralDiscountUsed = 20;
+        dfRefChk.checked = false;
+      }
 
       rides = rides.filter(r => r && r.id !== newRide.id);
       rides.unshift(newRide);
       ssStorage.setItem('ss_rides', JSON.stringify(rides));
       broadcastRidesLocally(rides); // Instant (<50ms) push to Admin Portal & Cloud!
+
+      // Award +100 Free Gaming Coins & complete referral if 1st action!
+      awardRideOrPostGameCoins(100, 'कार राइड पोस्ट करने पर');
+      if (user && user.phone) triggerReferralFirstActionCompletion(user.phone);
 
       if (typeof db !== 'undefined' && db) {
         try {
@@ -5794,7 +5833,7 @@ ET
       const dfUtr = document.getElementById('df-utr');
       if (dfUtr) dfUtr.value = '';
 
-      showToast(`🚗 आपकी गाड़ी (${model} • ${plate}) लाइव मैप और Admin Panel में तुरंत एक्टिव हो गई है!`, '#15803d');
+      showToast(`✅ कार UTR (${utr}) Admin को भेज दिया गया + 🪙 100 Game Coins मिले! Admin के वेरिफाई करते ही 1 सेकंड में लाइव हो जाएगी।`, '#15803d');
       renderLiveCarsHome();
       renderDriverFleet();
       showSection('driver-fleet');
@@ -6006,7 +6045,12 @@ ET
         const salt = generateSecureSalt();
         const passwordHash = await hashUserPassword(pwd, salt);
 
+        const refCodeRaw = (document.getElementById('auth-input-referral')?.value || ssStorage.getItem('ss_pending_ref_code') || '').trim().replace(/[^0-9]/g, '');
+        const cleanRefBy = (refCodeRaw && refCodeRaw.length === 10 && refCodeRaw !== uid) ? refCodeRaw : '';
+        const prevUserObj = users[uid] || {};
+
         const newUser = {
+          ...prevUserObj,
           userId: uid,
           phone: uid,
           name: name,
@@ -6014,7 +6058,13 @@ ET
           salt: salt,
           address: addr || 'Assam, India',
           hasAadhaar: true,
-          registeredAt: new Date().toISOString(),
+          referredBy: prevUserObj.referredBy || cleanRefBy,
+          referralRewardCredited: prevUserObj.referralRewardCredited || false,
+          referralBalance: Number(prevUserObj.referralBalance) || 0,
+          completedRidesCount: Number(prevUserObj.completedRidesCount) || 0,
+          unlockedTenRideMilestones: Number(prevUserObj.unlockedTenRideMilestones) || 0,
+          unlockedWithdrawalBalance: Number(prevUserObj.unlockedWithdrawalBalance) || 0,
+          registeredAt: prevUserObj.registeredAt || new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
 
@@ -6116,7 +6166,7 @@ ET
       const user = getActiveUserProfile();
       if (!user) { strip.innerHTML = ''; return; }
 
-      const myErs = getActiveErickshawsList().filter(er => er.driverPhone === user.phone || er.ownerUserId === user.userId);
+      const myErs = (JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]') || []).filter(er => er && !er.removedByAdmin && (er.driverPhone === user.phone || er.ownerUserId === user.userId));
       const myCars = rides.filter(r => r && r.driverPhone === user.phone && isWithin48Hours(r.postedAt));
 
       if (myErs.length === 0 && myCars.length === 0) {
@@ -6134,7 +6184,7 @@ ET
         itemsHtml.push(`
           <div style="background:#f0fdf4; border:1.5px solid #16a34a; border-radius:8px; padding:4px 8px; display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:0.65rem;">
             <div style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-              <strong style="color:#065f46;">🛺 ${er.vehicleNumber}</strong> • <span style="color:#15803d; font-weight:800;">${isConf ? '✅ Admin Confirmed Live' : '🟢 Live on Map (UTR Sent)'}</span>
+              <strong style="color:#065f46;">🛺 ${er.vehicleNumber}</strong> • <span style="color:#15803d; font-weight:800;">${isConf ? '🟢 Live on Map (12h Active)' : '⏳ Waiting Admin Confirmation'}</span>
             </div>
             <button type="button" onclick="showSection('live-erickshaw')" style="background:#16a34a; color:#fff; border:none; border-radius:5px; padding:2px 6px; font-size:0.6rem; font-weight:900; cursor:pointer; flex-shrink:0;">Map ➔</button>
           </div>
@@ -6172,6 +6222,7 @@ ET
           document.getElementById('prof-card-phone').innerText = '📱 +91 ' + user.phone;
           document.getElementById('prof-card-addr').innerText = '📍 ' + (user.address || 'Assam, India');
           renderProfileConnectedVehiclesStrip();
+          try { renderProfileReferralSummary(); } catch(e){}
         }
       }
       updateNavCounts();
@@ -6185,6 +6236,314 @@ ET
     }
 
     let editedProfileAadhaarData = null;
+
+
+    // =========================================================================
+    // 🎁 COMPLETE REFERRAL (₹100 ON 1ST RIDE/POST) + ₹20/TRIP USE + 10-RIDE ₹20 UNLOCK & WITHDRAWAL ENGINE
+    // =========================================================================
+    const FIREBASE_RTDB_WITHDRAWALS_URL = FIREBASE_RTDB_BASE + '/ss_withdrawal_requests.json';
+
+    (function captureUrlReferralCode() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const ref = (params.get('ref') || '').trim().replace(/[^0-9]/g, '');
+        if (ref && ref.length === 10) {
+          ssStorage.setItem('ss_pending_ref_code', ref);
+          const inp = document.getElementById('auth-input-referral');
+          if (inp) inp.value = ref;
+        }
+      } catch(e){}
+    })();
+
+    function awardRideOrPostGameCoins(amount = 100, reasonLabel = 'राइड/पोस्ट पर') {
+      try {
+        const cur = getGameCoins();
+        setGameCoins(cur + amount);
+        try { playCoinSound(); } catch(e){}
+      } catch(e){}
+    }
+
+    function claimFreePlayCoinsNow() {
+      setGameCoins(getGameCoins() + 100);
+      try { playCoinSound(); } catch(e){}
+      closeBuyCoinsModal();
+      showToast('🎁 +100 Free Gaming Coins आपके वॉलेट में जुड़ गए! (हर राइड/पोस्ट पर भी +100 कॉइन्स मिलते हैं)', '#15803d');
+    }
+
+    function triggerReferralFirstActionCompletion(actorPhone) {
+      try {
+        if (!actorPhone) return;
+        let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+        const actor = users[actorPhone];
+        if (!actor || !actor.referredBy || actor.referralRewardCredited === true) return;
+
+        const refPhone = String(actor.referredBy).trim();
+        if (!refPhone || refPhone === actorPhone) return;
+
+        // Mark 100% completed so it only credits once!
+        actor.referralRewardCredited = true;
+        actor.referralCompletedAt = new Date().toISOString();
+        users[actorPhone] = actor;
+
+        if (!users[refPhone]) {
+          users[refPhone] = {
+            userId: refPhone,
+            phone: refPhone,
+            name: 'User ' + refPhone.slice(-4),
+            address: 'Assam, India',
+            hasAadhaar: true,
+            referralBalance: 0,
+            completedReferralsCount: 0
+          };
+        }
+        users[refPhone].referralBalance = (Number(users[refPhone].referralBalance) || 0) + 100;
+        users[refPhone].completedReferralsCount = (Number(users[refPhone].completedReferralsCount) || 0) + 1;
+
+        broadcastUsersEverywhere(users);
+        if (typeof db !== 'undefined' && db) {
+          try {
+            db.collection('ss_users').doc(actorPhone).set(actor, { merge: true });
+            db.collection('ss_users').doc(refPhone).set(users[refPhone], { merge: true });
+          } catch(e){}
+        }
+        renderProfileReferralSummary();
+      } catch(e){}
+    }
+
+    function tryApply20ReferralDiscount() {
+      try {
+        const user = getActiveUserProfile();
+        if (!user || !user.phone) return false;
+        let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+        const u = users[user.phone] || user;
+        const bal = Number(u.referralBalance) || 0;
+        if (bal < 20) {
+          showToast('⚠️ आपके रेफरल वॉलेट में कम से कम ₹20 होने चाहिए! (किसी को रेफर करने पर ₹100 मिलता है)', '#dc2626');
+          return false;
+        }
+        u.referralBalance = bal - 20;
+        users[user.phone] = u;
+        broadcastUsersEverywhere(users);
+        if (typeof db !== 'undefined' && db) {
+          try { db.collection('ss_users').doc(user.phone).set(u, { merge: true }); } catch(e){}
+        }
+        renderProfileReferralSummary();
+        return true;
+      } catch(e){ return false; }
+    }
+
+    function incrementPassengerRideCountAndUnlock20(userPhone) {
+      try {
+        if (!userPhone) return;
+        let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+        const u = users[userPhone];
+        if (!u) return;
+
+        u.completedRidesCount = (Number(u.completedRidesCount) || 0) + 1;
+        const totalMilestones = Math.floor(u.completedRidesCount / 10);
+        const prevMilestones = Number(u.unlockedTenRideMilestones) || 0;
+
+        if (totalMilestones > prevMilestones) {
+          const newlyUnlocked = (totalMilestones - prevMilestones) * 20;
+          u.unlockedTenRideMilestones = totalMilestones;
+          u.unlockedWithdrawalBalance = (Number(u.unlockedWithdrawalBalance) || 0) + newlyUnlocked;
+          setTimeout(() => {
+            showToast(`🎉 बधाई हो! आपकी ${u.completedRidesCount} राइड पूरी होने पर ₹${newlyUnlocked} कैश अनलॉक हो गया है! आप Profile से इसे विड्रॉल कर सकते हैं।`, '#15803d');
+          }, 900);
+        }
+
+        users[userPhone] = u;
+        broadcastUsersEverywhere(users);
+        if (typeof db !== 'undefined' && db) {
+          try { db.collection('ss_users').doc(userPhone).set(u, { merge: true }); } catch(e){}
+        }
+        renderProfileReferralSummary();
+      } catch(e){}
+    }
+
+    function updateErickshawFeeDisplay() {
+      const user = getActiveUserProfile();
+      const refBal = Number(user?.referralBalance) || 0;
+      const availTxt = document.getElementById('er-ref-avail-txt');
+      if (availTxt) availTxt.innerText = '₹' + refBal;
+
+      const chk = document.getElementById('er-use-referral-chk');
+      const netPill = document.getElementById('er-net-fee-pill');
+      const headTxt = document.getElementById('er-pay-heading-txt');
+
+      if (chk && chk.checked) {
+        if (refBal < 20) {
+          chk.checked = false;
+          showToast('⚠️ आपके रेफरल वॉलेट में ₹20 उपलब्ध नहीं हैं! पहले किसी दोस्त को रेफर करें (₹100 बोनस)।', '#d97706');
+          return;
+        }
+        if (netPill) netPill.innerText = 'Fee: ₹80 (₹20 Off)';
+        if (headTxt) headTxt.innerText = 'Pay ₹80 (₹20 Referral Bonus Applied) for 12h Live GPS';
+      } else {
+        if (netPill) netPill.innerText = 'Fee: ₹100';
+        if (headTxt) headTxt.innerText = 'Pay ₹100 for 12-Hour Live E-Rickshaw GPS';
+      }
+    }
+
+    function renderProfileReferralSummary() {
+      const user = getActiveUserProfile();
+      if (!user) return;
+      const refBal = Number(user.referralBalance) || 0;
+      const unlockBal = Number(user.unlockedWithdrawalBalance) || 0;
+      const ridesCnt = Number(user.completedRidesCount) || 0;
+      const remMod = ridesCnt % 10;
+
+      const elRef = document.getElementById('prof-ref-bal-txt');
+      const elUnl = document.getElementById('prof-unlock-bal-txt');
+      const elRides = document.getElementById('prof-rides-count-txt');
+      if (elRef) elRef.innerText = '₹' + refBal;
+      if (elUnl) elUnl.innerText = '₹' + unlockBal;
+      if (elRides) elRides.innerText = `${remMod}/10`;
+
+      const mCode = document.getElementById('ref-modal-code-badge');
+      const mWal = document.getElementById('ref-modal-wallet-bal');
+      const mUnl = document.getElementById('ref-modal-unlock-bal');
+      const mProg = document.getElementById('ref-modal-rides-progress');
+      if (mCode) mCode.innerText = user.phone || user.userId || '----------';
+      if (mWal) mWal.innerText = '₹' + refBal;
+      if (mUnl) mUnl.innerText = '₹' + unlockBal;
+      if (mProg) mProg.innerText = `${ridesCnt} Total Rides (${remMod}/10 towards next ₹20)`;
+
+      updateErickshawFeeDisplay();
+      renderUserWithdrawalHistory();
+    }
+
+    function openReferralAndRewardsModal() {
+      const user = getActiveUserProfile();
+      if (!user) {
+        showToast('⚠️ रेफरल और रिवॉर्ड देखने के लिए कृपया लॉगिन करें!', '#dc2626');
+        return;
+      }
+      renderProfileReferralSummary();
+      const upiInp = document.getElementById('withdraw-upi-input');
+      if (upiInp && !upiInp.value) upiInp.value = user.phone + '@upi';
+      const modal = document.getElementById('referral-rewards-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeReferralAndRewardsModal() {
+      const modal = document.getElementById('referral-rewards-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function copyMyReferralCode() {
+      const user = getActiveUserProfile();
+      if (!user) return;
+      const code = user.phone || user.userId;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code);
+        }
+      } catch(e){}
+      showToast(`📋 आपका रेफरल कोड (${code}) कॉपी हो गया!`, '#15803d');
+    }
+
+    function shareMyReferralOnWhatsApp() {
+      const user = getActiveUserProfile();
+      if (!user) return;
+      const code = user.phone || user.userId;
+      const msg = encodeURIComponent(`🚗 *SafarSaathi Assam App* डाउनलोड करें और रजिस्टर करते समय मेरा Referral Code *${code}* डालें! पहली राइड या पोस्ट पर ₹100 रेफरल रिवॉर्ड और +100 फ्री गेम कॉइन्स पाएं!`);
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
+
+    function getWithdrawalRequestsList() {
+      try {
+        const list = JSON.parse(ssStorage.getItem('ss_withdrawal_requests') || '[]');
+        return Array.isArray(list) ? list : [];
+      } catch(e){ return []; }
+    }
+
+    function broadcastWithdrawalsEverywhere(list) {
+      try { ssStorage.setItem('ss_withdrawal_requests', JSON.stringify(list)); } catch(e){}
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'WITHDRAWALS_UPDATED', withdrawalRequests: list, timestamp: Date.now() }); } catch(e){}
+      }
+      pushStateToBackendServer({ withdrawalRequests: list });
+      try {
+        fetch(FIREBASE_RTDB_WITHDRAWALS_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(list)
+        }).catch(() => {});
+      } catch(e){}
+    }
+
+    function submitUserWithdrawalRequest() {
+      const user = getActiveUserProfile();
+      if (!user) return;
+      let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+      const u = users[user.phone] || user;
+      const unlockBal = Number(u.unlockedWithdrawalBalance) || 0;
+
+      if (unlockBal < 20) {
+        showToast(`⚠️ विड्रॉल के लिए कम से कम ₹20 अनलॉक होना चाहिए! (10 राइड पूरी होने पर ₹20 अनलॉक होता है • अभी आपकी ${Number(u.completedRidesCount)||0}/10 राइड हैं)`, '#dc2626');
+        return;
+      }
+
+      const upiId = (document.getElementById('withdraw-upi-input')?.value || '').trim();
+      if (!upiId) {
+        showToast('⚠️ कृपया अपना UPI ID या PhonePe/GPay नंबर लिखें!', '#dc2626');
+        return;
+      }
+
+      u.unlockedWithdrawalBalance = unlockBal - 20;
+      users[user.phone] = u;
+      broadcastUsersEverywhere(users);
+
+      const reqObj = {
+        id: 'WD-' + Math.floor(10000 + Math.random() * 90000),
+        userId: user.userId || user.phone,
+        userName: user.name,
+        userPhone: user.phone,
+        upiId: upiId,
+        amount: 20,
+        status: 'PENDING_ADMIN_PAYOUT',
+        requestedAt: new Date().toISOString(),
+        lastUpdated: Date.now()
+      };
+
+      const list = getWithdrawalRequestsList();
+      list.unshift(reqObj);
+      broadcastWithdrawalsEverywhere(list);
+
+      if (typeof db !== 'undefined' && db) {
+        try {
+          db.collection('ss_users').doc(user.phone).set(u, { merge: true });
+          db.collection('ss_withdrawal_requests').doc(reqObj.id).set(reqObj, { merge: true });
+        } catch(e){}
+      }
+
+      renderProfileReferralSummary();
+      showToast('💸 आपकी ₹20 विड्रॉल रिक्वेस्ट Admin Panel को भेज दी गई है! Admin द्वारा आपके UPI पर पैसे भेज दिए जाएंगे।', '#15803d');
+    }
+
+    function renderUserWithdrawalHistory() {
+      const box = document.getElementById('user-withdrawal-history-box');
+      if (!box) return;
+      const user = getActiveUserProfile();
+      if (!user) { box.innerHTML = ''; return; }
+      const myReqs = getWithdrawalRequestsList().filter(r => r && r.userPhone === user.phone);
+      if (myReqs.length === 0) {
+        box.innerHTML = `<div style="color:#64748b; text-align:center; padding:4px;">अभी कोई विड्रॉल रिक्वेस्ट नहीं है।</div>`;
+        return;
+      }
+      box.innerHTML = myReqs.map(r => {
+        const isPaid = (r.status || '').toUpperCase() === 'PAID';
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; margin-bottom:4px;">
+            <span><b>₹${r.amount}</b> ➔ ${r.upiId}</span>
+            <span style="background:${isPaid ? '#dcfce7' : '#fef3c7'}; color:${isPaid ? '#15803d' : '#b45309'}; font-weight:900; padding:1px 6px; border-radius:4px; font-size:0.6rem;">
+              ${isPaid ? '✅ PAID BY ADMIN' : '⏳ Pending Admin Payout'}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
 
     function openEditProfileModal() {
       const user = getActiveUserProfile();
@@ -6733,10 +7092,10 @@ ET
         return isMine && isWithin48Hours(r.postedAt);
       });
 
-      const myErickshaws = getActiveErickshawsList().filter(er =>
+      const myErickshaws = (JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]') || []).filter(er => er && !er.removedByAdmin && (
         (er.driverPhone && er.driverPhone === user.phone) ||
         (er.ownerUserId && er.ownerUserId === user.userId) ||
-        (myDevId && er.deviceId === myDevId)
+        (myDevId && er.deviceId === myDevId))
       );
 
       updateNavCounts();
@@ -6774,7 +7133,7 @@ ET
                 <div style="font-size:0.68rem; color:#475569; margin-top:2px;">💰 ₹100 UTR: <b>${er.utrNumber}</b> • ⏱️ ${timing.remLabel}</div>
               </div>
               <span style="background:#16a34a; color:#ffffff; font-size:0.66rem; font-weight:900; padding:3px 8px; border-radius:999px;">
-                ${isConf ? '✅ ADMIN VERIFIED LIVE' : '🟢 LIVE ON MAP'}
+                ${isConf ? '🟢 LIVE ON MAP (12h Active)' : '⏳ PENDING ADMIN UTR CONFIRMATION'}
               </span>
             </div>
             <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
@@ -7458,7 +7817,7 @@ ET
           if (myBet > 0) {
             myWinEstEl.innerHTML = `🏆 2x Win: <b style="color:#fde047;">🪙 ${myPotential2x} coins</b>`;
           } else {
-            myWinEstEl.innerHTML = `Lowest Bet Wins (2x)`;
+            myWinEstEl.innerHTML = `Win 2x Game Coins`;
           }
         }
 
@@ -7505,7 +7864,7 @@ ET
         if (myTotalBet > 0) {
           sumTextEl.innerHTML = `✅ <b>VIRTUAL BETS:</b> <span style="color:#67e8f9;">Rider A: ${virtualBets[0]}</span> • <span style="color:#d9f99d;">Rider B: ${virtualBets[1]}</span> • <span style="color:#fde047;">Rider C: ${virtualBets[2]}</span>`;
         } else {
-          sumTextEl.innerHTML = `🎯 <b>VIRTUAL BETS:</b> Rider A: ${virtualBets[0]} | Rider B: ${virtualBets[1]} | Rider C: ${virtualBets[2]} coins (Lowest Bet Wins!)`;
+          sumTextEl.innerHTML = `🎯 <b>ACTIVE RIDERS:</b> Rider A, Rider B या Rider C पर अपने गेम कॉइन्स लगाएं (2x इनाम)!`;
         }
       }
       if (sumPillEl) {
@@ -7601,7 +7960,7 @@ ET
       lastLeaderCycleIdx = -1;
       playCountdownSound(true);
       switchChametGameView('track');
-      showToast('🏁 GO! Cross, overtake, and race to the finish! (Lowest Bet Wins)', '#16a34a');
+      showToast('🏁 रेस शुरू हो गई है! फिनिश लाइन की ओर बढ़ें!', '#16a34a');
     }
 
     function RaceHUD_ResetRaceButton() {
@@ -8178,7 +8537,7 @@ ET
         ctx.fillText(`${rider.car.code} ${statusIcon}`, -tagW / 2 + 27, -4.5);
         ctx.font = '800 8px monospace';
         ctx.fillStyle = isFirst ? '#0f172a' : '#fde047';
-        ctx.fillText(`Bet: ${rider.virtualBet}c ${rider.isLowestBet ? '★LOWEST' : ''}`, -tagW / 2 + 27, 6.2);
+        ctx.fillText(`${rider.car ? rider.car.code : 'MTB'} • 2x`, -tagW / 2 + 27, 6.2);
       } else {
         ctx.font = '900 9.5px sans-serif';
         ctx.fillText(`${rider.car.code} (${rider.virtualBet}c) ${statusIcon}`, -tagW / 2 + 27, 0.5);
@@ -8391,9 +8750,9 @@ ET
         ctx.textAlign = 'center';
         let detailMsg = '';
         if (slowMoProg < 0.45) {
-          detailMsg = `🎬 PHOTO FINISH! SLOW MOTION (0.22x): ${winnerR.car.code} (Lowest Bet: ${winnerR.virtualBet}c) gets 1.35x final boost!`;
+          detailMsg = `🎬 PHOTO FINISH! ${winnerR.car.code} फिनिश लाइन के बिल्कुल करीब!`;
         } else {
-          detailMsg = `🏁 WP_FINISH REVEAL: WINNER ${winnerR.car.code} (Lowest bet: ${winnerR.virtualBet} coins) surges ahead of ${secondR.car.code}!`;
+          detailMsg = `🏁 रेस पूरी हुई: ${winnerR.car.code} ने शानदार जीत दर्ज की!`;
         }
         ctx.fillText(detailMsg, W * 0.5, detailBarY + 15);
         ctx.restore();
@@ -8565,16 +8924,16 @@ ET
       if (r1) r1.innerText = `🚵 ${winnerCar.name}`;
       if (r2) r2.innerText = `🚵 ${secondCar.name}`;
       if (r3) r3.innerText = `🚵 ${thirdCar.name}`;
-      if (b1) b1.innerText = `Lowest Bet: ${virtualBets[winningIndex]} coins`;
+      if (b1) b1.innerText = `Winner 🥇`;
       if (b2) b2.innerText = `Bet: ${virtualBets[other1]} coins`;
       if (b3) b3.innerText = `Bet: ${virtualBets[other2]} coins`;
 
       const dl1 = document.getElementById('res-detail-line-1');
       const dl2 = document.getElementById('res-detail-line-2');
       const dl3 = document.getElementById('res-detail-line-3');
-      if (dl1) dl1.innerHTML = `• <b>Lowest Bet Winner:</b> <b style="color:#22d3ee;">${winnerCar.code}</b> का virtualBet सबसे कम (<b>${virtualBets[winningIndex]} coins</b>) था, इसलिए यह #1 जीता!`;
-      if (dl2) dl2.innerHTML = `• <b>Final Waypoint Boost:</b> WP_11 से WP_FINISH पर <b style="color:#a3e635;">1.35x Boost</b> के साथ सबसे आगे निकला!`;
-      if (dl3) dl3.innerHTML = `• <b>Photo-Finish Slow-Mo:</b> 0.22x Slow Motion (3.5s) के बाद विजेता घोषित किया गया!`;
+      if (dl1) dl1.innerHTML = `• <b>Race Winner:</b> <b style="color:#22d3ee;">${winnerCar.code}</b> ने शानदार प्रदर्शन करते हुए #1 स्थान हासिल किया!`;
+      if (dl2) dl2.innerHTML = `• <b>Ride Bonus:</b> ऐप पर हर राइड या पोस्ट पूरी करने पर आपको +100 फ्री गेम कॉइन्स मिलते हैं!`;
+      if (dl3) dl3.innerHTML = `• <b>2x Play Coins:</b> विजेता राइडर पर लगाए गए कॉइन्स का दोगुना वॉलेट में जुड़ गया!`;
 
       if (settledRoundId === roundId) return;
       settledRoundId = roundId;
@@ -8590,10 +8949,10 @@ ET
 
       // Exact RaceManager.resultText string from RaceManager.cs
       if (winTitle) {
-        winTitle.innerText = `WINNER: ${winnerCar.name}\nLowest bet: ${virtualBets[winningIndex]} coins`;
+        winTitle.innerText = `🏆 WINNER: ${winnerCar.name}`;
       }
       if (winDesc) {
-        winDesc.innerText = `सबसे कम बेट (${virtualBets[winningIndex]} coins) वाले ${winnerCar.name} ने रेस जीत ली!`;
+        winDesc.innerText = `${winnerCar.name} ने इस राउंड की रेस जीत ली है!`;
       }
 
       if (winPayoutBox) {
@@ -8622,7 +8981,7 @@ ET
           winPayoutBox.innerHTML = `
             <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(34,211,238,0.4); border-radius: 8px; padding: 0.38rem 0.7rem; display: inline-block;">
               <span style="font-size: 0.66rem; color: #22d3ee; font-weight: 800;">
-                WINNER: <b>${winnerCar.name}</b> (Lowest bet: ${virtualBets[winningIndex]} coins${myTotalLost > 0 ? ' • आपकी बेट दूसरे राइडर पर ' + myTotalLost + ' coins थी' : ''})
+                WINNER: <b>${winnerCar.name}</b>${myTotalLost > 0 ? ' • अगला राउंड खेलने के लिए तैयार रहें!' : ''}
               </span>
             </div>
           `;
@@ -9137,13 +9496,14 @@ ET
 
       const fakeErIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106']);
 
-      // Never filter out any user by driverName! Even if they typed a different or common name, keep all real posted E-Rickshaws.
+      // Strictly show E-Rickshaws that have been Confirmed/Verified Live by Admin Panel and are within their 12-hour live window!
       const validCustom = stored.filter(item =>
         item &&
         !(fakeErIds.has(item.id) && !item.utrNumber) &&
-        isWithin12Hours(item.postedAt) &&
+        isWithin12Hours(item.approvedAt || item.postedAt) &&
         item.removedByAdmin !== true &&
-        (item.status || 'ACTIVE').toUpperCase() !== 'REMOVED'
+        (item.status || '').toUpperCase() === 'ACTIVE' &&
+        (item.adminUtrStatus === 'CONFIRMED' || item.verifiedByAdmin === true)
       );
 
       const userCenter = getBaseUserCenter();
@@ -9161,12 +9521,10 @@ ET
       return validCustom;
     }
 
-    function setErickshawStand(areaText) {
-      const inp = document.getElementById('er-area');
-      if (inp) inp.value = areaText;
-    }
+    function setErickshawStand(areaText) {}
 
     function preparePostErickshawForm() {
+      try { updateErickshawFeeDisplay(); } catch(e){}
       const user = getActiveUserProfile();
       const nameInp = document.getElementById('er-driver-name');
       if (nameInp && user && user.name) {
@@ -9195,7 +9553,7 @@ ET
       let user = getActiveUserProfile();
       const driverName = (document.getElementById('er-driver-name')?.value || user?.name || '').trim();
       const vehicleNo = (document.getElementById('er-vehicle-no')?.value || '').trim().toUpperCase();
-      const standArea = (document.getElementById('er-area')?.value || '').trim();
+      const standArea = 'Live Mobile GPS';
       const rawUtr = (document.getElementById('er-utr')?.value || '').trim().replace(/[\s-]/g, '');
 
       if (!driverName) {
@@ -9206,11 +9564,6 @@ ET
       if (!vehicleNo) {
         showToast('⚠️ कृपया ई-रिक्शा का गाड़ी नंबर लिखें!', '#dc2626');
         document.getElementById('er-vehicle-no')?.focus();
-        return;
-      }
-      if (!standArea) {
-        showToast('⚠️ कृपया ई-रिक्शा का रूट/स्टैंड लिखें!', '#dc2626');
-        document.getElementById('er-area')?.focus();
         return;
       }
       if (!rawUtr || rawUtr.length < 10) {
@@ -9270,14 +9623,26 @@ ET
         removedByAdmin: false,
         adminUtrStatus: 'PENDING_ADMIN_CONFIRMATION',
         verifiedByAdmin: false,
-        status: 'ACTIVE'
+        status: 'PENDING_APPROVAL'
       };
+
+      // Deduct ₹20 Referral Bonus if checkbox was checked
+      const refChk = document.getElementById('er-use-referral-chk');
+      if (refChk && refChk.checked && tryApply20ReferralDiscount()) {
+        newEr.referralDiscountUsed = 20;
+        newEr.platformFee = 80;
+        refChk.checked = false;
+      }
 
       customList = customList.filter(x => x && x.id !== newEr.id);
       customList.unshift(newEr);
       currentlySelectedErickshawId = newEr.id;
 
-      // Broadcast everywhere: LocalStorage + BroadcastChannel + Firebase RTDB + Firestore
+      // Award +100 Free Gaming Coins for posting & complete referral if this is user's 1st action!
+      awardRideOrPostGameCoins(100, 'ई-रिक्शा पोस्ट करने पर');
+      if (user && user.phone) triggerReferralFirstActionCompletion(user.phone);
+
+      // Broadcast everywhere: LocalStorage + BroadcastChannel + Server + Firebase RTDB + Firestore
       broadcastErickshawsEverywhere(customList);
       try {
         if (typeof db !== 'undefined' && db) {
@@ -9292,8 +9657,9 @@ ET
 
       updateErickshawNavBadge();
       closeErickshawOverlapFlipPage();
-      showToast(`🛺 आपका ई-रिक्शा (${driverName} • ${vehicleNo}) मैप और Admin Panel दोनों पर लाइव हो गया है!`, '#15803d');
-      showSection('live-erickshaw');
+      showToast(`✅ ई-रिक्शा UTR (${rawUtr}) Admin को भेज दिया गया + 🪙 100 Game Coins मिले! Admin के Confirm करते ही 1 सेकंड में 12 घंटे के लिए लाइव हो जाएगा।`, '#15803d');
+      renderDriverFleet();
+      showSection('driver-fleet');
       setTimeout(() => {
         try {
           renderLiveErickshaws();
@@ -9614,7 +9980,7 @@ ET
       const hintEl = document.getElementById('er-map-hint-text');
       if (pill) {
         if (list.length === 0) {
-          pill.innerHTML = `<span class="pulse-dot"></span><span>0 Live E-Rickshaw (1s Live Radar)</span>`;
+          pill.innerHTML = `<span class="pulse-dot"></span><span>0 Live E-Rickshaw on Map</span>`;
         } else {
           const nearest = list[0];
           const nearDist = formatNearbyDistance(nearest.distanceKm || 0.05);
@@ -9623,7 +9989,7 @@ ET
       }
       if (hintEl) {
         if (list.length === 0) {
-          hintEl.innerText = 'अभी कोई फेक डेटा नहीं है। जब कोई ड्राइवर ₹100 (12h) में ई-रिक्शा पोस्ट करेगा तो वह इसी फुल मैप पर हर 1 सेकंड में लाइव दिखेगा!';
+          hintEl.innerText = 'जब कोई ई-रिक्शा ड्राइवर मैप पर लाइव होगा तो वह हर 1 सेकंड में यहाँ मूव करता हुआ दिखेगा!';
         } else {
           hintEl.innerText = '🟢 हर 1 सेकंड में लाइव GPS अपडेट! मैप पर किसी भी ई-रिक्शा पर क्लिक करें — पेज फ्लिप होकर सभी ऑप्शन और डायरेक्ट कॉल आ जाएगा!';
         }
@@ -10473,7 +10839,73 @@ ET
   </div>
 
 
-  <!-- ==================== 🪙 BUY COINS MODAL (1 COIN = ₹1 VIA UPI QR) ==================== -->
+  <!-- ==================== 🎁 REFERRAL (₹100) & 10-RIDE (₹20 UNLOCK) WITHDRAWAL MODAL ==================== -->
+  <div class="modal-backdrop" id="referral-rewards-modal" style="display: none; z-index: 10003;" onclick="if(event.target===this) closeReferralAndRewardsModal();">
+    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2.5px solid #16a34a; border-radius: 18px; max-width: 440px; width: 92vw; padding: 1rem; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 1.2rem;">🎁</span>
+          <div>
+            <h3 style="font-size: 0.96rem; font-weight: 900; color: #065f46; margin: 0;">Refer & Earn ₹100 + 10-Ride Withdrawal</h3>
+            <div style="font-size: 0.62rem; color: #475569; font-weight: 700;">100% रेफर कंप्लीट होने पर ₹100 • 10 राइड पूरी होने पर ₹20 कैश विड्रॉल!</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeReferralAndRewardsModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 28px; height: 28px; border-radius: 50%; font-weight: 900; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- 1. Referral Code & Share Box -->
+      <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 12px; padding: 0.6rem; margin-bottom: 0.55rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span style="font-size: 0.7rem; font-weight: 900; color: #065f46;">📲 आपका रेफरल कोड (Your Referral Code):</span>
+          <span id="ref-modal-code-badge" style="background: #16a34a; color: #ffffff; font-family: monospace; font-size: 0.82rem; font-weight: 900; padding: 2px 8px; border-radius: 6px;">----------</span>
+        </div>
+        <div style="font-size: 0.64rem; color: #15803d; font-weight: 800; line-height: 1.35; margin-bottom: 6px;">
+          • जब आपका दोस्त आपके कोड से रजिस्टर करके अपनी <b>पहली राइड या पहला पोस्ट</b> कंप्लीट करेगा, तभी आपको <b>₹100</b> मिलेगा!<br>
+          • इस ₹100 में से आप हर ई-रिक्शा या कार ट्रिप/पोस्ट में <b>₹20</b> यूज़ कर सकते हैं।
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <button type="button" onclick="copyMyReferralCode()" style="background: #ffffff; color: #15803d; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px; font-size: 0.7rem; font-weight: 900; cursor: pointer;">
+            📋 Copy Code
+          </button>
+          <button type="button" onclick="shareMyReferralOnWhatsApp()" style="background: #16a34a; color: #ffffff; border: none; border-radius: 8px; padding: 5px; font-size: 0.7rem; font-weight: 900; cursor: pointer;">
+            💬 WhatsApp Share
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Wallets Summary Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.55rem; text-align: center;">
+        <div style="background: #fefce8; border: 1.5px solid #eab308; border-radius: 10px; padding: 0.5rem;">
+          <div style="font-size: 0.62rem; font-weight: 800; color: #854d0e;">🎁 Referral Balance</div>
+          <div id="ref-modal-wallet-bal" style="font-size: 1.15rem; font-weight: 900; color: #15803d; font-family: monospace;">₹0</div>
+          <div style="font-size: 0.58rem; color: #64748b; font-weight: 700;">Use ₹20 / Trip or Post</div>
+        </div>
+        <div style="background: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 10px; padding: 0.5rem;">
+          <div style="font-size: 0.62rem; font-weight: 800; color: #1e40af;">💸 10-Ride Unlocked Cash</div>
+          <div id="ref-modal-unlock-bal" style="font-size: 1.15rem; font-weight: 900; color: #0284c7; font-family: monospace;">₹0</div>
+          <div id="ref-modal-rides-progress" style="font-size: 0.58rem; color: #1d4ed8; font-weight: 800;">0 / 10 Rides Completed</div>
+        </div>
+      </div>
+
+      <!-- 3. Direct ₹20 UPI Withdrawal Request Form -->
+      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.6rem; margin-bottom: 0.45rem;">
+        <div style="font-size: 0.72rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">
+          💸 10 राइड पूरी होने पर अनलॉक ₹20 अपने UPI में विड्रॉल करें:
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px;">
+          <input type="text" id="withdraw-upi-input" class="form-control" placeholder="Enter UPI ID or GPay/PhonePe No." style="height: 34px !important; font-size: 0.78rem !important;">
+          <button type="button" onclick="submitUserWithdrawalRequest()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; border-radius: 8px; padding: 0 12px; font-size: 0.72rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
+            💸 Withdraw ₹20 ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Withdrawal Requests Status -->
+      <div id="user-withdrawal-history-box" style="max-height: 90px; overflow-y: auto; font-size: 0.66rem;"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 🪙 FREE GAME COINS MODAL (NO REAL MONEY NEEDED • +100 COINS PER RIDE/POST) ==================== -->
   <div class="modal-backdrop" id="buy-coins-modal" style="display: none; z-index: 10002;" onclick="if(event.target===this) closeBuyCoinsModal();">
     <div class="modal-card" style="background: #ffffff; color: #000000; border: 2px solid #16a34a; border-radius: 18px; max-width: 440px; width: 92vw; padding: 1.2rem; box-sizing: border-box; text-align: center;">
       
@@ -10485,12 +10917,17 @@ ET
         <button type="button" class="btn btn-secondary" onclick="closeBuyCoinsModal()" style="padding: 2px 7px; font-size: 0.8rem; background: #ffffff; color: #000000; border: 1.5px solid #16a34a;">✕</button>
       </div>
 
-      <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 6px 10px; margin-bottom: 0.75rem; font-size: 0.74rem; color: #166534; font-weight: 800;">
-        🛡️ <b>100% Admin Verified Recharge:</b> 1 Coin = ₹1 • बिना Admin UTR वेरिफिकेशन के कॉइन्स ऐड नहीं होते
+      <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 12px; padding: 10px; margin-bottom: 0.75rem; font-size: 0.76rem; color: #065f46; font-weight: 800; line-height: 1.45;">
+        🎁 <b>100% Free Gaming Coins (कोई पैसा देने की ज़रूरत नहीं है!):</b><br>
+        • जब भी आप कोई <b>राइड कंप्लीट</b> करते हैं या <b>गाड़ी / ई-रिक्शा पोस्ट</b> करते हैं, आपको तुरंत <b>+100 Gaming Coins</b> मुफ्त मिलते हैं!<br>
+        • प्रैक्टिस और मनोरंजन के लिए आप नीचे से कभी भी फ्री गेम कॉइन्स ले सकते हैं:
       </div>
+      <button type="button" onclick="claimFreePlayCoinsNow()" style="width: 100%; padding: 0.75rem; font-weight: 900; font-size: 0.9rem; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 10px; cursor: pointer; margin-bottom: 0.5rem; box-shadow: 0 4px 12px rgba(22,163,74,0.3);">
+        🎁 Claim +100 Free Gaming Coins Now ➔
+      </button>
 
       <!-- Quick Coin Packs -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 0.75rem;">
+      <div style="display: none; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 0.75rem;">
         <button type="button" onclick="selectBuyCoinPack(50)" id="pack-btn-50" style="background: #ffffff; border: 1.5px solid #16a34a; border-radius: 8px; padding: 6px 2px; cursor: pointer;">
           <div style="font-size: 0.82rem; font-weight: 900; color: #15803d;">50</div>
           <div style="font-size: 0.65rem; color: #64748b; font-weight: 700;">₹50</div>
@@ -10510,7 +10947,7 @@ ET
       </div>
 
       <!-- QR & Payee Details -->
-      <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0.75rem; margin-bottom: 0.75rem;">
+      <div style="display: none; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0.75rem; margin-bottom: 0.75rem;">
         <div style="font-size: 0.82rem; font-weight: 900; color: #000000; margin-bottom: 2px;">
           Amount to Pay: <span id="buy-amount-text" style="color: #15803d; font-size: 1.15rem; font-family: monospace;">₹100</span> (<span id="buy-coins-text">100 Coins</span>)
         </div>
@@ -10525,7 +10962,7 @@ ET
       </div>
 
       <!-- UTR Input Field -->
-      <div class="form-group" style="margin-bottom: 0.55rem; text-align: left;">
+      <div class="form-group" style="display: none;">
         <label style="font-size: 0.72rem; font-weight: 800; color: #000000; margin-bottom: 2px;">12-Digit Bank Payment UTR Number*</label>
         <input type="text" id="buy-coins-utr-input" class="form-control" maxlength="12" placeholder="Enter real 12-digit Bank UTR" style="font-family: monospace; font-size: 1rem; font-weight: 900; text-align: center; border: 1.5px solid #16a34a; background: #ffffff; color: #000000;">
         <div id="buy-coins-utr-status" style="margin-top: 4px; font-size: 0.68rem; color: #15803d; font-weight: 700; display: flex; align-items: center; gap: 4px;">
@@ -10533,7 +10970,7 @@ ET
         </div>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="submitBuyCoinsUtr()" style="width: 100%; padding: 0.75rem; font-weight: 900; font-size: 0.9rem; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 10px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);">
+      <button type="button" class="btn btn-primary" onclick="submitBuyCoinsUtr()" style="display: none; width: 100%; padding: 0.75rem; font-weight: 900; font-size: 0.9rem; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 10px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);">
         📤 Submit UTR for Admin Verification ➔
       </button>
 
@@ -10578,7 +11015,7 @@ ET
 
       <!-- Live Moving Route & GPS Distance Box -->
       <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.45rem 0.6rem; margin-bottom: 0.5rem; font-size: 0.7rem;">
-        <div style="margin-bottom: 4px;">🛣️ <b>Live Roaming Route:</b> <span id="erp-stand-area" style="color: #15803d; font-weight: 900;">Paltan Bazar ➔ Panbazar ➔ Fancy Bazar</span></div>
+        <div style="display: none;">🛣️ <b>Live GPS:</b> <span id="erp-stand-area">Live GPS</span></div>
         <div style="margin-bottom: 4px;">📍 <b>Current Moving Point:</b> <span id="erp-current-road-point" style="color: #0f172a; font-weight: 800;">Moving near Panbazar Overbridge (18 km/h)</span></div>
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span>📡 <b>Nearby Distance:</b> <span id="erp-distance" style="color: #0284c7; font-weight: 900;">280m away (0.28 km)</span></span>

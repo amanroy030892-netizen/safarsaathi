@@ -111,6 +111,7 @@ let memoryCloudState = {
   coinRequests: [],
   users: {},
   complaints: [],
+  withdrawalRequests: [],
   deletedErickshawIds: [],
   updatedAt: Date.now()
 };
@@ -127,6 +128,7 @@ function loadCloudStateFromDisk() {
           coinRequests: Array.isArray(parsed.coinRequests) ? parsed.coinRequests : [],
           users: (parsed.users && typeof parsed.users === 'object') ? parsed.users : {},
           complaints: Array.isArray(parsed.complaints) ? parsed.complaints : [],
+          withdrawalRequests: Array.isArray(parsed.withdrawalRequests) ? parsed.withdrawalRequests : [],
           deletedErickshawIds: Array.isArray(parsed.deletedErickshawIds) ? parsed.deletedErickshawIds : [],
           updatedAt: parsed.updatedAt || Date.now()
         };
@@ -387,6 +389,9 @@ function handleRequest(req, res) {
           }
           if (Array.isArray(data.complaints)) {
             memoryCloudState.complaints = mergeArrayById(memoryCloudState.complaints, data.complaints, 'id');
+          }
+          if (Array.isArray(data.withdrawalRequests)) {
+            memoryCloudState.withdrawalRequests = mergeArrayById(memoryCloudState.withdrawalRequests, data.withdrawalRequests, 'id');
           }
           if (data.users && typeof data.users === 'object') {
             memoryCloudState.users = { ...memoryCloudState.users, ...data.users };

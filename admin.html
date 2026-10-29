@@ -815,6 +815,9 @@
             renderAdminUsers();
           } else if (d.type === 'ERICKSHAWS_UPDATED' && Array.isArray(d.erickshaws)) {
             mergeAdminErickshawsSafely(d.erickshaws);
+          } else if (d.type === 'WITHDRAWALS_UPDATED' && Array.isArray(d.withdrawalRequests)) {
+            localStorage.setItem('ss_withdrawal_requests', JSON.stringify(d.withdrawalRequests));
+            try { renderGlobalLiveUtrQueue(); } catch(e){}
           } else if (d.type === 'COMPLAINTS_UPDATED' && Array.isArray(d.complaints)) {
             localStorage.setItem('ss_complaints', JSON.stringify(d.complaints));
             if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
@@ -886,6 +889,8 @@
           renderAdminUsers();
         } else if (e.key === 'ss_erickshaws' && e.newValue !== null) {
           mergeAdminErickshawsSafely(JSON.parse(e.newValue) || []);
+        } else if (e.key === 'ss_withdrawal_requests' && e.newValue !== null) {
+          try { renderGlobalLiveUtrQueue(); } catch(err){}
         } else if (e.key === 'ss_complaints' && e.newValue !== null) {
           if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
         } else if (e.key === 'ss_user_coins') {
@@ -1112,6 +1117,7 @@
               if (Array.isArray(sData.rides)) mergeAdminCloudRides(sData.rides);
               if (Array.isArray(sData.bookings)) { bookings = sData.bookings; localStorage.setItem('ss_bookings', JSON.stringify(bookings)); renderAdminBookings(); }
               if (Array.isArray(sData.coinRequests)) mergeCoinRequestsSafely(sData.coinRequests);
+              if (Array.isArray(sData.withdrawalRequests)) { localStorage.setItem('ss_withdrawal_requests', JSON.stringify(sData.withdrawalRequests)); try { renderGlobalLiveUtrQueue(); } catch(e){} }
               if (sData.users && typeof sData.users === 'object') {
                 registeredUsers = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}), ...sData.users };
                 localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
@@ -1983,12 +1989,16 @@
       let list = getAdminErickshaws();
       const item = list.find(x => x && x.id === id);
       if (!item) return;
+      const nowIso = new Date().toISOString();
+      const nowMs = Date.now();
       item.status = 'ACTIVE';
       item.adminUtrStatus = 'CONFIRMED';
       item.verifiedByAdmin = true;
       item.removedByAdmin = false;
-      item.approvedAt = new Date().toISOString();
-      item.lastUpdated = Date.now();
+      item.postedAt = nowIso;
+      item.approvedAt = nowIso;
+      item.expiresAt = new Date(nowMs + 12 * 3600 * 1000).toISOString();
+      item.lastUpdated = nowMs;
 
       localStorage.setItem('ss_erickshaws', JSON.stringify(list));
       if (syncBroadcastChannel) {
@@ -2012,14 +2022,48 @@
       showAdminToast(`✅ E-Rickshaw (${item.driverName} • ${item.vehicleNumber}) ₹100 UTR (${item.utrNumber}) Confirmed & Verified Live!`);
     }
 
+    function getAdminWithdrawals() {
+      try {
+        const raw = JSON.parse(localStorage.getItem('ss_withdrawal_requests') || '[]');
+        return Array.isArray(raw) ? raw : [];
+      } catch(e){ return []; }
+    }
+
+    function adminApproveWithdrawal(reqId) {
+      const list = getAdminWithdrawals();
+      const item = list.find(x => x && x.id === reqId);
+      if (!item) return;
+      item.status = 'PAID';
+      item.paidAt = new Date().toISOString();
+      item.lastUpdated = Date.now();
+      localStorage.setItem('ss_withdrawal_requests', JSON.stringify(list));
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'WITHDRAWALS_UPDATED', withdrawalRequests: list, timestamp: Date.now() }); } catch(e){}
+      }
+      pushAdminStateToBackend({ withdrawalRequests: list });
+      try {
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_withdrawal_requests.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(list)
+        }).catch(() => {});
+      } catch(e){}
+      if (adminDb) {
+        try { adminDb.collection('ss_withdrawal_requests').doc(reqId).set(item, { merge: true }); } catch(e){}
+      }
+      renderGlobalLiveUtrQueue();
+      showAdminToast(`✅ ₹${item.amount} Withdrawal marked as PAID to ${item.userName} (${item.upiId})!`);
+    }
+
     function renderGlobalLiveUtrQueue() {
       const box = document.getElementById('adm-global-live-utr-queue');
       if (!box) return;
       const erList = getAdminErickshaws();
       const pendingErs = erList.filter(er => er.adminUtrStatus !== 'CONFIRMED' && !er.verifiedByAdmin);
       const pendingCars = (rides || []).filter(r => (r.status || '').toUpperCase() === 'PENDING_APPROVAL' || (r.adminUtrStatus === 'PENDING_ADMIN_CONFIRMATION' && !r.verifiedByAdmin));
+      const pendingWithdrawals = getAdminWithdrawals().filter(w => w && (w.status || '').toUpperCase() !== 'PAID');
 
-      if (pendingErs.length === 0 && pendingCars.length === 0) {
+      if (pendingErs.length === 0 && pendingCars.length === 0 && pendingWithdrawals.length === 0) {
         if (erList.length > 0) {
           box.style.display = 'block';
           box.innerHTML = `
@@ -2043,7 +2087,7 @@
       box.innerHTML = `
         <div style="background: linear-gradient(135deg, rgba(120,53,15,0.92), rgba(20,83,45,0.92)); border: 2px solid #fbbf24; border-radius: 12px; padding: 0.65rem 0.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
-            <strong style="color:#fde047; font-size:0.84rem;">🔔 NEW ₹100 UTR CONFIRMATION REQUESTS (${pendingErs.length} E-Rickshaw • ${pendingCars.length} Car)</strong>
+            <strong style="color:#fde047; font-size:0.84rem;">🔔 LIVE REQUESTS (${pendingErs.length} E-Rickshaw • ${pendingCars.length} Car • ${pendingWithdrawals.length} ₹20 Withdrawal)</strong>
             <span style="font-size:0.66rem; color:#86efac; font-weight:900;">⚡ 1-Second Real-Time Sync</span>
           </div>
           <div style="display:flex; flex-direction:column; gap:6px;">
@@ -2070,6 +2114,17 @@
                 <div style="display:flex; gap:5px; flex-wrap:wrap;">
                   <button type="button" class="btn btn-success" onclick="reLiveRide('${r.id}')" style="font-size:0.7rem; padding:5px 10px;">✅ Confirm ₹100 UTR & Keep Live</button>
                   <button type="button" class="btn btn-danger" onclick="rejectRideUtr('${r.id}')" style="font-size:0.7rem; padding:5px 9px;">❌ Reject UTR</button>
+                </div>
+              </div>
+            `).join('')}
+            ${pendingWithdrawals.map(w => `
+              <div style="background:rgba(2,6,23,0.92); border:1.5px solid #a3e635; border-radius:9px; padding:0.5rem 0.65rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                  <div style="font-size:0.8rem; font-weight:900; color:#ffffff;">💸 10-Ride Withdrawal: <span style="color:#a3e635;">${w.userName}</span> (+91 ${w.userPhone})</div>
+                  <div style="font-size:0.72rem; color:#fde047; font-family:monospace; font-weight:900;">💰 Pay ₹${w.amount} to UPI: ${w.upiId}</div>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-success" onclick="adminApproveWithdrawal('${w.id}')" style="font-size:0.7rem; padding:5px 10px;">✅ Mark ₹${w.amount} Sent (Paid)</button>
                 </div>
               </div>
             `).join('')}
