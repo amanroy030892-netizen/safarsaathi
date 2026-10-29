@@ -516,24 +516,28 @@
         </section>
 
         <!-- =================================================================== -->
-        <!-- CATEGORY 5: 👥 REGISTERED AADHAAR KYC USERS                         -->
+        <!-- CATEGORY 5: 👥 KYC USERS, REFERRAL STOCK & 10-RIDE COMPLETION DESK   -->
         <!-- =================================================================== -->
         <section id="adm-sec-users" class="admin-cat-section">
           <div class="card" style="border: 2px solid #6366f1;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #334155; padding-bottom: 0.5rem;">
               <div>
                 <h3 style="font-size: 0.98rem; font-weight: 900; color: #c7d2fe;">
-                  👥 Category 5: Registered App Users & Aadhaar KYC
+                  👥 Category 5: KYC Users, 🎁 Referral Stock & 🔟 10-Ride Completion Tracker
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                  ऐप में रजिस्टर्ड सभी कस्टमर और ड्राइवर प्रोफ़ाइल:
+                  यहाँ से पता चलेगा किसने किसको रेफर किया (₹100 स्टॉक), किसने 10 राइड पूरी की (₹20 अनलॉक), और किसने आधार प्रोफाइल सुधार का मेल भेजा है:
                 </span>
               </div>
               <button type="button" class="btn btn-secondary" onclick="syncAdminWithCloud(true)" style="font-size: 0.72rem; padding: 5px 9px;">
-                🔄 Refresh
+                🔄 Refresh Stock
               </button>
             </div>
-            <div id="adm-users-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.65rem;"></div>
+
+            <!-- 📊 4-BOX LIVE REFERRAL & 10-RIDE STOCK SUMMARY BAR -->
+            <div id="adm-users-stock-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; margin-bottom: 0.75rem;"></div>
+
+            <div id="adm-users-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 0.65rem;"></div>
           </div>
         </section>
 
@@ -1808,11 +1812,143 @@
     // =========================================================================
     // 👥 CATEGORY 5: REGISTERED AADHAAR KYC USERS
     // =========================================================================
+    function broadcastAdminUsersToCloud(usersObj) {
+      localStorage.setItem('ss_users_db', JSON.stringify(usersObj));
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'USERS_UPDATED', users: usersObj, timestamp: Date.now() }); } catch(e){}
+      }
+      pushAdminStateToBackend({ users: usersObj });
+      try {
+        fetch(RTDB_USERS_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(usersObj)
+        }).catch(() => {});
+      } catch(e){}
+    }
+
+    function adminApproveProfileEdit(uid) {
+      registeredUsers = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+      const u = registeredUsers[uid];
+      if (!u || !u.pendingProfileEdit) return;
+      const oldName = u.name;
+      const newName = u.pendingProfileEdit.requestedName || u.name;
+      const newAddr = u.pendingProfileEdit.requestedAddress || u.address;
+
+      u.name = newName;
+      u.aadhaarVerifiedName = newName;
+      u.address = newAddr;
+      u.pendingProfileEdit.status = 'APPROVED';
+      delete u.pendingProfileEdit;
+      registeredUsers[uid] = u;
+      broadcastAdminUsersToCloud(registeredUsers);
+      if (adminDb) {
+        try { adminDb.collection('ss_users').doc(uid).set(u, { merge: true }); } catch(e){}
+      }
+
+      // Also update this user's name on any active E-Rickshaws or Cars!
+      try {
+        let erList = JSON.parse(localStorage.getItem('ss_erickshaws') || '[]');
+        let erChanged = false;
+        erList.forEach(er => {
+          if (er && (er.driverPhone === uid || er.ownerUserId === uid || er.driverName === oldName)) {
+            er.driverName = newName;
+            er.lastUpdated = Date.now();
+            erChanged = true;
+          }
+        });
+        if (erChanged) {
+          localStorage.setItem('ss_erickshaws', JSON.stringify(erList));
+          pushAdminStateToBackend({ erickshaws: erList });
+        }
+      } catch(e){}
+
+      renderAdminUsers();
+      renderGlobalLiveUtrQueue();
+      showAdminToast(`✅ Approved Aadhaar Name Match for +91 ${uid}: Profile updated to "${newName}"!`);
+    }
+
+    function adminRejectProfileEdit(uid) {
+      registeredUsers = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+      const u = registeredUsers[uid];
+      if (!u || !u.pendingProfileEdit) return;
+      delete u.pendingProfileEdit;
+      registeredUsers[uid] = u;
+      broadcastAdminUsersToCloud(registeredUsers);
+      if (adminDb) {
+        try { adminDb.collection('ss_users').doc(uid).set(u, { merge: true }); } catch(e){}
+      }
+      renderAdminUsers();
+      renderGlobalLiveUtrQueue();
+      showAdminToast(`❌ Rejected Profile Edit Request for +91 ${uid}.`);
+    }
+
+    function adminIncrementUserRideCount(uid) {
+      registeredUsers = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+      const u = registeredUsers[uid];
+      if (!u) return;
+      u.completedRidesCount = (Number(u.completedRidesCount) || 0) + 1;
+      const totalMilestones = Math.floor(u.completedRidesCount / 10);
+      const prevMilestones = Number(u.unlockedTenRideMilestones) || 0;
+      if (totalMilestones > prevMilestones) {
+        const newlyUnlocked = (totalMilestones - prevMilestones) * 20;
+        u.unlockedTenRideMilestones = totalMilestones;
+        u.unlockedWithdrawalBalance = (Number(u.unlockedWithdrawalBalance) || 0) + newlyUnlocked;
+      }
+      registeredUsers[uid] = u;
+      broadcastAdminUsersToCloud(registeredUsers);
+      if (adminDb) {
+        try { adminDb.collection('ss_users').doc(uid).set(u, { merge: true }); } catch(e){}
+      }
+      renderAdminUsers();
+      showAdminToast(`✅ Ride count for ${u.name} updated to ${u.completedRidesCount} Ride(s)!`);
+    }
+
     function renderAdminUsers() {
       registeredUsers = JSON.parse(localStorage.getItem('ss_users_db')) || {};
       const userList = Object.values(registeredUsers);
       const countEl = document.getElementById('adm-users-count');
       if (countEl) countEl.innerText = userList.length;
+
+      // Calculate Referral Stock & 10-Ride Stock KPIs
+      let totalReferredUsers = 0;
+      let totalCompletedReferrals = 0;
+      let usersWith10PlusRides = 0;
+      let pendingEditReqs = 0;
+
+      userList.forEach(u => {
+        if (!u) return;
+        if (u.referredBy) totalReferredUsers++;
+        if (u.referralRewardCredited) totalCompletedReferrals++;
+        if ((Number(u.completedRidesCount) || 0) >= 10) usersWith10PlusRides++;
+        if (u.pendingProfileEdit && u.pendingProfileEdit.status === 'PENDING_ADMIN_MAIL_APPROVAL') pendingEditReqs++;
+      });
+
+      const summaryEl = document.getElementById('adm-users-stock-summary');
+      if (summaryEl) {
+        summaryEl.innerHTML = `
+          <div style="background:rgba(15,23,42,0.9); border:1.5px solid #6366f1; border-radius:10px; padding:0.55rem; text-align:center;">
+            <div style="font-size:0.65rem; color:#c7d2fe; font-weight:800;">👥 Total Locked Profiles</div>
+            <div style="font-size:1.15rem; font-weight:900; color:#ffffff; font-family:monospace;">${userList.length}</div>
+            <div style="font-size:0.58rem; color:#94a3b8;">1 Mobile = 1 Aadhaar</div>
+          </div>
+          <div style="background:rgba(15,23,42,0.9); border:1.5px solid #22c55e; border-radius:10px; padding:0.55rem; text-align:center;">
+            <div style="font-size:0.65rem; color:#86efac; font-weight:800;">🎁 Referral Stock</div>
+            <div style="font-size:1.15rem; font-weight:900; color:#4ade80; font-family:monospace;">${totalCompletedReferrals} / ${totalReferredUsers}</div>
+            <div style="font-size:0.58rem; color:#cbd5e1;">100% Completed (₹${totalCompletedReferrals * 100})</div>
+          </div>
+          <div style="background:rgba(15,23,42,0.9); border:1.5px solid #38bdf8; border-radius:10px; padding:0.55rem; text-align:center;">
+            <div style="font-size:0.65rem; color:#7dd3fc; font-weight:800;">🔟 10-Ride Achievers</div>
+            <div style="font-size:1.15rem; font-weight:900; color:#38bdf8; font-family:monospace;">${usersWith10PlusRides} Users</div>
+            <div style="font-size:0.58rem; color:#cbd5e1;">₹20 Cash Unlocked</div>
+          </div>
+          <div style="background:rgba(15,23,42,0.9); border:1.5px solid #f59e0b; border-radius:10px; padding:0.55rem; text-align:center;">
+            <div style="font-size:0.65rem; color:#fde047; font-weight:800;">📧 Aadhaar Edit Mails</div>
+            <div style="font-size:1.15rem; font-weight:900; color:#fbbf24; font-family:monospace;">${pendingEditReqs} Pending</div>
+            <div style="font-size:0.58rem; color:#cbd5e1;">Requires Admin Approval</div>
+          </div>
+        `;
+      }
 
       const container = document.getElementById('adm-users-list');
       if (!container) return;
@@ -1826,18 +1962,68 @@
         return;
       }
 
-      container.innerHTML = userList.map(u => `
-        <div style="background: rgba(2,6,23,0.85); border: 1px solid #4f46e5; border-radius: 10px; padding: 0.7rem 0.85rem; font-size: 0.76rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <strong style="color: #ffffff; font-size: 0.86rem;">👤 ${u.name || 'User'}</strong>
-            <span style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.62rem; font-weight: 800; padding: 1px 6px; border-radius: 999px;">
-              🛡️ Verified
-            </span>
+      container.innerHTML = userList.map(u => {
+        const uid = u.phone || u.userId || '';
+        const ridesCnt = Number(u.completedRidesCount) || 0;
+        const mod10 = ridesCnt % 10;
+        const pct10 = Math.min(100, Math.round((mod10 / 10) * 100));
+        const refBal = Number(u.referralBalance) || 0;
+        const unlockBal = Number(u.unlockedWithdrawalBalance) || 0;
+        const refsDone = Number(u.completedReferralsCount) || 0;
+        const hasPendingEdit = u.pendingProfileEdit && u.pendingProfileEdit.status === 'PENDING_ADMIN_MAIL_APPROVAL';
+
+        return `
+          <div style="background: rgba(2,6,23,0.92); border: 1.5px solid ${hasPendingEdit ? '#f59e0b' : (ridesCnt >= 10 ? '#22c55e' : '#4f46e5')}; border-radius: 12px; padding: 0.75rem; font-size: 0.74rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 6px; flex-wrap: wrap;">
+              <strong style="color: #ffffff; font-size: 0.88rem;">👤 ${u.name || 'User'}</strong>
+              <span style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.6rem; font-weight: 900; padding: 1px 6px; border-radius: 999px;">
+                🪪 Aadhaar Matched ✓
+              </span>
+            </div>
+            <div style="color: #cbd5e1;">📱 Permanent ID: <b style="color: #38bdf8; font-family: monospace;">+91 ${uid}</b> 🔒</div>
+            <div style="color: #94a3b8; font-size: 0.68rem; margin: 2px 0 6px 0;">📍 ${u.address || 'Assam, India'}</div>
+
+            <!-- 🎁 Referral Stock Info -->
+            <div style="background: rgba(20,83,45,0.35); border: 1px solid #22c55e; border-radius: 8px; padding: 5px 7px; margin-bottom: 6px; font-size: 0.68rem;">
+              <div style="color: #86efac; font-weight: 900;">🎁 Referral Stock: <b>${refsDone} Completed</b> • कुल जमा बैलेंस (Deposited): <b style="color:#fde047;">₹${refBal}</b></div>
+              <div style="color: #cbd5e1; font-size: 0.64rem; margin-top: 2px;">
+                Referred By: <b>${u.referredBy ? ('+91 ' + u.referredBy + (u.referralRewardCredited ? ' (✅ ₹100 Credited)' : ' (⏳ Waiting 1st Ride/Post)')) : 'Direct Organic User'}</b>
+              </div>
+            </div>
+
+            <!-- 🎟️ 10-Ride Completion Stock Tracker -->
+            <div style="background: rgba(15,23,42,0.95); border: 1px solid #38bdf8; border-radius: 8px; padding: 5px 7px; margin-bottom: 6px; font-size: 0.68rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                <span style="color:#7dd3fc; font-weight:900;">🎟️ Rides Completed: <b style="color:#fff;">${ridesCnt} Total (${mod10}/10)</b></span>
+                <span style="color:#a3e635; font-weight:900;">💸 Unlocked: ₹${unlockBal}</span>
+              </div>
+              <div style="width:100%; height:6px; background:#1e293b; border-radius:999px; overflow:hidden; margin-bottom:5px;">
+                <div style="width:${ridesCnt >= 10 && mod10 === 0 ? 100 : pct10}%; height:100%; background:linear-gradient(90deg,#38bdf8,#22c55e);"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.6rem; color:${ridesCnt >= 10 ? '#4ade80' : '#94a3b8'}; font-weight:800;">
+                  ${ridesCnt >= 10 ? '🏆 10-Ride Milestone Achieved (₹20 Unlocked)!' : `${10 - mod10} more ride(s) for ₹20 unlock`}
+                </span>
+                <button type="button" class="btn btn-secondary" onclick="adminIncrementUserRideCount('${uid}')" style="font-size:0.62rem; padding:2px 7px; color:#38bdf8; border-color:#38bdf8;">
+                  ➕ +1 Ride Verify
+                </button>
+              </div>
+            </div>
+
+            ${hasPendingEdit ? `
+              <div style="background: rgba(120,53,15,0.55); border: 1.5px solid #fbbf24; border-radius: 8px; padding: 6px; margin-top: 4px;">
+                <div style="font-size:0.68rem; font-weight:900; color:#fde047;">📧 Mail & Aadhaar Re-Upload Request:</div>
+                <div style="font-size:0.66rem; color:#ffffff; margin:2px 0;">New Name: <b>${u.pendingProfileEdit.requestedName}</b> (Aadhaar Matched ✓)</div>
+                <div style="font-size:0.64rem; color:#cbd5e1; margin-bottom:5px;">New Address: ${u.pendingProfileEdit.requestedAddress}</div>
+                <div style="display:flex; gap:5px;">
+                  <button type="button" class="btn btn-success" onclick="adminApproveProfileEdit('${uid}')" style="font-size:0.66rem; padding:4px 8px;">✅ Approve & Update</button>
+                  <button type="button" class="btn btn-danger" onclick="adminRejectProfileEdit('${uid}')" style="font-size:0.66rem; padding:4px 8px;">❌ Reject</button>
+                </div>
+              </div>
+            ` : ''}
           </div>
-          <div style="color: #cbd5e1;">📱 ID: <b style="color: #38bdf8;">+91 ${u.phone || u.userId}</b></div>
-          <div style="color: #94a3b8; font-size: 0.7rem; margin-top: 2px;">📍 ${u.address || 'Assam, India'}</div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     // =========================================================================
@@ -2062,8 +2248,10 @@
       const pendingErs = erList.filter(er => er.adminUtrStatus !== 'CONFIRMED' && !er.verifiedByAdmin);
       const pendingCars = (rides || []).filter(r => (r.status || '').toUpperCase() === 'PENDING_APPROVAL' || (r.adminUtrStatus === 'PENDING_ADMIN_CONFIRMATION' && !r.verifiedByAdmin));
       const pendingWithdrawals = getAdminWithdrawals().filter(w => w && (w.status || '').toUpperCase() !== 'PAID');
+      const allUsersMap = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+      const pendingProfileEdits = Object.values(allUsersMap).filter(u => u && u.pendingProfileEdit && u.pendingProfileEdit.status === 'PENDING_ADMIN_MAIL_APPROVAL');
 
-      if (pendingErs.length === 0 && pendingCars.length === 0 && pendingWithdrawals.length === 0) {
+      if (pendingErs.length === 0 && pendingCars.length === 0 && pendingWithdrawals.length === 0 && pendingProfileEdits.length === 0) {
         if (erList.length > 0) {
           box.style.display = 'block';
           box.innerHTML = `
@@ -2087,7 +2275,7 @@
       box.innerHTML = `
         <div style="background: linear-gradient(135deg, rgba(120,53,15,0.92), rgba(20,83,45,0.92)); border: 2px solid #fbbf24; border-radius: 12px; padding: 0.65rem 0.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
-            <strong style="color:#fde047; font-size:0.84rem;">🔔 LIVE REQUESTS (${pendingErs.length} E-Rickshaw • ${pendingCars.length} Car • ${pendingWithdrawals.length} ₹20 Withdrawal)</strong>
+            <strong style="color:#fde047; font-size:0.84rem;">🔔 LIVE REQUESTS (${pendingErs.length} E-Rickshaw • ${pendingCars.length} Car • ${pendingWithdrawals.length} ₹20 Withdrawal • ${pendingProfileEdits.length} Aadhaar Edit)</strong>
             <span style="font-size:0.66rem; color:#86efac; font-weight:900;">⚡ 1-Second Real-Time Sync</span>
           </div>
           <div style="display:flex; flex-direction:column; gap:6px;">
@@ -2125,6 +2313,18 @@
                 </div>
                 <div style="display:flex; gap:5px; flex-wrap:wrap;">
                   <button type="button" class="btn btn-success" onclick="adminApproveWithdrawal('${w.id}')" style="font-size:0.7rem; padding:5px 10px;">✅ Mark ₹${w.amount} Sent (Paid)</button>
+                </div>
+              </div>
+            `).join('')}
+            ${pendingProfileEdits.map(u => `
+              <div style="background:rgba(2,6,23,0.92); border:1.5px solid #f59e0b; border-radius:9px; padding:0.5rem 0.65rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                  <div style="font-size:0.8rem; font-weight:900; color:#ffffff;">🪪 Aadhaar Profile Edit Mail: <span style="color:#fde047;">${u.name} ➔ ${u.pendingProfileEdit.requestedName}</span> (+91 ${u.phone})</div>
+                  <div style="font-size:0.7rem; color:#86efac; font-weight:800;">✓ Aadhaar Re-Uploaded & Name Matched • New Address: ${u.pendingProfileEdit.requestedAddress}</div>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-success" onclick="adminApproveProfileEdit('${u.phone}')" style="font-size:0.7rem; padding:5px 10px;">✅ Approve Aadhaar & Update</button>
+                  <button type="button" class="btn btn-danger" onclick="adminRejectProfileEdit('${u.phone}')" style="font-size:0.7rem; padding:5px 9px;">❌ Reject</button>
                 </div>
               </div>
             `).join('')}

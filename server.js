@@ -113,6 +113,8 @@ let memoryCloudState = {
   complaints: [],
   withdrawalRequests: [],
   deletedErickshawIds: [],
+  activeCalls: {},
+  onlinePresence: {},
   updatedAt: Date.now()
 };
 
@@ -130,6 +132,8 @@ function loadCloudStateFromDisk() {
           complaints: Array.isArray(parsed.complaints) ? parsed.complaints : [],
           withdrawalRequests: Array.isArray(parsed.withdrawalRequests) ? parsed.withdrawalRequests : [],
           deletedErickshawIds: Array.isArray(parsed.deletedErickshawIds) ? parsed.deletedErickshawIds : [],
+          activeCalls: (parsed.activeCalls && typeof parsed.activeCalls === 'object') ? parsed.activeCalls : {},
+          onlinePresence: (parsed.onlinePresence && typeof parsed.onlinePresence === 'object') ? parsed.onlinePresence : {},
           updatedAt: parsed.updatedAt || Date.now()
         };
       }
@@ -395,6 +399,22 @@ function handleRequest(req, res) {
           }
           if (data.users && typeof data.users === 'object') {
             memoryCloudState.users = { ...memoryCloudState.users, ...data.users };
+          }
+          if (data.activeCalls && typeof data.activeCalls === 'object') {
+            if (!memoryCloudState.activeCalls) memoryCloudState.activeCalls = {};
+            Object.keys(data.activeCalls).forEach(k => {
+              const inc = data.activeCalls[k];
+              const prev = memoryCloudState.activeCalls[k];
+              if (!prev || (Number(inc?.updatedAt || 0) >= Number(prev?.updatedAt || 0))) {
+                memoryCloudState.activeCalls[k] = { ...(prev || {}), ...(inc || {}) };
+              }
+            });
+          }
+          if (data.onlinePresence && typeof data.onlinePresence === 'object') {
+            if (!memoryCloudState.onlinePresence) memoryCloudState.onlinePresence = {};
+            Object.keys(data.onlinePresence).forEach(k => {
+              memoryCloudState.onlinePresence[k] = data.onlinePresence[k];
+            });
           }
           memoryCloudState.updatedAt = Date.now();
           saveCloudStateToDiskAsync();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SafarSaathi - Register Account</title>
+  <title>SafarSaathi - Register Account (Aadhaar Name Match Locked)</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body { background: #ffffff; color: #000000; font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 1rem; margin: 0; }
@@ -15,7 +15,7 @@
   <div class="card">
     <div style="text-align: center; margin-bottom: 0.75rem;">
       <h2 style="color: #15803d; margin: 0; font-size: 1.3rem;">🚗 SafarSaathi</h2>
-      <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Register Free Account • Aadhaar AI Verified</p>
+      <p style="font-size: 0.75rem; color: #065f46; font-weight: 800; margin: 2px 0 0 0;">🔒 1 Mobile = 1 Aadhaar = 1 Name = 1 Permanent Profile</p>
     </div>
 
     <form onsubmit="handleStandaloneRegister(event)">
@@ -25,8 +25,8 @@
           <input type="tel" id="st-reg-phone" required maxlength="10" placeholder="9864012345" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
         <div>
-          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Full Name*</label>
-          <input type="text" id="st-reg-name" required placeholder="Aapka Naam" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Full Name (Same as Aadhaar)*</label>
+          <input type="text" id="st-reg-name" required placeholder="Aadhaar Name" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
       </div>
 
@@ -41,34 +41,64 @@
         </div>
       </div>
 
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem;">
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">🪪 Name on Aadhaar Card*</label>
+          <input type="text" id="st-reg-aadhaar-name" required placeholder="Must Match Name 100%" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #059669; border-radius: 8px; box-sizing: border-box;">
+        </div>
+        <div>
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">📸 Upload Aadhaar Photo (Compulsory)*</label>
+          <input type="file" id="st-reg-aadhaar-file" required accept="image/*" style="width: 100%; font-size: 0.65rem;">
+        </div>
+      </div>
+
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.75rem;">
         <div>
           <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Address in Assam*</label>
           <input type="text" id="st-reg-addr" required placeholder="Nagaon / Guwahati" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
         <div>
-          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Aadhaar Photo (Optional)</label>
-          <input type="file" accept="image/*" style="width: 100%; font-size: 0.65rem;">
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">🎁 Referral Code (Opt)</label>
+          <input type="text" id="st-reg-ref" placeholder="SS789012" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box; text-transform: uppercase;">
         </div>
       </div>
 
-      <button type="submit" class="btn-green">✨ Register & Open Choice Hub ➔</button>
+      <div id="st-reg-msg" style="display:none; padding:6px 8px; border-radius:8px; font-size:0.72rem; font-weight:800; margin-bottom:0.5rem;"></div>
+      <button type="submit" class="btn-green">✨ Match Aadhaar & Create Permanent Profile ➔</button>
     </form>
     <script>
+      function normName(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9\u0900-\u097F\s]/g, '').replace(/\s+/g, ' ').trim(); }
       function handleStandaloneRegister(e) {
         e.preventDefault();
-        try {
-          var phone = (document.getElementById('st-reg-phone').value || '').trim();
-          var name = (document.getElementById('st-reg-name').value || '').trim();
-          var pwd = (document.getElementById('st-reg-pwd').value || '').trim();
-          var addr = (document.getElementById('st-reg-addr').value || 'Assam, India').trim();
-          if (phone.length === 10 && name) {
-            var users = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
-            users[phone] = { userId: phone, phone: phone, name: name, password: pwd, address: addr, hasAadhaar: true, registeredAt: new Date().toISOString() };
-            localStorage.setItem('ss_users_db', JSON.stringify(users));
-            localStorage.setItem('ss_current_user_id', phone);
-          }
-        } catch(err) {}
+        var msg = document.getElementById('st-reg-msg');
+        var phone = (document.getElementById('st-reg-phone').value || '').replace(/\D/g, '').trim();
+        var name = (document.getElementById('st-reg-name').value || '').trim();
+        var aName = (document.getElementById('st-reg-aadhaar-name').value || '').trim();
+        var pwd = (document.getElementById('st-reg-pwd').value || '').trim();
+        var conf = (document.getElementById('st-reg-conf').value || '').trim();
+        var addr = (document.getElementById('st-reg-addr').value || 'Assam, India').trim();
+        var ref = (document.getElementById('st-reg-ref').value || '').trim().toUpperCase();
+        var aFile = document.getElementById('st-reg-aadhaar-file').files[0];
+        if (phone.length !== 10) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ 10-digit Mobile Number required!'; return; }
+        if (pwd !== conf) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ Passwords do not match!'; return; }
+        if (!aFile) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ Compulsory Aadhaar Card Photo required!'; return; }
+        if (normName(name) !== normName(aName)) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ Name ('+name+') and Name on Aadhaar ('+aName+') must match 100%!'; return; }
+        var users = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+        if (users[phone]) {
+          msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c';
+          msg.innerText='🔒 Only 1 Profile is allowed per Mobile Number! Please login or email support@safarsaathi.com for edits.';
+          return;
+        }
+        var fp = (aFile.name || 'aadhaar') + '_' + (aFile.size || 0);
+        users[phone] = {
+          userId: phone, phone: phone, name: name, aadhaarName: aName, aadhaarMatched: true,
+          aadhaarFileName: aFile.name, aadhaarFingerprint: fp, profileLocked: true,
+          password: pwd, address: addr, hasAadhaar: true, myRefCode: 'SS' + phone.slice(-6),
+          referredByCode: ref, referralCompleted: false, referralStockCount: 0,
+          completedPassengerRides: 0, registeredAt: new Date().toISOString()
+        };
+        localStorage.setItem('ss_users_db', JSON.stringify(users));
+        localStorage.setItem('ss_current_user_id', phone);
         window.location.href = 'index.html';
       }
     </script>

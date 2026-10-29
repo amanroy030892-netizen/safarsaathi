@@ -2159,23 +2159,27 @@
             </div>
 
 
-            <!-- Row 3: Address, Referral Code & Aadhaar Upload (Registration Only) -->
-            <div style="display: none; grid-template-columns: 1fr 1fr 0.9fr; gap: 5px; margin-bottom: 0.35rem;" id="reg-extra-row">
+            <!-- Row 3: Aadhaar Name Match, Address, Referral Code & Mandatory Aadhaar Upload (Registration Only) -->
+            <div style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 0.28rem;" id="reg-extra-row">
               <div class="form-group" style="margin: 0;">
-                <label style="font-size: 0.64rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Address (पता)*</label>
-                <input type="text" id="auth-input-address" class="form-control" placeholder="Nagaon / Ghy" style="height: 31px !important; font-size: 0.78rem; padding: 2px 6px;">
+                <label style="font-size: 0.62rem; font-weight: 900; color: #15803d; margin-bottom: 1px;">Name on Aadhaar (आधार का नाम मैच करें)*</label>
+                <input type="text" id="auth-input-aadhaar-name" class="form-control" placeholder="Same as Aadhaar Card" oninput="checkLiveAadhaarNameMatch('auth')" style="height: 29px !important; font-size: 0.75rem; padding: 2px 6px; border: 1.5px solid #16a34a;">
               </div>
               <div class="form-group" style="margin: 0;">
-                <label style="font-size: 0.64rem; font-weight: 800; color: #15803d; margin-bottom: 2px;">🎁 Referral Code</label>
-                <input type="text" id="auth-input-referral" class="form-control" maxlength="12" placeholder="Optional Mobile" style="height: 31px !important; font-size: 0.76rem; padding: 2px 6px; border: 1.5px dashed #16a34a;">
-              </div>
-              <div class="form-group" style="margin: 0;">
-                <label style="font-size: 0.64rem; font-weight: 800; color: #000000; margin-bottom: 2px;">Aadhaar KYC</label>
-                <label for="auth-aadhaar-file" id="auth-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 3px; height: 31px; background: #f0fdf4; border: 1.5px dashed #16a34a; border-radius: 8px; color: #15803d; font-size: 0.66rem; font-weight: 800; cursor: pointer; padding: 0 4px; text-align: center; box-sizing: border-box; margin: 0;">
-                  📷 <span>Aadhaar</span>
+                <label style="font-size: 0.62rem; font-weight: 900; color: #000000; margin-bottom: 1px;">Upload Aadhaar Photo (अनिवार्य)*</label>
+                <label for="auth-aadhaar-file" id="auth-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 3px; height: 29px; background: #f0fdf4; border: 1.5px dashed #16a34a; border-radius: 7px; color: #15803d; font-size: 0.65rem; font-weight: 900; cursor: pointer; padding: 0 4px; text-align: center; box-sizing: border-box; margin: 0;">
+                  📷 <span>Upload Aadhaar*</span>
                 </label>
                 <input type="file" id="auth-aadhaar-file" accept="image/*" style="display: none;" onchange="handleAuthAadhaarScan(event)">
-                <div id="auth-aadhaar-preview-box" style="display: none; font-size: 0.58rem; color: #16a34a; font-weight: 900; text-align: center;">✓ Added</div>
+                <div id="auth-aadhaar-preview-box" style="display: none; font-size: 0.55rem; color: #16a34a; font-weight: 900; text-align: center;">✓ Aadhaar Matched</div>
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 0.62rem; font-weight: 800; color: #000000; margin-bottom: 1px;">Address in Assam (पता)*</label>
+                <input type="text" id="auth-input-address" class="form-control" placeholder="Nagaon / Guwahati" style="height: 29px !important; font-size: 0.75rem; padding: 2px 6px;">
+              </div>
+              <div class="form-group" style="margin: 0;">
+                <label style="font-size: 0.62rem; font-weight: 800; color: #15803d; margin-bottom: 1px;">🎁 Referral Code (Optional)</label>
+                <input type="text" id="auth-input-referral" class="form-control" maxlength="12" placeholder="Referrer Mobile" style="height: 29px !important; font-size: 0.75rem; padding: 2px 6px; border: 1.5px dashed #16a34a;">
               </div>
             </div>
           </div>
@@ -2215,7 +2219,7 @@
               </div>
             </div>
             <button type="button" id="btn-open-edit-profile" onclick="openEditProfileModal()" style="background: #dcfce7; color: #15803d; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px 9px; font-size: 0.68rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(22,163,74,0.15);">
-              ✏️ नाम / प्रोफाइल सुधारें
+              📧 प्रोफाइल सुधार (Mail Admin)
             </button>
           </div>
 
@@ -2653,48 +2657,58 @@
       </div>
     </div>
   </div>
-  <!-- ✏️ Full Edit Profile Modal (Edit Name, Mobile/User ID, Address, Aadhaar Photo) -->
+  <!-- 🪪 Official Aadhaar Re-Upload & Mail Request Modal for Profile Correction (1 Mobile = 1 Aadhaar = 1 Profile) -->
   <div class="modal-backdrop" id="edit-profile-modal" style="display: none; z-index: 9999;" onclick="if(event.target===this) closeEditProfileModal();">
-    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2px solid #16a34a; border-radius: 16px; max-width: 440px; width: 92vw; padding: 1.1rem;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.45rem;">
+    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2px solid #16a34a; border-radius: 16px; max-width: 440px; width: 92vw; padding: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem;">
         <div>
-          <h3 style="font-size: 0.98rem; font-weight: 900; color: #065f46; margin: 0;">✏️ Edit Full Profile (प्रोफाइल सुधारें)</h3>
-          <div style="font-size: 0.66rem; color: #475569; font-weight: 700; margin-top: 2px;">
-            यहाँ नाम, मोबाइल नंबर या पता बदलने पर आपके लाइव ई-रिक्शा और गाड़ी में भी तुरंत अपडेट हो जाएगा!
+          <h3 style="font-size: 0.94rem; font-weight: 900; color: #065f46; margin: 0;">🪪 आधार री-अपलोड व प्रोफाइल सुधार मेल (Aadhaar Match Required)</h3>
+          <div style="font-size: 0.64rem; color: #dc2626; font-weight: 800; margin-top: 2px;">
+            🔒 एक नंबर और एक आधार से एक ही प्रोफाइल बनती है। बदलाव के लिए फिर से आधार अपलोड करके हमें मेल करना अनिवार्य है!
           </div>
         </div>
         <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()" style="padding: 2px 8px; font-size: 0.8rem;">✕</button>
       </div>
 
-      <div class="form-group" style="margin-bottom: 0.5rem;">
-        <label style="font-size: 0.72rem; font-weight: 800; color: #0f172a;">Full Legal Name (पूरा नाम सुधारें)*</label>
-        <input type="text" id="ep-input-name" class="form-control" placeholder="अपना सही नाम लिखें" style="height: 36px !important; font-size: 0.86rem; font-weight: 800; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      <div class="form-group" style="margin-bottom: 0.4rem;">
+        <label style="font-size: 0.68rem; font-weight: 800; color: #64748b;">Permanent User ID (10-Digit Mobile - Locked 🔒)</label>
+        <input type="tel" id="ep-input-phone" class="form-control" readonly style="height: 32px !important; font-size: 0.82rem; font-weight: 900; color: #475569; background: #e2e8f0; border: 1.5px solid #94a3b8; cursor: not-allowed;">
       </div>
 
-      <div class="form-group" style="margin-bottom: 0.5rem;">
-        <label style="font-size: 0.72rem; font-weight: 800; color: #0f172a;">10-Digit Mobile Number (User ID)*</label>
-        <input type="tel" id="ep-input-phone" class="form-control" maxlength="10" placeholder="10-digit mobile number" style="height: 36px !important; font-size: 0.86rem; font-weight: 800; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.4rem;">
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 0.68rem; font-weight: 800; color: #0f172a;">New Full Name (नया नाम)*</label>
+          <input type="text" id="ep-input-name" class="form-control" oninput="checkLiveAadhaarNameMatch('edit')" placeholder="सही नाम लिखें" style="height: 33px !important; font-size: 0.8rem; font-weight: 800; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+        </div>
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 0.68rem; font-weight: 800; color: #15803d;">Name on Aadhaar (मैच करें)*</label>
+          <input type="text" id="ep-input-aadhaar-name" class="form-control" oninput="checkLiveAadhaarNameMatch('edit')" placeholder="आधार में लिखा नाम" style="height: 33px !important; font-size: 0.8rem; font-weight: 800; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+        </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 0.5rem;">
-        <label style="font-size: 0.72rem; font-weight: 800; color: #0f172a;">Address in Assam (स्थान / पता)*</label>
-        <input type="text" id="ep-input-address" class="form-control" placeholder="e.g. Nagaon / Guwahati, Assam" style="height: 36px !important; font-size: 0.84rem; font-weight: 700; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      <div id="ep-aadhaar-match-badge" style="font-size: 0.64rem; font-weight: 900; color: #d97706; margin-bottom: 0.4rem;">
+        ⏳ प्रोफाइल नाम और आधार कार्ड का नाम दोनों एक जैसे (Match) होने चाहिए
       </div>
 
-      <div class="form-group" style="margin-bottom: 0.65rem;">
-        <label style="font-size: 0.7rem; font-weight: 800; color: #0f172a;">Update Aadhaar Photo (आधार कार्ड फोटो - Optional)</label>
-        <label for="ep-aadhaar-file" id="ep-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 34px; background: #f0fdf4; border: 1.5px dashed #16a34a; border-radius: 8px; color: #15803d; font-size: 0.74rem; font-weight: 800; cursor: pointer;">
-          📷 <span>आधार फोटो बदलें (पहले से AI Verified है)</span>
+      <div class="form-group" style="margin-bottom: 0.4rem;">
+        <label style="font-size: 0.68rem; font-weight: 800; color: #0f172a;">Address in Assam (स्थान / पता)*</label>
+        <input type="text" id="ep-input-address" class="form-control" placeholder="e.g. Nagaon / Guwahati, Assam" style="height: 33px !important; font-size: 0.8rem; font-weight: 700; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.55rem;">
+        <label style="font-size: 0.68rem; font-weight: 900; color: #dc2626;">Re-Upload Aadhaar Card Photo (फिर से आधार अपलोड करना अनिवार्य है)*</label>
+        <label for="ep-aadhaar-file" id="ep-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 34px; background: #fef2f2; border: 1.5px dashed #dc2626; border-radius: 8px; color: #dc2626; font-size: 0.72rem; font-weight: 900; cursor: pointer;">
+          📷 <span>आधार कार्ड फिर से अपलोड करें (Mandatory)*</span>
         </label>
         <input type="file" id="ep-aadhaar-file" accept="image/*" style="display: none;" onchange="handleEditProfileAadhaarScan(event)">
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()" style="padding: 0.6rem; font-size: 0.8rem; font-weight: 800;">
+      <div style="display: grid; grid-template-columns: 0.8fr 1.4fr; gap: 8px;">
+        <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()" style="padding: 0.55rem; font-size: 0.76rem; font-weight: 800;">
           Cancel
         </button>
-        <button type="button" class="btn btn-primary" id="btn-save-edit-profile" onclick="submitEditProfile()" style="padding: 0.6rem; font-size: 0.82rem; font-weight: 900; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none;">
-          💾 Save Profile & Sync Live
+        <button type="button" class="btn btn-primary" id="btn-save-edit-profile" onclick="submitEditProfile()" style="padding: 0.55rem; font-size: 0.74rem; font-weight: 900; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none;">
+          📧 Match Aadhaar & Mail Admin ➔
         </button>
       </div>
     </div>
@@ -3248,7 +3262,14 @@
     function handleIncomingChannelPayload(data) {
       try {
         if (!data || !data.type) return;
-        if (data.type === 'RIDES_UPDATED' && Array.isArray(data.rides)) {
+        if (data.type === 'CALL_SIGNAL_UPDATE' && data.packet) {
+          processIncomingCallPacketSignal(data.packet);
+        } else if (data.type === 'PRESENCE_UPDATED' && data.onlinePresence) {
+          try {
+            const cur = getOnlinePresenceMap();
+            ssStorage.setItem('ss_online_presence', JSON.stringify({ ...cur, ...data.onlinePresence }));
+          } catch(e){}
+        } else if (data.type === 'RIDES_UPDATED' && Array.isArray(data.rides)) {
           mergeIncomingCloudRides(data.rides, true);
         } else if (data.type === 'BOOKINGS_UPDATED' && Array.isArray(data.bookings)) {
           mergeIncomingCloudBookings(data.bookings);
@@ -3755,6 +3776,11 @@
     window.activeAppSection = 'profile';
 
     function showSection(tab) {
+      const publicViewableTabs = ['profile', 'map', 'live-erickshaw'];
+      if (!publicViewableTabs.includes(tab) && !isUserLoggedIn()) {
+        showToast('🔒 किसी भी ऑप्शन में जाने के लिए लॉगिन अनिवार्य है! (सिर्फ़ Live Map और Live E-Rickshaw Map बिना लॉगिन दिखता है)', '#dc2626');
+        tab = 'profile';
+      }
       window.activeAppSection = tab;
       const secLive = document.getElementById('section-live-cars');
       const secDriver = document.getElementById('section-driver');
@@ -6045,17 +6071,56 @@ ET
       try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
 
       if (currentAuthMode === 'register') {
-        const confPwd = (confPwdInput?.value || pwd).trim();
-        const name = (document.getElementById('auth-input-name')?.value || '').trim();
-        const addr = (document.getElementById('auth-input-address')?.value || 'Assam, India').trim();
+        // RULE 1: One Mobile Number = One Permanent Profile! Block duplicate registration with same number!
+        if (users[uid]) {
+          showToast(`🚫 इस मोबाइल नंबर (+91 ${uid}) से पहले ही प्रोफाइल बनी हुई है! एक नंबर, एक आधार और एक नाम से सिर्फ़ एक ही प्रोफाइल बन सकती है। कृपया लॉगिन करें।`, '#dc2626');
+          setAuthMode('login');
+          return;
+        }
 
-        if (confPwd && pwd !== confPwd) {
+        const confPwd = (confPwdInput?.value || '').trim();
+        const name = (document.getElementById('auth-input-name')?.value || '').trim();
+        const aadhaarName = (document.getElementById('auth-input-aadhaar-name')?.value || '').trim();
+        const addr = (document.getElementById('auth-input-address')?.value || '').trim();
+
+        if (!confPwd || pwd !== confPwd) {
           showToast('❌ दोनों पासवर्ड एक जैसे होने चाहिए! कृपया पासवर्ड चेक करें।', '#dc2626');
           return;
         }
         if (!name) {
-          showToast('⚠️ कृपया अपना पूरा नाम (Full Name) लिखें!', '#dc2626');
+          showToast('⚠️ कृपया अपना पूरा नाम (Full Legal Name) लिखें!', '#dc2626');
           document.getElementById('auth-input-name')?.focus();
+          return;
+        }
+        if (!aadhaarName) {
+          showToast('⚠️ कृपया आधार कार्ड में लिखा अपना नाम दर्ज करें ताकि नाम मैच हो सके!', '#dc2626');
+          document.getElementById('auth-input-aadhaar-name')?.focus();
+          return;
+        }
+        // RULE 2: Compulsory Name Match between Profile Name and Aadhaar Name!
+        const normName = name.replace(/\s+/g, ' ').toLowerCase();
+        const normAadhaarName = aadhaarName.replace(/\s+/g, ' ').toLowerCase();
+        if (normName !== normAadhaarName) {
+          showToast('❌ आधार नाम मैच नहीं हुआ! आपका प्रोफाइल नाम और आधार कार्ड में लिखा नाम 100% एक जैसा होना अनिवार्य है।', '#dc2626');
+          document.getElementById('auth-input-aadhaar-name')?.focus();
+          return;
+        }
+        if (!addr) {
+          showToast('⚠️ कृपया असम का अपना पता (Address) लिखें!', '#dc2626');
+          document.getElementById('auth-input-address')?.focus();
+          return;
+        }
+        // RULE 3: Compulsory Aadhaar Photo Upload!
+        if (!uploadedAadhaarData) {
+          showToast('⚠️ आधार कार्ड अपलोड करना अनिवार्य है! बिना आधार अपलोड और नाम मैच के प्रोफाइल नहीं बनेगी।', '#dc2626');
+          return;
+        }
+
+        // RULE 4: Check that this Aadhaar photo/signature isn't already linked to another mobile number!
+        const aadhaarFp = String(uploadedAadhaarData).slice(-120);
+        const dupAadhaarUser = Object.values(users).find(u => u && u.aadhaarFingerprint && u.aadhaarFingerprint === aadhaarFp && u.phone !== uid);
+        if (dupAadhaarUser) {
+          showToast('🚫 यह आधार कार्ड पहले ही किसी दूसरे नंबर से रजिस्टर्ड है! एक आधार से सिर्फ़ एक ही प्रोफाइल बन सकती है।', '#dc2626');
           return;
         }
 
@@ -6065,24 +6130,26 @@ ET
 
         const refCodeRaw = (document.getElementById('auth-input-referral')?.value || ssStorage.getItem('ss_pending_ref_code') || '').trim().replace(/[^0-9]/g, '');
         const cleanRefBy = (refCodeRaw && refCodeRaw.length === 10 && refCodeRaw !== uid) ? refCodeRaw : '';
-        const prevUserObj = users[uid] || {};
 
         const newUser = {
-          ...prevUserObj,
           userId: uid,
           phone: uid,
           name: name,
+          aadhaarVerifiedName: aadhaarName,
+          aadhaarNameMatched: true,
+          aadhaarFingerprint: aadhaarFp,
           passwordHash: passwordHash,
           salt: salt,
-          address: addr || 'Assam, India',
+          address: addr,
           hasAadhaar: true,
-          referredBy: prevUserObj.referredBy || cleanRefBy,
-          referralRewardCredited: prevUserObj.referralRewardCredited || false,
-          referralBalance: Number(prevUserObj.referralBalance) || 0,
-          completedRidesCount: Number(prevUserObj.completedRidesCount) || 0,
-          unlockedTenRideMilestones: Number(prevUserObj.unlockedTenRideMilestones) || 0,
-          unlockedWithdrawalBalance: Number(prevUserObj.unlockedWithdrawalBalance) || 0,
-          registeredAt: prevUserObj.registeredAt || new Date().toISOString(),
+          profileLocked: true,
+          referredBy: cleanRefBy,
+          referralRewardCredited: false,
+          referralBalance: 0,
+          completedRidesCount: 0,
+          unlockedTenRideMilestones: 0,
+          unlockedWithdrawalBalance: 0,
+          registeredAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
 
@@ -6093,26 +6160,11 @@ ET
           try { db.collection('ss_users').doc(uid).set(newUser, { merge: true }); } catch(e){}
         }
 
-        // Also sync this user's name to any E-Rickshaw or Car they already posted from this phone/device!
-        try {
-          let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
-          let erChanged = false;
-          if (Array.isArray(erList)) {
-            erList.forEach(er => {
-              if (er && (er.driverPhone === uid || er.ownerUserId === uid)) {
-                er.driverName = name;
-                er.lastUpdated = Date.now();
-                erChanged = true;
-              }
-            });
-            if (erChanged) broadcastErickshawsEverywhere(erList);
-          }
-        } catch(e){}
-
         if (pwdInput) pwdInput.value = '';
         if (confPwdInput) confPwdInput.value = '';
+        uploadedAadhaarData = null;
 
-        showToast(`✅ प्रोफाइल बन गई (${name})! अब नीचे ई-रिक्शा या कार का ऑप्शन चुनें।`, '#15803d');
+        showToast(`✅ आधार नाम मैच सफल (${name})! आपकी स्थायी प्रोफाइल बन गई है।`, '#15803d');
         renderProfileView();
       } else {
         const existing = users[uid];
@@ -6415,17 +6467,35 @@ ET
       const elUnl = document.getElementById('prof-unlock-bal-txt');
       const elRides = document.getElementById('prof-rides-count-txt');
       if (elRef) elRef.innerText = '₹' + refBal;
-      if (elUnl) elUnl.innerText = '₹' + unlockBal;
-      if (elRides) elRides.innerText = `${remMod}/10`;
+      if (elUnl) elUnl.innerText = (unlockBal >= 20) ? ('🔓 ₹' + unlockBal) : ('🔒 ₹' + unlockBal);
+      if (elRides) elRides.innerText = `${ ridesCnt >= 10 && remMod === 0 ? '10' : remMod }/10 (${ridesCnt} कुल)`;
 
       const mCode = document.getElementById('ref-modal-code-badge');
       const mWal = document.getElementById('ref-modal-wallet-bal');
       const mUnl = document.getElementById('ref-modal-unlock-bal');
       const mProg = document.getElementById('ref-modal-rides-progress');
+      const lockBanner = document.getElementById('ref-modal-withdraw-lock-banner');
+      const wdBtn = document.getElementById('btn-submit-withdrawal');
+
       if (mCode) mCode.innerText = user.phone || user.userId || '----------';
       if (mWal) mWal.innerText = '₹' + refBal;
-      if (mUnl) mUnl.innerText = '₹' + unlockBal;
-      if (mProg) mProg.innerText = `${ridesCnt} Total Rides (${remMod}/10 towards next ₹20)`;
+      if (mUnl) mUnl.innerText = (unlockBal >= 20) ? ('🔓 ₹' + unlockBal) : ('🔒 ₹' + unlockBal);
+      if (mProg) mProg.innerText = `${ridesCnt} Total Rides (${remMod}/10 towards next ₹20 unlock)`;
+
+      if (lockBanner && wdBtn) {
+        if (unlockBal >= 20) {
+          lockBanner.style.color = '#15803d';
+          lockBanner.innerHTML = `🔓 <b>अनलॉक है (Unlocked):</b> आपकी 10 राइड पूरी हो चुकी हैं! आप अभी <b>₹20 विड्रॉल</b> कर सकते हैं (कुल जमा बैलेंस ₹${refBal} में से ₹20 माइनस होगा)।`;
+          wdBtn.style.opacity = '1';
+          wdBtn.innerText = '💸 Withdraw ₹20 (-₹20) ➔';
+        } else {
+          const needed = 10 - remMod;
+          lockBanner.style.color = '#dc2626';
+          lockBanner.innerHTML = `🔒 <b>विड्रॉल लॉक है:</b> 10 राइड पूरी होने पर ही ₹20 विड्रॉल अनलॉक होगा (अभी ${ridesCnt} राइड हुई हैं • अनलॉक के लिए ${needed} राइड और करें)। तब तक आपका ₹${refBal} हमेशा जमा रहेगा!`;
+          wdBtn.style.opacity = '0.75';
+          wdBtn.innerText = `🔒 Locked (${remMod}/10 Rides)`;
+        }
+      }
 
       updateErickshawFeeDisplay();
       renderUserWithdrawalHistory();
@@ -6497,9 +6567,13 @@ ET
       let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
       const u = users[user.phone] || user;
       const unlockBal = Number(u.unlockedWithdrawalBalance) || 0;
+      const refBal = Number(u.referralBalance) || 0;
+      const ridesCnt = Number(u.completedRidesCount) || 0;
 
+      // Strict Lock Check: Must have completed 10 rides (unlockBal >= 20)
       if (unlockBal < 20) {
-        showToast(`⚠️ विड्रॉल के लिए कम से कम ₹20 अनलॉक होना चाहिए! (10 राइड पूरी होने पर ₹20 अनलॉक होता है • अभी आपकी ${Number(u.completedRidesCount)||0}/10 राइड हैं)`, '#dc2626');
+        const needed = 10 - (ridesCnt % 10);
+        showToast(`🔒 विड्रॉल अभी लॉक है! हर 10 राइड पूरी होने पर ही ₹20 अनलॉक होता है (अभी ${ridesCnt} राइड हैं, ${needed} राइड और पूरी करें)। आपका जमा पैसा (₹${refBal}) सुरक्षित जमा रहेगा!`, '#dc2626');
         return;
       }
 
@@ -6509,7 +6583,12 @@ ET
         return;
       }
 
-      u.unlockedWithdrawalBalance = unlockBal - 20;
+      // Deduct (Minus) ₹20 from BOTH unlockedWithdrawalBalance AND deposited referralBalance!
+      const prevRefBal = refBal;
+      u.unlockedWithdrawalBalance = Math.max(0, unlockBal - 20);
+      u.referralBalance = Math.max(0, refBal - 20);
+      u.totalWithdrawnAmount = (Number(u.totalWithdrawnAmount) || 0) + 20;
+      u.updatedAt = new Date().toISOString();
       users[user.phone] = u;
       broadcastUsersEverywhere(users);
 
@@ -6520,6 +6599,9 @@ ET
         userPhone: user.phone,
         upiId: upiId,
         amount: 20,
+        prevDepositedBalance: prevRefBal,
+        remainingDepositedBalance: u.referralBalance,
+        completedRidesAtWithdrawal: ridesCnt,
         status: 'PENDING_ADMIN_PAYOUT',
         requestedAt: new Date().toISOString(),
         lastUpdated: Date.now()
@@ -6537,7 +6619,7 @@ ET
       }
 
       renderProfileReferralSummary();
-      showToast('💸 आपकी ₹20 विड्रॉल रिक्वेस्ट Admin Panel को भेज दी गई है! Admin द्वारा आपके UPI पर पैसे भेज दिए जाएंगे।', '#15803d');
+      showToast(`💸 ₹20 विड्रॉल रिक्वेस्ट सफल! आपके कुल जमा बैलेंस (₹${prevRefBal}) में से ₹20 माइनस कर दिया गया है और बाकी ₹${u.referralBalance} आपके वॉलेट में सुरक्षित जमा है!`, '#15803d');
     }
 
     function renderUserWithdrawalHistory() {
@@ -6552,15 +6634,50 @@ ET
       }
       box.innerHTML = myReqs.map(r => {
         const isPaid = (r.status || '').toUpperCase() === 'PAID';
+        const remTxt = (r.remainingDepositedBalance !== undefined) ? ` (बाकी जमा: ₹${r.remainingDepositedBalance})` : '';
         return `
           <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:4px 8px; margin-bottom:4px;">
-            <span><b>₹${r.amount}</b> ➔ ${r.upiId}</span>
+            <span><b>-₹${r.amount}</b> ➔ ${r.upiId}${remTxt}</span>
             <span style="background:${isPaid ? '#dcfce7' : '#fef3c7'}; color:${isPaid ? '#15803d' : '#b45309'}; font-weight:900; padding:1px 6px; border-radius:4px; font-size:0.6rem;">
               ${isPaid ? '✅ PAID BY ADMIN' : '⏳ Pending Admin Payout'}
             </span>
           </div>
         `;
       }).join('');
+    }
+
+    function checkLiveAadhaarNameMatch(mode) {
+      if (mode === 'auth') {
+        const n1 = (document.getElementById('auth-input-name')?.value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+        const n2 = (document.getElementById('auth-input-aadhaar-name')?.value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+        const box = document.getElementById('auth-aadhaar-preview-box');
+        if (box && n1 && n2) {
+          box.style.display = 'block';
+          if (n1 === n2) {
+            box.style.color = '#16a34a';
+            box.innerText = '✅ Aadhaar Name Matched';
+          } else {
+            box.style.color = '#dc2626';
+            box.innerText = '❌ Name Mismatch with Aadhaar';
+          }
+        }
+      } else {
+        const n1 = (document.getElementById('ep-input-name')?.value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+        const n2 = (document.getElementById('ep-input-aadhaar-name')?.value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+        const badge = document.getElementById('ep-aadhaar-match-badge');
+        if (badge) {
+          if (!n1 || !n2) {
+            badge.style.color = '#d97706';
+            badge.innerText = '⏳ प्रोफाइल नाम और आधार कार्ड का नाम दोनों एक जैसे (Match) होने चाहिए';
+          } else if (n1 === n2) {
+            badge.style.color = '#16a34a';
+            badge.innerText = '✅ Aadhaar Name 100% Matched!';
+          } else {
+            badge.style.color = '#dc2626';
+            badge.innerText = '❌ नाम मैच नहीं हो रहा है! आधार में लिखा सटीक नाम डालें।';
+          }
+        }
+      }
     }
 
     function openEditProfileModal() {
@@ -6571,17 +6688,24 @@ ET
       }
       editedProfileAadhaarData = null;
       const nameInp = document.getElementById('ep-input-name');
+      const aadhNameInp = document.getElementById('ep-input-aadhaar-name');
       const phoneInp = document.getElementById('ep-input-phone');
       const addrInp = document.getElementById('ep-input-address');
       const aadhLbl = document.getElementById('ep-aadhaar-label');
+      const aadhFile = document.getElementById('ep-aadhaar-file');
 
       if (nameInp) nameInp.value = user.name || '';
+      if (aadhNameInp) aadhNameInp.value = '';
       if (phoneInp) phoneInp.value = user.phone || user.userId || '';
       if (addrInp) addrInp.value = user.address || 'Assam, India';
+      if (aadhFile) aadhFile.value = '';
       if (aadhLbl) {
-        aadhLbl.style.background = '#f0fdf4';
-        aadhLbl.innerHTML = '📷 <span>आधार फोटो बदलें (पहले से AI Verified है)</span>';
+        aadhLbl.style.background = '#fef2f2';
+        aadhLbl.style.borderColor = '#dc2626';
+        aadhLbl.style.color = '#dc2626';
+        aadhLbl.innerHTML = '📷 <span>आधार कार्ड फिर से अपलोड करें (Mandatory)*</span>';
       }
+      checkLiveAadhaarNameMatch('edit');
 
       const modal = document.getElementById('edit-profile-modal');
       if (modal) modal.style.display = 'flex';
@@ -6601,9 +6725,11 @@ ET
         const lbl = document.getElementById('ep-aadhaar-label');
         if (lbl) {
           lbl.style.background = '#dcfce7';
-          lbl.innerHTML = '✅ <span style="font-weight:900;">नया आधार फोटो जुड़ गया!</span>';
+          lbl.style.borderColor = '#16a34a';
+          lbl.style.color = '#15803d';
+          lbl.innerHTML = '✅ <span style="font-weight:900;">नया आधार कार्ड फोटो अपलोड हो गया!</span>';
         }
-        showToast('✓ New Aadhaar photo verified!', '#15803d');
+        showToast('✓ Aadhaar photo re-uploaded for verification!', '#15803d');
       };
       reader.readAsDataURL(file);
     }
@@ -6613,17 +6739,23 @@ ET
       if (!user) return;
 
       const newName = (document.getElementById('ep-input-name')?.value || '').trim();
-      const newPhone = (document.getElementById('ep-input-phone')?.value || '').trim();
+      const epAadhaarName = (document.getElementById('ep-input-aadhaar-name')?.value || '').trim();
       const newAddr = (document.getElementById('ep-input-address')?.value || '').trim();
+      const lockedPhone = user.phone || user.userId;
 
       if (!newName) {
         showToast('⚠️ कृपया अपना सही नाम लिखें!', '#dc2626');
         document.getElementById('ep-input-name')?.focus();
         return;
       }
-      if (!newPhone || !/^\d{10}$/.test(newPhone)) {
-        showToast('⚠️ कृपया सही 10-अंकों का मोबाइल नंबर लिखें!', '#dc2626');
-        document.getElementById('ep-input-phone')?.focus();
+      if (!epAadhaarName) {
+        showToast('⚠️ कृपया आधार कार्ड में लिखा नाम दर्ज करें!', '#dc2626');
+        document.getElementById('ep-input-aadhaar-name')?.focus();
+        return;
+      }
+      if (newName.replace(/\s+/g, ' ').toLowerCase() !== epAadhaarName.replace(/\s+/g, ' ').toLowerCase()) {
+        showToast('❌ आधार का नाम और प्रोफाइल का नाम दोनों 100% मैच होने चाहिए!', '#dc2626');
+        document.getElementById('ep-input-aadhaar-name')?.focus();
         return;
       }
       if (!newAddr) {
@@ -6631,99 +6763,61 @@ ET
         document.getElementById('ep-input-address')?.focus();
         return;
       }
-
-      const oldUid = user.userId || user.phone;
-      const oldPhone = user.phone || user.userId;
-      const oldName = user.name;
-      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
+      // COMPULSORY RE-UPLOAD OF AADHAAR PHOTO!
+      if (!editedProfileAadhaarData) {
+        showToast('⚠️ प्रोफाइल में किसी भी सुधार के लिए फिर से आधार कार्ड अपलोड करना अनिवार्य है!', '#dc2626');
+        return;
+      }
 
       let users = {};
       try { users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}'); } catch(e){ users = {}; }
 
-      const updatedUser = {
-        ...user,
-        userId: newPhone,
-        phone: newPhone,
-        name: newName,
-        address: newAddr,
-        hasAadhaar: true,
-        updatedAt: new Date().toISOString()
+      // Save Pending Profile Correction Request for Admin Panel + Trigger Official Email to support@safarsaathi.com
+      user.pendingProfileEdit = {
+        requestedName: newName,
+        aadhaarMatchedName: epAadhaarName,
+        requestedAddress: newAddr,
+        aadhaarReuploaded: true,
+        requestedAt: new Date().toISOString(),
+        status: 'PENDING_ADMIN_MAIL_APPROVAL'
       };
-
-      if (oldUid && oldUid !== newPhone) {
-        delete users[oldUid];
-      }
-      users[newPhone] = updatedUser;
-      ssStorage.setItem('ss_current_user_id', newPhone);
+      users[lockedPhone] = user;
       broadcastUsersEverywhere(users);
 
       if (typeof db !== 'undefined' && db) {
         try {
-          db.collection('ss_users').doc(newPhone).set(updatedUser, { merge: true });
+          db.collection('ss_users').doc(lockedPhone).set(user, { merge: true });
         } catch(e){}
       }
 
-      // 1. Automatically sync updated Name & Phone across all E-Rickshaws posted by this user!
-      try {
-        let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
-        let erUpdated = false;
-        if (Array.isArray(erList)) {
-          erList.forEach(er => {
-            if (!er) return;
-            const belongsToUser = (er.driverPhone && (er.driverPhone === oldPhone || er.driverPhone === newPhone)) ||
-                                  (er.ownerUserId && (er.ownerUserId === oldUid || er.ownerUserId === newPhone)) ||
-                                  (myDevId && er.deviceId === myDevId) ||
-                                  (oldName && er.driverName === oldName);
-            if (belongsToUser) {
-              er.driverName = newName;
-              er.driverPhone = newPhone;
-              er.ownerUserId = newPhone;
-              er.status = 'ACTIVE';
-              er.removedByAdmin = false;
-              if (!isWithin12Hours(er.postedAt)) {
-                er.postedAt = new Date().toISOString();
-                er.expiresAt = new Date(Date.now() + ERICKSHAW_VALIDITY_MS).toISOString();
-              }
-              er.lastUpdated = Date.now();
-              erUpdated = true;
-              if (typeof db !== 'undefined' && db) {
-                try { db.collection('ss_erickshaws').doc(er.id).set(er, { merge: true }); } catch(e){}
-              }
-            }
-          });
-        }
-        if (erUpdated) {
-          broadcastErickshawsEverywhere(erList);
-        }
-      } catch(e){}
-
-      // 2. Automatically sync updated Name & Phone across all Carpool Rides posted by this user!
-      try {
-        let rUpdated = false;
-        rides.forEach(r => {
-          if (r && (r.driverPhone === oldPhone || r.driverPhone === newPhone || (oldName && r.driverName === oldName))) {
-            r.driverName = newName;
-            r.driverPhone = newPhone;
-            rUpdated = true;
-            if (typeof db !== 'undefined' && db) {
-              try { db.collection('ss_rides').doc(r.id).set(r, { merge: true }); } catch(e){}
-            }
-          }
-        });
-        if (rUpdated) {
-          broadcastRidesLocally(rides);
-        }
-      } catch(e){}
-
-      // Also update #er-driver-name input if present
-      const erNameInp = document.getElementById('er-driver-name');
-      if (erNameInp) erNameInp.value = newName;
-
       closeEditProfileModal();
       renderProfileView();
-      try { renderLiveErickshaws(); } catch(e){}
-      try { updateMapLiveCarRadar(); } catch(e){}
-      showToast(`✅ प्रोफाइल अपडेट हो गई (${newName})! ई-रिक्शा और मैप पर भी नया नाम लाइव हो गया है।`, '#15803d');
+
+      const mailSubject = encodeURIComponent(`SafarSaathi Profile Aadhaar Correction Request - User ID ${lockedPhone}`);
+      const mailBody = encodeURIComponent(
+        `Hello SafarSaathi Admin Team,
+
+` +
+        `Please verify my re-uploaded Aadhaar Card and update my locked profile:
+` +
+        `• Permanent User ID (Mobile): +91 ${lockedPhone}
+` +
+        `• Current Profile Name: ${user.name}
+` +
+        `• New Aadhaar-Matched Name: ${newName}
+` +
+        `• Updated Address: ${newAddr}
+` +
+        `• Aadhaar Re-Upload & Name Match: VERIFIED IN APP
+
+` +
+        `Thank you.`
+      );
+      try {
+        window.open(`mailto:support@safarsaathi.com?subject=${mailSubject}&body=${mailBody}`, '_self');
+      } catch(e){}
+
+      showToast(`📧 आधार नाम मैच हो गया! प्रोफाइल सुधार की रिक्वेस्ट Admin Panel और मेल (support@safarsaathi.com) पर भेज दी गई है। Admin के अप्रूव करते ही नाम बदल जाएगा!`, '#15803d');
     }
 
     function openChangePasswordModal() {
@@ -9560,20 +9654,9 @@ ET
 
     function submitErickshawPost() {
       if (!isUserLoggedIn()) {
-        const typedName = (document.getElementById('er-driver-name')?.value || '').trim();
-        if (typedName) {
-          // Auto-create instant verified driver profile so posting E-Rickshaw NEVER fails even if they didn't log in first!
-          const autoPhone = '9864' + Math.floor(100000 + Math.random() * 900000);
-          let uMap = {};
-          try { uMap = JSON.parse(ssStorage.getItem('ss_users_db') || '{}'); } catch(e){}
-          uMap[autoPhone] = { userId: autoPhone, phone: autoPhone, name: typedName, address: 'Assam, India', hasAadhaar: true, registeredAt: new Date().toISOString() };
-          ssStorage.setItem('ss_current_user_id', autoPhone);
-          broadcastUsersEverywhere(uMap);
-        } else {
-          showToast('⚠️ कृपया ड्राइवर का नाम लिखें या Profile में लॉगिन करें!', '#dc2626');
-          document.getElementById('er-driver-name')?.focus();
-          return;
-        }
+        showToast('🔒 ई-रिक्शा पोस्ट करने के लिए लॉगिन अनिवार्य है! कृपया अपनी User ID और पासवर्ड से लॉगिन करें।', '#dc2626');
+        showSection('profile');
+        return;
       }
 
       let user = getActiveUserProfile();
@@ -9598,21 +9681,11 @@ ET
         return;
       }
 
-      // If the user corrected or changed their name in the E-Rickshaw form, automatically sync it to their Profile so there is NEVER a mismatch!
-      if (user && driverName && user.name !== driverName) {
-        try {
-          user.name = driverName;
-          let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
-          const uidKey = user.userId || user.phone;
-          if (uidKey) {
-            users[uidKey] = user;
-            broadcastUsersEverywhere(users);
-            if (typeof db !== 'undefined' && db) {
-              db.collection('ss_users').doc(uidKey).set(user, { merge: true });
-            }
-          }
-        } catch(e){}
+      // Enforce Aadhaar-matched Profile Name on posted E-Rickshaw
+      if (user && user.name && driverName.toLowerCase() !== user.name.toLowerCase()) {
+        showToast(`⚠️ नाम आपके आधार प्रोफाइल नाम (${user.name}) से मैच होना अनिवार्य है!`, '#d97706');
       }
+      const verifiedDriverName = (user && user.name) ? user.name : driverName;
 
       const c = getBaseUserCenter();
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
@@ -9627,7 +9700,7 @@ ET
 
       const newEr = {
         id: existingEr ? existingEr.id : ('ER-' + Math.floor(1000 + Math.random() * 9000)),
-        driverName: driverName,
+        driverName: verifiedDriverName,
         driverPhone: user?.phone || user?.userId || '',
         ownerUserId: user?.userId || user?.phone || '',
         deviceId: myDevId,
@@ -9799,6 +9872,11 @@ ET
 
     // Clicking on an overlapping or single E-Rickshaw marker on the map FLIPS the page to show all options at that spot!
     function onErickshawMapClusterClick(clusterKey) {
+      if (!isUserLoggedIn()) {
+        showToast('🔒 ई-रिक्शा ड्राइवर से बात करने के लिए लॉगिन अनिवार्य है! कृपया पहले अपनी User ID से लॉगिन करें।', '#dc2626');
+        showSection('profile');
+        return;
+      }
       const items = activeErickshawClustersMap[clusterKey] || [];
       if (items.length === 0) return;
       currentOpenClusterFlipIds = items.map(x => x.id);
@@ -10125,7 +10203,123 @@ ET
     let appCallRingTimer = null;
     let isAppCallConnected = false;
 
+    // =========================================================================
+    // 🟢 WHATSAPP-STYLE ONLINE/OFFLINE PRESENCE & REAL-TIME 2-WAY HD VOICE CALL
+    // =========================================================================
+    const FIREBASE_RTDB_CALLS_BASE = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls';
+    const FIREBASE_RTDB_PRESENCE_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_online_presence.json';
+    let activeCallId = null;
+    let activeCallRole = null; // 'CALLER' or 'DRIVER'
+    let activeCallPacket = null;
+    let rtcPeerConn = null;
+    let localProcessedIceSet = new Set();
+    let remoteAudioVoiceCtx = null;
+    let outgoingRingLoop = null;
+    let incomingRingLoop = null;
+    let mediaRecorderRelay = null;
+    let playedVoiceChunkIds = new Set();
+
+    function getOnlinePresenceMap() {
+      try {
+        return JSON.parse(ssStorage.getItem('ss_online_presence') || '{}') || {};
+      } catch(e) { return {}; }
+    }
+
+    function isDriverCurrentlyOnline(driverPhone, erObj) {
+      if (!driverPhone && !erObj) return false;
+      const map = getOnlinePresenceMap();
+      const phone = String(driverPhone || erObj?.driverPhone || erObj?.ownerUserId || '').trim();
+      if (phone && map[phone] && (Date.now() - Number(map[phone].lastSeen || 0) < 45000)) {
+        return true;
+      }
+      if (erObj && erObj.lastUpdated && (Date.now() - Number(erObj.lastUpdated) < 60000)) {
+        return true;
+      }
+      if (erObj && (erObj.adminUtrStatus === 'CONFIRMED' || erObj.verifiedByAdmin === true) && isWithin12Hours(erObj.approvedAt || erObj.postedAt)) {
+        return true;
+      }
+      return false;
+    }
+
+    function broadcastMyOnlinePresence() {
+      const user = getActiveUserProfile();
+      if (!user || !user.phone) return;
+      const map = getOnlinePresenceMap();
+      map[user.phone] = {
+        phone: user.phone,
+        name: user.name || 'User',
+        lastSeen: Date.now(),
+        status: 'ONLINE'
+      };
+      try { ssStorage.setItem('ss_online_presence', JSON.stringify(map)); } catch(e){}
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'PRESENCE_UPDATED', onlinePresence: map }); } catch(e){}
+      }
+      pushStateToBackendServer({ onlinePresence: { [user.phone]: map[user.phone] } });
+      try {
+        fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_online_presence/${user.phone}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(map[user.phone])
+        }).catch(() => {});
+      } catch(e){}
+    }
+
+    function getActiveCallsMap() {
+      try {
+        return JSON.parse(ssStorage.getItem('ss_active_calls_map') || '{}') || {};
+      } catch(e) { return {}; }
+    }
+
+    function saveAndBroadcastCallPacket(packet) {
+      if (!packet || !packet.callId) return;
+      packet.updatedAt = Date.now();
+      const map = getActiveCallsMap();
+      map[packet.callId] = packet;
+      if (packet.driverPhone) map['PHONE_' + packet.driverPhone] = packet;
+      if (packet.erickshawId) map['ER_' + packet.erickshawId] = packet;
+      try {
+        ssStorage.setItem('ss_active_calls_map', JSON.stringify(map));
+        ssStorage.setItem('ss_latest_incoming_call', JSON.stringify(packet));
+      } catch(e){}
+
+      if (appCallBroadcastChannel) {
+        try { appCallBroadcastChannel.postMessage({ type: 'CALL_SIGNAL_UPDATE', packet: packet }); } catch(e){}
+      }
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'CALL_SIGNAL_UPDATE', packet: packet }); } catch(e){}
+      }
+      pushStateToBackendServer({
+        activeCalls: {
+          [packet.callId]: packet,
+          ['PHONE_' + (packet.driverPhone || '')]: packet,
+          ['ER_' + (packet.erickshawId || '')]: packet
+        }
+      });
+      try {
+        if (packet.driverPhone) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/PHONE_' + packet.driverPhone + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(packet)
+          }).catch(() => {});
+        }
+        if (packet.erickshawId) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + packet.erickshawId + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(packet)
+          }).catch(() => {});
+        }
+      } catch(e){}
+    }
+
     function openErickshawProfileModal(erId, autoStartCall = false) {
+      if (!isUserLoggedIn()) {
+        showToast('🔒 ड्राइवर को कॉल करने के लिए लॉगिन अनिवार्य है! कृपया पहले लॉगिन करें।', '#dc2626');
+        showSection('profile');
+        return;
+      }
       const list = getActiveErickshawsList();
       const er = list.find(x => x.id === erId) || list[0];
       if (!er) return;
@@ -10135,6 +10329,17 @@ ET
       const modal = document.getElementById('erickshaw-profile-modal');
       if (!modal) return;
 
+      const online = isDriverCurrentlyOnline(er.driverPhone, er);
+      const dotEl = document.getElementById('erp-online-dot');
+      const pillEl = document.getElementById('erp-online-status-pill');
+      if (dotEl) dotEl.style.background = online ? '#22c55e' : '#94a3b8';
+      if (pillEl) {
+        pillEl.style.background = online ? '#dcfce7' : '#f1f5f9';
+        pillEl.style.color = online ? '#15803d' : '#475569';
+        pillEl.style.borderColor = online ? '#16a34a' : '#94a3b8';
+        pillEl.innerText = online ? '🟢 Online (ऐप पर ऑनलाइन है)' : '⚪ Offline (रिंग नोटिफिकेशन जाएगा)';
+      }
+
       document.getElementById('erp-driver-name').innerText = er.driverName;
       document.getElementById('erp-vehicle-plate').innerText = `${er.vehicleNumber} • 12h Live GPS Route`;
       document.getElementById('erp-post-time').innerText = `🕒 Posted: ${timing.agoLabel} • Valid: ${timing.remLabel}`;
@@ -10142,6 +10347,12 @@ ET
       const ptEl = document.getElementById('erp-current-road-point');
       if (ptEl) ptEl.innerText = er.currentPointLabel || 'Moving Live on Route';
       document.getElementById('erp-distance').innerText = `${formatNearbyDistance(er.distanceKm || 0.28)} (Live Moving GPS)`;
+
+      const dPhone = (er.driverPhone || er.ownerUserId || '9864012345').replace(/\D/g, '');
+      const simLink = document.getElementById('erp-fallback-sim-call');
+      const waLink = document.getElementById('erp-fallback-wa-call');
+      if (simLink) simLink.href = 'tel:+91' + dPhone;
+      if (waLink) waLink.href = 'https://wa.me/91' + dPhone;
 
       resetAppCallUiState();
       modal.style.display = 'flex';
@@ -10170,9 +10381,19 @@ ET
       }, 200);
     }
 
+    function stopAllCallRingtones() {
+      if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
+      if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
+      if (mediaRecorderRelay) {
+        try { if (mediaRecorderRelay.state !== 'inactive') mediaRecorderRelay.stop(); } catch(e){}
+        mediaRecorderRelay = null;
+      }
+    }
+
     function resetAppCallUiState() {
       clearInterval(appCallTimerInterval);
       clearTimeout(appCallRingTimer);
+      stopAllCallRingtones();
       appCallSeconds = 0;
       appCallMuted = false;
       appCallSpeaker = true;
@@ -10180,7 +10401,9 @@ ET
       const timerEl = document.getElementById('erp-call-timer');
       if (timerEl) timerEl.innerText = '00:00';
       const statusEl = document.getElementById('erp-call-status-text');
-      if (statusEl) statusEl.innerText = 'नीचे कॉल बटन दबाएं — ड्राइवर के फोन पर घंटी बजेगी और कॉल रिसीव होगा';
+      if (statusEl) statusEl.innerText = 'नीचे हरा कॉल बटन दबाएं — ई-रिक्शा वाले के फोन पर तुरंत घंटी (Ringing) बजेगी!';
+      const subEl = document.getElementById('erp-call-substatus-text');
+      if (subEl) subEl.innerText = '🟢 दोनों तरफ रिंगिंग, ऑनलाइन/ऑफलाइन स्टेटस और क्रिस्टल-क्लियर माइक/स्पीकर आवाज़';
       const rcvPrompt = document.getElementById('erp-driver-receive-prompt');
       if (rcvPrompt) rcvPrompt.style.display = 'none';
       const waveEl = document.getElementById('erp-call-waveform');
@@ -10205,11 +10428,20 @@ ET
         const gain = appCallAudioCtx.createGain();
         osc.type = 'sine';
         osc.frequency.value = freq;
-        gain.gain.value = 0.09;
+        gain.gain.value = 0.14;
         osc.connect(gain);
         gain.connect(appCallAudioCtx.destination);
         osc.start();
         setTimeout(() => { try { osc.stop(); } catch(e){} }, durationMs);
+      } catch(e){}
+    }
+
+    function playIncomingWhatsAppRingtone() {
+      playDialToneBeep(523.25, 220);
+      setTimeout(() => playDialToneBeep(659.25, 220), 250);
+      setTimeout(() => playDialToneBeep(783.99, 280), 500);
+      try {
+        if (navigator.vibrate) navigator.vibrate([350, 150, 350]);
       } catch(e){}
     }
 
@@ -10227,13 +10459,141 @@ ET
       } catch(e){}
     }
 
-    function startAppToAppVoiceCall() {
+    // Attach crystal-clear High-Pass + Voice Presence EQ filter to incoming WebRTC stream
+    function attachCrystalClearRemoteAudio(remoteStream) {
+      try {
+        const audioEl = document.getElementById('ss-remote-call-audio');
+        if (audioEl) {
+          audioEl.srcObject = remoteStream;
+          audioEl.volume = 1.0;
+          audioEl.muted = !appCallSpeaker;
+          audioEl.play().catch(() => {});
+        }
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) {
+          if (!remoteAudioVoiceCtx) remoteAudioVoiceCtx = new Ctx();
+          if (remoteAudioVoiceCtx.state === 'suspended') remoteAudioVoiceCtx.resume();
+          const source = remoteAudioVoiceCtx.createMediaStreamSource(remoteStream);
+          // 1. Cut low road/engine rumble below 120Hz
+          const highpass = remoteAudioVoiceCtx.createBiquadFilter();
+          highpass.type = 'highpass';
+          highpass.frequency.value = 120;
+          // 2. Boost human voice clarity around 2400Hz
+          const presence = remoteAudioVoiceCtx.createBiquadFilter();
+          presence.type = 'peaking';
+          presence.frequency.value = 2400;
+          presence.Q.value = 1.0;
+          presence.gain.value = 5.5;
+          // 3. Smooth volume via DynamicsCompressor
+          const compressor = remoteAudioVoiceCtx.createDynamicsCompressor();
+          const gainNode = remoteAudioVoiceCtx.createGain();
+          gainNode.gain.value = 1.6;
+          source.connect(highpass);
+          highpass.connect(presence);
+          presence.connect(compressor);
+          compressor.connect(gainNode);
+          gainNode.connect(remoteAudioVoiceCtx.destination);
+        }
+      } catch(e){}
+    }
+
+    // Real-Time Chunked Audio Streamer fallback so voice works even across symmetric mobile NATs
+    function startLiveVoiceChunkRelay(stream, role) {
+      try {
+        if (typeof MediaRecorder === 'undefined' || !stream) return;
+        if (mediaRecorderRelay && mediaRecorderRelay.state !== 'inactive') {
+          try { mediaRecorderRelay.stop(); } catch(e){}
+        }
+        mediaRecorderRelay = new MediaRecorder(stream);
+        mediaRecorderRelay.ondataavailable = function(ev) {
+          if (!isAppCallConnected || appCallMuted || !ev.data || ev.data.size < 200) return;
+          const reader = new FileReader();
+          reader.onloadend = function() {
+            const base64Audio = reader.result;
+            if (!base64Audio || !activeCallPacket) return;
+            const chunkObj = {
+              id: 'VC-' + Date.now() + '-' + Math.floor(Math.random() * 999),
+              senderRole: role,
+              dataUrl: base64Audio,
+              ts: Date.now()
+            };
+            playedVoiceChunkIds.add(chunkObj.id);
+            const arr = Array.isArray(activeCallPacket.voiceChunks) ? activeCallPacket.voiceChunks.slice(-3) : [];
+            arr.push(chunkObj);
+            activeCallPacket.voiceChunks = arr;
+            saveAndBroadcastCallPacket(activeCallPacket);
+          };
+          reader.readAsDataURL(ev.data);
+        };
+        mediaRecorderRelay.start(1200);
+      } catch(e){}
+    }
+
+    function playIncomingVoiceChunksIfAny(packet) {
+      try {
+        if (!isAppCallConnected || !appCallSpeaker || !packet || !Array.isArray(packet.voiceChunks)) return;
+        packet.voiceChunks.forEach(ch => {
+          if (!ch || !ch.id || playedVoiceChunkIds.has(ch.id)) return;
+          if (ch.senderRole === activeCallRole) return;
+          if (Date.now() - Number(ch.ts || 0) > 8000) return;
+          playedVoiceChunkIds.add(ch.id);
+          const a = new Audio(ch.dataUrl);
+          a.volume = 1.0;
+          a.play().catch(() => {});
+        });
+      } catch(e){}
+    }
+
+    function createCallPeerConnection(role, packet) {
+      try {
+        if (rtcPeerConn) {
+          try { rtcPeerConn.close(); } catch(e){}
+        }
+        localProcessedIceSet.clear();
+        const pc = new RTCPeerConnection({
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' }
+          ]
+        });
+        rtcPeerConn = pc;
+
+        pc.ontrack = (event) => {
+          if (event.streams && event.streams[0]) {
+            attachCrystalClearRemoteAudio(event.streams[0]);
+          }
+        };
+
+        pc.onicecandidate = (event) => {
+          if (event.candidate && activeCallPacket) {
+            const key = role === 'CALLER' ? 'callerIce' : 'driverIce';
+            if (!Array.isArray(activeCallPacket[key])) activeCallPacket[key] = [];
+            activeCallPacket[key].push(event.candidate.toJSON ? event.candidate.toJSON() : event.candidate);
+            saveAndBroadcastCallPacket(activeCallPacket);
+          }
+        };
+
+        return pc;
+      } catch(e) { return null; }
+    }
+
+    async function startAppToAppVoiceCall() {
       if (!selectedErickshawForCall) return;
       const er = selectedErickshawForCall;
       const user = getActiveUserProfile();
-      const callerName = user?.name || 'SafarSaathi Customer';
+      const callerName = user?.name || 'SafarSaathi Passenger';
+      const callerPhone = user?.phone || user?.userId || '9864000000';
+      const driverPhone = er.driverPhone || er.ownerUserId || '';
+      const online = isDriverCurrentlyOnline(driverPhone, er);
+
+      stopAllCallRingtones();
+      isAppCallConnected = false;
+      activeCallRole = 'CALLER';
+      activeCallId = 'CALL-' + Date.now();
 
       const statusEl = document.getElementById('erp-call-status-text');
+      const subEl = document.getElementById('erp-call-substatus-text');
       const rcvPrompt = document.getElementById('erp-driver-receive-prompt');
       const waveEl = document.getElementById('erp-call-waveform');
       const idleAct = document.getElementById('erp-call-idle-actions');
@@ -10243,63 +10603,104 @@ ET
       if (activeAct) activeAct.style.display = 'grid';
       if (rcvPrompt) rcvPrompt.style.display = 'flex';
       if (waveEl) waveEl.style.display = 'flex';
-      if (statusEl) statusEl.innerText = `🔔 Ringing ${er.driverName} (${er.vehicleNumber})... Waiting to Receive Call`;
 
-      // Request real microphone stream for authentic WebRTC In-App Voice Call
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-          appCallMicStream = stream;
-          const micLbl = document.getElementById('erp-mic-level-label');
-          if (micLbl) micLbl.innerText = '🎙️ HD Mic Active • Direct App-to-App Audio';
-        }).catch(() => {});
+      if (statusEl) {
+        statusEl.innerText = online
+          ? `🔔 Ringing ${er.driverName} (${er.vehicleNumber})...`
+          : `📞 Calling ${er.driverName} (${er.vehicleNumber})...`;
+      }
+      if (subEl) {
+        subEl.innerText = online
+          ? `🟢 ड्राइवर ऑनलाइन है — उसके फोन पर घंटी बज रही है, कॉल उठाते ही बात शुरू होगी!`
+          : `⚪ ड्राइवर को इनकमिंग कॉल नोटिफिकेशन भेजा जा रहा है...`;
       }
 
-      // Broadcast live RINGING call packet so Driver can click Receive Call
-      const callPacket = {
-        callId: 'CALL-' + Date.now(),
-        erickshawId: er.id,
-        driverName: er.driverName,
-        driverPhone: er.driverPhone,
-        vehicleNumber: er.vehicleNumber,
-        callerName: callerName,
-        status: 'RINGING',
-        startedAt: new Date().toISOString()
-      };
-
+      // 1. Acquire studio-grade HD microphone with Echo Cancellation & Noise Suppression
       try {
-        ssStorage.setItem('ss_latest_incoming_call', JSON.stringify(callPacket));
-        if (appCallBroadcastChannel) {
-          appCallBroadcastChannel.postMessage({ type: 'INCOMING_CALL', packet: callPacket });
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          appCallMicStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+              channelCount: 1,
+              sampleRate: 48000
+            }
+          });
+          const micLbl = document.getElementById('erp-mic-level-label');
+          if (micLbl) micLbl.innerText = '🎙️ HD Crystal-Clear Mic Active • Waiting for Driver';
         }
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + er.id + '.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(callPacket)
-        }).catch(() => {});
       } catch(e){}
 
-      // Also display top incoming call banner so user can see/test Driver Receive
+      // 2. Build Call Packet + WebRTC SDP Offer
+      const callPacket = {
+        callId: activeCallId,
+        erickshawId: er.id,
+        driverName: er.driverName,
+        driverPhone: driverPhone,
+        vehicleNumber: er.vehicleNumber,
+        callerName: callerName,
+        callerPhone: callerPhone,
+        status: online ? 'RINGING' : 'CALLING',
+        driverOnline: online,
+        callerIce: [],
+        driverIce: [],
+        voiceChunks: [],
+        startedAt: new Date().toISOString(),
+        updatedAt: Date.now()
+      };
+      activeCallPacket = callPacket;
+
+      try {
+        const pc = createCallPeerConnection('CALLER', callPacket);
+        if (pc) {
+          if (appCallMicStream) {
+            appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
+          }
+          const offer = await pc.createOffer({ offerToReceiveAudio: true });
+          await pc.setLocalDescription(offer);
+          callPacket.webrtcOffer = { type: offer.type, sdp: offer.sdp };
+        }
+      } catch(e){}
+
+      saveAndBroadcastCallPacket(callPacket);
+
+      // Show top banner too in case Driver is testing on the same device
       triggerDriverIncomingCallBanner(callPacket);
 
+      // 3. Play WhatsApp-style outgoing ringback tone every 2.2s until Driver answers (up to 45s)
       playDialToneBeep(425, 320);
-      setTimeout(() => playDialToneBeep(425, 320), 700);
+      setTimeout(() => playDialToneBeep(425, 320), 450);
+      outgoingRingLoop = setInterval(() => {
+        if (isAppCallConnected) {
+          stopAllCallRingtones();
+          return;
+        }
+        playDialToneBeep(425, 320);
+        setTimeout(() => playDialToneBeep(425, 320), 450);
+      }, 2400);
 
-      // Auto-receive after 1.8s if not manually received first
       clearTimeout(appCallRingTimer);
       appCallRingTimer = setTimeout(() => {
         if (!isAppCallConnected) {
-          driverReceiveCallNow();
+          stopAllCallRingtones();
+          const st = document.getElementById('erp-call-status-text');
+          if (st) st.innerText = `⚠️ ${er.driverName} ने अभी कॉल रिसीव नहीं किया। नीचे SIM Call या WhatsApp Call दबाएं या दोबारा रिंग करें।`;
         }
-      }, 1800);
+      }, 45000);
     }
 
-    function driverReceiveCallNow() {
+    function onCallConnectedCommonUI(packet, isSimulatedSameDevice = false) {
       if (isAppCallConnected) return;
       isAppCallConnected = true;
       clearTimeout(appCallRingTimer);
+      stopAllCallRingtones();
 
-      const er = selectedErickshawForCall || getActiveErickshawsList()[0];
+      const erName = packet?.driverName || selectedErickshawForCall?.driverName || 'E-Rickshaw Driver';
+      const vehNo = packet?.vehicleNumber || selectedErickshawForCall?.vehicleNumber || 'E-Rickshaw';
+
       const statusEl = document.getElementById('erp-call-status-text');
+      const subEl = document.getElementById('erp-call-substatus-text');
       const rcvPrompt = document.getElementById('erp-driver-receive-prompt');
       const quickRow = document.getElementById('erp-quick-talk-row');
       const bubbleEl = document.getElementById('erp-driver-speech-bubble');
@@ -10307,38 +10708,113 @@ ET
 
       if (rcvPrompt) rcvPrompt.style.display = 'none';
       if (banner) banner.style.display = 'none';
-      if (statusEl) statusEl.innerText = `🟢 Call Received • Connected with ${er.driverName} (${er.vehicleNumber})`;
+      if (statusEl) statusEl.innerText = `🟢 HD Voice Connected • ${erName} (${vehNo})`;
+      if (subEl) subEl.innerText = `🔊 क्रिस्टल-क्लियर 2-Way ऑडियो चालू है — अब सीधे बात करें!`;
       if (quickRow) quickRow.style.display = 'flex';
-
-      playDialToneBeep(587, 160);
-
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        const greeting = `हाँ भैया, नमस्कार! मैं ${er.driverName} बोल रहा हूँ, अभी ${er.standArea} में ई-रिक्शा चला रहा हूँ। बोलिए आपको कहाँ से कहाँ जाना है?`;
-        bubbleEl.innerHTML = `🛺 <b>${er.driverName} (Received Call):</b> "${greeting}"`;
-        speakDriverHindiVoice(greeting);
+        bubbleEl.innerHTML = `🟢 <b>2-Way HD Call Live:</b> ${erName} ने कॉल उठा लिया है! आपकी आवाज़ सीधे जा रही है और उधर की आवाज़ क्लियर आ रही है।`;
       }
 
-      try {
-        if (appCallBroadcastChannel) {
-          appCallBroadcastChannel.postMessage({ type: 'CALL_RECEIVED', packet: { erickshawId: er.id } });
-        }
-      } catch(e){}
+      playDialToneBeep(660, 160);
 
-      appCallSeconds = 0;
+      if (appCallMicStream) {
+        startLiveVoiceChunkRelay(appCallMicStream, activeCallRole || 'CALLER');
+      }
+
       clearInterval(appCallTimerInterval);
+      appCallSeconds = 0;
       appCallTimerInterval = setInterval(() => {
         appCallSeconds++;
-        const m = String(Math.floor(appCallSeconds / 60)).padStart(2, '0');
-        const s = String(appCallSeconds % 60).padStart(2, '0');
-        const tEl = document.getElementById('erp-call-timer');
-        if (tEl) tEl.innerText = `${m}:${s}`;
+        const mins = String(Math.floor(appCallSeconds / 60)).padStart(2, '0');
+        const secs = String(appCallSeconds % 60).padStart(2, '0');
+        const timerEl = document.getElementById('erp-call-timer');
+        if (timerEl) timerEl.innerText = `${mins}:${secs}`;
+        const incStatus = document.getElementById('wa-inc-call-status');
+        if (incStatus && document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex') {
+          incStatus.innerText = `🟢 HD Call Connected (${mins}:${secs}) — साफ़ आवाज़ में बात करें`;
+        }
       }, 1000);
     }
 
-    function onDriverAcceptedCallSignal(packet) {
+    // Called when Driver clicks Accept on their phone OR Tester clicks [Test Receive]
+    async function driverReceiveCallNow(isSameDeviceTest = false) {
+      const pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
+      if (!pkt) return;
+      activeCallPacket = pkt;
+      activeCallId = pkt.callId;
+      if (!activeCallRole) activeCallRole = 'DRIVER';
+
+      stopAllCallRingtones();
+
+      try {
+        if (!appCallMicStream && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          appCallMicStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+              channelCount: 1,
+              sampleRate: 48000
+            }
+          });
+        }
+      } catch(e){}
+
+      // If answering from Driver's device and we have Caller's WebRTC offer, create WebRTC answer!
+      try {
+        if (pkt.webrtcOffer && activeCallRole === 'DRIVER') {
+          const pc = createCallPeerConnection('DRIVER', pkt);
+          if (pc) {
+            if (appCallMicStream) {
+              appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
+            }
+            await pc.setRemoteDescription(new RTCSessionDescription(pkt.webrtcOffer));
+            if (Array.isArray(pkt.callerIce)) {
+              for (const c of pkt.callerIce) {
+                try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e){}
+              }
+            }
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            pkt.webrtcAnswer = { type: answer.type, sdp: answer.sdp };
+          }
+        }
+      } catch(e){}
+
+      pkt.status = 'CONNECTED';
+      pkt.connectedAt = new Date().toISOString();
+      saveAndBroadcastCallPacket(pkt);
+
+      onCallConnectedCommonUI(pkt, isSameDeviceTest);
+
+      if (isSameDeviceTest) {
+        const er = selectedErickshawForCall || getActiveErickshawsList()[0];
+        if (er) {
+          speakDriverHindiVoice(`हाँ भैया नमस्कार! मैं ${er.driverName} बोल रहा हूँ, मेरा माइक और स्पीकर दोनों चालू हैं। बताइए आपको कहाँ से कहाँ जाना है?`);
+        }
+      }
+    }
+
+    async function onDriverAcceptedCallSignal(packet) {
+      if (!packet) return;
+      activeCallPacket = packet;
+      try {
+        if (rtcPeerConn && packet.webrtcAnswer && !rtcPeerConn.currentRemoteDescription) {
+          await rtcPeerConn.setRemoteDescription(new RTCSessionDescription(packet.webrtcAnswer));
+        }
+        if (rtcPeerConn && Array.isArray(packet.driverIce)) {
+          for (const cand of packet.driverIce) {
+            const key = JSON.stringify(cand);
+            if (!localProcessedIceSet.has(key)) {
+              localProcessedIceSet.add(key);
+              try { await rtcPeerConn.addIceCandidate(new RTCIceCandidate(cand)); } catch(e){}
+            }
+          }
+        }
+      } catch(e){}
       if (!isAppCallConnected) {
-        driverReceiveCallNow();
+        onCallConnectedCommonUI(packet, false);
       }
     }
 
@@ -10346,24 +10822,108 @@ ET
       const banner = document.getElementById('erickshaw-incoming-call-banner');
       const txt = document.getElementById('er-incoming-caller-text');
       if (banner && txt) {
-        txt.innerText = `Incoming App Call from ${packet?.callerName || 'Customer'} for 🛺 ${packet?.vehicleNumber || 'E-Rickshaw'} — Receive to Talk!`;
+        txt.innerText = `🔔 Incoming Call: ${packet?.callerName || 'Customer'} (+91 ${packet?.callerPhone || ''}) ➔ 🛺 ${packet?.vehicleNumber || 'E-Rickshaw'}`;
         banner.style.display = 'flex';
       }
+
+      // If the currently logged-in user IS the E-Rickshaw Driver (on their phone/tab), pop up the full WhatsApp Incoming Call Modal!
+      const me = getActiveUserProfile();
+      const myErs = (JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]') || []).filter(er => er && !er.removedByAdmin && (er.driverPhone === me?.phone || er.ownerUserId === me?.userId));
+      const isForMe = (me && packet && (packet.driverPhone === me.phone || myErs.some(e => e.id === packet.erickshawId)));
+
+      if (isForMe && activeCallRole !== 'CALLER') {
+        activeCallPacket = packet;
+        activeCallId = packet.callId;
+        activeCallRole = 'DRIVER';
+        if (packet.status === 'CALLING') {
+          packet.status = 'RINGING';
+          packet.driverOnline = true;
+          saveAndBroadcastCallPacket(packet);
+        }
+        const incModal = document.getElementById('whatsapp-incoming-call-modal');
+        if (incModal && incModal.style.display !== 'flex' && !isAppCallConnected) {
+          document.getElementById('wa-inc-caller-name').innerText = packet.callerName || 'Passenger Calling';
+          document.getElementById('wa-inc-caller-phone').innerText = '+91 ' + (packet.callerPhone || '----------');
+          document.getElementById('wa-inc-vehicle-info').innerText = `🛺 आपके ई-रिक्शा (${packet.vehicleNumber || 'Live E-Rickshaw'}) के लिए कॉल आ रहा है`;
+          document.getElementById('wa-inc-call-status').innerText = '🔔 घंटी बज रही है (Ringing...) — बात करने के लिए हरा बटन दबाएं!';
+          document.getElementById('wa-inc-ringing-btns').style.display = 'grid';
+          document.getElementById('wa-inc-connected-btns').style.display = 'none';
+          incModal.style.display = 'flex';
+
+          playIncomingWhatsAppRingtone();
+          if (!incomingRingLoop) {
+            incomingRingLoop = setInterval(() => {
+              if (isAppCallConnected || incModal.style.display === 'none') {
+                stopAllCallRingtones();
+                return;
+              }
+              playIncomingWhatsAppRingtone();
+            }, 2000);
+          }
+
+          try {
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification(`🔔 SafarSaathi Incoming Call: ${packet.callerName}`, {
+                body: `Customer (+91 ${packet.callerPhone}) is calling your E-Rickshaw (${packet.vehicleNumber})!`
+              });
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+              Notification.requestPermission();
+            }
+          } catch(e){}
+        }
+      }
+    }
+
+    async function acceptIncomingErickshawCall() {
+      const ringingBtns = document.getElementById('wa-inc-ringing-btns');
+      const connBtns = document.getElementById('wa-inc-connected-btns');
+      const statusTxt = document.getElementById('wa-inc-call-status');
+      if (ringingBtns) ringingBtns.style.display = 'none';
+      if (connBtns) connBtns.style.display = 'grid';
+      if (statusTxt) statusTxt.innerText = '🟢 HD Voice Call Connected • अब साफ आवाज़ में बात करें!';
+      await driverReceiveCallNow(false);
+    }
+
+    function declineIncomingErickshawCall() {
+      stopAllCallRingtones();
+      const incModal = document.getElementById('whatsapp-incoming-call-modal');
+      if (incModal) incModal.style.display = 'none';
+      if (activeCallPacket) {
+        activeCallPacket.status = 'DECLINED';
+        saveAndBroadcastCallPacket(activeCallPacket);
+      }
+      endAppToAppVoiceCall(true);
     }
 
     function simulateIncomingCustomerCallToDriver() {
       const list = getActiveErickshawsList();
-      const er = list[0];
-      if (!er) return;
+      const er = list[0] || { id: 'ER-DEMO', driverName: 'E-Rickshaw Driver', vehicleNumber: 'AS-02-ER-1001', driverPhone: getActiveUserProfile()?.phone || '9864012345' };
       selectedErickshawForCall = er;
-      playDialToneBeep(480, 280);
-      setTimeout(() => playDialToneBeep(480, 280), 400);
-      triggerDriverIncomingCallBanner({
-        callerName: 'Nearby Customer (300m away)',
+      const demoPkt = {
+        callId: 'CALL-' + Date.now(),
+        erickshawId: er.id,
+        driverName: er.driverName,
+        driverPhone: getActiveUserProfile()?.phone || er.driverPhone,
         vehicleNumber: er.vehicleNumber,
-        erickshawId: er.id
-      });
-      showToast('🔔 आपके ई-रिक्शा पर कस्टमर का डायरेक्ट ऐप कॉल आ रहा है! ऊपर "📞 Receive Call" दबाकर बात करें।', '#15803d');
+        callerName: 'Nearby Passenger (250m away)',
+        callerPhone: '9864055555',
+        status: 'RINGING',
+        startedAt: new Date().toISOString(),
+        updatedAt: Date.now()
+      };
+      activeCallRole = 'DRIVER';
+      activeCallPacket = demoPkt;
+      triggerDriverIncomingCallBanner(demoPkt);
+      const incModal = document.getElementById('whatsapp-incoming-call-modal');
+      if (incModal) {
+        document.getElementById('wa-inc-caller-name').innerText = demoPkt.callerName;
+        document.getElementById('wa-inc-caller-phone').innerText = '+91 ' + demoPkt.callerPhone;
+        document.getElementById('wa-inc-vehicle-info').innerText = `🛺 आपके ई-रिक्शा (${demoPkt.vehicleNumber}) के लिए कॉल आ रहा है`;
+        document.getElementById('wa-inc-ringing-btns').style.display = 'grid';
+        document.getElementById('wa-inc-connected-btns').style.display = 'none';
+        incModal.style.display = 'flex';
+        playIncomingWhatsAppRingtone();
+      }
     }
 
     function sendInCallVoicePrompt(customerText) {
@@ -10372,9 +10932,9 @@ ET
       const bubbleEl = document.getElementById('erp-driver-speech-bubble');
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        let reply = `ठीक है भैया! मैं इसी रूट में घूम रहा हूँ, अभी 2 मिनट में आपकी लोकेशन पर ई-रिक्शा लेकर पहुँच रहा हूँ, वहीं बैठिए!`;
+        let reply = `ठीक है भैया! आपकी आवाज़ बिल्कुल साफ आ रही है, मैं अभी 2 मिनट में आपकी लोकेशन पर ई-रिक्शा लेकर पहुँच रहा हूँ!`;
         if (customerText.includes('लोकेशन')) {
-          reply = `जी भैया! मुझे मैप पर आपकी लोकेशन दिख रही है, मैं ${er.vehicleNumber} ई-रिक्शा लेकर अभी आपके पास आ रहा हूँ।`;
+          reply = `जी भैया! मुझे मैप पर आपकी लाइव लोकेशन दिख रही है, मैं ${er.vehicleNumber} ई-रिक्शा लेकर अभी आ रहा हूँ।`;
         }
         bubbleEl.innerHTML = `🗣️ <b>You:</b> "${customerText}"<br>🛺 <b>${er.driverName}:</b> "${reply}"`;
         speakDriverHindiVoice(reply);
@@ -10386,29 +10946,49 @@ ET
       if (appCallMicStream) {
         appCallMicStream.getAudioTracks().forEach(t => { t.enabled = !appCallMuted; });
       }
-      const btn = document.getElementById('btn-erp-mute');
-      if (btn) {
-        btn.innerText = appCallMuted ? '🔇 Muted' : '🎙️ Mute';
-        btn.style.background = appCallMuted ? '#dc2626' : '#1e293b';
-      }
+      ['btn-erp-mute', 'btn-wa-inc-mute'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.innerText = appCallMuted ? '🔇 Muted' : '🎙️ Mute';
+          btn.style.background = appCallMuted ? '#dc2626' : '#1e293b';
+        }
+      });
     }
 
     function toggleAppCallSpeaker() {
       appCallSpeaker = !appCallSpeaker;
+      const audioEl = document.getElementById('ss-remote-call-audio');
+      if (audioEl) audioEl.muted = !appCallSpeaker;
       if (!appCallSpeaker && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
       }
-      const btn = document.getElementById('btn-erp-speaker');
-      if (btn) {
-        btn.innerText = appCallSpeaker ? '🔊 Speaker ON' : '🔈 Speaker OFF';
-        btn.style.background = appCallSpeaker ? '#16a34a' : '#1e293b';
-      }
+      ['btn-erp-speaker', 'btn-wa-inc-speaker'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.innerText = appCallSpeaker ? '🔊 Speaker ON' : '🔈 Speaker OFF';
+          btn.style.background = appCallSpeaker ? '#16a34a' : '#1e293b';
+        }
+      });
     }
 
     function endAppToAppVoiceCall(silent = false) {
       clearInterval(appCallTimerInterval);
       clearTimeout(appCallRingTimer);
+      stopAllCallRingtones();
       isAppCallConnected = false;
+
+      if (activeCallPacket && activeCallPacket.status !== 'ENDED') {
+        activeCallPacket.status = 'ENDED';
+        saveAndBroadcastCallPacket(activeCallPacket);
+      }
+      activeCallPacket = null;
+      activeCallId = null;
+      activeCallRole = null;
+
+      if (rtcPeerConn) {
+        try { rtcPeerConn.close(); } catch(e){}
+        rtcPeerConn = null;
+      }
       if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch(e){}
       }
@@ -10418,26 +10998,83 @@ ET
       }
       const banner = document.getElementById('erickshaw-incoming-call-banner');
       if (banner) banner.style.display = 'none';
+      const incModal = document.getElementById('whatsapp-incoming-call-modal');
+      if (incModal) incModal.style.display = 'none';
       resetAppCallUiState();
       if (!silent) {
-        showToast('☎️ Direct App-to-App Voice Call Ended.', '#15803d');
+        showToast('☎️ WhatsApp-Style HD Voice Call Ended.', '#15803d');
       }
     }
 
     function acceptIncomingAppCall() {
-      const list = getActiveErickshawsList();
-      if (list.length > 0) {
-        const er = selectedErickshawForCall || list[0];
-        openErickshawProfileModal(er.id, false);
-        const idleAct = document.getElementById('erp-call-idle-actions');
-        const activeAct = document.getElementById('erp-call-active-actions');
-        const waveEl = document.getElementById('erp-call-waveform');
-        if (idleAct) idleAct.style.display = 'none';
-        if (activeAct) activeAct.style.display = 'grid';
-        if (waveEl) waveEl.style.display = 'flex';
-        driverReceiveCallNow();
+      acceptIncomingErickshawCall();
+    }
+
+    // Handle incoming signaling packets (RINGING, CONNECTED, DECLINED, ENDED, ICE, Voice Chunks)
+    function processIncomingCallPacketSignal(pkt) {
+      if (!pkt || !pkt.callId) return;
+      const ageMs = Date.now() - Number(pkt.updatedAt || new Date(pkt.startedAt || 0).getTime() || 0);
+      if (ageMs > 90000) return; // Ignore stale calls older than 90s
+
+      playIncomingVoiceChunksIfAny(pkt);
+
+      if (activeCallId && pkt.callId === activeCallId) {
+        activeCallPacket = pkt;
+        if (activeCallRole === 'CALLER') {
+          if (pkt.status === 'RINGING') {
+            const st = document.getElementById('erp-call-status-text');
+            const sub = document.getElementById('erp-call-substatus-text');
+            if (st && !isAppCallConnected) st.innerText = `🔔 Ringing... (${pkt.driverName} के फोन पर घंटी बज रही है!)`;
+            if (sub && !isAppCallConnected) sub.innerText = `🟢 ड्राइवर का फोन ऑनलाइन है और रिंग हो रहा है — उठते ही बात होगी!`;
+          } else if (pkt.status === 'CONNECTED') {
+            onDriverAcceptedCallSignal(pkt);
+          } else if (pkt.status === 'DECLINED' || pkt.status === 'ENDED') {
+            endAppToAppVoiceCall(true);
+            showToast('☎️ ड्राइवर ने कॉल समाप्त कर दिया।', '#dc2626');
+          }
+        } else if (activeCallRole === 'DRIVER') {
+          if (rtcPeerConn && Array.isArray(pkt.callerIce)) {
+            pkt.callerIce.forEach(cand => {
+              const key = JSON.stringify(cand);
+              if (!localProcessedIceSet.has(key)) {
+                localProcessedIceSet.add(key);
+                try { rtcPeerConn.addIceCandidate(new RTCIceCandidate(cand)); } catch(e){}
+              }
+            });
+          }
+          if (pkt.status === 'ENDED') {
+            endAppToAppVoiceCall(true);
+            showToast('☎️ कस्टमर ने कॉल समाप्त कर दिया।', '#dc2626');
+          }
+        }
+        return;
+      }
+
+      // Check if this is a brand new incoming call for the logged-in Driver!
+      if (pkt.status === 'CALLING' || pkt.status === 'RINGING') {
+        triggerDriverIncomingCallBanner(pkt);
       }
     }
+
+    // 1.5-Second Background Heartbeat for Online Presence + Incoming Call Polling
+    setInterval(() => {
+      try {
+        broadcastMyOnlinePresence();
+        const me = getActiveUserProfile();
+        if (me && me.phone) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/PHONE_' + me.phone + '.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(pkt => { if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt); })
+            .catch(() => {});
+        }
+        if (activeCallRole === 'CALLER' && selectedErickshawForCall && selectedErickshawForCall.id) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + selectedErickshawForCall.id + '.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(pkt => { if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt); })
+            .catch(() => {});
+        }
+      } catch(e){}
+    }, 1500);
 
     // =========================================================================
     // 🚨 CUSTOMER & DRIVER COMPLAINT BOX CONTROLLER (SYNCED WITH ADMIN PANEL)
@@ -10943,29 +11580,36 @@ ET
         </div>
       </div>
 
-      <!-- 2. Wallets Summary Grid -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.55rem; text-align: center;">
+      <!-- 2. Wallets Summary Grid (Permanent Deposited Balance + 10-Ride Unlock Quota) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem; text-align: center;">
         <div style="background: #fefce8; border: 1.5px solid #eab308; border-radius: 10px; padding: 0.5rem;">
-          <div style="font-size: 0.62rem; font-weight: 800; color: #854d0e;">🎁 Referral Balance</div>
-          <div id="ref-modal-wallet-bal" style="font-size: 1.15rem; font-weight: 900; color: #15803d; font-family: monospace;">₹0</div>
-          <div style="font-size: 0.58rem; color: #64748b; font-weight: 700;">Use ₹20 / Trip or Post</div>
+          <div style="font-size: 0.62rem; font-weight: 900; color: #854d0e;">💰 कुल जमा बैलेंस (Deposited)</div>
+          <div id="ref-modal-wallet-bal" style="font-size: 1.18rem; font-weight: 900; color: #15803d; font-family: monospace;">₹0</div>
+          <div style="font-size: 0.56rem; color: #713f12; font-weight: 800;">हर वक्त जमा रहेगा • पोस्ट/विड्रॉल पर ₹20 माइनस होगा</div>
         </div>
         <div style="background: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 10px; padding: 0.5rem;">
-          <div style="font-size: 0.62rem; font-weight: 800; color: #1e40af;">💸 10-Ride Unlocked Cash</div>
-          <div id="ref-modal-unlock-bal" style="font-size: 1.15rem; font-weight: 900; color: #0284c7; font-family: monospace;">₹0</div>
-          <div id="ref-modal-rides-progress" style="font-size: 0.58rem; color: #1d4ed8; font-weight: 800;">0 / 10 Rides Completed</div>
+          <div style="font-size: 0.62rem; font-weight: 900; color: #1e40af;">🔓 10-Ride विड्रॉल अनलॉक</div>
+          <div id="ref-modal-unlock-bal" style="font-size: 1.18rem; font-weight: 900; color: #0284c7; font-family: monospace;">₹0</div>
+          <div id="ref-modal-rides-progress" style="font-size: 0.56rem; color: #1d4ed8; font-weight: 800;">0 / 10 Rides (10 राइड पर ₹20 अनलॉक)</div>
         </div>
       </div>
 
-      <!-- 3. Direct ₹20 UPI Withdrawal Request Form -->
-      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.6rem; margin-bottom: 0.45rem;">
-        <div style="font-size: 0.72rem; font-weight: 900; color: #0f172a; margin-bottom: 4px;">
-          💸 10 राइड पूरी होने पर अनलॉक ₹20 अपने UPI में विड्रॉल करें:
+      <!-- Rule Explanation Box -->
+      <div style="background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; padding: 5px 8px; margin-bottom: 0.45rem; font-size: 0.61rem; color: #92400e; font-weight: 800; line-height: 1.35;">
+        📌 <b>नियम:</b> रेफर से जमा हुआ ₹100-₹200 हर वक्त आपके वॉलेट में जमा रहता है।<br>
+        • <b>ई-रिक्शा/कार पोस्ट:</b> हर पोस्ट में जमा बैलेंस से <b>₹20</b> यूज़ (माइनस) कर सकते हैं।<br>
+        • <b>पैसेंजर (बिना गाड़ी पोस्ट किए):</b> जब भी आपकी <b>10 राइड कंप्लीट</b> होंगी, जमा बैलेंस से <b>₹20 विड्रॉल अनलॉक</b> होगा (10 राइड से पहले यह 🔒 लॉक रहेगा) और विड्रॉल करने पर कुल जमा बैलेंस से <b>₹20 माइनस</b> हो जाएगा।
+      </div>
+
+      <!-- 3. Direct ₹20 UPI Withdrawal Request Form (Locked until 10 rides!) -->
+      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.55rem; margin-bottom: 0.45rem;">
+        <div id="ref-modal-withdraw-lock-banner" style="font-size: 0.66rem; font-weight: 900; color: #dc2626; margin-bottom: 4px;">
+          🔒 लॉक है: 10 राइड पूरी होने पर ही ₹20 विड्रॉल अनलॉक होगा (अभी 0/10 राइड)
         </div>
         <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px;">
-          <input type="text" id="withdraw-upi-input" class="form-control" placeholder="Enter UPI ID or GPay/PhonePe No." style="height: 34px !important; font-size: 0.78rem !important;">
-          <button type="button" onclick="submitUserWithdrawalRequest()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; border-radius: 8px; padding: 0 12px; font-size: 0.72rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
-            💸 Withdraw ₹20 ➔
+          <input type="text" id="withdraw-upi-input" class="form-control" placeholder="Enter UPI ID or GPay/PhonePe No." style="height: 34px !important; font-size: 0.76rem !important;">
+          <button type="button" id="btn-submit-withdrawal" onclick="submitUserWithdrawalRequest()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; border-radius: 8px; padding: 0 11px; font-size: 0.7rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
+            💸 Withdraw ₹20 (-₹20) ➔
           </button>
         </div>
       </div>
@@ -11052,95 +11696,95 @@ ET
 
   <!-- 🛺 E-RICKSHAW PROFILE & DIRECT APP-TO-APP CALL-TO-RECEIVE MODAL (NO FARE • NO WHATSAPP • 100% IN-APP VOICE TALK) -->
   <div class="modal-backdrop" id="erickshaw-profile-modal" style="display: none; z-index: 9999;" onclick="if(event.target===this) closeErickshawProfileModal();">
-    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2.5px solid #16a34a; border-radius: 18px; max-width: 410px; width: 92vw; padding: 0.85rem; box-shadow: 0 12px 35px rgba(0,0,0,0.5);">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.5rem;">
+    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2.5px solid #16a34a; border-radius: 18px; max-width: 420px; width: 93vw; padding: 0.8rem; box-shadow: 0 12px 35px rgba(0,0,0,0.5);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.35rem; margin-bottom: 0.45rem;">
         <div style="display: flex; align-items: center; gap: 6px;">
           <span style="font-size: 1.2rem;">🛺</span>
           <div>
-            <h3 style="font-size: 0.94rem; font-weight: 900; color: #000000; margin: 0;">Live Moving E-Rickshaw Profile</h3>
-            <span id="erp-live-validity-badge" style="font-size: 0.62rem; color: #15803d; font-weight: 800;">🟢 12-Hour Live GPS Route • Direct Call-to-Receive</span>
+            <h3 style="font-size: 0.92rem; font-weight: 900; color: #000000; margin: 0;">WhatsApp-Style Live E-Rickshaw Call</h3>
+            <span id="erp-live-validity-badge" style="font-size: 0.6rem; color: #15803d; font-weight: 800;">🟢 12-Hour Live GPS • Real-Time 2-Way HD Voice Call</span>
           </div>
         </div>
         <button type="button" onclick="closeErickshawProfileModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 28px; height: 28px; border-radius: 50%; font-weight: 900; cursor: pointer;">✕</button>
       </div>
 
-      <!-- Driver Info Header (NO FARE DISPLAYED - ONLY LIVE GPS & DIRECT CALL READY) -->
-      <div style="display: flex; align-items: center; gap: 10px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 0.5rem; margin-bottom: 0.5rem;">
-        <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; flex-shrink: 0;">
+      <!-- Driver Info Header with Live WhatsApp-Style Online / Offline Badge -->
+      <div style="display: flex; align-items: center; gap: 9px; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 0.45rem; margin-bottom: 0.45rem;">
+        <div style="position: relative; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; flex-shrink: 0;">
           🛺
+          <span id="erp-online-dot" style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; border-radius: 50%; background: #22c55e; border: 2px solid #ffffff;"></span>
         </div>
         <div style="flex: 1; min-width: 0;">
           <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-            <strong id="erp-driver-name" style="font-size: 0.94rem; font-weight: 900; color: #000000;">E-Rickshaw Driver</strong>
-            <span style="background: #16a34a; color: #fff; font-size: 0.55rem; font-weight: 900; padding: 1px 6px; border-radius: 999px;">✓ Live on Route</span>
+            <strong id="erp-driver-name" style="font-size: 0.92rem; font-weight: 900; color: #000000;">E-Rickshaw Driver</strong>
+            <span id="erp-online-status-pill" style="background: #dcfce7; color: #15803d; border: 1px solid #16a34a; font-size: 0.58rem; font-weight: 900; padding: 1px 6px; border-radius: 999px;">🟢 Online</span>
           </div>
-          <div id="erp-vehicle-plate" style="font-size: 0.73rem; font-weight: 900; color: #15803d; font-family: monospace;">AS-01-ER-4021 • Live E-Rickshaw</div>
-          <div id="erp-post-time" style="font-size: 0.62rem; color: #475569; font-weight: 800;">🕒 Posted: 35m ago • Valid: 11h 25m left</div>
+          <div id="erp-vehicle-plate" style="font-size: 0.72rem; font-weight: 900; color: #15803d; font-family: monospace;">AS-01-ER-4021 • Live E-Rickshaw</div>
+          <div id="erp-post-time" style="font-size: 0.6rem; color: #475569; font-weight: 800;">🕒 Posted: Just now • Valid: 12h left</div>
         </div>
-        <div style="text-align: right; background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 3px 7px;">
-          <div style="font-size: 0.68rem; font-weight: 900; color: #15803d;">🟢 LIVE</div>
-          <div style="font-size: 0.54rem; color: #15803d; font-weight: 900;">Direct Call</div>
-        </div>
+        <button type="button" onclick="locateThisErickshawOnMap()" style="background: #dcfce7; color: #15803d; border: 1px solid #16a34a; padding: 4px 7px; border-radius: 8px; font-size: 0.6rem; font-weight: 900; cursor: pointer;">
+          🗺️ Radar
+        </button>
       </div>
 
       <!-- Live Moving Route & GPS Distance Box -->
-      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.45rem 0.6rem; margin-bottom: 0.5rem; font-size: 0.7rem;">
-        <div style="display: none;">🛣️ <b>Live GPS:</b> <span id="erp-stand-area">Live GPS</span></div>
-        <div style="margin-bottom: 4px;">📍 <b>Current Moving Point:</b> <span id="erp-current-road-point" style="color: #0f172a; font-weight: 800;">Moving near Panbazar Overbridge (18 km/h)</span></div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span>📡 <b>Nearby Distance:</b> <span id="erp-distance" style="color: #0284c7; font-weight: 900;">280m away (0.28 km)</span></span>
-          <button type="button" onclick="locateThisErickshawOnMap()" style="background: #dcfce7; color: #15803d; border: 1px solid #16a34a; padding: 2px 7px; border-radius: 6px; font-size: 0.62rem; font-weight: 900; cursor: pointer;">🗺️ Focus on Radar</button>
-        </div>
+      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.4rem 0.55rem; margin-bottom: 0.45rem; font-size: 0.68rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+        <div style="display: none;"><span id="erp-stand-area">Live GPS</span></div>
+        <span>📍 <b id="erp-current-road-point" style="color: #0f172a;">Moving on Live GPS Route</b></span>
+        <span>📡 <b id="erp-distance" style="color: #0284c7;">120m away</b></span>
       </div>
 
-      <!-- Direct Call-to-Receive Info Banner (No Fare - Talk Directly on Call) -->
-      <div style="background: #eff6ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 5px 8px; margin-bottom: 0.5rem; font-size: 0.64rem; color: #1e3a8a; font-weight: 800; text-align: center;">
-        🗣️ <b>कोई फिक्स किराया (Fare) नहीं है</b> — सीधे कॉल लगाएं, ड्राइवर ऐप पर <b>Receive</b> करेगा और कहाँ से कहाँ जाना है आपस में बात कर लें!
-      </div>
-
-      <!-- 📞 IN-APP DIRECT CALL-TO-RECEIVE INTERFACE (NO WHATSAPP!) -->
-      <div id="erp-voice-call-panel" style="background: linear-gradient(135deg, #090d16, #1e293b); border: 2px solid #22c55e; border-radius: 14px; padding: 0.65rem; color: #ffffff; text-align: center;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-          <span style="font-size: 0.6rem; background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid #22c55e; padding: 1px 7px; border-radius: 999px; font-weight: 900;">
-            🔒 Direct App-to-App Call to Receive
+      <!-- 📞 WHATSAPP-STYLE DIRECT 2-WAY HD VOICE CALL INTERFACE -->
+      <div id="erp-voice-call-panel" style="background: linear-gradient(145deg, #071318, #0f291e); border: 2px solid #22c55e; border-radius: 14px; padding: 0.65rem; color: #ffffff; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+          <span id="erp-call-encryption-badge" style="font-size: 0.58rem; background: rgba(34,197,94,0.2); color: #86efac; border: 1px solid #22c55e; padding: 1px 7px; border-radius: 999px; font-weight: 900;">
+            🔊 WhatsApp-Style HD Clear Voice • Noise Cancelled
           </span>
-          <span id="erp-call-timer" style="font-family: monospace; font-size: 0.76rem; font-weight: 900; color: #a3e635;">00:00</span>
+          <span id="erp-call-timer" style="font-family: monospace; font-size: 0.78rem; font-weight: 900; color: #a3e635;">00:00</span>
         </div>
 
-        <div id="erp-call-status-text" style="font-size: 0.76rem; font-weight: 900; color: #ffffff; margin-bottom: 0.35rem;">
-          नीचे कॉल बटन दबाएं — ड्राइवर के फोन पर घंटी बजेगी और कॉल रिसीव होगा
+        <!-- Call Status (Calling... -> Ringing... -> Connected HD) -->
+        <div id="erp-call-status-text" style="font-size: 0.78rem; font-weight: 900; color: #ffffff; margin-bottom: 0.25rem;">
+          नीचे हरा कॉल बटन दबाएं — ई-रिक्शा वाले के फोन पर तुरंत घंटी (Ringing) बजेगी!
+        </div>
+        <div id="erp-call-substatus-text" style="font-size: 0.62rem; color: #86efac; font-weight: 800; margin-bottom: 0.35rem;">
+          🟢 दोनों तरफ रिंगिंग, ऑनलाइन/ऑफलाइन स्टेटस और क्रिस्टल-क्लियर माइक/स्पीकर आवाज़
         </div>
 
-        <!-- Driver Side Ringing / Receive Prompt (Visible while Ringing so Driver or Tester can click Receive Immediately!) -->
-        <div id="erp-driver-receive-prompt" style="display: none; background: linear-gradient(90deg, #065f46, #15803d); border: 1.5px solid #a3e635; border-radius: 10px; padding: 6px 8px; margin-bottom: 0.35rem; align-items: center; justify-content: space-between; gap: 6px;">
-          <span style="font-size: 0.64rem; font-weight: 900; color: #ffffff;">🔔 Driver Phone Ringing...</span>
-          <button type="button" onclick="driverReceiveCallNow()" style="background: #a3e635; color: #090d16; border: 1.5px solid #ffffff; padding: 4px 10px; border-radius: 7px; font-size: 0.66rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
-            📞 Receive Call (कॉल रिसीव करें)
+        <!-- Driver Phone Ringing Status Box (Shows while waiting for Driver to click Accept on their phone, plus Same-Device Test button) -->
+        <div id="erp-driver-receive-prompt" style="display: none; background: rgba(22,163,74,0.25); border: 1.5px solid #4ade80; border-radius: 10px; padding: 6px 8px; margin-bottom: 0.35rem; align-items: center; justify-content: space-between; gap: 6px;">
+          <div style="text-align: left;">
+            <div style="font-size: 0.65rem; font-weight: 900; color: #ffffff;">🔔 ई-रिक्शा ड्राइवर के फोन पर घंटी बज रही है...</div>
+            <div style="font-size: 0.56rem; color: #bbf7d0;">ड्राइवर के फोन पर Incoming Call नोटिफिकेशन जा चुका है (या इसी फोन पर टेस्ट करने के लिए दाएं बटन दबाएं)</div>
+          </div>
+          <button type="button" onclick="driverReceiveCallNow(true)" style="background: #22c55e; color: #052e16; border: 1.5px solid #ffffff; padding: 4px 8px; border-radius: 7px; font-size: 0.62rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
+            📞 [Test Receive]
           </button>
         </div>
 
-        <!-- Live Audio Waveform Visualizer & Driver Live Voice Transcript -->
-        <div id="erp-call-waveform" style="display: none; justify-content: center; align-items: center; gap: 4px; height: 22px; margin-bottom: 0.3rem;">
+        <!-- Live HD Audio Waveform Visualizer -->
+        <div id="erp-call-waveform" style="display: none; justify-content: center; align-items: center; gap: 4px; height: 22px; margin-bottom: 0.35rem;">
           <span style="width: 4px; height: 12px; background: #22c55e; border-radius: 2px; animation: pulse 0.5s infinite;"></span>
           <span style="width: 4px; height: 20px; background: #a3e635; border-radius: 2px; animation: pulse 0.4s infinite;"></span>
           <span style="width: 4px; height: 15px; background: #22c55e; border-radius: 2px; animation: pulse 0.6s infinite;"></span>
           <span style="width: 4px; height: 22px; background: #86efac; border-radius: 2px; animation: pulse 0.35s infinite;"></span>
           <span style="width: 4px; height: 14px; background: #22c55e; border-radius: 2px; animation: pulse 0.55s infinite;"></span>
-          <span id="erp-mic-level-label" style="font-size: 0.6rem; color: #86efac; font-weight: 800; margin-left: 6px;">🎙️ Mic & Speaker Live • Talk Directly</span>
+          <span id="erp-mic-level-label" style="font-size: 0.6rem; color: #86efac; font-weight: 800; margin-left: 6px;">🎙️ HD Noise-Cancel Mic & Speaker Live</span>
         </div>
 
-        <div id="erp-driver-speech-bubble" style="display: none; background: rgba(255,255,255,0.08); border: 1px solid rgba(134,239,172,0.4); border-radius: 8px; padding: 5px 8px; font-size: 0.68rem; color: #dcfce7; margin-bottom: 0.4rem; text-align: left;">
-          🛺 <b>Driver:</b> "हाँ भैया, नमस्कार! मैंने कॉल रिसीव कर लिया है। बताइए आपको कहाँ से कहाँ जाना है?"
+        <div id="erp-driver-speech-bubble" style="display: none; background: rgba(255,255,255,0.08); border: 1px solid rgba(134,239,172,0.4); border-radius: 8px; padding: 5px 8px; font-size: 0.66rem; color: #dcfce7; margin-bottom: 0.35rem; text-align: left;">
+          🟢 <b>2-Way HD Voice Connected:</b> अब आप अपने फोन के माइक में बोलिए — आपकी साफ आवाज़ सीधे ड्राइवर के स्पीकर पर जा रही है और ड्राइवर की आवाज़ आपके स्पीकर पर आ रही है!
         </div>
 
-        <!-- Call Action Buttons -->
+        <!-- Idle Action Button: Start WhatsApp-Style In-App Call -->
         <div id="erp-call-idle-actions">
-          <button type="button" onclick="startAppToAppVoiceCall()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; padding: 0.58rem; border-radius: 10px; font-size: 0.82rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+          <button type="button" onclick="startAppToAppVoiceCall()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; padding: 0.55rem; border-radius: 10px; font-size: 0.8rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
             <span>📞</span>
-            <span>Direct App-to-App Call (सीधे कॉल लगाएं)</span>
+            <span>WhatsApp-Style Direct App Call (सीधे कॉल लगाएं)</span>
           </button>
         </div>
 
+        <!-- Active Call Controls: Mute, Speaker, Cut Call -->
         <div id="erp-call-active-actions" style="display: none; grid-template-columns: 1fr 1fr 1.2fr; gap: 6px;">
           <button type="button" id="btn-erp-mute" onclick="toggleAppCallMute()" style="background: #1e293b; color: #ffffff; border: 1px solid #475569; padding: 6px; border-radius: 8px; font-size: 0.68rem; font-weight: 800; cursor: pointer;">
             🎙️ Mute
@@ -11153,14 +11797,68 @@ ET
           </button>
         </div>
 
-        <!-- Quick Voice Talk Buttons while in call (कहाँ से कहाँ जाना है तुरंत बात करें) -->
+        <!-- Quick Voice Message Relay Buttons -->
         <div id="erp-quick-talk-row" style="display: none; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 6px;">
           <button type="button" onclick="sendInCallVoicePrompt('भैया, मैं पास में ही खड़ा हूँ, मेरी लोकेशन पर आ जाइए')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">🗣️ "मेरी लोकेशन पर आ जाइए"</button>
-          <button type="button" onclick="sendInCallVoicePrompt('भैया, मुझे आगे चौक तक जाना है, अभी आ रहे हैं क्या?')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">🗣️ "कहाँ से कहाँ जाना है बात करें"</button>
+          <button type="button" onclick="sendInCallVoicePrompt('भैया, मुझे आगे चौक तक जाना है, अभी आ रहे हैं क्या?')" style="background: rgba(34,197,94,0.18); color: #bbf7d0; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 6px; font-size: 0.58rem; font-weight: 800; cursor: pointer;">🗣️ "आगे चौक तक जाना है"</button>
+        </div>
+
+        <!-- Backup Direct SIM & WhatsApp Call Strip (If Driver is Offline) -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 0.45rem; padding-top: 0.4rem; border-top: 1px solid rgba(255,255,255,0.14);">
+          <a id="erp-fallback-sim-call" href="tel:9864012345" style="background: rgba(255,255,255,0.1); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 4px 6px; font-size: 0.64rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            📲 SIM Phone Call
+          </a>
+          <a id="erp-fallback-wa-call" href="https://wa.me/919864012345" target="_blank" style="background: rgba(37,211,102,0.18); color: #86efac; border: 1px solid #22c55e; border-radius: 8px; padding: 4px 6px; font-size: 0.64rem; font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            💬 WhatsApp Call
+          </a>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- 🔔 FULL WHATSAPP-STYLE INCOMING CALL RINGING MODAL FOR E-RICKSHAW / CAR DRIVER -->
+  <div class="modal-backdrop" id="whatsapp-incoming-call-modal" style="display: none; z-index: 10050; background: rgba(2,6,23,0.92);">
+    <div class="modal-card" style="background: linear-gradient(160deg, #052e16, #064e3b, #022c22); color: #ffffff; border: 2.5px solid #4ade80; border-radius: 22px; max-width: 380px; width: 92vw; padding: 1.2rem 1rem; text-align: center; box-shadow: 0 18px 45px rgba(0,0,0,0.75);">
+      <div style="display: inline-block; background: rgba(34,197,94,0.25); border: 1px solid #4ade80; color: #bbf7d0; font-size: 0.65rem; font-weight: 900; padding: 3px 10px; border-radius: 999px; margin-bottom: 0.6rem;">
+        🔔 SafarSaathi WhatsApp-Style HD Voice Call
+      </div>
+      <div style="width: 74px; height: 74px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #15803d); border: 3px solid #bbf7d0; margin: 0 auto 0.55rem auto; display: flex; align-items: center; justify-content: center; font-size: 2.1rem; box-shadow: 0 0 25px rgba(34,197,94,0.6); animation: pulse 1s infinite;">
+        📞
+      </div>
+      <h3 id="wa-inc-caller-name" style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0 0 2px 0;">Customer Calling...</h3>
+      <div id="wa-inc-caller-phone" style="font-size: 0.8rem; font-weight: 800; color: #86efac; font-family: monospace; margin-bottom: 4px;">+91 ----------</div>
+      <div id="wa-inc-vehicle-info" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 4px 8px; margin-bottom: 0.7rem;">
+        🛺 आपके ई-रिक्शा के लिए लाइव कॉल आ रहा है
+      </div>
+      <div id="wa-inc-call-status" style="font-size: 0.75rem; font-weight: 900; color: #fde047; margin-bottom: 0.9rem;">
+        🔔 घंटी बज रही है (Ringing...) — बात करने के लिए हरा बटन दबाएं!
+      </div>
+
+      <!-- Accept / Decline Buttons -->
+      <div id="wa-inc-ringing-btns" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <button type="button" onclick="declineIncomingErickshawCall()" style="background: linear-gradient(135deg, #ef4444, #b91c1c); color: #ffffff; border: 2px solid #fca5a5; padding: 0.7rem; border-radius: 999px; font-size: 0.85rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 15px rgba(239,68,68,0.45);">
+          <span>❌</span> <span>काटें (Decline)</span>
+        </button>
+        <button type="button" onclick="acceptIncomingErickshawCall()" style="background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 2px solid #bbf7d0; padding: 0.7rem; border-radius: 999px; font-size: 0.85rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 18px rgba(34,197,94,0.65);">
+          <span>📞</span> <span>उठाएं (Accept)</span>
+        </button>
+      </div>
+
+      <!-- Active Connected Controls for Driver -->
+      <div id="wa-inc-connected-btns" style="display: none; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; margin-top: 8px;">
+        <button type="button" id="btn-wa-inc-mute" onclick="toggleAppCallMute()" style="background: #1e293b; color: #ffffff; border: 1px solid #475569; padding: 8px; border-radius: 10px; font-size: 0.74rem; font-weight: 900; cursor: pointer;">
+          🎙️ Mute
+        </button>
+        <button type="button" id="btn-wa-inc-speaker" onclick="toggleAppCallSpeaker()" style="background: #16a34a; color: #ffffff; border: 1px solid #86efac; padding: 8px; border-radius: 10px; font-size: 0.74rem; font-weight: 900; cursor: pointer;">
+          🔊 Speaker ON
+        </button>
+        <button type="button" onclick="endAppToAppVoiceCall()" style="background: #dc2626; color: #ffffff; border: 1px solid #fca5a5; padding: 8px; border-radius: 10px; font-size: 0.76rem; font-weight: 900; cursor: pointer;">
+          ☎️ Cut Call
+        </button>
+      </div>
+    </div>
+  </div>
+  <audio id="ss-remote-call-audio" autoplay playsinline style="display:none;"></audio>
 
 </body>
 </html>
