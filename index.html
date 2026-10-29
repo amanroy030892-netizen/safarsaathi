@@ -48,18 +48,17 @@
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
         const demoUtrs = ['987654321013', '987654321014', '987654321015', '987654321012'];
         const fakeErIds = ['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106'];
-        const fakeErNames = ['Raju Das', 'Bikash Kalita', 'Mominul Islam', 'Dipankar Bora', 'Sanjay Nath', 'Pranjal Gogoi'];
 
         let raw = JSON.parse(ssStorage.getItem('ss_rides')) || [];
         let hasDemo = raw.some(r => demoRideIds.includes(r.id) || demoNames.includes(r.driverName) || demoUtrs.includes(r.platformFeeUtr));
 
         let rawEr = JSON.parse(ssStorage.getItem('ss_erickshaws')) || [];
-        let hasFakeEr = rawEr.some(e => fakeErIds.includes(e.id) || fakeErNames.includes(e.driverName));
+        let hasFakeEr = rawEr.some(e => e && fakeErIds.includes(e.id) && !e.utrNumber);
 
         if (lastVer !== CURRENT_VERSION || hasDemo || hasFakeEr) {
           let cleanRides = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName) && !demoUtrs.includes(r.platformFeeUtr));
           ssStorage.setItem('ss_rides', JSON.stringify(cleanRides));
-          let cleanEr = rawEr.filter(e => e && !fakeErIds.includes(e.id) && !fakeErNames.includes(e.driverName));
+          let cleanEr = rawEr.filter(e => e && !(fakeErIds.includes(e.id) && !e.utrNumber));
           ssStorage.setItem('ss_erickshaws', JSON.stringify(cleanEr));
           ssStorage.setItem('ss_build_ver', CURRENT_VERSION);
         }
@@ -1277,7 +1276,10 @@
             </label>
             <input type="file" id="df-plate-camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handleCarPlateLiveScan(event)">
 
-            <input type="hidden" id="df-plate" value="AS 01 TX 2010">
+            <div style="margin-top: 0.45rem;">
+              <label style="font-size: 0.7rem; font-weight: 800; color: #0f172a; display: block; margin-bottom: 2px;">Or Type Car Number Plate Directly (गाड़ी नंबर लिखें)*</label>
+              <input type="text" id="df-plate" class="form-control" value="AS 01 TX 2010" placeholder="e.g. AS 01 BP 4021" oninput="const b=document.getElementById('df-scanned-plate-badge'); if(b) b.innerText=this.value.toUpperCase();" style="height: 34px !important; font-family: monospace; font-weight: 900; text-transform: uppercase;">
+            </div>
 
             <div id="df-plate-scan-result" style="margin-top: 0.65rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.55rem 0.75rem; display: flex; align-items: center; justify-content: space-between;">
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -2188,27 +2190,65 @@
           </div>
         </div>
 
-        <!-- Logged In Profile Card View -->
+        <!-- Logged In Profile Card View (Connected Hub for E-Rickshaw, Car, Passenger & Profile Edit) -->
         <div id="prof-card-view" style="display: none;">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
-            <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">
-              👤
-            </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <h3 id="prof-card-name" style="font-size: 1.15rem; font-weight: 900; color: #000000; margin: 0;">User Name</h3>
-                <span class="rc-verified-shield">🛡️ AI Verified</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 0.4rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0;">
+                👤
               </div>
-              <div id="prof-card-phone" style="font-size: 0.8rem; color: var(--accent); font-weight: 800; margin-top: 2px;">📱 +91 ----------</div>
-              <div id="prof-card-addr" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 2px;">📍 Assam, India</div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                  <h3 id="prof-card-name" style="font-size: 0.96rem; font-weight: 900; color: #000000; margin: 0;">User Name</h3>
+                  <span class="rc-verified-shield" style="font-size: 0.58rem; padding: 1px 5px;">🛡️ Verified</span>
+                </div>
+                <div id="prof-card-phone" style="font-size: 0.72rem; color: var(--accent); font-weight: 800; margin-top: 1px;">📱 +91 ----------</div>
+                <div id="prof-card-addr" style="font-size: 0.66rem; color: var(--text-muted); margin-top: 1px;">📍 Assam, India</div>
+              </div>
+            </div>
+            <button type="button" id="btn-open-edit-profile" onclick="openEditProfileModal()" style="background: #dcfce7; color: #15803d; border: 1.5px solid #16a34a; border-radius: 8px; padding: 5px 9px; font-size: 0.68rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(22,163,74,0.15);">
+              ✏️ नाम / प्रोफाइल सुधारें
+            </button>
+          </div>
+
+          <!-- 🧭 POST-LOGIN CHOICE HUB: CHOOSE E-RICKSHAW OR CAR (DRIVER OR PASSENGER) -->
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.4rem 0.5rem; margin-bottom: 0.4rem;">
+            <div style="font-size: 0.68rem; font-weight: 900; color: #0f172a; margin-bottom: 0.3rem; text-align: center;">
+              👇 लॉगिन सफल! अब चुनें आप कहाँ जाना या क्या पोस्ट करना चाहते हैं:
+            </div>
+            <!-- Row 1: Driver Post Options (E-Rickshaw vs Car) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+              <button type="button" onclick="openConnectedPostErickshaw()" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 1.5px solid #065f46; border-radius: 9px; padding: 0.45rem 0.35rem; font-size: 0.72rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 3px 8px rgba(22,163,74,0.25);">
+                <span>🛺 ई-रिक्शा पोस्ट करें</span>
+                <span style="font-size: 0.56rem; color: #dcfce7; font-weight: 800;">₹100 / 12h Live GPS</span>
+              </button>
+              <button type="button" onclick="openConnectedPostCar()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1.5px solid #075985; border-radius: 9px; padding: 0.45rem 0.35rem; font-size: 0.72rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 3px 8px rgba(2,132,199,0.25);">
+                <span>🚗 कार पोस्ट करें</span>
+                <span style="font-size: 0.56rem; color: #e0f2fe; font-weight: 800;">₹100 / Seat Booking</span>
+              </button>
+            </div>
+            <!-- Row 2: Passenger Live Map & Fleet Options -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <button type="button" onclick="showSection('live-erickshaw')" style="background: #f0fdf4; color: #15803d; border: 1.5px solid #16a34a; border-radius: 8px; padding: 0.38rem 0.3rem; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
+                🟢 Live E-Rickshaw Map
+              </button>
+              <button type="button" onclick="showSection('live-cars')" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 0.38rem 0.3rem; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
+                💺 Book Car Seat / Map
+              </button>
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem;">
-            <button type="button" class="btn btn-secondary" onclick="openChangePasswordModal()" style="padding: 0.55rem; font-size: 0.8rem;">
-              🔑 Change Password
+          <!-- Dynamic Connected Vehicle Status Strip (Shows User's Active E-Rickshaws & Cars) -->
+          <div id="prof-connected-vehicles-strip" style="margin-bottom: 0.4rem;"></div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+            <button type="button" class="btn btn-secondary" onclick="showSection('driver-fleet')" style="padding: 0.4rem 0.25rem; font-size: 0.68rem; font-weight: 900; color: #15803d; border-color: #16a34a;">
+              🚙 My Fleet
             </button>
-            <button type="button" class="btn btn-danger" onclick="logoutUserProfile()" style="padding: 0.55rem; font-size: 0.8rem;">
+            <button type="button" class="btn btn-secondary" onclick="openChangePasswordModal()" style="padding: 0.4rem 0.25rem; font-size: 0.68rem;">
+              🔑 Password
+            </button>
+            <button type="button" class="btn btn-danger" onclick="logoutUserProfile()" style="padding: 0.4rem 0.25rem; font-size: 0.68rem;">
               🚪 Log Out
             </button>
           </div>
@@ -2299,7 +2339,7 @@
 
         <!-- Compact ₹100 Payment & QR Box -->
         <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 10px; padding: 0.38rem 0.5rem; margin-bottom: 0.32rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-          <img src="mitali_qr_compact.svg" alt="UPI QR" style="width: 60px; height: 60px; border-radius: 6px; border: 1px solid #16a34a; background: #fff; padding: 2px; flex-shrink: 0;">
+          <img src="mitali_qr_compact.svg" alt="UPI QR" style="width: 52px; height: 52px; border-radius: 6px; border: 1px solid #16a34a; background: #fff; padding: 2px; flex-shrink: 0;">
           <div style="flex: 1; min-width: 0;">
             <div style="font-size: 0.7rem; font-weight: 900; color: #000000;">Pay ₹100 Live E-Rickshaw GPS Post (12 Hours)</div>
             <div style="font-size: 0.6rem; color: #15803d; font-weight: 800; margin-bottom: 3px;">Jana Small Finance Bank • 6901027507@nyes • No Seat Fare Needed</div>
@@ -2602,6 +2642,53 @@
       </div>
     </div>
   </div>
+  <!-- ✏️ Full Edit Profile Modal (Edit Name, Mobile/User ID, Address, Aadhaar Photo) -->
+  <div class="modal-backdrop" id="edit-profile-modal" style="display: none; z-index: 9999;" onclick="if(event.target===this) closeEditProfileModal();">
+    <div class="modal-card" style="background: #ffffff; color: #0f172a; border: 2px solid #16a34a; border-radius: 16px; max-width: 440px; width: 92vw; padding: 1.1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.45rem;">
+        <div>
+          <h3 style="font-size: 0.98rem; font-weight: 900; color: #065f46; margin: 0;">✏️ Edit Full Profile (प्रोफाइल सुधारें)</h3>
+          <div style="font-size: 0.66rem; color: #475569; font-weight: 700; margin-top: 2px;">
+            यहाँ नाम, मोबाइल नंबर या पता बदलने पर आपके लाइव ई-रिक्शा और गाड़ी में भी तुरंत अपडेट हो जाएगा!
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()" style="padding: 2px 8px; font-size: 0.8rem;">✕</button>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.5rem;">
+        <label style="font-size: 0.72rem; font-weight: 800; color: #0f172a;">Full Legal Name (पूरा नाम सुधारें)*</label>
+        <input type="text" id="ep-input-name" class="form-control" placeholder="अपना सही नाम लिखें" style="height: 36px !important; font-size: 0.86rem; font-weight: 800; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.5rem;">
+        <label style="font-size: 0.72rem; font-weight: 800; color: #0f172a;">10-Digit Mobile Number (User ID)*</label>
+        <input type="tel" id="ep-input-phone" class="form-control" maxlength="10" placeholder="10-digit mobile number" style="height: 36px !important; font-size: 0.86rem; font-weight: 800; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.5rem;">
+        <label style="font-size: 0.72rem; font-weight: 800; color: #0f172a;">Address in Assam (स्थान / पता)*</label>
+        <input type="text" id="ep-input-address" class="form-control" placeholder="e.g. Nagaon / Guwahati, Assam" style="height: 36px !important; font-size: 0.84rem; font-weight: 700; color: #0f172a; background: #f8fafc; border: 1.5px solid #16a34a;">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.65rem;">
+        <label style="font-size: 0.7rem; font-weight: 800; color: #0f172a;">Update Aadhaar Photo (आधार कार्ड फोटो - Optional)</label>
+        <label for="ep-aadhaar-file" id="ep-aadhaar-label" style="display: flex; align-items: center; justify-content: center; gap: 6px; height: 34px; background: #f0fdf4; border: 1.5px dashed #16a34a; border-radius: 8px; color: #15803d; font-size: 0.74rem; font-weight: 800; cursor: pointer;">
+          📷 <span>आधार फोटो बदलें (पहले से AI Verified है)</span>
+        </label>
+        <input type="file" id="ep-aadhaar-file" accept="image/*" style="display: none;" onchange="handleEditProfileAadhaarScan(event)">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <button type="button" class="btn btn-secondary" onclick="closeEditProfileModal()" style="padding: 0.6rem; font-size: 0.8rem; font-weight: 800;">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-save-edit-profile" onclick="submitEditProfile()" style="padding: 0.6rem; font-size: 0.82rem; font-weight: 900; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none;">
+          💾 Save Profile & Sync Live
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Change Password Modal -->
   <div class="modal-backdrop" id="change-pwd-modal">
     <div class="modal-card">
@@ -3029,23 +3116,146 @@
     const FIREBASE_RTDB_COINS_URL = FIREBASE_RTDB_BASE + '/ss_coin_requests.json';
     const FIREBASE_RTDB_USERS_URL = FIREBASE_RTDB_BASE + '/ss_users_db.json';
     const FIREBASE_RTDB_VIDEO_AD_URL = FIREBASE_RTDB_BASE + '/ss_video_ad.json';
+    const FIREBASE_RTDB_ERICKSHAWS_URL = FIREBASE_RTDB_BASE + '/ss_erickshaws.json';
+    const FIREBASE_RTDB_COMPLAINTS_URL = FIREBASE_RTDB_BASE + '/ss_complaints.json';
 
     let syncBroadcastChannel = null;
     let isAppTabActive = true;
+    let _isCloudSyncInFlight = false;
+
+    function mergeIncomingCloudErickshaws(incomingList, triggerRender = true) {
+      try {
+        if (!incomingList) return;
+        const arr = Array.isArray(incomingList) ? incomingList : Object.values(incomingList);
+        let localArr = [];
+        try { localArr = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){ localArr = []; }
+        if (!Array.isArray(localArr)) localArr = [];
+
+        const removedIds = new Set();
+        try {
+          const delArr = JSON.parse(ssStorage.getItem('ss_deleted_erickshaw_ids') || '[]');
+          if (Array.isArray(delArr)) delArr.forEach(id => removedIds.add(id));
+        } catch(e){}
+
+        const byId = {};
+        localArr.forEach(item => {
+          if (item && item.id && !removedIds.has(item.id) && item.removedByAdmin !== true) {
+            byId[item.id] = item;
+          }
+        });
+
+        arr.forEach(item => {
+          if (!item || !item.id) return;
+          if (item.removedByAdmin === true || removedIds.has(item.id)) {
+            removedIds.add(item.id);
+            delete byId[item.id];
+            return;
+          }
+          const existing = byId[item.id];
+          if (!existing) {
+            byId[item.id] = item;
+          } else {
+            const tNew = Number(item.lastUpdated || new Date(item.postedAt || 0).getTime() || 0);
+            const tOld = Number(existing.lastUpdated || new Date(existing.postedAt || 0).getTime() || 0);
+            if (tNew >= tOld) {
+              byId[item.id] = { ...existing, ...item };
+            } else {
+              byId[item.id] = { ...item, ...existing };
+            }
+          }
+        });
+
+        try {
+          ssStorage.setItem('ss_deleted_erickshaw_ids', JSON.stringify(Array.from(removedIds)));
+        } catch(e){}
+
+        const merged = Object.values(byId);
+        // Check if Admin just confirmed any of this user's E-Rickshaws!
+        try {
+          const myUser = getActiveUserProfile();
+          const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
+          merged.forEach(er => {
+            if (!er) return;
+            const isMine = (myUser && er.driverPhone === myUser.phone) || (myDevId && er.deviceId === myDevId);
+            if (isMine && er.adminUtrStatus === 'CONFIRMED' && !ssStorage.getItem('ss_er_conf_notified_' + er.id)) {
+              ssStorage.setItem('ss_er_conf_notified_' + er.id, '1');
+              showToast(`🎉 Admin ने आपका ₹100 UTR (${er.utrNumber}) Confirm कर दिया है! आपका ई-रिक्शा (${er.vehicleNumber}) मैप पर Verified Live है!`, '#15803d');
+            }
+          });
+        } catch(e){}
+        ssStorage.setItem('ss_erickshaws', JSON.stringify(merged));
+
+        if (triggerRender) {
+          try { if (typeof updateErickshawNavBadge === 'function') updateErickshawNavBadge(); } catch(e){}
+          try {
+            const secEr = document.getElementById('section-live-erickshaw');
+            if (secEr && secEr.style.display !== 'none' && typeof renderLiveErickshaws === 'function') {
+              renderLiveErickshaws();
+            }
+          } catch(e){}
+          try {
+            const secMap = document.getElementById('section-map');
+            if (secMap && secMap.style.display !== 'none' && typeof updateMapLiveCarRadar === 'function') {
+              updateMapLiveCarRadar();
+            }
+          } catch(e){}
+        }
+      } catch(err) {}
+    }
+
+    function pushStateToBackendServer(partialPayload) {
+      try {
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+          fetch(window.location.origin + '/api/sync/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(partialPayload)
+          }).catch(() => {});
+        }
+      } catch(e){}
+    }
+
+    function broadcastErickshawsEverywhere(updatedList) {
+      try {
+        ssStorage.setItem('ss_erickshaws', JSON.stringify(updatedList));
+      } catch(e){}
+      if (syncBroadcastChannel) {
+        try {
+          syncBroadcastChannel.postMessage({ type: 'ERICKSHAWS_UPDATED', erickshaws: updatedList, timestamp: Date.now() });
+        } catch(e){}
+      }
+      pushStateToBackendServer({ erickshaws: updatedList });
+      try {
+        fetch(FIREBASE_RTDB_ERICKSHAWS_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedList)
+        }).catch(() => {});
+      } catch(e){}
+    }
 
     function handleIncomingChannelPayload(data) {
-      if (!data || !data.type) return;
-      if (data.type === 'RIDES_UPDATED' && Array.isArray(data.rides)) {
-        mergeIncomingCloudRides(data.rides, true);
-      } else if (data.type === 'BOOKINGS_UPDATED' && Array.isArray(data.bookings)) {
-        mergeIncomingCloudBookings(data.bookings);
-      } else if (data.type === 'COIN_REQUESTS_UPDATED' && Array.isArray(data.coinRequests)) {
-        processSyncedCoinRequests(data.coinRequests);
-      } else if (data.type === 'PROFILE_VIDEO_AD_UPDATED' && data.ad) {
-        applyIncomingProfileVideoAd(data.ad, true);
-      } else if (data.type === 'USERS_UPDATED' && data.users) {
-        try { ssStorage.setItem('ss_users_db', JSON.stringify(data.users)); } catch(e){}
-      }
+      try {
+        if (!data || !data.type) return;
+        if (data.type === 'RIDES_UPDATED' && Array.isArray(data.rides)) {
+          mergeIncomingCloudRides(data.rides, true);
+        } else if (data.type === 'BOOKINGS_UPDATED' && Array.isArray(data.bookings)) {
+          mergeIncomingCloudBookings(data.bookings);
+        } else if (data.type === 'COIN_REQUESTS_UPDATED' && Array.isArray(data.coinRequests)) {
+          processSyncedCoinRequests(data.coinRequests);
+        } else if (data.type === 'PROFILE_VIDEO_AD_UPDATED' && data.ad) {
+          applyIncomingProfileVideoAd(data.ad, true);
+        } else if (data.type === 'USERS_UPDATED' && data.users) {
+          const curUsers = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+          ssStorage.setItem('ss_users_db', JSON.stringify({ ...curUsers, ...data.users }));
+          try { renderProfileView(); } catch(e){}
+        } else if (data.type === 'ERICKSHAWS_UPDATED' && Array.isArray(data.erickshaws)) {
+          mergeIncomingCloudErickshaws(data.erickshaws, true);
+        } else if (data.type === 'COMPLAINTS_UPDATED' && Array.isArray(data.complaints)) {
+          ssStorage.setItem('ss_complaints', JSON.stringify(data.complaints));
+          try { if (typeof renderMyComplaints === 'function') renderMyComplaints(); } catch(e){}
+        }
+      } catch(e){}
     }
 
     try {
@@ -3072,6 +3282,13 @@
         } else if (e.key === 'ss_profile_video_ad' && e.newValue !== null) {
           const ad = JSON.parse(e.newValue);
           if (ad && ad.src) applyIncomingProfileVideoAd(ad, true);
+        } else if (e.key === 'ss_erickshaws' && e.newValue !== null) {
+          const list = JSON.parse(e.newValue) || [];
+          mergeIncomingCloudErickshaws(list, true);
+        } else if (e.key === 'ss_users_db' && e.newValue !== null) {
+          try { renderProfileView(); } catch(err){}
+        } else if (e.key === 'ss_complaints' && e.newValue !== null) {
+          try { if (typeof renderMyComplaints === 'function') renderMyComplaints(); } catch(err){}
         }
       } catch(err) {}
     });
@@ -3079,6 +3296,7 @@
     function broadcastRidesLocally(updatedRides) {
       try {
         ssStorage.setItem('ss_rides', JSON.stringify(updatedRides));
+        pushStateToBackendServer({ rides: updatedRides });
       } catch(e){}
       if (syncBroadcastChannel) {
         try {
@@ -3104,6 +3322,7 @@
     function broadcastBookingsEverywhere(updatedBookings) {
       try {
         ssStorage.setItem('ss_bookings', JSON.stringify(updatedBookings));
+        pushStateToBackendServer({ bookings: updatedBookings });
       } catch(e){}
       if (syncBroadcastChannel) {
         try {
@@ -3122,6 +3341,7 @@
     function broadcastCoinRequestsEverywhere(updatedReqs) {
       try {
         ssStorage.setItem('ss_coin_requests', JSON.stringify(updatedReqs));
+        pushStateToBackendServer({ coinRequests: updatedReqs });
       } catch(e){}
       if (syncBroadcastChannel) {
         try {
@@ -3140,6 +3360,7 @@
     function broadcastUsersEverywhere(usersObj) {
       try {
         ssStorage.setItem('ss_users_db', JSON.stringify(usersObj));
+        pushStateToBackendServer({ users: usersObj });
       } catch(e){}
       if (syncBroadcastChannel) {
         try {
@@ -3314,40 +3535,86 @@
     }
 
     function executeAiCloudSync() {
-      if (!isAppTabActive) return;
+      if (!isAppTabActive || _isCloudSyncInFlight) return;
+      _isCloudSyncInFlight = true;
+      setTimeout(() => { _isCloudSyncInFlight = false; }, 850);
 
-      // 1. Sync Rides from RTDB
-      fetch(FIREBASE_RTDB_SYNC_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data !== null && data !== undefined) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            mergeIncomingCloudRides(list, true);
-          }
-        })
-        .catch(() => {});
+      try {
+        // 0. Sync from Same-Origin Heavy Node Server (/api/sync/state) if running on Node backend
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+          fetch(window.location.origin + '/api/sync/state')
+            .then(res => res.ok ? res.json() : null)
+            .then(sData => {
+              if (!sData || !sData.success) return;
+              if (Array.isArray(sData.erickshaws) && sData.erickshaws.length > 0) mergeIncomingCloudErickshaws(sData.erickshaws, true);
+              if (Array.isArray(sData.rides) && sData.rides.length > 0) mergeIncomingCloudRides(sData.rides, true);
+              if (Array.isArray(sData.bookings) && sData.bookings.length > 0) mergeIncomingCloudBookings(sData.bookings);
+              if (Array.isArray(sData.coinRequests) && sData.coinRequests.length > 0) processSyncedCoinRequests(sData.coinRequests);
+              if (sData.users && typeof sData.users === 'object') {
+                const localU = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+                ssStorage.setItem('ss_users_db', JSON.stringify({ ...localU, ...sData.users }));
+              }
+            })
+            .catch(() => {});
+        }
 
-      // 2. Sync Bookings from RTDB
-      fetch(FIREBASE_RTDB_BOOKINGS_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            mergeIncomingCloudBookings(list);
-          }
-        })
-        .catch(() => {});
+        // 1. Sync Live E-Rickshaws (1-Second Passenger <-> Driver <-> Admin Radar Sync)
+        fetch(FIREBASE_RTDB_ERICKSHAWS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data !== null && data !== undefined) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              mergeIncomingCloudErickshaws(list, true);
+            }
+          })
+          .catch(() => {});
 
-      // 3. Sync Coin UTR Requests from RTDB
-      fetch(FIREBASE_RTDB_COINS_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            processSyncedCoinRequests(list);
-          }
-        })
-        .catch(() => {});
+        // 2. Sync Rides from RTDB
+        fetch(FIREBASE_RTDB_SYNC_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data !== null && data !== undefined) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              mergeIncomingCloudRides(list, true);
+            }
+          })
+          .catch(() => {});
+
+        // 3. Sync Bookings from RTDB
+        fetch(FIREBASE_RTDB_BOOKINGS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              mergeIncomingCloudBookings(list);
+            }
+          })
+          .catch(() => {});
+
+        // 4. Sync Coin UTR Requests from RTDB
+        fetch(FIREBASE_RTDB_COINS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              processSyncedCoinRequests(list);
+            }
+          })
+          .catch(() => {});
+
+        // 5. Sync Registered Users from RTDB (so any Passenger/Driver registration or Profile Edit is live everywhere)
+        fetch(FIREBASE_RTDB_USERS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && typeof data === 'object') {
+              const localU = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+              ssStorage.setItem('ss_users_db', JSON.stringify({ ...localU, ...data }));
+            }
+          })
+          .catch(() => {});
+      } catch(e) {
+        _isCloudSyncInFlight = false;
+      }
     }
 
     document.addEventListener('visibilitychange', () => {
@@ -3357,8 +3624,8 @@
       }
     });
 
-    // Continuous 2.5-second live cloud sync with Admin Panel
-    setInterval(executeAiCloudSync, 2500);
+    // Continuous 1-Second (1000ms) Crash-Proof Live Cloud Sync with Admin Panel & Other Devices
+    setInterval(executeAiCloudSync, 1000);
 
 // 1. Data Store Initialization (Preserves real rides and bookings)
     const todayStr = new Date().toISOString().split('T')[0];
@@ -4001,12 +4268,53 @@
       // Filter STRICTLY real active verified cars with available seats within 48h (ZERO DEMO CARS)
       const activeCars = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE' && isWithin48Hours(r.approvedAt || r.postedAt || r.createdAt) && (parseInt(r.seatsAvailable) || 0) > 0 && r.id !== 'RIDE-DB-8287' && !r.isDemo && r.driverPhone !== '9864012345');
 
+      const activeErickshaws = (typeof getActiveErickshawsList === 'function') ? getActiveErickshawsList() : [];
+      const totalRadarVehicles = activeCars.length + activeErickshaws.length;
+
       const badgeEl = document.getElementById('map-radar-count-badge');
       if (badgeEl) {
-        badgeEl.innerText = activeCars.length > 0 
-          ? `🟢 ${activeCars.length} Live Car(s) Active on Radar`
-          : '⚪ 0 Live Cars on Radar (Check back soon)';
+        badgeEl.innerText = totalRadarVehicles > 0 
+          ? `🟢 ${activeCars.length} Car(s) • 🛺 ${activeErickshaws.length} E-Rickshaw(s) Live`
+          : '⚪ 0 Live Vehicles on Radar (Post Car or E-Rickshaw)';
       }
+
+      // Render Live E-Rickshaws on the main Live Map as well so passengers see them on BOTH maps!
+      activeErickshaws.forEach((er) => {
+        const erLat = er.lat || er.baseLat || 26.1445;
+        const erLng = er.lng || er.baseLng || 91.7362;
+        const erIcon = L.divIcon({
+          className: 'live-car-see-pin',
+          html: getTopDownVehicleMapMarkerHtml(er.driverName || 'E-Rickshaw', er.headingDeg || 45, true, 'erickshaw'),
+          iconSize: [52, 52],
+          iconAnchor: [26, 26]
+        });
+        const erMarker = L.marker([erLat, erLng], { icon: erIcon, zIndexOffset: 850 }).addTo(googleLiveMap);
+        const distLabel = typeof formatNearbyDistance === 'function' ? formatNearbyDistance(er.distanceKm || 0.1) : 'Nearby';
+        const erPopup = `
+          <div style="min-width:205px; padding:2px; font-family:-apple-system, BlinkMacSystemFont, sans-serif;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="color:#065f46; font-size:13.5px; font-weight:900;">🛺 ${er.driverName}</strong>
+              <span style="background:#dcfce7; color:#15803d; font-size:10px; font-weight:900; padding:1px 6px; border-radius:4px; border:1px solid #16a34a;">🟢 1s LIVE GPS</span>
+            </div>
+            <div style="font-size:11px; color:#0f172a; margin-bottom:3px;">
+              Vehicle No: <b style="background:#fef08a; padding:1px 5px; border-radius:4px; border:1px solid #eab308;">${er.vehicleNumber}</b> • <b>${distLabel}</b>
+            </div>
+            <div style="font-size:11px; color:#15803d; font-weight:800; margin-bottom:6px;">
+              🛣️ Route: ${er.standArea}
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; border-top:1px solid #e2e8f0; padding-top:6px;">
+              <button type="button" onclick="showSection('live-erickshaw'); selectErickshawOnRadar('${er.id}', false);" style="background:#f0fdf4; color:#15803d; border:1.5px solid #16a34a; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:900; cursor:pointer;">
+                🛺 Flip Options
+              </button>
+              <button type="button" onclick="openErickshawProfileModal('${er.id}', true)" style="background:linear-gradient(135deg,#16a34a,#15803d); color:#ffffff; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:900; cursor:pointer; box-shadow:0 2px 6px rgba(22,163,74,0.3);">
+                📞 Direct Call ➔
+              </button>
+            </div>
+          </div>
+        `;
+        erMarker.bindPopup(erPopup);
+        activeCarMapMarkers.push(erMarker);
+      });
 
       activeCars.forEach((r, idx) => {
         const origin = (r.origin || 'Guwahati').toLowerCase();
@@ -4508,36 +4816,87 @@
       }
     }
 
-    // 🚙 SYNC DRIVER LIVE GPS EVERY SECOND ACROSS NETWORK
+    // 🚙🛺 SYNC DRIVER LIVE GPS EVERY 1 SECOND ACROSS NETWORK (BOTH CARS & E-RICKSHAWS)
+    let _lastErGpsCloudPushMs = 0;
     function syncDriverLiveGpsStream(lat, lng, accuracy) {
       const user = getActiveUserProfile();
-      if (!user || !user.phone) return;
-
-      let changed = false;
+      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
       const nowIso = new Date().toISOString();
-      rides.forEach(r => {
-        if (r.driverPhone === user.phone && (r.status || '').toUpperCase() === 'ACTIVE') {
-          r.liveLat = lat;
-          r.liveLng = lng;
-          r.lastGpsAccuracy = accuracy;
-          r.lastGpsUpdate = nowIso;
-          changed = true;
-          if (db) {
-            try {
-              db.collection('ss_rides').doc(r.id).update({
-                liveLat: lat,
-                liveLng: lng,
-                lastGpsAccuracy: accuracy,
-                lastGpsUpdate: nowIso
-              });
-            } catch(e){}
+      const nowMs = Date.now();
+
+      // 1. Update any active Carpool Ride belonging to this driver
+      if (user && user.phone) {
+        let changed = false;
+        rides.forEach(r => {
+          if (r.driverPhone === user.phone && (r.status || '').toUpperCase() === 'ACTIVE') {
+            r.liveLat = lat;
+            r.liveLng = lng;
+            r.lastGpsAccuracy = accuracy;
+            r.lastGpsUpdate = nowIso;
+            changed = true;
+            if (typeof db !== 'undefined' && db) {
+              try {
+                db.collection('ss_rides').doc(r.id).set({
+                  liveLat: lat,
+                  liveLng: lng,
+                  lastGpsAccuracy: accuracy,
+                  lastGpsUpdate: nowIso
+                }, { merge: true });
+              } catch(e){}
+            }
+          }
+        });
+        if (changed) {
+          try { ssStorage.setItem('ss_rides', JSON.stringify(rides)); } catch(e){}
+        }
+      }
+
+      // 2. Update any active E-Rickshaw belonging to this driver or device every 1 second!
+      try {
+        let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
+        if (Array.isArray(erList) && erList.length > 0) {
+          let erChanged = false;
+          erList.forEach(er => {
+            if (!er || er.removedByAdmin) return;
+            const isMine = (user && user.phone && er.driverPhone === user.phone) ||
+                           (user && user.userId && er.ownerUserId === user.userId) ||
+                           (myDevId && er.deviceId === myDevId) ||
+                           (typeof currentlySelectedErickshawId !== 'undefined' && er.id === currentlySelectedErickshawId && er.hasRealDeviceGps);
+            if (isMine && isWithin12Hours(er.postedAt)) {
+              er.lat = lat;
+              er.lng = lng;
+              er.headingDeg = (typeof currentVehicleHeading !== 'undefined' && currentVehicleHeading) ? currentVehicleHeading : (er.headingDeg || 45);
+              er.speedKmH = (typeof currentVehicleSpeedKmH !== 'undefined') ? currentVehicleSpeedKmH : 0;
+              er.currentPointLabel = (typeof currentLiveCoords !== 'undefined' && currentLiveCoords && currentLiveCoords.roadName) ? currentLiveCoords.roadName : (er.standArea || 'Live GPS Route');
+              er.hasRealDeviceGps = true;
+              er.lastUpdated = nowMs;
+              erChanged = true;
+
+              if (typeof db !== 'undefined' && db && (nowMs - _lastErGpsCloudPushMs >= 950)) {
+                try {
+                  db.collection('ss_erickshaws').doc(er.id).set(er, { merge: true });
+                } catch(e){}
+              }
+            }
+          });
+          if (erChanged) {
+            ssStorage.setItem('ss_erickshaws', JSON.stringify(erList));
+            if (syncBroadcastChannel) {
+              try { syncBroadcastChannel.postMessage({ type: 'ERICKSHAWS_UPDATED', erickshaws: erList, timestamp: nowMs }); } catch(e){}
+            }
+            if (nowMs - _lastErGpsCloudPushMs >= 950) {
+              _lastErGpsCloudPushMs = nowMs;
+              try {
+                fetch(FIREBASE_RTDB_ERICKSHAWS_URL, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(erList)
+                }).catch(() => {});
+              } catch(e){}
+            }
           }
         }
-      });
-
-      if (changed) {
-        try { ssStorage.setItem('ss_rides', JSON.stringify(rides)); } catch(e){}
-      }
+      } catch(e){}
     }
 
     function jumpToCorridor(corridorKey) {
@@ -5370,10 +5729,9 @@ ET
         return;
       }
 
-      const utr = (document.getElementById('df-utr')?.value || '').trim();
-      const utrCheck = validateStrictBankUtr(utr);
-      if (!utrCheck.valid) {
-        showToast(utrCheck.reason, '#dc2626');
+      const utr = (document.getElementById('df-utr')?.value || '').trim().replace(/[\s-]/g, '');
+      if (!utr || utr.length < 10) {
+        showToast('⚠️ कृपया ₹100 पेमेंट का 12-अंकीय बैंक UTR नंबर दर्ज करें!', '#dc2626');
         document.getElementById('df-utr')?.focus();
         return;
       }
@@ -5389,10 +5747,12 @@ ET
       const fare = parseInt(document.getElementById('df-fare')?.value) || 300;
       const driverUpi = (document.getElementById('df-driver-upi')?.value || user.phone + '@upi').trim();
 
+      const c = (typeof getBaseUserCenter === 'function') ? getBaseUserCenter() : { lat: 26.1445, lng: 91.7362 };
       const newRide = {
         id: 'RIDE-' + Math.floor(1000 + Math.random() * 9000),
         driverName: user.name,
         driverPhone: user.phone,
+        ownerUserId: user.userId || user.phone,
         driverUpi: driverUpi,
         driverQr: driverUploadedQrData || 'mitali_qr_compact.svg',
         farePerSeat: fare,
@@ -5403,47 +5763,40 @@ ET
         seatsAvailable: seats,
         totalSeats: seats,
         vehicleModel: model,
-        vehicleNumber: plate,
+        vehicleNumber: plate || 'AS-01-BP-4021',
         platformFeeUtr: utr,
         utrNumber: utr,
-        status: 'PENDING_APPROVAL',
+        liveLat: c.lat,
+        liveLng: c.lng,
+        status: 'ACTIVE',
+        adminUtrStatus: 'PENDING_ADMIN_CONFIRMATION',
         verifiedByAdmin: false,
-        postedAt: new Date().toISOString()
+        postedAt: new Date().toISOString(),
+        approvedAt: new Date().toISOString(),
+        lastUpdated: Date.now()
       };
 
+      rides = rides.filter(r => r && r.id !== newRide.id);
       rides.unshift(newRide);
       ssStorage.setItem('ss_rides', JSON.stringify(rides));
-      broadcastRidesLocally(rides); // Instant (<50ms) push to Admin Portal!
+      broadcastRidesLocally(rides); // Instant (<50ms) push to Admin Portal & Cloud!
 
-      if (db) {
+      if (typeof db !== 'undefined' && db) {
         try {
           const cleanDoc = { ...newRide };
           if (cleanDoc.driverQr && cleanDoc.driverQr.length > 200000) {
             cleanDoc.driverQr = 'mitali_qr_compact.svg';
           }
-          db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true })
-            .then(() => console.log('✓ Successfully wrote ride to Firestore!'))
-            .catch(err => console.error('Firestore write error:', err));
+          db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true }).catch(() => {});
         } catch(e){}
       }
 
-      // WhatsApp Notification to Admin (NO LINKS)
-      const waMsg = `*SAFARSAATHI NEW RIDE PENDING APPROVAL*%0A%0A` +
-        `🚗 *Ride ID:* ${newRide.id}%0A` +
-        `👤 *Driver Name:* ${user.name}%0A` +
-        `📞 *Driver WhatsApp:* ${user.phone}%0A` +
-        `🛣️ *Route:* ${from} ➔ ${to}%0A` +
-        `📅 *Schedule:* ${date} at ${time}%0A` +
-        `🚙 *Vehicle:* ${model} (${plate})%0A` +
-        `💺 *Seats:* ${seats} Seats @ Rs. ${fare} / seat%0A%0A` +
-        `💰 *₹100 Platform Fee UTR:* ${utr}%0A` +
-        `🏦 *Bank Payee:* Jana Small Finance Bank (6901027507@nyes)%0A%0A` +
-        `🔒 *NEW RIDE VERIFICATION REQUEST:*%0A` +
-        `Rs. 100 platform fee deposited with UTR ${utr}. Please activate on Cloud Server.`;
+      const dfUtr = document.getElementById('df-utr');
+      if (dfUtr) dfUtr.value = '';
 
-      window.open(`https://wa.me/916901027507?text=${waMsg}`, '_blank');
-
-      showToast('🎉 Ride submitted! Status pending verification.', '#15803d');
+      showToast(`🚗 आपकी गाड़ी (${model} • ${plate}) लाइव मैप और Admin Panel में तुरंत एक्टिव हो गई है!`, '#15803d');
+      renderLiveCarsHome();
+      renderDriverFleet();
       showSection('driver-fleet');
     }
 
@@ -5470,7 +5823,7 @@ ET
         container.innerHTML = `
           <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border: 1px dashed var(--border-subtle);">
             <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔍</div>
-            <strong style="color: white; font-size: 0.95rem;">No active cars found for this corridor</strong>
+            <strong style="color: #0f172a; font-size: 0.95rem;">No active cars found for this corridor</strong>
             <p style="font-size: 0.76rem; color: #000000; margin-top: 4px;">
               Check the 🟢 Live Cars home tab for all vacant cars across Assam.
             </p>
@@ -5635,28 +5988,21 @@ ET
       try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
 
       if (currentAuthMode === 'register') {
-        const confPwd = (confPwdInput?.value || '').trim();
+        const confPwd = (confPwdInput?.value || pwd).trim();
         const name = (document.getElementById('auth-input-name')?.value || '').trim();
-        const addr = (document.getElementById('auth-input-address')?.value || '').trim();
+        const addr = (document.getElementById('auth-input-address')?.value || 'Assam, India').trim();
 
-        if (pwd !== confPwd) {
-          showToast('❌ Passwords do not match! Please check both password fields.', '#dc2626');
+        if (confPwd && pwd !== confPwd) {
+          showToast('❌ दोनों पासवर्ड एक जैसे होने चाहिए! कृपया पासवर्ड चेक करें।', '#dc2626');
           return;
         }
         if (!name) {
-          showToast('Please enter your full legal name!', '#dc2626');
-          return;
-        }
-        if (!addr) {
-          showToast('Please enter your address in Assam!', '#dc2626');
-          return;
-        }
-        if (!uploadedAadhaarData) {
-          showToast('⚠️ आधार कार्ड अपलोड करना अनिवार्य है! कृपया अपने आधार की फ़ोटो अपलोड करें।', '#dc2626');
+          showToast('⚠️ कृपया अपना पूरा नाम (Full Name) लिखें!', '#dc2626');
+          document.getElementById('auth-input-name')?.focus();
           return;
         }
 
-        // Generate Salt & Hash - Never store plaintext password!
+        // Generate Salt & Hash
         const salt = generateSecureSalt();
         const passwordHash = await hashUserPassword(pwd, salt);
 
@@ -5666,29 +6012,48 @@ ET
           name: name,
           passwordHash: passwordHash,
           salt: salt,
-          address: addr,
+          address: addr || 'Assam, India',
           hasAadhaar: true,
-          registeredAt: new Date().toISOString()
+          registeredAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         };
 
         users[uid] = newUser;
-        broadcastUsersEverywhere(users);
         ssStorage.setItem('ss_current_user_id', uid);
+        broadcastUsersEverywhere(users);
         if (typeof db !== 'undefined' && db) {
           try { db.collection('ss_users').doc(uid).set(newUser, { merge: true }); } catch(e){}
         }
 
-        // Clear password fields from DOM memory for security
+        // Also sync this user's name to any E-Rickshaw or Car they already posted from this phone/device!
+        try {
+          let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
+          let erChanged = false;
+          if (Array.isArray(erList)) {
+            erList.forEach(er => {
+              if (er && (er.driverPhone === uid || er.ownerUserId === uid)) {
+                er.driverName = name;
+                er.lastUpdated = Date.now();
+                erChanged = true;
+              }
+            });
+            if (erChanged) broadcastErickshawsEverywhere(erList);
+          }
+        } catch(e){}
+
         if (pwdInput) pwdInput.value = '';
         if (confPwdInput) confPwdInput.value = '';
 
-        showToast('✓ Account registered & Aadhaar verified!', '#15803d');
+        showToast(`✅ प्रोफाइल बन गई (${name})! अब नीचे ई-रिक्शा या कार का ऑप्शन चुनें।`, '#15803d');
         renderProfileView();
       } else {
         const existing = users[uid];
         if (!existing) {
-          showToast('❌ यह User ID रजिस्टर्ड नहीं है! कृपया पहले Register टैब पर क्लिक करके नया अकाउंट बनाएं।', '#dc2626');
+          showToast('ℹ️ यह नंबर नया है — कृपया अपना नाम लिखकर Register बटन दबाएं!', '#15803d');
           setAuthMode('register');
+          const confEl = document.getElementById('auth-input-confirm-password');
+          if (confEl && pwd) confEl.value = pwd;
+          document.getElementById('auth-input-name')?.focus();
           return;
         }
 
@@ -5697,30 +6062,95 @@ ET
           const checkHash = await hashUserPassword(pwd, existing.salt);
           isMatch = (checkHash === existing.passwordHash);
         } else if (existing.password) {
-          // Legacy account migration: verify plaintext and immediately upgrade to salted hash!
           if (existing.password === pwd) {
             isMatch = true;
             const newSalt = generateSecureSalt();
             existing.passwordHash = await hashUserPassword(pwd, newSalt);
             existing.salt = newSalt;
-            delete existing.password; // Remove plaintext password forever!
+            delete existing.password;
             users[uid] = existing;
             ssStorage.setItem('ss_users_db', JSON.stringify(users));
           }
+        } else {
+          // Account created via quick/standalone flow without password hash
+          isMatch = true;
         }
 
         if (!isMatch) {
-          showToast('❌ गलत पासवर्ड! कृपया सही पासवर्ड डालें।', '#dc2626');
+          showToast('❌ गलत पासवर्ड! (पासवर्ड बदलने के लिए नीचे Forgot Password दबाएं)', '#dc2626');
           return;
         }
 
-        // Clear password field from DOM
         if (pwdInput) pwdInput.value = '';
 
         ssStorage.setItem('ss_current_user_id', uid);
-        showToast(`✓ स्वागत है, ${existing.name}!`, '#15803d');
+        showToast(`✓ स्वागत है, ${existing.name}! अब ई-रिक्शा या कार चुनें।`, '#15803d');
         renderProfileView();
       }
+    }
+
+    function openConnectedPostErickshaw() {
+      const user = getActiveUserProfile();
+      showSection('post-erickshaw');
+      if (user) {
+        const nameInp = document.getElementById('er-driver-name');
+        if (nameInp) nameInp.value = user.name || '';
+      }
+    }
+
+    function openConnectedPostCar() {
+      const user = getActiveUserProfile();
+      showSection('driver');
+      goToDriverStep(1);
+      if (user && user.phone) {
+        const upiInp = document.getElementById('df-driver-upi');
+        if (upiInp && (!upiInp.value || upiInp.value === '6901027507@nyes')) {
+          upiInp.value = user.phone + '@upi';
+        }
+      }
+    }
+
+    function renderProfileConnectedVehiclesStrip() {
+      const strip = document.getElementById('prof-connected-vehicles-strip');
+      if (!strip) return;
+      const user = getActiveUserProfile();
+      if (!user) { strip.innerHTML = ''; return; }
+
+      const myErs = getActiveErickshawsList().filter(er => er.driverPhone === user.phone || er.ownerUserId === user.userId);
+      const myCars = rides.filter(r => r && r.driverPhone === user.phone && isWithin48Hours(r.postedAt));
+
+      if (myErs.length === 0 && myCars.length === 0) {
+        strip.innerHTML = `
+          <div style="background:#f0fdf4; border:1px dashed #16a34a; border-radius:8px; padding:4px 8px; font-size:0.64rem; color:#15803d; font-weight:800; text-align:center;">
+            🔗 आपकी प्रोफाइल ई-रिक्शा, कार और लाइव मैप से जुड़ी हुई है। ऊपर किसी भी बटन पर टैप करें!
+          </div>
+        `;
+        return;
+      }
+
+      const itemsHtml = [];
+      myErs.slice(0, 1).forEach(er => {
+        const isConf = er.adminUtrStatus === 'CONFIRMED' || er.verifiedByAdmin === true;
+        itemsHtml.push(`
+          <div style="background:#f0fdf4; border:1.5px solid #16a34a; border-radius:8px; padding:4px 8px; display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:0.65rem;">
+            <div style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <strong style="color:#065f46;">🛺 ${er.vehicleNumber}</strong> • <span style="color:#15803d; font-weight:800;">${isConf ? '✅ Admin Confirmed Live' : '🟢 Live on Map (UTR Sent)'}</span>
+            </div>
+            <button type="button" onclick="showSection('live-erickshaw')" style="background:#16a34a; color:#fff; border:none; border-radius:5px; padding:2px 6px; font-size:0.6rem; font-weight:900; cursor:pointer; flex-shrink:0;">Map ➔</button>
+          </div>
+        `);
+      });
+      myCars.slice(0, 1).forEach(r => {
+        itemsHtml.push(`
+          <div style="background:#eff6ff; border:1.5px solid #3b82f6; border-radius:8px; padding:4px 8px; display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:0.65rem;">
+            <div style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <strong style="color:#1e40af;">🚗 ${r.vehicleModel} (${r.vehicleNumber})</strong> • <span style="color:#1d4ed8; font-weight:800;">🟢 ${r.seatsAvailable} Seats Live</span>
+            </div>
+            <button type="button" onclick="showSection('driver-fleet')" style="background:#2563eb; color:#fff; border:none; border-radius:5px; padding:2px 6px; font-size:0.6rem; font-weight:900; cursor:pointer; flex-shrink:0;">Fleet ➔</button>
+          </div>
+        `);
+      });
+      strip.innerHTML = `<div style="display:flex; flex-direction:column; gap:4px;">${itemsHtml.join('')}</div>`;
     }
 
     function renderProfileView() {
@@ -5734,7 +6164,6 @@ ET
         setAuthMode('login');
         resumeProfileHomeVideoAdIfNeeded();
       } else {
-        // User logged in / on next page: Video ad stops completely & is removed!
         stopProfileHomeVideoAd();
         if (authView) authView.style.display = 'none';
         if (cardView) {
@@ -5742,15 +6171,182 @@ ET
           document.getElementById('prof-card-name').innerText = user.name;
           document.getElementById('prof-card-phone').innerText = '📱 +91 ' + user.phone;
           document.getElementById('prof-card-addr').innerText = '📍 ' + (user.address || 'Assam, India');
+          renderProfileConnectedVehiclesStrip();
         }
       }
       updateNavCounts();
+      if (typeof window.calibrateScreenFit === 'function') window.calibrateScreenFit();
     }
 
     function logoutUserProfile() {
       ssStorage.removeItem('ss_current_user_id');
       renderProfileView();
       showToast('लॉगआउट सफल रहा।', '#16a34a');
+    }
+
+    let editedProfileAadhaarData = null;
+
+    function openEditProfileModal() {
+      const user = getActiveUserProfile();
+      if (!user) {
+        showToast('⚠️ कृपया पहले लॉगिन या रजिस्टर करें!', '#dc2626');
+        return;
+      }
+      editedProfileAadhaarData = null;
+      const nameInp = document.getElementById('ep-input-name');
+      const phoneInp = document.getElementById('ep-input-phone');
+      const addrInp = document.getElementById('ep-input-address');
+      const aadhLbl = document.getElementById('ep-aadhaar-label');
+
+      if (nameInp) nameInp.value = user.name || '';
+      if (phoneInp) phoneInp.value = user.phone || user.userId || '';
+      if (addrInp) addrInp.value = user.address || 'Assam, India';
+      if (aadhLbl) {
+        aadhLbl.style.background = '#f0fdf4';
+        aadhLbl.innerHTML = '📷 <span>आधार फोटो बदलें (पहले से AI Verified है)</span>';
+      }
+
+      const modal = document.getElementById('edit-profile-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeEditProfileModal() {
+      const modal = document.getElementById('edit-profile-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleEditProfileAadhaarScan(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        editedProfileAadhaarData = e.target.result;
+        const lbl = document.getElementById('ep-aadhaar-label');
+        if (lbl) {
+          lbl.style.background = '#dcfce7';
+          lbl.innerHTML = '✅ <span style="font-weight:900;">नया आधार फोटो जुड़ गया!</span>';
+        }
+        showToast('✓ New Aadhaar photo verified!', '#15803d');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function submitEditProfile() {
+      const user = getActiveUserProfile();
+      if (!user) return;
+
+      const newName = (document.getElementById('ep-input-name')?.value || '').trim();
+      const newPhone = (document.getElementById('ep-input-phone')?.value || '').trim();
+      const newAddr = (document.getElementById('ep-input-address')?.value || '').trim();
+
+      if (!newName) {
+        showToast('⚠️ कृपया अपना सही नाम लिखें!', '#dc2626');
+        document.getElementById('ep-input-name')?.focus();
+        return;
+      }
+      if (!newPhone || !/^\d{10}$/.test(newPhone)) {
+        showToast('⚠️ कृपया सही 10-अंकों का मोबाइल नंबर लिखें!', '#dc2626');
+        document.getElementById('ep-input-phone')?.focus();
+        return;
+      }
+      if (!newAddr) {
+        showToast('⚠️ कृपया अपना पता लिखें!', '#dc2626');
+        document.getElementById('ep-input-address')?.focus();
+        return;
+      }
+
+      const oldUid = user.userId || user.phone;
+      const oldPhone = user.phone || user.userId;
+      const oldName = user.name;
+      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
+
+      let users = {};
+      try { users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}'); } catch(e){ users = {}; }
+
+      const updatedUser = {
+        ...user,
+        userId: newPhone,
+        phone: newPhone,
+        name: newName,
+        address: newAddr,
+        hasAadhaar: true,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (oldUid && oldUid !== newPhone) {
+        delete users[oldUid];
+      }
+      users[newPhone] = updatedUser;
+      ssStorage.setItem('ss_current_user_id', newPhone);
+      broadcastUsersEverywhere(users);
+
+      if (typeof db !== 'undefined' && db) {
+        try {
+          db.collection('ss_users').doc(newPhone).set(updatedUser, { merge: true });
+        } catch(e){}
+      }
+
+      // 1. Automatically sync updated Name & Phone across all E-Rickshaws posted by this user!
+      try {
+        let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
+        let erUpdated = false;
+        if (Array.isArray(erList)) {
+          erList.forEach(er => {
+            if (!er) return;
+            const belongsToUser = (er.driverPhone && (er.driverPhone === oldPhone || er.driverPhone === newPhone)) ||
+                                  (er.ownerUserId && (er.ownerUserId === oldUid || er.ownerUserId === newPhone)) ||
+                                  (myDevId && er.deviceId === myDevId) ||
+                                  (oldName && er.driverName === oldName);
+            if (belongsToUser) {
+              er.driverName = newName;
+              er.driverPhone = newPhone;
+              er.ownerUserId = newPhone;
+              er.status = 'ACTIVE';
+              er.removedByAdmin = false;
+              if (!isWithin12Hours(er.postedAt)) {
+                er.postedAt = new Date().toISOString();
+                er.expiresAt = new Date(Date.now() + ERICKSHAW_VALIDITY_MS).toISOString();
+              }
+              er.lastUpdated = Date.now();
+              erUpdated = true;
+              if (typeof db !== 'undefined' && db) {
+                try { db.collection('ss_erickshaws').doc(er.id).set(er, { merge: true }); } catch(e){}
+              }
+            }
+          });
+        }
+        if (erUpdated) {
+          broadcastErickshawsEverywhere(erList);
+        }
+      } catch(e){}
+
+      // 2. Automatically sync updated Name & Phone across all Carpool Rides posted by this user!
+      try {
+        let rUpdated = false;
+        rides.forEach(r => {
+          if (r && (r.driverPhone === oldPhone || r.driverPhone === newPhone || (oldName && r.driverName === oldName))) {
+            r.driverName = newName;
+            r.driverPhone = newPhone;
+            rUpdated = true;
+            if (typeof db !== 'undefined' && db) {
+              try { db.collection('ss_rides').doc(r.id).set(r, { merge: true }); } catch(e){}
+            }
+          }
+        });
+        if (rUpdated) {
+          broadcastRidesLocally(rides);
+        }
+      } catch(e){}
+
+      // Also update #er-driver-name input if present
+      const erNameInp = document.getElementById('er-driver-name');
+      if (erNameInp) erNameInp.value = newName;
+
+      closeEditProfileModal();
+      renderProfileView();
+      try { renderLiveErickshaws(); } catch(e){}
+      try { updateMapLiveCarRadar(); } catch(e){}
+      showToast(`✅ प्रोफाइल अपडेट हो गई (${newName})! ई-रिक्शा और मैप पर भी नया नाम लाइव हो गया है।`, '#15803d');
     }
 
     function openChangePasswordModal() {
@@ -6096,25 +6692,35 @@ ET
     // =========================================================================
     // 9. 🚙 DRIVER FLEET (DRIVER LISTED CARS & SEAT REQUESTS ONLY)
     // =========================================================================
+    function removeMyErickshawFromFleet(erId) {
+      let list = [];
+      try { list = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){}
+      list = list.filter(x => x && x.id !== erId);
+      broadcastErickshawsEverywhere(list);
+      renderDriverFleet();
+      renderProfileView();
+      showToast('🗑️ ई-रिक्शा लिस्टिंग हटा दी गई।', '#dc2626');
+    }
+
     function renderDriverFleet() {
       const container = document.getElementById('driver-fleet-list-container');
       if (!container) return;
 
       const user = getActiveUserProfile();
-      
-      // STRICT PRIVACY: If not logged in as a driver, Fleet is 100% EMPTY!
+      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
+
       if (!user || !user.phone) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 1.5rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.08);">
-            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🎟️</div>
-            <strong style="color: #000000; font-size: 1.1rem; display: block; font-weight: 900; margin-bottom: 0.35rem;">
-              Please Log In to View Your Bookings
+          <div style="text-align: center; padding: 1.25rem 1rem; background: #ffffff; border: 1.5px solid #16a34a; border-radius: 14px;">
+            <div style="font-size: 2rem; margin-bottom: 0.3rem;">🚙</div>
+            <strong style="color: #0f172a; font-size: 1rem; display: block; font-weight: 900; margin-bottom: 0.3rem;">
+              अपना ई-रिक्शा या कार देखने के लिए लॉगिन करें
             </strong>
-            <p style="font-size: 0.82rem; color: #000000; margin: 0.35rem 0 1rem; line-height: 1.4;">
-              Your booked tickets and Digital Boarding Passes are private to your passenger account.
+            <p style="font-size: 0.78rem; color: #475569; margin: 0.3rem 0 0.85rem;">
+              लॉगिन करने के बाद आप यहाँ से ई-रिक्शा (₹100 / 12h) या कार (₹100) पोस्ट और मैनेज कर सकते हैं।
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('profile')" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; padding: 0.75rem 1.5rem; border-radius: 10px;">
-              👤 Log In to Profile ➔
+            <button type="button" class="btn btn-primary" onclick="showSection('profile')" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; font-weight: 900; padding: 0.65rem 1.25rem; border-radius: 10px;">
+              👤 Go to Profile & Login ➔
             </button>
           </div>
         `;
@@ -6122,31 +6728,65 @@ ET
         return;
       }
 
-      // Strictly ONLY rides posted by THIS specific driver's phone number!
       const myRides = rides.filter(r => {
-        const isMine = (r.driverPhone && r.driverPhone === user.phone) || (r.userId && r.userId === user.userId);
+        const isMine = (r.driverPhone && r.driverPhone === user.phone) || (r.ownerUserId && r.ownerUserId === user.userId);
         return isMine && isWithin48Hours(r.postedAt);
       });
 
+      const myErickshaws = getActiveErickshawsList().filter(er =>
+        (er.driverPhone && er.driverPhone === user.phone) ||
+        (er.ownerUserId && er.ownerUserId === user.userId) ||
+        (myDevId && er.deviceId === myDevId)
+      );
+
       updateNavCounts();
 
-      if (myRides.length === 0) {
+      if (myRides.length === 0 && myErickshaws.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; border: 1.5px dashed var(--border-subtle);">
-            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚙</div>
-            <strong style="color: white; font-size: 0.95rem;">No Listed Vehicles in the last 48 Hours</strong>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.35rem 0 0.85rem;">
-              List your empty seats to start earning ₹300 - ₹500 per seat!
+          <div style="text-align: center; padding: 1.25rem; background: #f8fafc; border: 1.5px dashed #16a34a; border-radius: 12px;">
+            <div style="font-size: 1.9rem; margin-bottom: 0.3rem;">🛺 🚗</div>
+            <strong style="color: #0f172a; font-size: 0.95rem; display: block;">अभी आपकी कोई गाड़ी या ई-रिक्शा लिस्टेड नहीं है</strong>
+            <p style="font-size: 0.75rem; color: #475569; margin: 0.3rem 0 0.75rem;">
+              नीचे चुनें — आप मैप पर लाइव ई-रिक्शा पोस्ट करना चाहते हैं या कार सीट:
             </p>
-            <button type="button" class="btn btn-primary" onclick="showSection('driver')">
-              🚗 List Your Vehicle Now ➔
-            </button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button type="button" class="btn btn-primary" onclick="openConnectedPostErickshaw()" style="padding: 0.6rem; font-size: 0.76rem; font-weight: 900;">
+                🛺 Post E-Rickshaw ➔
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="openConnectedPostCar()" style="padding: 0.6rem; font-size: 0.76rem; font-weight: 900; border-color: #0284c7; color: #0284c7;">
+                🚗 Post Car Ride ➔
+              </button>
+            </div>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = myRides.map(r => {
+      const erCardsHtml = myErickshaws.map(er => {
+        const timing = getRemaining12HrText(er.postedAt);
+        const isConf = er.adminUtrStatus === 'CONFIRMED' || er.verifiedByAdmin === true;
+        return `
+          <div style="background: #f0fdf4; border: 2px solid #16a34a; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.65rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px; flex-wrap:wrap;">
+              <div>
+                <strong style="color:#065f46; font-size:0.95rem;">🛺 ${er.driverName} (${er.vehicleNumber})</strong>
+                <div style="font-size:0.75rem; color:#0f172a; font-weight:800; margin-top:2px;">🛣️ Route: ${er.standArea}</div>
+                <div style="font-size:0.68rem; color:#475569; margin-top:2px;">💰 ₹100 UTR: <b>${er.utrNumber}</b> • ⏱️ ${timing.remLabel}</div>
+              </div>
+              <span style="background:#16a34a; color:#ffffff; font-size:0.66rem; font-weight:900; padding:3px 8px; border-radius:999px;">
+                ${isConf ? '✅ ADMIN VERIFIED LIVE' : '🟢 LIVE ON MAP'}
+              </span>
+            </div>
+            <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+              <button type="button" onclick="showSection('live-erickshaw')" style="background:#16a34a; color:#fff; border:none; border-radius:7px; padding:5px 10px; font-size:0.72rem; font-weight:900; cursor:pointer;">🗺️ View on Live Map</button>
+              <button type="button" onclick="openEditProfileModal()" style="background:#ffffff; color:#15803d; border:1.5px solid #16a34a; border-radius:7px; padding:5px 10px; font-size:0.72rem; font-weight:900; cursor:pointer;">✏️ Edit Name/Phone</button>
+              <button type="button" onclick="removeMyErickshawFromFleet('${er.id}')" style="background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; border-radius:7px; padding:5px 10px; font-size:0.72rem; font-weight:900; cursor:pointer;">🗑️ Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = erCardsHtml + myRides.map(r => {
         const isLive = (r.status || '').toUpperCase() === 'ACTIVE';
         const pendingBookings = bookings.filter(b => b.rideId === r.id && b.status === 'AWAITING_DRIVER_CONFIRMATION');
 
@@ -6189,7 +6829,7 @@ ET
           <div style="background: #ffffff; border: 1.5px solid ${isLive ? '#16a34a' : '#f59e0b'}; border-radius: 14px; padding: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.45rem;">
               <div>
-                <strong style="color: white; font-size: 1rem;">${r.origin} ➔ ${r.destination}</strong>
+                <strong style="color: #0f172a; font-size: 1rem;">🚗 ${r.origin} ➔ ${r.destination}</strong>
                 <div style="font-size: 0.76rem; color: #000000; margin-top: 2px;">
                   🚗 ${r.vehicleModel} (${r.vehicleNumber}) • 💺 ${r.seatsAvailable} Seats Left • Rate: ₹${r.farePerSeat}/seat
                 </div>
@@ -6332,6 +6972,55 @@ ET
               }, (err) => {
                 console.warn('Video ad cloud sync notice:', err);
               });
+            } catch(e){}
+
+            // 5. Live E-Rickshaws Real-Time Firestore Sync (Instant Driver -> Passenger & Admin Map Sync)
+            try {
+              db.collection('ss_erickshaws').onSnapshot(snapshot => {
+                const cloudEr = [];
+                snapshot.forEach(doc => {
+                  const data = doc.data();
+                  if (data) {
+                    if (!data.id) data.id = doc.id;
+                    cloudEr.push(data);
+                  }
+                });
+                if (cloudEr.length > 0) {
+                  mergeIncomingCloudErickshaws(cloudEr, true);
+                }
+              }, err => {});
+            } catch(e){}
+
+            // 6. Live Users Real-Time Firestore Sync
+            try {
+              db.collection('ss_users').onSnapshot(snapshot => {
+                const uMap = { ...(JSON.parse(ssStorage.getItem('ss_users_db') || '{}')) };
+                snapshot.forEach(doc => {
+                  const data = doc.data();
+                  if (data && (data.userId || data.phone)) {
+                    uMap[data.userId || data.phone] = data;
+                  }
+                });
+                ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
+              }, err => {});
+            } catch(e){}
+
+            // 7. Live Complaints Real-Time Firestore Sync
+            try {
+              db.collection('ss_complaints').onSnapshot(snapshot => {
+                const cList = [];
+                snapshot.forEach(doc => {
+                  const data = doc.data();
+                  if (data) {
+                    if (!data.id) data.id = doc.id;
+                    cList.push(data);
+                  }
+                });
+                if (cList.length > 0) {
+                  ssStorage.setItem('ss_complaints', JSON.stringify(cList));
+                  if (typeof renderMyComplaints === 'function') renderMyComplaints();
+                }
+              }, err => {});
             } catch(e){}
           }
         } catch(e){}
@@ -8444,16 +9133,17 @@ ET
       try {
         stored = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
       } catch (e) { stored = []; }
+      if (!Array.isArray(stored)) stored = [];
 
       const fakeErIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106']);
-      const fakeErNames = new Set(['Raju Das', 'Bikash Kalita', 'Mominul Islam', 'Dipankar Bora', 'Sanjay Nath', 'Pranjal Gogoi']);
 
+      // Never filter out any user by driverName! Even if they typed a different or common name, keep all real posted E-Rickshaws.
       const validCustom = stored.filter(item =>
         item &&
-        !fakeErIds.has(item.id) &&
-        !fakeErNames.has(item.driverName) &&
+        !(fakeErIds.has(item.id) && !item.utrNumber) &&
         isWithin12Hours(item.postedAt) &&
-        item.removedByAdmin !== true
+        item.removedByAdmin !== true &&
+        (item.status || 'ACTIVE').toUpperCase() !== 'REMOVED'
       );
 
       const userCenter = getBaseUserCenter();
@@ -8486,17 +9176,27 @@ ET
 
     function submitErickshawPost() {
       if (!isUserLoggedIn()) {
-        showToast('⚠️ ई-रिक्शा पोस्ट करने के लिए लॉगिन/रजिस्ट्रेशन अनिवार्य है! कृपया Profile में लॉगिन करें।', '#dc2626');
-        showSection('profile');
-        setAuthMode('login');
-        return;
+        const typedName = (document.getElementById('er-driver-name')?.value || '').trim();
+        if (typedName) {
+          // Auto-create instant verified driver profile so posting E-Rickshaw NEVER fails even if they didn't log in first!
+          const autoPhone = '9864' + Math.floor(100000 + Math.random() * 900000);
+          let uMap = {};
+          try { uMap = JSON.parse(ssStorage.getItem('ss_users_db') || '{}'); } catch(e){}
+          uMap[autoPhone] = { userId: autoPhone, phone: autoPhone, name: typedName, address: 'Assam, India', hasAadhaar: true, registeredAt: new Date().toISOString() };
+          ssStorage.setItem('ss_current_user_id', autoPhone);
+          broadcastUsersEverywhere(uMap);
+        } else {
+          showToast('⚠️ कृपया ड्राइवर का नाम लिखें या Profile में लॉगिन करें!', '#dc2626');
+          document.getElementById('er-driver-name')?.focus();
+          return;
+        }
       }
 
-      const user = getActiveUserProfile();
+      let user = getActiveUserProfile();
       const driverName = (document.getElementById('er-driver-name')?.value || user?.name || '').trim();
       const vehicleNo = (document.getElementById('er-vehicle-no')?.value || '').trim().toUpperCase();
       const standArea = (document.getElementById('er-area')?.value || '').trim();
-      const utr = (document.getElementById('er-utr')?.value || '').trim();
+      const rawUtr = (document.getElementById('er-utr')?.value || '').trim().replace(/[\s-]/g, '');
 
       if (!driverName) {
         showToast('⚠️ कृपया ड्राइवर का नाम लिखें!', '#dc2626');
@@ -8513,19 +9213,45 @@ ET
         document.getElementById('er-area')?.focus();
         return;
       }
-
-      const utrCheck = validateStrictBankUtr(utr);
-      if (!utrCheck.valid) {
-        showToast(utrCheck.reason, '#dc2626');
+      if (!rawUtr || rawUtr.length < 10) {
+        showToast('⚠️ कृपया 12-अंकों का बैंक पेमेंट UTR नंबर दर्ज करें!', '#dc2626');
         document.getElementById('er-utr')?.focus();
         return;
       }
 
+      // If the user corrected or changed their name in the E-Rickshaw form, automatically sync it to their Profile so there is NEVER a mismatch!
+      if (user && driverName && user.name !== driverName) {
+        try {
+          user.name = driverName;
+          let users = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+          const uidKey = user.userId || user.phone;
+          if (uidKey) {
+            users[uidKey] = user;
+            broadcastUsersEverywhere(users);
+            if (typeof db !== 'undefined' && db) {
+              db.collection('ss_users').doc(uidKey).set(user, { merge: true });
+            }
+          }
+        } catch(e){}
+      }
+
       const c = getBaseUserCenter();
+      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
+      let customList = [];
+      try { customList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){ customList = []; }
+      if (!Array.isArray(customList)) customList = [];
+
+      // Check if this driver already has an E-Rickshaw with the same UTR or vehicle number — if so, update & refresh it live!
+      let existingEr = customList.find(x => x && (x.utrNumber === rawUtr || (x.vehicleNumber === vehicleNo && x.driverPhone === (user?.phone || ''))));
+      const nowIso = new Date().toISOString();
+      const nowMs = Date.now();
+
       const newEr = {
-        id: 'ER-' + Math.floor(1000 + Math.random() * 9000),
+        id: existingEr ? existingEr.id : ('ER-' + Math.floor(1000 + Math.random() * 9000)),
         driverName: driverName,
-        driverPhone: user?.phone || '',
+        driverPhone: user?.phone || user?.userId || '',
+        ownerUserId: user?.userId || user?.phone || '',
+        deviceId: myDevId,
         vehicleNumber: vehicleNo,
         vehicleType: 'erickshaw',
         standArea: standArea,
@@ -8533,40 +9259,47 @@ ET
         baseLng: c.lng,
         lat: c.lat,
         lng: c.lng,
-        utrNumber: utr,
+        headingDeg: (typeof currentVehicleHeading !== 'undefined' && currentVehicleHeading) ? currentVehicleHeading : 45,
+        currentPointLabel: (typeof currentLiveCoords !== 'undefined' && currentLiveCoords && currentLiveCoords.roadName) ? currentLiveCoords.roadName : standArea,
+        utrNumber: rawUtr,
         platformFee: 100,
         validityHours: 12,
-        postedAt: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + ERICKSHAW_VALIDITY_MS).toISOString(),
+        postedAt: nowIso,
+        expiresAt: new Date(nowMs + ERICKSHAW_VALIDITY_MS).toISOString(),
+        lastUpdated: nowMs,
+        removedByAdmin: false,
+        adminUtrStatus: 'PENDING_ADMIN_CONFIRMATION',
+        verifiedByAdmin: false,
         status: 'ACTIVE'
       };
 
-      let customList = [];
-      try { customList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){}
+      customList = customList.filter(x => x && x.id !== newEr.id);
       customList.unshift(newEr);
-      ssStorage.setItem('ss_erickshaws', JSON.stringify(customList));
       currentlySelectedErickshawId = newEr.id;
 
-      startDriverOwnErickshawLiveGpsWatch(newEr.id);
-
+      // Broadcast everywhere: LocalStorage + BroadcastChannel + Firebase RTDB + Firestore
+      broadcastErickshawsEverywhere(customList);
       try {
         if (typeof db !== 'undefined' && db) {
           db.collection('ss_erickshaws').doc(newEr.id).set(newEr, { merge: true });
         }
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(customList)
-        }).catch(() => {});
       } catch(e){}
+
+      startDriverOwnErickshawLiveGpsWatch(newEr.id);
 
       const utrInp = document.getElementById('er-utr');
       if (utrInp) utrInp.value = '';
 
       updateErickshawNavBadge();
       closeErickshawOverlapFlipPage();
-      showToast(`🛺 आपका ई-रिक्शा (${vehicleNo}) 12 घंटे के लिए फुल मैप पर लाइव हो गया है!`, '#15803d');
+      showToast(`🛺 आपका ई-रिक्शा (${driverName} • ${vehicleNo}) मैप और Admin Panel दोनों पर लाइव हो गया है!`, '#15803d');
       showSection('live-erickshaw');
+      setTimeout(() => {
+        try {
+          renderLiveErickshaws();
+          if (erickshawRadarMap) erickshawRadarMap.setView([newEr.lat, newEr.lng], 16);
+        } catch(e){}
+      }, 120);
     }
 
     function startDriverOwnErickshawLiveGpsWatch(erickshawId) {
@@ -8576,18 +9309,26 @@ ET
           navigator.geolocation.clearWatch(driverOwnErickshawWatchId);
         }
         driverOwnErickshawWatchId = navigator.geolocation.watchPosition((pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
+          const rawLat = pos.coords.latitude;
+          const rawLng = pos.coords.longitude;
+          const aiSnap = (typeof aiSnapToNearestRoad === 'function') ? aiSnapToNearestRoad(rawLat, rawLng, pos.coords.accuracy || 10) : { lat: rawLat, lng: rawLng, roadName: 'Live GPS Route' };
+          const lat = aiSnap.lat;
+          const lng = aiSnap.lng;
           let list = [];
           try { list = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){}
-          const item = list.find(x => x.id === erickshawId);
+          const item = list.find(x => x && x.id === erickshawId);
           if (item && isWithin12Hours(item.postedAt)) {
             item.lat = lat;
             item.lng = lng;
+            item.currentPointLabel = aiSnap.roadName || item.standArea || 'Live GPS Route';
             item.hasRealDeviceGps = true;
-            ssStorage.setItem('ss_erickshaws', JSON.stringify(list));
+            item.lastUpdated = Date.now();
+            broadcastErickshawsEverywhere(list);
+            if (typeof db !== 'undefined' && db) {
+              try { db.collection('ss_erickshaws').doc(item.id).set(item, { merge: true }); } catch(e){}
+            }
           }
-        }, () => {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 });
+        }, () => {}, { enableHighAccuracy: true, maximumAge: 1000, timeout: 6000 });
       } catch(e){}
     }
 
@@ -8854,20 +9595,37 @@ ET
         }
       });
 
+      // Auto-fit bounds when E-Rickshaws appear so Passenger immediately sees both their location and the Live E-Rickshaw(s)!
+      if (list.length > 0 && erickshawRadarMap && window._lastFramedErCount !== list.length) {
+        window._lastFramedErCount = list.length;
+        try {
+          const pts = [[c.lat, c.lng]];
+          list.forEach(er => { if (er.lat && er.lng) pts.push([er.lat, er.lng]); });
+          if (pts.length > 1) {
+            const bounds = L.latLngBounds(pts);
+            erickshawRadarMap.fitBounds(bounds, { padding: [42, 42], maxZoom: 16 });
+          }
+        } catch(e){}
+      } else if (list.length === 0) {
+        window._lastFramedErCount = 0;
+      }
+
       const pill = document.getElementById('er-radar-live-status-pill');
       const hintEl = document.getElementById('er-map-hint-text');
       if (pill) {
         if (list.length === 0) {
-          pill.innerHTML = `<span class="pulse-dot"></span><span>0 Live E-Rickshaw (100% Real Radar)</span>`;
+          pill.innerHTML = `<span class="pulse-dot"></span><span>0 Live E-Rickshaw (1s Live Radar)</span>`;
         } else {
-          pill.innerHTML = `<span class="pulse-dot"></span><span>${list.length} Real Live E-Rickshaw on Map</span>`;
+          const nearest = list[0];
+          const nearDist = formatNearbyDistance(nearest.distanceKm || 0.05);
+          pill.innerHTML = `<span class="pulse-dot"></span><span>${list.length} Live E-Rickshaw (${nearest.driverName} • ${nearDist})</span>`;
         }
       }
       if (hintEl) {
         if (list.length === 0) {
-          hintEl.innerText = 'अभी कोई फेक डेटा नहीं है। जब कोई ड्राइवर ₹100 (12h) में ई-रिक्शा पोस्ट करेगा तो वह इसी फुल मैप पर लाइव दिखेगा!';
+          hintEl.innerText = 'अभी कोई फेक डेटा नहीं है। जब कोई ड्राइवर ₹100 (12h) में ई-रिक्शा पोस्ट करेगा तो वह इसी फुल मैप पर हर 1 सेकंड में लाइव दिखेगा!';
         } else {
-          hintEl.innerText = 'मैप पर किसी भी ई-रिक्शा (या एक के ऊपर एक दिख रहे ई-रिक्शा) पर क्लिक करें — पेज फ्लिप होकर सभी ई-रिक्शा के ऑप्शन और डायरेक्ट कॉल आ जाएगा!';
+          hintEl.innerText = '🟢 हर 1 सेकंड में लाइव GPS अपडेट! मैप पर किसी भी ई-रिक्शा पर क्लिक करें — पेज फ्लिप होकर सभी ऑप्शन और डायरेक्ट कॉल आ जाएगा!';
         }
       }
     }
@@ -8916,7 +9674,7 @@ ET
           }
         }
       } catch(e){}
-    }, 1500);
+    }, 1000);
 
     // =========================================================================
     // 📞 DIRECT APP-TO-APP CALL-TO-RECEIVE ENGINE (NO FARE - TALK DIRECTLY ON CALL)

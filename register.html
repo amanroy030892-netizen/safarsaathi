@@ -18,42 +18,60 @@
       <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Register Free Account • Aadhaar AI Verified</p>
     </div>
 
-    <form onsubmit="event.preventDefault(); window.location.href='index.html';">
+    <form onsubmit="handleStandaloneRegister(event)">
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem;">
         <div>
           <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Mobile (User ID)*</label>
-          <input type="tel" required maxlength="10" placeholder="9864012345" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+          <input type="tel" id="st-reg-phone" required maxlength="10" placeholder="9864012345" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
         <div>
           <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Full Name*</label>
-          <input type="text" required placeholder="Aapka Naam" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+          <input type="text" id="st-reg-name" required placeholder="Aapka Naam" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.5rem;">
         <div>
           <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Password*</label>
-          <input type="password" required placeholder="Password" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+          <input type="password" id="st-reg-pwd" required placeholder="Password" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
         <div>
           <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Confirm Password*</label>
-          <input type="password" required placeholder="Re-enter" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+          <input type="password" id="st-reg-conf" required placeholder="Re-enter" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.75rem;">
         <div>
           <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Address in Assam*</label>
-          <input type="text" required placeholder="Paltan Bazar, Ghy" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+          <input type="text" id="st-reg-addr" required placeholder="Nagaon / Guwahati" style="width: 100%; height: 34px; padding: 4px 8px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
         </div>
         <div>
-          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Aadhaar Photo*</label>
-          <input type="file" required accept="image/*" style="width: 100%; font-size: 0.65rem;">
+          <label style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 2px;">Aadhaar Photo (Optional)</label>
+          <input type="file" accept="image/*" style="width: 100%; font-size: 0.65rem;">
         </div>
       </div>
 
-      <button type="submit" class="btn-green">✨ Register & Verify Aadhaar AI ➔</button>
+      <button type="submit" class="btn-green">✨ Register & Open Choice Hub ➔</button>
     </form>
+    <script>
+      function handleStandaloneRegister(e) {
+        e.preventDefault();
+        try {
+          var phone = (document.getElementById('st-reg-phone').value || '').trim();
+          var name = (document.getElementById('st-reg-name').value || '').trim();
+          var pwd = (document.getElementById('st-reg-pwd').value || '').trim();
+          var addr = (document.getElementById('st-reg-addr').value || 'Assam, India').trim();
+          if (phone.length === 10 && name) {
+            var users = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+            users[phone] = { userId: phone, phone: phone, name: name, password: pwd, address: addr, hasAadhaar: true, registeredAt: new Date().toISOString() };
+            localStorage.setItem('ss_users_db', JSON.stringify(users));
+            localStorage.setItem('ss_current_user_id', phone);
+          }
+        } catch(err) {}
+        window.location.href = 'index.html';
+      }
+    </script>
 
     <div style="text-align: center; margin-top: 0.75rem; font-size: 0.75rem;">
       Already have an account? <a href="login.html" style="color: #15803d; font-weight: 900;">User Login</a>

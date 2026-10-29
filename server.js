@@ -91,7 +91,89 @@ const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s =>
 const activeAdminTokens = new Map(); // token -> { createdAt, expiresAt }
 const activeUserTokens = new Map();  // token -> { phone, expiresAt }
 const rateLimitBuckets = new Map();  // ip:action -> { count, resetTime }
-const otpStore = new Map();          // phone -> { hashedOtp, salt, expiresAt, attempts }
+const otpStore = new Map();
+
+// ===========================================================================
+// 🛡️ HEAVY CRASH-PROOF GLOBAL PROCESS SHIELD & REAL-TIME MULTI-TABLE DB ENGINE
+// ===========================================================================
+process.on('uncaughtException', (err) => {
+  console.error('[SafarSaathi Anti-Crash Shield] Uncaught Exception absorbed:', err && err.message ? err.message : err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[SafarSaathi Anti-Crash Shield] Unhandled Rejection absorbed:', reason);
+});
+
+const STATE_DB_FILE = path.join(ROOT_DIR, 'safarsaathi_cloud_state.json');
+let memoryCloudState = {
+  rides: [],
+  erickshaws: [],
+  bookings: [],
+  coinRequests: [],
+  users: {},
+  complaints: [],
+  deletedErickshawIds: [],
+  updatedAt: Date.now()
+};
+
+function loadCloudStateFromDisk() {
+  try {
+    if (fs.existsSync(STATE_DB_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(STATE_DB_FILE, 'utf-8'));
+      if (parsed && typeof parsed === 'object') {
+        memoryCloudState = {
+          rides: Array.isArray(parsed.rides) ? parsed.rides : [],
+          erickshaws: Array.isArray(parsed.erickshaws) ? parsed.erickshaws : [],
+          bookings: Array.isArray(parsed.bookings) ? parsed.bookings : [],
+          coinRequests: Array.isArray(parsed.coinRequests) ? parsed.coinRequests : [],
+          users: (parsed.users && typeof parsed.users === 'object') ? parsed.users : {},
+          complaints: Array.isArray(parsed.complaints) ? parsed.complaints : [],
+          deletedErickshawIds: Array.isArray(parsed.deletedErickshawIds) ? parsed.deletedErickshawIds : [],
+          updatedAt: parsed.updatedAt || Date.now()
+        };
+      }
+    }
+  } catch (e) {}
+}
+loadCloudStateFromDisk();
+
+let _saveStateTimer = null;
+function saveCloudStateToDiskAsync() {
+  if (_saveStateTimer) return;
+  _saveStateTimer = setTimeout(() => {
+    _saveStateTimer = null;
+    try {
+      fs.writeFile(STATE_DB_FILE, JSON.stringify(memoryCloudState), 'utf-8', () => {});
+    } catch (e) {}
+  }, 150);
+}
+
+function mergeArrayById(existingArr, incomingArr, idKey = 'id', deletedSet = new Set()) {
+  const map = {};
+  (Array.isArray(existingArr) ? existingArr : []).forEach(item => {
+    if (item && item[idKey] && !deletedSet.has(item[idKey]) && item.removedByAdmin !== true) {
+      map[item[idKey]] = item;
+    }
+  });
+  (Array.isArray(incomingArr) ? incomingArr : []).forEach(item => {
+    if (!item || !item[idKey]) return;
+    const id = item[idKey];
+    if (item.removedByAdmin === true || deletedSet.has(id)) {
+      deletedSet.add(id);
+      delete map[id];
+      return;
+    }
+    const prev = map[id];
+    if (!prev) {
+      map[id] = item;
+    } else {
+      const tNew = Number(item.lastUpdated || new Date(item.approvedAt || item.postedAt || item.timestamp || 0).getTime() || 0);
+      const tOld = Number(prev.lastUpdated || new Date(prev.approvedAt || prev.postedAt || prev.timestamp || 0).getTime() || 0);
+      map[id] = (tNew >= tOld) ? { ...prev, ...item } : { ...item, ...prev };
+    }
+  });
+  return Object.values(map);
+}
+          // phone -> { hashedOtp, salt, expiresAt, attempts }
 
 /**
  * Rate Limiter
@@ -267,6 +349,62 @@ function handleRequest(req, res) {
   };
 
   // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // 1B. GET & POST /api/sync/state — Heavy 1-Second Real-Time Multi-Table Sync API
+  // ---------------------------------------------------------------------------
+  if (pathname === '/api/sync/state') {
+    if (req.method === 'GET') {
+      return sendJson(200, {
+        success: true,
+        ...memoryCloudState,
+        ad: loadAds(),
+        serverTime: Date.now()
+      });
+    }
+    if (req.method === 'POST') {
+      readBody((err, data) => {
+        if (err || !data || typeof data !== 'object') {
+          return sendJson(400, { success: false, error: 'Invalid sync payload' });
+        }
+        try {
+          const delSet = new Set(memoryCloudState.deletedErickshawIds || []);
+          if (Array.isArray(data.deletedErickshawIds)) {
+            data.deletedErickshawIds.forEach(id => delSet.add(id));
+          }
+          if (Array.isArray(data.erickshaws)) {
+            memoryCloudState.erickshaws = mergeArrayById(memoryCloudState.erickshaws, data.erickshaws, 'id', delSet);
+          }
+          memoryCloudState.deletedErickshawIds = Array.from(delSet);
+
+          if (Array.isArray(data.rides)) {
+            memoryCloudState.rides = mergeArrayById(memoryCloudState.rides, data.rides, 'id');
+          }
+          if (Array.isArray(data.bookings)) {
+            memoryCloudState.bookings = mergeArrayById(memoryCloudState.bookings, data.bookings, 'bookingId');
+          }
+          if (Array.isArray(data.coinRequests)) {
+            memoryCloudState.coinRequests = mergeArrayById(memoryCloudState.coinRequests, data.coinRequests, 'id');
+          }
+          if (Array.isArray(data.complaints)) {
+            memoryCloudState.complaints = mergeArrayById(memoryCloudState.complaints, data.complaints, 'id');
+          }
+          if (data.users && typeof data.users === 'object') {
+            memoryCloudState.users = { ...memoryCloudState.users, ...data.users };
+          }
+          memoryCloudState.updatedAt = Date.now();
+          saveCloudStateToDiskAsync();
+        } catch (mergeErr) {}
+
+        return sendJson(200, {
+          success: true,
+          ...memoryCloudState,
+          serverTime: Date.now()
+        });
+      });
+      return;
+    }
+  }
+
   // 1. GET /api/health — Server Status Healthcheck
   // ---------------------------------------------------------------------------
   if (req.method === 'GET' && pathname === '/api/health') {

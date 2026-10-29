@@ -36,12 +36,11 @@
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
         const fakeErIds = ['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106'];
-        const fakeErNames = ['Raju Das', 'Bikash Kalita', 'Mominul Islam', 'Dipankar Bora', 'Sanjay Nath', 'Pranjal Gogoi'];
         let raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
         let clean = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName));
         localStorage.setItem('ss_rides', JSON.stringify(clean));
         let rawEr = JSON.parse(localStorage.getItem('ss_erickshaws')) || [];
-        let cleanEr = rawEr.filter(e => e && !fakeErIds.includes(e.id) && !fakeErNames.includes(e.driverName));
+        let cleanEr = rawEr.filter(e => e && !(fakeErIds.includes(e.id) && !e.utrNumber));
         localStorage.setItem('ss_erickshaws', JSON.stringify(cleanEr));
       } catch(e){}
     })();
@@ -386,6 +385,9 @@
 
       <!-- ==================== ADMIN CLICK & FLIP DASHBOARD ==================== -->
       <div id="admin-dashboard" style="display: none;">
+
+        <!-- 🔔 GLOBAL INSTANT ₹100 E-RICKSHAW & CAR UTR CONFIRMATION DESK (VISIBLE ON ALL TABS) -->
+        <div id="adm-global-live-utr-queue" style="display: none; margin-bottom: 0.75rem;"></div>
 
         <!-- =================================================================== -->
         <!-- CATEGORY 1: 🪙 GAME COIN RECHARGE UTR VERIFICATION & WALLET MANAGER  -->
@@ -808,15 +810,65 @@
           } else if (d.type === 'COIN_REQUESTS_UPDATED' && Array.isArray(d.coinRequests)) {
             mergeCoinRequestsSafely(d.coinRequests);
           } else if (d.type === 'USERS_UPDATED' && d.users) {
-            registeredUsers = d.users;
+            registeredUsers = { ...(JSON.parse(localStorage.getItem('ss_users_db') || '{}')), ...d.users };
             localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
             renderAdminUsers();
+          } else if (d.type === 'ERICKSHAWS_UPDATED' && Array.isArray(d.erickshaws)) {
+            mergeAdminErickshawsSafely(d.erickshaws);
+          } else if (d.type === 'COMPLAINTS_UPDATED' && Array.isArray(d.complaints)) {
+            localStorage.setItem('ss_complaints', JSON.stringify(d.complaints));
+            if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
           } else if (d.type === 'LIVE_GAME_BETS_SYNC') {
             renderAdminLiveGameMonitor();
           }
         };
       }
     } catch(e){}
+
+    function mergeAdminErickshawsSafely(incomingList) {
+      try {
+        if (!incomingList) return;
+        const arr = Array.isArray(incomingList) ? incomingList : Object.values(incomingList);
+        let localArr = [];
+        try { localArr = JSON.parse(localStorage.getItem('ss_erickshaws') || '[]'); } catch(e){ localArr = []; }
+        if (!Array.isArray(localArr)) localArr = [];
+
+        const removedIds = new Set();
+        try {
+          const delArr = JSON.parse(localStorage.getItem('ss_deleted_erickshaw_ids') || '[]');
+          if (Array.isArray(delArr)) delArr.forEach(id => removedIds.add(id));
+        } catch(e){}
+
+        const byId = {};
+        localArr.forEach(item => {
+          if (item && item.id && !removedIds.has(item.id) && item.removedByAdmin !== true) {
+            byId[item.id] = item;
+          }
+        });
+
+        arr.forEach(item => {
+          if (!item || !item.id) return;
+          if (item.removedByAdmin === true || removedIds.has(item.id)) {
+            removedIds.add(item.id);
+            delete byId[item.id];
+            return;
+          }
+          const existing = byId[item.id];
+          if (!existing) {
+            byId[item.id] = item;
+          } else {
+            const tNew = Number(item.lastUpdated || new Date(item.postedAt || 0).getTime() || 0);
+            const tOld = Number(existing.lastUpdated || new Date(existing.postedAt || 0).getTime() || 0);
+            byId[item.id] = (tNew >= tOld) ? { ...existing, ...item } : { ...item, ...existing };
+          }
+        });
+
+        const merged = Object.values(byId);
+        localStorage.setItem('ss_erickshaws', JSON.stringify(merged));
+        if (typeof renderAdminErickshaws === 'function') renderAdminErickshaws();
+        if (typeof renderAdminVehicles === 'function') renderAdminVehicles();
+      } catch(e){}
+    }
 
     window.addEventListener('storage', (e) => {
       try {
@@ -832,6 +884,10 @@
         } else if (e.key === 'ss_users_db' && e.newValue !== null) {
           registeredUsers = JSON.parse(e.newValue) || {};
           renderAdminUsers();
+        } else if (e.key === 'ss_erickshaws' && e.newValue !== null) {
+          mergeAdminErickshawsSafely(JSON.parse(e.newValue) || []);
+        } else if (e.key === 'ss_complaints' && e.newValue !== null) {
+          if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
         } else if (e.key === 'ss_user_coins') {
           updateAdminWalletDisplay();
         }
@@ -990,11 +1046,40 @@
               const uMap = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}) };
               snapshot.forEach(doc => {
                 const data = doc.data();
-                if (data && data.userId) uMap[data.userId] = data;
+                if (data && (data.userId || data.phone)) uMap[data.userId || data.phone] = data;
               });
               registeredUsers = uMap;
               localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
               renderAdminUsers();
+            }, err => {});
+
+            adminDb.collection('ss_erickshaws').onSnapshot(snapshot => {
+              const cloudEr = [];
+              snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data) {
+                  if (!data.id) data.id = doc.id;
+                  cloudEr.push(data);
+                }
+              });
+              if (cloudEr.length > 0) {
+                mergeAdminErickshawsSafely(cloudEr);
+              }
+            }, err => {});
+
+            adminDb.collection('ss_complaints').onSnapshot(snapshot => {
+              const cList = [];
+              snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data) {
+                  if (!data.id) data.id = doc.id;
+                  cList.push(data);
+                }
+              });
+              if (cList.length > 0) {
+                localStorage.setItem('ss_complaints', JSON.stringify(cList));
+                if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
+              }
             }, err => {});
           }
         } catch(e){}
@@ -1011,85 +1096,116 @@
       renderAdminVehicles();
     }
 
+    let _isAdminCloudSyncBusy = false;
     function syncAdminWithCloud(showFeedback = false) {
-      fetch(RTDB_RIDES_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data !== null && data !== undefined) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            mergeAdminCloudRides(list);
-          }
-        }).catch(() => {});
+      if (_isAdminCloudSyncBusy && !showFeedback) return;
+      _isAdminCloudSyncBusy = true;
+      setTimeout(() => { _isAdminCloudSyncBusy = false; }, 850);
 
-      fetch(RTDB_BOOKINGS_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            bookings = list;
-            localStorage.setItem('ss_bookings', JSON.stringify(bookings));
-            renderAdminBookings();
-          }
-        }).catch(() => {});
+      try {
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+          fetch(window.location.origin + '/api/sync/state')
+            .then(res => res.ok ? res.json() : null)
+            .then(sData => {
+              if (!sData || !sData.success) return;
+              if (Array.isArray(sData.erickshaws)) mergeAdminErickshawsSafely(sData.erickshaws);
+              if (Array.isArray(sData.rides)) mergeAdminCloudRides(sData.rides);
+              if (Array.isArray(sData.bookings)) { bookings = sData.bookings; localStorage.setItem('ss_bookings', JSON.stringify(bookings)); renderAdminBookings(); }
+              if (Array.isArray(sData.coinRequests)) mergeCoinRequestsSafely(sData.coinRequests);
+              if (sData.users && typeof sData.users === 'object') {
+                registeredUsers = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}), ...sData.users };
+                localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
+                renderAdminUsers();
+              }
+            }).catch(() => {});
+        }
 
-      fetch(RTDB_COINS_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            mergeCoinRequestsSafely(list);
-          }
-        }).catch(() => {});
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json')
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              mergeAdminErickshawsSafely(list);
+            } else {
+              if (typeof renderAdminErickshaws === 'function') renderAdminErickshaws();
+            }
+          }).catch(() => {});
 
-      fetch(RTDB_USERS_URL)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data && typeof data === 'object') {
-            registeredUsers = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}), ...data };
-            localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
-            renderAdminUsers();
-          }
-        }).catch(() => {});
+        fetch(RTDB_RIDES_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data !== null && data !== undefined) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              mergeAdminCloudRides(list);
+            }
+          }).catch(() => {});
 
-      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json')
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            localStorage.setItem('ss_erickshaws', JSON.stringify(list));
-            if (typeof renderAdminErickshaws === 'function') renderAdminErickshaws();
-          }
-        }).catch(() => {});
+        fetch(RTDB_BOOKINGS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              bookings = list;
+              localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+              renderAdminBookings();
+            }
+          }).catch(() => {});
 
-      fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_complaints.json')
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            const list = Array.isArray(data) ? data : Object.values(data);
-            localStorage.setItem('ss_complaints', JSON.stringify(list));
-            if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
-          }
-        }).catch(() => {});
+        fetch(RTDB_COINS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              mergeCoinRequestsSafely(list);
+            }
+          }).catch(() => {});
 
-      const hb = document.getElementById('adm-live-heartbeat-text');
-      if (hb) {
-        hb.innerText = `🟢 Live Synced (${new Date().toLocaleTimeString()})`;
-      }
-      if (showFeedback) {
-        showAdminToast('✓ All 6 Admin Categories synced live with Cloud & App!');
+        fetch(RTDB_USERS_URL)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && typeof data === 'object') {
+              registeredUsers = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}), ...data };
+              localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
+              renderAdminUsers();
+            }
+          }).catch(() => {});
+
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_complaints.json')
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const list = Array.isArray(data) ? data : Object.values(data);
+              localStorage.setItem('ss_complaints', JSON.stringify(list));
+              if (typeof renderAdminComplaints === 'function') renderAdminComplaints();
+            }
+          }).catch(() => {});
+
+        const hb = document.getElementById('adm-live-heartbeat-text');
+        if (hb) {
+          hb.innerText = `🟢 1s Live Sync (${new Date().toLocaleTimeString()})`;
+        }
+        if (showFeedback) {
+          showAdminToast('✓ All Categories & Live E-Rickshaws synced with Cloud & App!');
+        }
+      } catch(e) {
+        _isAdminCloudSyncBusy = false;
       }
     }
 
+    // Continuous 1-Second (1000ms) Crash-Proof Sync between Admin Panel & Customer App
     setInterval(() => {
-      if (sessionStorage.getItem('ss_admin_authed') === 'true') {
-        syncAdminWithCloud(false);
-        updateAdminWalletDisplay();
-        if (currentAdminCategory === 'game') renderAdminLiveGameMonitor();
-      }
-    }, 2500);
+      try {
+        if (sessionStorage.getItem('ss_admin_authed') === 'true') {
+          syncAdminWithCloud(false);
+          updateAdminWalletDisplay();
+          if (currentAdminCategory === 'game') renderAdminLiveGameMonitor();
+        }
+      } catch(e){}
+    }, 1000);
 
     function broadcastRidesToCloud(updatedRides) {
       localStorage.setItem('ss_rides', JSON.stringify(updatedRides));
+      try { if (typeof pushAdminStateToBackend === 'function') pushAdminStateToBackend({ rides: updatedRides }); } catch(e){}
       if (syncBroadcastChannel) {
         try { syncBroadcastChannel.postMessage({ type: 'RIDES_UPDATED', rides: updatedRides, timestamp: Date.now() }); } catch(e){}
       }
@@ -1320,25 +1436,56 @@
     // =========================================================================
     function renderAdminVehicles() {
       rides = JSON.parse(localStorage.getItem('ss_rides')) || [];
+      const erList = (typeof getAdminErickshaws === 'function') ? getAdminErickshaws() : [];
 
-      const activeCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE').length;
+      const activeCount = rides.filter(r => (r.status || '').toUpperCase() === 'ACTIVE').length + erList.length;
       const pendingCount = rides.filter(r => (r.status || '').toUpperCase() === 'PENDING_APPROVAL').length;
 
       const totalEl = document.getElementById('adm-stat-total');
       const activeEl = document.getElementById('adm-stat-active');
       const pendingEl = document.getElementById('adm-stat-pending');
-      if (totalEl) totalEl.innerText = rides.length;
+      if (totalEl) totalEl.innerText = rides.length + erList.length;
       if (activeEl) activeEl.innerText = activeCount;
-      if (pendingEl) pendingEl.innerText = pendingCount;
+      if (pendingEl) pendingEl.innerText = pendingCount + erList.length;
+
+      const erBadge = document.getElementById('adm-stat-erickshaws-badge');
+      if (erBadge) erBadge.innerText = erList.length;
 
       const container = document.getElementById('adm-vehicles-list');
       if (!container) return;
 
+      let erBannerHtml = '';
+      if (erList.length > 0) {
+        erBannerHtml = `
+          <div style="background: rgba(20,83,45,0.45); border: 2px solid #22c55e; border-radius: 12px; padding: 0.75rem; margin-bottom: 0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+              <strong style="color:#86efac; font-size:0.88rem;">🛺 Live E-Rickshaws Posted with ₹100 Fee & UTR (${erList.length} Active)</strong>
+              <button type="button" class="btn btn-success" onclick="showAdminCategory('erickshaws')" style="font-size:0.7rem; padding:4px 9px;">Open Full E-Rickshaw Desk ➔</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              ${erList.map(er => `
+                <div style="background:rgba(2,6,23,0.9); border:1.5px solid #22c55e; border-radius:9px; padding:0.55rem 0.7rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                  <div>
+                    <div style="font-size:0.82rem; font-weight:900; color:#ffffff;">🛺 ${er.driverName} <span style="background:#fef08a; color:#0f172a; padding:1px 6px; border-radius:4px; font-size:0.7rem;">${er.vehicleNumber}</span></div>
+                    <div style="font-size:0.72rem; color:#cbd5e1;">📞 +91 ${er.driverPhone || 'N/A'} • 🛣️ ${er.standArea}</div>
+                    <div style="font-size:0.7rem; color:#fbbf24; font-family:monospace; font-weight:900;">💰 ₹100 Bank UTR: ${er.utrNumber || 'VERIFIED'} • 📍 GPS: ${(Number(er.lat)||26.1445).toFixed(4)}°N, ${(Number(er.lng)||91.7362).toFixed(4)}°E</div>
+                  </div>
+                  <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                    ${(er.adminUtrStatus !== 'CONFIRMED' && !er.verifiedByAdmin) ? `<button type="button" class="btn btn-success" onclick="adminConfirmErickshawUtr('${er.id}')" style="font-size:0.68rem; padding:4px 9px;">✅ Confirm ₹100 UTR</button>` : `<span style="background:#14532d; color:#86efac; border:1px solid #22c55e; padding:4px 8px; border-radius:6px; font-size:0.68rem; font-weight:900;">✅ ₹100 CONFIRMED LIVE</span>`}
+                    <button type="button" class="btn btn-danger" onclick="removeAdminErickshaw('${er.id}')" style="font-size:0.68rem; padding:4px 8px;">🗑️ Reject/Remove</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
       if (rides.length === 0) {
-        container.innerHTML = `
+        container.innerHTML = erBannerHtml + `
           <div style="text-align: center; color: #94a3b8; padding: 1.5rem 1rem; background: rgba(2,6,23,0.6); border: 1.5px dashed #475569; border-radius: 12px;">
-            <strong style="color: white; font-size: 0.9rem; display: block;">No Vehicles Listed Right Now</strong>
-            <p style="font-size: 0.74rem; margin: 0.3rem 0 0.75rem;">When a driver posts a ride with a ₹100 UTR on the app, it appears here live.</p>
+            <strong style="color: white; font-size: 0.9rem; display: block;">No Carpool Cars Listed Right Now (${erList.length} Live E-Rickshaw Active Above)</strong>
+            <p style="font-size: 0.74rem; margin: 0.3rem 0 0.75rem;">When a driver posts a car or E-Rickshaw with a ₹100 UTR on the app, it appears here live every 1 second.</p>
             <button type="button" class="btn btn-success" onclick="openManualActivateModal()" style="font-size: 0.76rem; padding: 6px 12px;">
               ➕ Activate New Car Directly
             </button>
@@ -1347,7 +1494,7 @@
         return;
       }
 
-      container.innerHTML = rides.map(r => {
+      container.innerHTML = erBannerHtml + rides.map(r => {
         const statusUpper = (r.status || '').toUpperCase();
         const isLive = statusUpper === 'ACTIVE';
         const isOffline = statusUpper === 'OFFLINE' || statusUpper === 'REMOVED';
@@ -1436,7 +1583,9 @@
       const r = rides.find(item => item.id === rideId);
       if (!r) return;
       r.status = 'ACTIVE';
+      r.adminUtrStatus = 'CONFIRMED';
       r.verifiedByAdmin = true;
+      r.lastUpdated = Date.now();
       r.removedByAdmin = false;
       r.approvedAt = new Date().toISOString();
       r.postedAt = new Date().toISOString();
@@ -1451,6 +1600,7 @@
         } catch(e){}
       }
       renderAdminVehicles();
+      try { renderGlobalLiveUtrQueue(); } catch(e){}
       showAdminToast(`✅ Vehicle ${r.vehicleModel} (${r.vehicleNumber}) is now 100% LIVE on Customer App!`);
     }
 
@@ -1464,6 +1614,7 @@
       broadcastRidesToCloud(rides);
       if (adminDb) { try { adminDb.collection('ss_rides').doc(rideId).set(r, { merge: true }); } catch(e){} }
       renderAdminVehicles();
+      try { renderGlobalLiveUtrQueue(); } catch(e){}
       showAdminToast(`❌ Wrong UTR Rejected for ${r.vehicleNumber}!`);
     }
 
@@ -1804,7 +1955,9 @@
     // =========================================================================
     function getAdminErickshaws() {
       try {
-        return JSON.parse(localStorage.getItem('ss_erickshaws') || '[]');
+        const raw = JSON.parse(localStorage.getItem('ss_erickshaws') || '[]');
+        if (!Array.isArray(raw)) return [];
+        return raw.filter(x => x && x.removedByAdmin !== true && (x.status || 'ACTIVE').toUpperCase() !== 'REMOVED');
       } catch(e) { return []; }
     }
 
@@ -1814,35 +1967,190 @@
       } catch(e) { return []; }
     }
 
+    function pushAdminStateToBackend(partialPayload) {
+      try {
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+          fetch(window.location.origin + '/api/sync/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(partialPayload)
+          }).catch(() => {});
+        }
+      } catch(e){}
+    }
+
+    function adminConfirmErickshawUtr(id) {
+      let list = getAdminErickshaws();
+      const item = list.find(x => x && x.id === id);
+      if (!item) return;
+      item.status = 'ACTIVE';
+      item.adminUtrStatus = 'CONFIRMED';
+      item.verifiedByAdmin = true;
+      item.removedByAdmin = false;
+      item.approvedAt = new Date().toISOString();
+      item.lastUpdated = Date.now();
+
+      localStorage.setItem('ss_erickshaws', JSON.stringify(list));
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'ERICKSHAWS_UPDATED', erickshaws: list, timestamp: Date.now() }); } catch(e){}
+      }
+      pushAdminStateToBackend({ erickshaws: list });
+      try {
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(list)
+        }).catch(() => {});
+      } catch(e){}
+      if (adminDb) {
+        try { adminDb.collection('ss_erickshaws').doc(id).set(item, { merge: true }); } catch(e){}
+      }
+
+      renderAdminErickshaws();
+      renderAdminVehicles();
+      renderGlobalLiveUtrQueue();
+      showAdminToast(`✅ E-Rickshaw (${item.driverName} • ${item.vehicleNumber}) ₹100 UTR (${item.utrNumber}) Confirmed & Verified Live!`);
+    }
+
+    function renderGlobalLiveUtrQueue() {
+      const box = document.getElementById('adm-global-live-utr-queue');
+      if (!box) return;
+      const erList = getAdminErickshaws();
+      const pendingErs = erList.filter(er => er.adminUtrStatus !== 'CONFIRMED' && !er.verifiedByAdmin);
+      const pendingCars = (rides || []).filter(r => (r.status || '').toUpperCase() === 'PENDING_APPROVAL' || (r.adminUtrStatus === 'PENDING_ADMIN_CONFIRMATION' && !r.verifiedByAdmin));
+
+      if (pendingErs.length === 0 && pendingCars.length === 0) {
+        if (erList.length > 0) {
+          box.style.display = 'block';
+          box.innerHTML = `
+            <div style="background: rgba(20,83,45,0.55); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.5rem 0.75rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="font-size: 0.76rem; color: #86efac; font-weight: 900;">
+                🛺 <b>${erList.length} Live E-Rickshaw(s) Active on Customer Map</b> (All ₹100 UTRs Confirmed)
+              </div>
+              <button type="button" class="btn btn-success" onclick="showAdminCategory('erickshaws')" style="font-size: 0.68rem; padding: 3px 9px;">
+                🛺 View Live E-Rickshaws ➔
+              </button>
+            </div>
+          `;
+        } else {
+          box.style.display = 'none';
+          box.innerHTML = '';
+        }
+        return;
+      }
+
+      box.style.display = 'block';
+      box.innerHTML = `
+        <div style="background: linear-gradient(135deg, rgba(120,53,15,0.92), rgba(20,83,45,0.92)); border: 2px solid #fbbf24; border-radius: 12px; padding: 0.65rem 0.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+            <strong style="color:#fde047; font-size:0.84rem;">🔔 NEW ₹100 UTR CONFIRMATION REQUESTS (${pendingErs.length} E-Rickshaw • ${pendingCars.length} Car)</strong>
+            <span style="font-size:0.66rem; color:#86efac; font-weight:900;">⚡ 1-Second Real-Time Sync</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            ${pendingErs.map(er => `
+              <div style="background:rgba(2,6,23,0.92); border:1.5px solid #fbbf24; border-radius:9px; padding:0.5rem 0.65rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                  <div style="font-size:0.8rem; font-weight:900; color:#ffffff;">🛺 E-Rickshaw: <span style="color:#86efac;">${er.driverName}</span> (${er.vehicleNumber})</div>
+                  <div style="font-size:0.7rem; color:#cbd5e1;">🛣️ ${er.standArea} • 📞 +91 ${er.driverPhone || 'N/A'}</div>
+                  <div style="font-size:0.72rem; color:#fde047; font-family:monospace; font-weight:900;">💰 ₹100 Bank UTR: ${er.utrNumber}</div>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-success" onclick="adminConfirmErickshawUtr('${er.id}')" style="font-size:0.7rem; padding:5px 10px;">✅ Confirm ₹100 UTR & Keep Live</button>
+                  <button type="button" class="btn btn-danger" onclick="removeAdminErickshaw('${er.id}')" style="font-size:0.7rem; padding:5px 9px;">❌ Reject UTR</button>
+                </div>
+              </div>
+            `).join('')}
+            ${pendingCars.map(r => `
+              <div style="background:rgba(2,6,23,0.92); border:1.5px solid #38bdf8; border-radius:9px; padding:0.5rem 0.65rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                  <div style="font-size:0.8rem; font-weight:900; color:#ffffff;">🚗 Car: <span style="color:#38bdf8;">${r.driverName}</span> (${r.vehicleModel} • ${r.vehicleNumber})</div>
+                  <div style="font-size:0.7rem; color:#cbd5e1;">🛣️ ${r.origin} ➔ ${r.destination} • 📞 +91 ${r.driverPhone || 'N/A'}</div>
+                  <div style="font-size:0.72rem; color:#fde047; font-family:monospace; font-weight:900;">💰 ₹100 Bank UTR: ${r.platformFeeUtr || r.utrNumber}</div>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-success" onclick="reLiveRide('${r.id}')" style="font-size:0.7rem; padding:5px 10px;">✅ Confirm ₹100 UTR & Keep Live</button>
+                  <button type="button" class="btn btn-danger" onclick="rejectRideUtr('${r.id}')" style="font-size:0.7rem; padding:5px 9px;">❌ Reject UTR</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     function renderAdminErickshaws() {
       const container = document.getElementById('adm-erickshaws-list-container');
       const badge = document.getElementById('adm-stat-erickshaws-badge');
       const list = getAdminErickshaws();
       if (badge) badge.innerText = list.length;
+      try { renderGlobalLiveUtrQueue(); } catch(e){}
       if (!container) return;
 
       if (list.length === 0) {
-        container.innerHTML = `<div style="padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.8rem; background: rgba(15,23,42,0.6); border-radius: 10px;">0 Fake Data! Only 100% Real ₹100 12-Hour E-Rickshaw posts appear here and on the Customer Full Map!</div>`;
+        container.innerHTML = `<div style="padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.8rem; background: rgba(15,23,42,0.6); border-radius: 10px;">0 Fake Data! जब भी कोई ड्राइवर ₹100 फीस और 12-अंकों का UTR सबमिट करके ई-रिक्शा पोस्ट करेगा, वह 1 सेकंड में यहाँ और लाइव मैप पर दिखेगा!</div>`;
         return;
       }
 
-      container.innerHTML = list.map(er => `
-        <div style="background: rgba(15,23,42,0.85); border: 1.5px solid #22c55e; border-radius: 10px; padding: 0.65rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <div>
-            <div style="font-size: 0.84rem; font-weight: 900; color: #86efac;">🛺 ${er.driverName} (${er.vehicleNumber}) • 🟢 Live Route GPS (Direct Call - No Fare)</div>
-            <div style="font-size: 0.72rem; color: #cbd5e1;">🛣️ Roaming Route: ${er.standArea} • 📞 ${er.driverPhone}</div>
-            <div style="font-size: 0.68rem; color: #fbbf24; font-family: monospace;">💰 ₹100 UTR: ${er.utrNumber || 'VERIFIED'} • Posted: ${new Date(er.postedAt).toLocaleTimeString()} (12h Valid)</div>
+      container.innerHTML = list.map(er => {
+        const latStr = (Number(er.lat || er.baseLat) || 26.1445).toFixed(5);
+        const lngStr = (Number(er.lng || er.baseLng) || 91.7362).toFixed(5);
+        const postedTimeStr = er.postedAt ? new Date(er.postedAt).toLocaleTimeString() : 'Just now';
+        const isConfirmed = er.adminUtrStatus === 'CONFIRMED' || er.verifiedByAdmin === true;
+        return `
+          <div style="background: rgba(15,23,42,0.92); border: 1.5px solid ${isConfirmed ? '#22c55e' : '#fbbf24'}; border-radius: 10px; padding: 0.7rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.86rem; font-weight: 900; color: #86efac;">
+                🛺 ${er.driverName} <span style="background:#fef08a; color:#0f172a; padding:1px 6px; border-radius:4px; font-size:0.72rem;">${er.vehicleNumber}</span> • 🟢 1s Live Route GPS
+              </div>
+              <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">
+                🛣️ Roaming Route: <b>${er.standArea}</b> • 📞 Mobile: <b style="color:#38bdf8;">+91 ${er.driverPhone || 'N/A'}</b>
+              </div>
+              <div style="font-size: 0.7rem; color: #fbbf24; font-family: monospace; font-weight: 800; margin-top: 2px;">
+                💰 ₹100 Bank UTR: ${er.utrNumber || 'VERIFIED'} • 📍 Live GPS: ${latStr}°N, ${lngStr}°E • 🕒 ${postedTimeStr} (12h Valid)
+              </div>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              ${!isConfirmed ? `
+                <button type="button" class="btn btn-success" onclick="adminConfirmErickshawUtr('${er.id}')" style="font-size: 0.72rem; padding: 5px 10px;">
+                  ✅ Confirm ₹100 UTR & Verify Live
+                </button>
+              ` : `
+                <span style="background:#14532d; color:#86efac; border:1px solid #22c55e; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:900;">✅ ₹100 UTR CONFIRMED LIVE</span>
+              `}
+              <button type="button" class="btn btn-danger" onclick="removeAdminErickshaw('${er.id}')" style="font-size: 0.7rem; padding: 5px 10px;">🗑️ Reject / Remove</button>
+            </div>
           </div>
-          <button type="button" class="btn btn-danger" onclick="removeAdminErickshaw('${er.id}')" style="font-size: 0.7rem; padding: 4px 10px;">🗑️ Remove</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function removeAdminErickshaw(id) {
+      try {
+        const delArr = JSON.parse(localStorage.getItem('ss_deleted_erickshaw_ids') || '[]');
+        if (!delArr.includes(id)) delArr.push(id);
+        localStorage.setItem('ss_deleted_erickshaw_ids', JSON.stringify(delArr));
+      } catch(e){}
+
       let list = getAdminErickshaws().filter(x => x.id !== id);
       localStorage.setItem('ss_erickshaws', JSON.stringify(list));
+
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'ERICKSHAWS_UPDATED', erickshaws: list, timestamp: Date.now() }); } catch(e){}
+      }
+      try {
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(list)
+        }).catch(() => {});
+      } catch(e){}
+      if (adminDb) {
+        try { adminDb.collection('ss_erickshaws').doc(id).set({ removedByAdmin: true, status: 'REMOVED' }, { merge: true }); } catch(e){}
+      }
+
       renderAdminErickshaws();
-      showAdminToast('🗑️ E-Rickshaw listing removed.');
+      renderAdminVehicles();
+      showAdminToast('🗑️ E-Rickshaw listing removed from App & Cloud.');
     }
 
     function renderAdminComplaints() {

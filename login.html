@@ -18,17 +18,35 @@
       <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">User ID Login • Assam Carpooling Network</p>
     </div>
 
-    <form onsubmit="event.preventDefault(); window.location.href='index.html';">
+    <form onsubmit="handleStandaloneLogin(event)">
       <div style="margin-bottom: 0.65rem;">
         <label style="font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 3px;">10-Digit Mobile (User ID)*</label>
-        <input type="tel" required maxlength="10" placeholder="e.g. 9864012345" style="width: 100%; height: 36px; padding: 6px 10px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        <input type="tel" id="st-login-phone" required maxlength="10" placeholder="e.g. 9864012345" style="width: 100%; height: 36px; padding: 6px 10px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
       </div>
       <div style="margin-bottom: 0.85rem;">
         <label style="font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 3px;">Password*</label>
-        <input type="password" required placeholder="Enter password" style="width: 100%; height: 36px; padding: 6px 10px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
+        <input type="password" id="st-login-pwd" required placeholder="Enter password" style="width: 100%; height: 36px; padding: 6px 10px; border: 1.5px solid #16a34a; border-radius: 8px; box-sizing: border-box;">
       </div>
       <button type="submit" class="btn-green">🚀 Log In to Profile ➔</button>
     </form>
+    <script>
+      function handleStandaloneLogin(e) {
+        e.preventDefault();
+        try {
+          var phone = (document.getElementById('st-login-phone').value || '').trim();
+          var pwd = (document.getElementById('st-login-pwd').value || '').trim();
+          if (phone.length === 10) {
+            var users = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+            if (!users[phone]) {
+              users[phone] = { userId: phone, phone: phone, name: 'SafarSaathi User (' + phone.slice(-4) + ')', password: pwd, address: 'Assam, India', hasAadhaar: true, registeredAt: new Date().toISOString() };
+              localStorage.setItem('ss_users_db', JSON.stringify(users));
+            }
+            localStorage.setItem('ss_current_user_id', phone);
+          }
+        } catch(err) {}
+        window.location.href = 'index.html';
+      }
+    </script>
 
     <div style="text-align: center; margin-top: 0.85rem; font-size: 0.75rem;">
       Don't have an account? <a href="register.html" style="color: #15803d; font-weight: 900;">Register Account</a>
