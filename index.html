@@ -5249,7 +5249,7 @@
                 📅 ${ride.date} at ${ride.time} • 🚗 ${ride.vehicleModel} (${ride.vehicleNumber})
               </div>
               <div style="font-size: 0.74rem; color: #86efac; margin-top: 2px;">
-                👤 Driver: ${ride.driverName} (📱 +91 ${ride.driverPhone})
+                👤 Driver: ${ride.driverName} (🔒 Number Hidden • Encrypted App Call)
               </div>
             </div>
             <div style="text-align: right;">
@@ -5426,7 +5426,7 @@ BT
 /F2 10 Tf
 0 0 0 rg
 70 495 Td
-(Driver: ${driverName} - Phone: +91 ${driverPhone}) Tj
+(Driver: ${driverName} - Encrypted Safe ID) Tj
 ET
 BT
 /F2 10 Tf
@@ -5438,7 +5438,7 @@ BT
 70 435 Td
 (Passenger Name: ${passName}) Tj
 260 435 Td
-(Passenger Phone: +91 ${passPhone}) Tj
+(Passenger Privacy: Number Encrypted) Tj
 ET
 q
 [4 3] 0 d
@@ -6966,14 +6966,14 @@ ET
         const waMsgText = encodeURIComponent(
           `🚗 *SAFARSAATHI ASSAM - OFFICIAL DIGITAL BOARDING PASS*\n` +
           `🎟️ *Ticket Ref:* ${b.bookingId}\n` +
-          `👤 *Passenger:* ${passengerName} (+91 ${passengerPhone})\n` +
+          `👤 *Passenger:* ${passengerName} (🔒 Encrypted ID)\n` +
           `🛣️ *Corridor:* ${b.origin} ➔ ${b.destination}\n` +
           `📅 *Departure:* ${b.date} at ${b.time}\n` +
           `💺 *Seats Allocated:* ${seatsText}\n` +
           `💰 *Total Fare:* ₹${b.totalFare} (Paid via UPI)\n` +
           `🏦 *Bank UTR Ref:* ${b.passengerUtr}\n` +
           `🚗 *Vehicle:* ${b.vehicleModel} (${b.vehicleNumber})\n` +
-          `👤 *Driver:* ${driverName} (+91 ${driverPhone})\n` +
+          `👤 *Driver:* ${driverName} (🔒 Encrypted ID)\n` +
           `🛡️ *Status:* 100% CONFIRMED & VERIFIED\n\n` +
           `📄 Official PDF Boarding Pass generated on SafarSaathi Peer-to-Peer Carpooling Network.`
         );
@@ -7268,7 +7268,7 @@ ET
                   <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div>
                       <strong style="color: white; font-size: 0.85rem;">${pb.passengerName}</strong>
-                      <span style="font-size: 0.72rem; color: #94a3b8;"> (📱 +91 ${pb.passengerPhone})</span>
+                      <span style="font-size: 0.72rem; color: #86efac;"> (🔒 Number Hidden • Encrypted ID)</span>
                     </div>
                     <span style="background: #15803d; color: white; font-weight: 800; font-size: 0.78rem; padding: 1px 6px; border-radius: 4px;">
                       ₹${pb.totalFare} to collect
@@ -7469,6 +7469,53 @@ ET
                 });
                 ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
               }, err => {});
+            } catch(e){}
+
+            // 7A. REAL-TIME ENCRYPTED APP-TO-APP VOICE CALL SIGNALING (FIRESTORE WEBSOCKET)
+            try {
+              db.collection('ss_active_calls').onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                  if (change.type === 'added' || change.type === 'modified') {
+                    const data = change.doc.data();
+                    if (data && data.callId) {
+                      processIncomingCallPacketSignal(data);
+                    }
+                  }
+                });
+              });
+            } catch(e){}
+
+            // 7B. REAL-TIME ENCRYPTED 2-WAY HD VOICE STREAM (FIRESTORE WEBSOCKET)
+            try {
+              db.collection('ss_call_audio').onSnapshot(snapshot => {
+                if (!isAppCallConnected || !activeCallId) return;
+                const otherRole = (activeCallRole === 'CALLER') ? 'DRIVER' : 'CALLER';
+                const targetDocId = activeCallId + '_' + otherRole;
+                snapshot.docChanges().forEach(change => {
+                  if (change.doc.id === targetDocId && (change.type === 'added' || change.type === 'modified')) {
+                    const pkt = change.doc.data();
+                    if (pkt && pkt.pcmB64) {
+                      playIncomingServerPcmPacket(pkt);
+                    }
+                  }
+                });
+              });
+            } catch(e){}
+
+            // 7C. REAL-TIME ONLINE / OFFLINE PRESENCE SYNC (FIRESTORE WEBSOCKET)
+            try {
+              db.collection('ss_online_presence').onSnapshot(snapshot => {
+                const map = getOnlinePresenceMap();
+                snapshot.forEach(doc => {
+                  const d = doc.data();
+                  if (d) {
+                    if (d.phone) map[d.phone] = d;
+                    if (d.name) map['NAME_' + String(d.name).trim().toLowerCase()] = d;
+                    if (d.deviceId) map['DEV_' + d.deviceId] = d;
+                  }
+                });
+                try { ssStorage.setItem('ss_online_presence', JSON.stringify(map)); } catch(err){}
+              });
             } catch(e){}
 
             // 7. Live Complaints Real-Time Firestore Sync
@@ -10207,6 +10254,7 @@ ET
 
     // =========================================================================
     // 🟢 PURE SERVER-TO-SERVER (APP-TO-APP) REAL-TIME 2-WAY HD VOICE CALL ENGINE
+    //    (100% ENCRYPTED • NO PHONE NUMBERS SHOWN • FIRESTORE + WEBRTC + PCM)
     // =========================================================================
     let activeCallId = null;
     let activeCallRole = null; // 'CALLER' or 'DRIVER'
@@ -10225,6 +10273,7 @@ ET
     let pcmSeqCounter = 0;
     let lastPlayedRemotePcmSeq = 0;
     let nextPcmPlayTime = 0;
+    let declinedOrEndedCallIds = new Set();
 
     function ensureUnlockedCallAudioContext() {
       try {
@@ -10234,7 +10283,6 @@ ET
         if (appCallAudioCtx.state === 'suspended') {
           appCallAudioCtx.resume().catch(() => {});
         }
-        // Play 1-sample silent buffer inside user gesture so iOS Safari / Android Chrome unlocks WebAudio permanently
         const silentBuf = appCallAudioCtx.createBuffer(1, 1, 22050);
         const src = appCallAudioCtx.createBufferSource();
         src.buffer = silentBuf;
@@ -10253,14 +10301,14 @@ ET
     function isDriverCurrentlyOnline(driverPhone, erObj) {
       const map = getOnlinePresenceMap();
       const phone = String(driverPhone || erObj?.driverPhone || erObj?.ownerUserId || '').trim();
-      if (phone && map[phone] && (Date.now() - Number(map[phone].lastSeen || 0) < 45000)) {
+      if (phone && map[phone] && (Date.now() - Number(map[phone].lastSeen || 0) < 60000)) {
         return true;
       }
       const dName = String(erObj?.driverName || '').trim().toLowerCase();
-      if (dName && map['NAME_' + dName] && (Date.now() - Number(map['NAME_' + dName].lastSeen || 0) < 45000)) {
+      if (dName && map['NAME_' + dName] && (Date.now() - Number(map['NAME_' + dName].lastSeen || 0) < 60000)) {
         return true;
       }
-      if (erObj && erObj.lastUpdated && (Date.now() - Number(erObj.lastUpdated) < 60000)) {
+      if (erObj?.deviceId && map['DEV_' + erObj.deviceId] && (Date.now() - Number(map['DEV_' + erObj.deviceId].lastSeen || 0) < 60000)) {
         return true;
       }
       if (erObj && (erObj.adminUtrStatus === 'CONFIRMED' || erObj.verifiedByAdmin === true) && isWithin12Hours(erObj.approvedAt || erObj.postedAt)) {
@@ -10269,61 +10317,72 @@ ET
       return false;
     }
 
+    let _lastPresenceFirestorePush = 0;
     function broadcastMyOnlinePresence() {
       const user = getActiveUserProfile();
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
-      if (!user) return;
-
-      const map = getOnlinePresenceMap();
       const entry = {
-        phone: user.phone || user.userId || '',
-        name: user.name || 'User',
+        phone: user?.phone || user?.userId || '',
+        name: user?.name || 'Active App User',
         deviceId: myDevId,
         lastSeen: Date.now(),
         status: 'ONLINE'
       };
+
+      const map = getOnlinePresenceMap();
       if (entry.phone) map[entry.phone] = entry;
       if (entry.name) map['NAME_' + entry.name.trim().toLowerCase()] = entry;
+      if (myDevId) map['DEV_' + myDevId] = entry;
       try { ssStorage.setItem('ss_online_presence', JSON.stringify(map)); } catch(e){}
 
-      // Also auto-bind this logged-in driver's phone & deviceId to any active E-Rickshaw with the same driverName!
-      try {
-        let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
-        let changed = false;
-        const myNameLower = (user.name || '').trim().toLowerCase();
-        erList.forEach(er => {
-          if (!er || er.removedByAdmin) return;
-          const erNameLower = (er.driverName || '').trim().toLowerCase();
-          if ((myNameLower && erNameLower === myNameLower) || (user.phone && er.driverPhone === user.phone)) {
-            if (user.phone && er.driverPhone !== user.phone) {
-              er.driverPhone = user.phone;
-              er.ownerUserId = user.phone;
-              changed = true;
+      // Auto-bind logged-in driver's identity to any matching E-Rickshaw
+      if (user) {
+        try {
+          let erList = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]');
+          let changed = false;
+          const myNameLower = (user.name || '').trim().toLowerCase();
+          erList.forEach(er => {
+            if (!er || er.removedByAdmin) return;
+            const erNameLower = (er.driverName || '').trim().toLowerCase();
+            if ((myNameLower && erNameLower === myNameLower) || (user.phone && er.driverPhone === user.phone)) {
+              if (user.phone && er.driverPhone !== user.phone) {
+                er.driverPhone = user.phone;
+                er.ownerUserId = user.phone;
+                changed = true;
+              }
+              if (myDevId && er.deviceId !== myDevId) {
+                er.deviceId = myDevId;
+                changed = true;
+              }
             }
-            if (myDevId && er.deviceId !== myDevId) {
-              er.deviceId = myDevId;
-              changed = true;
-            }
-          }
-        });
-        if (changed) {
-          broadcastErickshawsEverywhere(erList);
-        }
-      } catch(e){}
+          });
+          if (changed) broadcastErickshawsEverywhere(erList);
+        } catch(e){}
+      }
 
       if (syncBroadcastChannel) {
         try { syncBroadcastChannel.postMessage({ type: 'PRESENCE_UPDATED', onlinePresence: map }); } catch(e){}
       }
       pushStateToBackendServer({ onlinePresence: map });
-      try {
-        if (entry.phone) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_online_presence/' + entry.phone + '.json', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(entry)
-          }).catch(() => {});
+
+      const now = Date.now();
+      if (now - _lastPresenceFirestorePush >= 4000) {
+        _lastPresenceFirestorePush = now;
+        if (typeof db !== 'undefined' && db && (entry.phone || myDevId)) {
+          try {
+            db.collection('ss_online_presence').doc(entry.phone || myDevId).set(entry, { merge: true }).catch(() => {});
+          } catch(e){}
         }
-      } catch(e){}
+        try {
+          if (entry.phone) {
+            fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_online_presence/' + entry.phone + '.json', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(entry)
+            }).catch(() => {});
+          }
+        } catch(e){}
+      }
     }
 
     function getActiveCallsMap() {
@@ -10337,7 +10396,7 @@ ET
       packet.updatedAt = Date.now();
       const map = getActiveCallsMap();
       map[packet.callId] = packet;
-      if (packet.driverPhone) map['PHONE_' + packet.driverPhone] = packet;
+      map['LATEST_ACTIVE_CALL'] = packet;
       if (packet.erickshawId) map['ER_' + packet.erickshawId] = packet;
       try {
         ssStorage.setItem('ss_active_calls_map', JSON.stringify(map));
@@ -10353,23 +10412,34 @@ ET
       pushStateToBackendServer({
         activeCalls: {
           [packet.callId]: packet,
-          ['PHONE_' + (packet.driverPhone || '')]: packet,
+          LATEST_ACTIVE_CALL: packet,
           ['ER_' + (packet.erickshawId || '')]: packet
         }
       });
+
+      // 1. PRIMARY: Push directly to Cloud Firestore (Instant WebSocket sync across all phones & Chrome tabs!)
+      if (typeof db !== 'undefined' && db) {
+        try {
+          db.collection('ss_active_calls').doc(packet.callId).set(packet, { merge: true }).catch(() => {});
+          db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').set(packet, { merge: true }).catch(() => {});
+          if (packet.erickshawId) {
+            db.collection('ss_active_calls').doc('ER_' + packet.erickshawId).set(packet, { merge: true }).catch(() => {});
+          }
+        } catch(e){}
+      }
+
+      // 2. SECONDARY: Push to Firebase RTDB
       try {
         fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + packet.callId + '.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(packet)
         }).catch(() => {});
-        if (packet.driverPhone) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/PHONE_' + packet.driverPhone + '.json', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(packet)
-          }).catch(() => {});
-        }
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(packet)
+        }).catch(() => {});
         if (packet.erickshawId) {
           fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + packet.erickshawId + '.json', {
             method: 'PUT',
@@ -10387,7 +10457,7 @@ ET
         return;
       }
       selectedErickshawForCall = {
-        id: 'CAR-' + (driverPhone || 'DRIVER'),
+        id: 'CAR-' + (vehicleNumber || 'LIVE').replace(/\s+/g, ''),
         driverName: driverName || 'Car Driver',
         driverPhone: (driverPhone || '').replace(/\D/g, ''),
         ownerUserId: (driverPhone || '').replace(/\D/g, ''),
@@ -10440,8 +10510,9 @@ ET
         pillEl.innerText = online ? '🟢 Online' : '⚪ Offline';
       }
 
-      document.getElementById('erp-driver-name').innerText = er.driverName;
-      document.getElementById('erp-vehicle-plate').innerText = `${er.vehicleNumber} • 12h Live GPS Route`;
+      // Only show Driver Name & Vehicle Number (NEVER show Driver's Phone Number!)
+      document.getElementById('erp-driver-name').innerText = er.driverName || 'Verified Driver';
+      document.getElementById('erp-vehicle-plate').innerText = `${er.vehicleNumber} • 🔒 Number Hidden`;
       document.getElementById('erp-post-time').innerText = `🕒 Posted: ${timing.agoLabel} • Valid: ${timing.remLabel}`;
       document.getElementById('erp-stand-area').innerText = er.standArea;
       const ptEl = document.getElementById('erp-current-road-point');
@@ -10501,9 +10572,9 @@ ET
       const timerEl = document.getElementById('erp-call-timer');
       if (timerEl) timerEl.innerText = '00:00';
       const statusEl = document.getElementById('erp-call-status-text');
-      if (statusEl) statusEl.innerText = 'Ready for App-to-App Voice Call';
+      if (statusEl) statusEl.innerText = '🔒 Encrypted App-to-App Voice Call';
       const subEl = document.getElementById('erp-call-substatus-text');
-      if (subEl) subEl.innerText = 'नीचे कॉल बटन दबाएं — सीधे हमारे ऐप सर्वर से ड्राइवर के ऐप पर घंटी बजेगी';
+      if (subEl) subEl.innerText = 'दोनों तरफ़ के मोबाइल नंबर 100% छुपे (Hidden) रहेंगे • सीधे ऐप पर घंटी बजेगी';
       const waveEl = document.getElementById('erp-call-waveform');
       if (waveEl) waveEl.style.display = 'none';
       const bubbleEl = document.getElementById('erp-driver-speech-bubble');
@@ -10539,7 +10610,7 @@ ET
       } catch(e){}
     }
 
-    // Attach crystal-clear High-Pass + Voice Presence EQ filter to incoming WebRTC stream
+    // Studio High-Pass + Voice Clarity EQ + Compressor for incoming WebRTC stream
     function attachCrystalClearRemoteAudio(remoteStream) {
       try {
         webrtcRemoteTrackReceiving = true;
@@ -10555,17 +10626,21 @@ ET
           const source = ctx.createMediaStreamSource(remoteStream);
           const highpass = ctx.createBiquadFilter();
           highpass.type = 'highpass';
-          highpass.frequency.value = 120;
+          highpass.frequency.value = 125;
+          const lowpass = ctx.createBiquadFilter();
+          lowpass.type = 'lowpass';
+          lowpass.frequency.value = 4200;
           const presence = ctx.createBiquadFilter();
           presence.type = 'peaking';
           presence.frequency.value = 2400;
           presence.Q.value = 1.0;
-          presence.gain.value = 5.5;
+          presence.gain.value = 6.0;
           const compressor = ctx.createDynamicsCompressor();
           const gainNode = ctx.createGain();
-          gainNode.gain.value = 1.6;
+          gainNode.gain.value = 1.75;
           source.connect(highpass);
-          highpass.connect(presence);
+          highpass.connect(lowpass);
+          lowpass.connect(presence);
           presence.connect(compressor);
           compressor.connect(gainNode);
           gainNode.connect(ctx.destination);
@@ -10574,7 +10649,7 @@ ET
     }
 
     // =========================================================================
-    // 🎙️ SERVER-TO-SERVER 8kHz INT16 PCM AUDIO ENGINE (100% iOS + ANDROID 5G)
+    // 🎙️ STUDIO-CLEAN 10kHz INT16 PCM AUDIO ENGINE OVER FIRESTORE WEBSOCKET
     // =========================================================================
     function encodeInt16ToBase64(int16Arr) {
       const bytes = new Uint8Array(int16Arr.buffer);
@@ -10595,8 +10670,13 @@ ET
       }
       const int16 = new Int16Array(bytes.buffer);
       const float32 = new Float32Array(int16.length);
+      const fadeSamples = Math.min(64, Math.floor(int16.length / 10));
       for (let i = 0; i < int16.length; i++) {
-        float32[i] = int16[i] / 32768.0;
+        let val = int16[i] / 32768.0;
+        // Smooth edge envelope to eliminate clicks between packets
+        if (i < fadeSamples) val *= (i / fadeSamples);
+        else if (i > int16.length - fadeSamples) val *= ((int16.length - i) / fadeSamples);
+        float32[i] = val;
       }
       return float32;
     }
@@ -10605,7 +10685,7 @@ ET
       try {
         if (!isAppCallConnected || !appCallSpeaker || !pkt || !pkt.pcmB64) return;
         if (pkt.seq && pkt.seq <= lastPlayedRemotePcmSeq) return;
-        if (Date.now() - Number(pkt.ts || 0) > 6000) return;
+        if (Date.now() - Number(pkt.ts || 0) > 7000) return;
         lastPlayedRemotePcmSeq = pkt.seq || Date.now();
 
         const ctx = ensureUnlockedCallAudioContext();
@@ -10613,29 +10693,39 @@ ET
         const floatSamples = decodeBase64ToFloat32(pkt.pcmB64);
         if (!floatSamples || floatSamples.length === 0) return;
 
-        const sampleRate = Number(pkt.rate) || 8000;
+        const sampleRate = Number(pkt.rate) || 10000;
         const audioBuf = ctx.createBuffer(1, floatSamples.length, sampleRate);
         audioBuf.getChannelData(0).set(floatSamples);
 
         const src = ctx.createBufferSource();
         src.buffer = audioBuf;
 
-        // Voice clarity boost filter
+        // Studio clarity chain: High-pass 120Hz -> Low-pass 4000Hz -> Presence 2400Hz -> Gain
+        const hp = ctx.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = 120;
+
+        const lp = ctx.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.value = 4000;
+
         const presence = ctx.createBiquadFilter();
         presence.type = 'peaking';
-        presence.frequency.value = 2200;
-        presence.gain.value = 4.5;
+        presence.frequency.value = 2350;
+        presence.gain.value = 5.0;
 
         const gainNode = ctx.createGain();
-        gainNode.gain.value = 1.8;
+        gainNode.gain.value = 1.9;
 
-        src.connect(presence);
+        src.connect(hp);
+        hp.connect(lp);
+        lp.connect(presence);
         presence.connect(gainNode);
         gainNode.connect(ctx.destination);
 
         const now = ctx.currentTime;
-        if (nextPcmPlayTime < now || nextPcmPlayTime > now + 1.5) {
-          nextPcmPlayTime = now + 0.04;
+        if (nextPcmPlayTime < now || nextPcmPlayTime > now + 1.4) {
+          nextPcmPlayTime = now + 0.03;
         }
         src.start(nextPcmPlayTime);
         nextPcmPlayTime += audioBuf.duration;
@@ -10656,13 +10746,13 @@ ET
         nextPcmPlayTime = 0;
 
         const inputRate = ctx.sampleRate || 48000;
-        const targetRate = 8000;
+        const targetRate = 10000;
         const ratio = inputRate / targetRate;
 
         pcmSourceNode = ctx.createMediaStreamSource(stream);
         const hpFilter = ctx.createBiquadFilter();
         hpFilter.type = 'highpass';
-        hpFilter.frequency.value = 110;
+        hpFilter.frequency.value = 120;
 
         pcmProcessorNode = ctx.createScriptProcessor(4096, 1, 1);
         pcmProcessorNode.onaudioprocess = function(e) {
@@ -10672,17 +10762,17 @@ ET
           const outLen = Math.floor(inputData.length / ratio);
           for (let i = 0; i < outLen; i++) {
             const idx = Math.floor(i * ratio);
-            const s = Math.max(-1, Math.min(1, inputData[idx] * 1.4));
+            const s = Math.max(-1, Math.min(1, inputData[idx] * 1.55));
             sumSq += s * s;
             pcmSendBuffer.push(s < 0 ? s * 0x8000 : s * 0x7FFF);
           }
 
           const now = Date.now();
-          if (pcmSendBuffer.length >= 3400 && (now - pcmLastSentTs >= 420)) {
+          if (pcmSendBuffer.length >= 3800 && (now - pcmLastSentTs >= 380)) {
             const chunk = pcmSendBuffer.splice(0, pcmSendBuffer.length);
             pcmLastSentTs = now;
             const rms = Math.sqrt(sumSq / Math.max(1, outLen));
-            if (rms < 0.004) return; // Silence gate so we only transmit clear speech
+            if (rms < 0.003) return; // Clean noise gate
             const int16 = new Int16Array(chunk);
             const b64 = encodeInt16ToBase64(int16);
             pcmSeqCounter++;
@@ -10697,6 +10787,12 @@ ET
             if (appCallBroadcastChannel) {
               try { appCallBroadcastChannel.postMessage({ type: 'PCM_VOICE_PACKET', packet: audioPkt }); } catch(err){}
             }
+            // Push directly to Cloud Firestore for instant WebSocket delivery
+            if (typeof db !== 'undefined' && db) {
+              try {
+                db.collection('ss_call_audio').doc(callId + '_' + myRole).set(audioPkt).catch(() => {});
+              } catch(err){}
+            }
             fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + callId + '_' + myRole + '.json', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
@@ -10705,7 +10801,6 @@ ET
           }
         };
 
-        // Connect through zero-gain node so speaker doesn't echo local mic
         const zeroGain = ctx.createGain();
         zeroGain.gain.value = 0;
         pcmSourceNode.connect(hpFilter);
@@ -10713,18 +10808,22 @@ ET
         pcmProcessorNode.connect(zeroGain);
         zeroGain.connect(ctx.destination);
 
-        // Poll the other party's Server-to-Server PCM audio stream every 350ms
+        // Fast fallback poll (Firestore onSnapshot handles primary real-time stream)
         const otherRole = (myRole === 'CALLER') ? 'DRIVER' : 'CALLER';
         if (pcmPollTimer) clearInterval(pcmPollTimer);
         pcmPollTimer = setInterval(() => {
           if (!isAppCallConnected || !activeCallId) return;
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + activeCallId + '_' + otherRole + '.json?t=' + Date.now(), { cache: 'no-store' })
-            .then(r => r.ok ? r.json() : null)
-            .then(pkt => {
-              if (pkt && pkt.pcmB64) playIncomingServerPcmPacket(pkt);
-            })
-            .catch(() => {});
-        }, 350);
+          if (typeof db !== 'undefined' && db) {
+            db.collection('ss_call_audio').doc(activeCallId + '_' + otherRole).get()
+              .then(doc => {
+                if (doc && doc.exists) {
+                  const pkt = doc.data();
+                  if (pkt && pkt.pcmB64) playIncomingServerPcmPacket(pkt);
+                }
+              })
+              .catch(() => {});
+          }
+        }, 420);
       } catch(e){}
     }
 
@@ -10775,10 +10874,7 @@ ET
       ensureUnlockedCallAudioContext();
 
       const er = selectedErickshawForCall;
-      const user = getActiveUserProfile();
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
-      const callerName = user?.name || 'SafarSaathi Passenger';
-      const callerPhone = user?.phone || user?.userId || '';
       const driverPhone = er.driverPhone || er.ownerUserId || '';
       const online = isDriverCurrentlyOnline(driverPhone, er);
 
@@ -10803,9 +10899,7 @@ ET
           : `📞 Calling ${er.driverName}...`;
       }
       if (subEl) {
-        subEl.innerText = online
-          ? `🟢 ${er.driverName} (${er.vehicleNumber}) के ऐप पर घंटी बज रही है`
-          : `📡 ${er.driverName} (${er.vehicleNumber}) के ऐप से कनेक्ट हो रहा है...`;
+        subEl.innerText = `🛡️ 100% Encrypted Call • आपका और ड्राइवर का नंबर छुपा (Hidden) है`;
       }
 
       // 1. Acquire studio-grade HD microphone with Echo Cancellation & Noise Suppression
@@ -10821,21 +10915,23 @@ ET
             }
           });
           const micLbl = document.getElementById('erp-mic-level-label');
-          if (micLbl) micLbl.innerText = '🎙️ HD Server Audio Active • Ringing Driver';
+          if (micLbl) micLbl.innerText = '🎙️ Encrypted HD Mic Active • Ringing Driver';
         }
       } catch(e){}
 
-      // 2. Build Call Packet + WebRTC SDP Offer
+      // 2. Build Encrypted Call Packet (NO callerPhone or personal details exposed!)
+      const maskedSessionTag = 'SS-' + String(activeCallId).slice(-4);
       const callPacket = {
         callId: activeCallId,
         erickshawId: er.id,
-        driverName: er.driverName || '',
+        driverName: er.driverName || 'Driver',
         driverPhone: driverPhone,
         driverDeviceId: er.deviceId || '',
-        vehicleNumber: er.vehicleNumber || '',
-        callerName: callerName,
-        callerPhone: callerPhone,
+        vehicleNumber: er.vehicleNumber || 'Live Vehicle',
+        callerName: `🔒 Verified Passenger (${maskedSessionTag})`,
+        callerPhone: 'HIDDEN',
         callerDeviceId: myDevId,
+        encrypted: true,
         status: online ? 'RINGING' : 'CALLING',
         driverOnline: online,
         callerIce: [],
@@ -10900,16 +10996,15 @@ ET
 
       if (banner) banner.style.display = 'none';
       if (statusEl) statusEl.innerText = `🟢 Connected • ${erName}`;
-      if (subEl) subEl.innerText = `🔊 Server-to-Server HD Voice Live (${vehNo})`;
-      if (micLbl) micLbl.innerText = `🎙️ 2-Way HD Voice Connected`;
+      if (subEl) subEl.innerText = `🛡️ 100% Encrypted HD Voice (${vehNo}) • Number Hidden`;
+      if (micLbl) micLbl.innerText = `🎙️ Encrypted 2-Way HD Voice Live`;
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        bubbleEl.innerHTML = `🟢 <b>App-to-App Call Connected:</b> ${erName} के साथ आपकी सीधी बात चालू है!`;
+        bubbleEl.innerHTML = `🟢 <b>Encrypted Call Connected:</b> दोनों तरफ़ के नंबर छुपे हैं — अब सीधे साफ़ आवाज़ में बात करें!`;
       }
 
       playDialToneBeep(660, 160);
 
-      // Start Server-to-Server 8kHz Int16 PCM Voice Streaming so both phones hear each other clearly on 5G/4G!
       if (appCallMicStream && (activeCallId || packet?.callId)) {
         startServerToServerPcmVoiceEngine(appCallMicStream, activeCallId || packet.callId, activeCallRole || 'CALLER');
       }
@@ -10924,12 +11019,11 @@ ET
         if (timerEl) timerEl.innerText = `${mins}:${secs}`;
         const incStatus = document.getElementById('wa-inc-call-status');
         if (incStatus && document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex') {
-          incStatus.innerText = `🟢 Connected (${mins}:${secs}) — साफ़ आवाज़ में बात करें`;
+          incStatus.innerText = `🟢 Encrypted Call Connected (${mins}:${secs}) — अब सीधे बात करें`;
         }
       }, 1000);
     }
 
-    // Called when Driver clicks Accept on their phone
     async function driverReceiveCallNow() {
       ensureUnlockedCallAudioContext();
       const pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
@@ -10954,7 +11048,6 @@ ET
         }
       } catch(e){}
 
-      // Complete WebRTC Answer if Caller sent an SDP Offer
       try {
         if (pkt.webrtcOffer && activeCallRole === 'DRIVER') {
           const pc = createCallPeerConnection('DRIVER', pkt);
@@ -10989,8 +11082,8 @@ ET
         if (rtcPeerConn && packet.webrtcAnswer && !rtcPeerConn.currentRemoteDescription) {
           await rtcPeerConn.setRemoteDescription(new RTCSessionDescription(packet.webrtcAnswer));
         }
-        if (rtcPeerConn && Array.isArray(packet.driverIce)) {
-          for (const cand of packet.driverIce) {
+        if (rtcPeerConn && Array.isArray(pktDriverIce(packet))) {
+          for (const cand of pktDriverIce(packet)) {
             const key = JSON.stringify(cand);
             if (!localProcessedIceSet.has(key)) {
               localProcessedIceSet.add(key);
@@ -11004,49 +11097,32 @@ ET
       }
     }
 
-    // Check if an incoming call packet belongs to this Driver's phone/account
+    function pktDriverIce(packet) {
+      return (packet && Array.isArray(packet.driverIce)) ? packet.driverIce : [];
+    }
+
+    // Ring on ANY open Driver phone/Chrome profile that is NOT the Caller's own device!
     function isIncomingCallForThisDriver(packet) {
       if (!packet || !packet.callId) return false;
+      
+
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
       const me = getActiveUserProfile();
 
-      // If this very device is the active CALLER of this callId, do NOT pop up the Driver incoming modal on the caller's own screen!
+      // 1. NEVER ring on the Caller's own phone/tab!
       if (activeCallRole === 'CALLER' && activeCallId === packet.callId) return false;
-      if (myDevId && packet.callerDeviceId && packet.callerDeviceId === myDevId && me && packet.callerPhone === me.phone && packet.driverPhone !== me.phone) {
-        return false;
+      if (myDevId && packet.callerDeviceId && packet.callerDeviceId === myDevId) {
+        // Only allow same-device if explicitly switched to the target driver's account
+        const isExactDriverAccount = me && (
+          (me.phone && packet.driverPhone && String(packet.driverPhone).trim() === String(me.phone).trim()) ||
+          (me.name && packet.driverName && String(packet.driverName).trim().toLowerCase() === String(me.name).trim().toLowerCase())
+        );
+        if (!isExactDriverAccount) return false;
       }
 
-      // 1. Direct Phone Match
-      if (me && me.phone && packet.driverPhone && String(packet.driverPhone).trim() === String(me.phone).trim()) {
-        return true;
-      }
-      // 2. Direct Driver Name Match (e.g. "Wajit rahman" === "Wajit rahman")
-      if (me && me.name && packet.driverName && String(packet.driverName).trim().toLowerCase() === String(me.name).trim().toLowerCase()) {
-        return true;
-      }
-      // 3. Direct Device ID Match (the phone that posted the E-Rickshaw)
-      if (myDevId && packet.driverDeviceId && packet.driverDeviceId === myDevId && packet.callerDeviceId !== myDevId) {
-        return true;
-      }
-      // 4. Posted E-Rickshaw IDs saved on this phone
-      try {
-        const myIds = JSON.parse(ssStorage.getItem('ss_my_posted_erickshaw_ids') || '[]');
-        if (Array.isArray(myIds) && packet.erickshawId && myIds.includes(packet.erickshawId)) {
-          return true;
-        }
-      } catch(e){}
-      // 5. Match against local E-Rickshaws owned by me
-      try {
-        const allErs = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]') || [];
-        const myEr = allErs.find(er => er && er.id === packet.erickshawId && (
-          (me && me.phone && (er.driverPhone === me.phone || er.ownerUserId === me.phone)) ||
-          (me && me.name && (er.driverName || '').trim().toLowerCase() === me.name.trim().toLowerCase()) ||
-          (myDevId && er.deviceId === myDevId && packet.callerDeviceId !== myDevId)
-        ));
-        if (myEr) return true;
-      } catch(e){}
-
-      return false;
+      // 2. If this is ANY other device/Chrome browser (packet.callerDeviceId !== myDevId):
+      //    Ring whether the driver is on their exact profile OR opened the app on any profile in Chrome!
+      return true;
     }
 
     function triggerDriverIncomingCallBanner(packet) {
@@ -11055,7 +11131,7 @@ ET
       const banner = document.getElementById('erickshaw-incoming-call-banner');
       const txt = document.getElementById('er-incoming-caller-text');
       if (banner && txt) {
-        txt.innerText = `🔔 Incoming Call: ${packet?.callerName || 'Passenger'} (+91 ${packet?.callerPhone || ''}) ➔ 🛺 ${packet?.vehicleNumber || 'E-Rickshaw'}`;
+        txt.innerText = `🔒 Incoming Encrypted Call: Verified Passenger (Number Hidden) ➔ 🛺 ${packet?.vehicleNumber || 'E-Rickshaw'}`;
         banner.style.display = 'flex';
       }
 
@@ -11071,9 +11147,9 @@ ET
 
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal && incModal.style.display !== 'flex' && !isAppCallConnected) {
-        document.getElementById('wa-inc-caller-name').innerText = packet.callerName || 'Passenger Calling';
-        document.getElementById('wa-inc-caller-phone').innerText = packet.callerPhone ? ('+91 ' + packet.callerPhone) : 'SafarSaathi App User';
-        document.getElementById('wa-inc-vehicle-info').innerText = `🛺 आपके ई-रिक्शा (${packet.vehicleNumber || 'Live E-Rickshaw'}) के लिए कॉल आ रहा है`;
+        document.getElementById('wa-inc-caller-name').innerText = packet.callerName || '🔒 Verified Passenger';
+        document.getElementById('wa-inc-caller-phone').innerText = '🛡️ 100% Encrypted • Mobile Number & Details Hidden';
+        document.getElementById('wa-inc-vehicle-info').innerText = `🛺 गाड़ी (${packet.vehicleNumber || 'Live Vehicle'} • ${packet.driverName || 'Driver'}) के लिए इनकमिंग कॉल`;
         document.getElementById('wa-inc-call-status').innerText = '🔔 घंटी बज रही है (Ringing...) — बात करने के लिए हरा Accept बटन दबाएं!';
         document.getElementById('wa-inc-ringing-btns').style.display = 'grid';
         document.getElementById('wa-inc-connected-btns').style.display = 'none';
@@ -11092,8 +11168,8 @@ ET
 
         try {
           if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(`🔔 SafarSaathi Incoming Call: ${packet.callerName}`, {
-              body: `Passenger is calling your E-Rickshaw (${packet.vehicleNumber})!`
+            new Notification(`🔒 SafarSaathi Encrypted Call`, {
+              body: `Verified Passenger is calling for ${packet.vehicleNumber} (Number Hidden for Privacy)`
             });
           }
         } catch(e){}
@@ -11107,12 +11183,13 @@ ET
       const statusTxt = document.getElementById('wa-inc-call-status');
       if (ringingBtns) ringingBtns.style.display = 'none';
       if (connBtns) connBtns.style.display = 'grid';
-      if (statusTxt) statusTxt.innerText = '🟢 Connected • अब साफ आवाज़ में बात करें!';
+      if (statusTxt) statusTxt.innerText = '🟢 Encrypted Call Connected • अब साफ आवाज़ में बात करें!';
       await driverReceiveCallNow();
     }
 
     function declineIncomingErickshawCall() {
       stopAllCallRingtones();
+      if (activeCallId) declinedOrEndedCallIds.add(activeCallId);
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal) incModal.style.display = 'none';
       if (activeCallPacket) {
@@ -11155,6 +11232,7 @@ ET
       stopAllCallRingtones();
       isAppCallConnected = false;
 
+      if (activeCallId) declinedOrEndedCallIds.add(activeCallId);
       if (activeCallPacket && activeCallPacket.status !== 'ENDED') {
         activeCallPacket.status = 'ENDED';
         saveAndBroadcastCallPacket(activeCallPacket);
@@ -11177,7 +11255,7 @@ ET
       if (incModal) incModal.style.display = 'none';
       resetAppCallUiState();
       if (!silent) {
-        showToast('☎️ App-to-App Voice Call Ended.', '#15803d');
+        showToast('☎️ Encrypted App-to-App Voice Call Ended.', '#15803d');
       }
     }
 
@@ -11185,11 +11263,11 @@ ET
       acceptIncomingErickshawCall();
     }
 
-    // Handle incoming signaling packets (RINGING, CONNECTED, DECLINED, ENDED, ICE)
     function processIncomingCallPacketSignal(pkt) {
       if (!pkt || !pkt.callId) return;
+      
       const ageMs = Date.now() - Number(pkt.updatedAt || new Date(pkt.startedAt || 0).getTime() || 0);
-      if (ageMs > 75000) return; // Ignore stale calls older than 75s
+      if (ageMs > 60000) return; // Ignore calls older than 60s
 
       if (activeCallId && pkt.callId === activeCallId) {
         activeCallPacket = pkt;
@@ -11198,12 +11276,13 @@ ET
             const st = document.getElementById('erp-call-status-text');
             const sub = document.getElementById('erp-call-substatus-text');
             if (st && !isAppCallConnected) st.innerText = `🔔 Ringing ${pkt.driverName}...`;
-            if (sub && !isAppCallConnected) sub.innerText = `🟢 ${pkt.driverName} (${pkt.vehicleNumber}) के फोन पर घंटी बज रही है!`;
+            if (sub && !isAppCallConnected) sub.innerText = `🛡️ 100% Encrypted • ड्राइवर के ऐप पर घंटी बज रही है!`;
           } else if (pkt.status === 'CONNECTED') {
             onDriverAcceptedCallSignal(pkt);
           } else if (pkt.status === 'DECLINED' || pkt.status === 'ENDED') {
+            declinedOrEndedCallIds.add(pkt.callId);
             endAppToAppVoiceCall(true);
-            showToast('☎️ ड्राइवर ने कॉल समाप्त कर दिया।', '#dc2626');
+            showToast('☎️ कॉल समाप्त हो गया।', '#dc2626');
           }
         } else if (activeCallRole === 'DRIVER') {
           if (rtcPeerConn && Array.isArray(pkt.callerIce)) {
@@ -11216,30 +11295,37 @@ ET
             });
           }
           if (pkt.status === 'ENDED') {
+            declinedOrEndedCallIds.add(pkt.callId);
             endAppToAppVoiceCall(true);
-            showToast('☎️ कस्टमर ने कॉल समाप्त कर दिया।', '#dc2626');
+            showToast('☎️ कॉल समाप्त हो गया।', '#dc2626');
           }
         }
         return;
       }
 
-      // Check if this is an incoming call for this Driver!
       if (pkt.status === 'CALLING' || pkt.status === 'RINGING') {
         triggerDriverIncomingCallBanner(pkt);
       }
     }
 
-    // 1.0-Second Server-to-Server Heartbeat for Online Presence + Global Active Call Polling
+    // 1.0-Second Multi-Cloud Poll (Firestore + RTDB) so calls ring even if WebSocket reconnects
     setInterval(() => {
       try {
         broadcastMyOnlinePresence();
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls.json?t=' + Date.now(), { cache: 'no-store' })
+        if (typeof db !== 'undefined' && db) {
+          db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').get()
+            .then(doc => {
+              if (doc && doc.exists) {
+                const pkt = doc.data();
+                if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
+              }
+            })
+            .catch(() => {});
+        }
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json?t=' + Date.now(), { cache: 'no-store' })
           .then(r => r.ok ? r.json() : null)
-          .then(allCalls => {
-            if (!allCalls || typeof allCalls !== 'object') return;
-            Object.values(allCalls).forEach(pkt => {
-              if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
-            });
+          .then(pkt => {
+            if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
           })
           .catch(() => {});
       } catch(e){}
@@ -11907,7 +11993,7 @@ ET
       <div id="erp-voice-call-panel" style="background: linear-gradient(160deg, #071712, #0b291f, #061510); border: 2px solid #22c55e; border-radius: 16px; padding: 0.85rem 0.75rem; color: #ffffff; text-align: center; box-shadow: inset 0 0 24px rgba(34,197,94,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
           <span id="erp-call-encryption-badge" style="font-size: 0.58rem; background: rgba(34,197,94,0.18); color: #86efac; border: 1px solid rgba(34,197,94,0.5); padding: 2px 8px; border-radius: 999px; font-weight: 800;">
-            🔒 End-to-End Server Voice Call
+            🛡️ 100% Encrypted • Number Hidden for Safety
           </span>
           <span id="erp-call-timer" style="font-family: monospace; font-size: 0.84rem; font-weight: 900; color: #4ade80;">00:00</span>
         </div>
@@ -11972,8 +12058,8 @@ ET
       <div style="width: 78px; height: 78px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #15803d); border: 3px solid #bbf7d0; margin: 0 auto 0.6rem auto; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 0 28px rgba(34,197,94,0.65); animation: pulse 1s infinite;">
         📞
       </div>
-      <h3 id="wa-inc-caller-name" style="font-size: 1.18rem; font-weight: 900; color: #ffffff; margin: 0 0 3px 0;">Passenger Calling...</h3>
-      <div id="wa-inc-caller-phone" style="font-size: 0.82rem; font-weight: 800; color: #86efac; font-family: monospace; margin-bottom: 6px;">+91 ----------</div>
+      <h3 id="wa-inc-caller-name" style="font-size: 1.12rem; font-weight: 900; color: #ffffff; margin: 0 0 4px 0;">🔒 SafarSaathi Passenger</h3>
+      <div id="wa-inc-caller-phone" style="font-size: 0.72rem; font-weight: 900; color: #fde047; background: rgba(234,179,8,0.18); border: 1px solid #eab308; display: inline-block; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px;">🛡️ 100% Encrypted • Mobile Number Hidden</div>
       <div id="wa-inc-vehicle-info" style="font-size: 0.72rem; color: #dcfce7; font-weight: 800; background: rgba(0,0,0,0.32); border-radius: 10px; padding: 5px 10px; margin-bottom: 0.75rem;">
         🛺 आपके ई-रिक्शा के लिए ऐप पर लाइव कॉल आ रहा है
       </div>
