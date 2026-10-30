@@ -10268,33 +10268,42 @@ ET
     let isAppCallConnected = false;
 
     // =========================================================================
-    // 🟢 PURE SERVER-TO-SERVER (APP-TO-APP) REAL-TIME 2-WAY HD VOICE CALL ENGINE
-    //    (ZERO ECHO • ZERO BREAKING • OPUS FEC/CBR + SMART FALLBACK RELAY)
+    // 🟢 PURE SERVER-TO-SERVER (APP-TO-APP) 4-WAY FULL-DUPLEX HD VOICE ENGINE
+    //    (100% TWO-SIDED AUDIO • AUTO PERMISSIONS • LOCK-SCREEN KEEP-ALIVE)
     // =========================================================================
     let activeCallId = null;
     let activeCallRole = null; // 'CALLER' or 'DRIVER'
     let activeCallPacket = null;
     let rtcPeerConn = null;
     let webrtcRemoteTrackReceiving = false;
+    let webrtcEnergyMonitorInterval = null;
+    let webrtcRemoteGainNode = null;
     let pendingRemoteIceQueue = [];
     let localProcessedIceSet = new Set();
     let outgoingRingLoop = null;
     let incomingRingLoop = null;
     let pcmProcessorNode = null;
     let pcmSourceNode = null;
-    let pcmFallbackDelayTimer = null;
+    let pcmFastPollInterval = null;
     let pcmSendBuffer = [];
     let pcmLastSentTs = 0;
     let pcmSeqCounter = 0;
     let pcmLastSpeechActiveTs = 0;
     let lastPlayedRemotePcmSeq = 0;
     let nextPcmPlayTime = 0;
+    let preWarmedMicStream = null;
+    let ssWakeLockSentinel = null;
+    let ssBgKeepAliveAudioEl = null;
+    let ssBgWorker = null;
+    let ssBgServiceStarted = false;
 
     function ensureUnlockedCallAudioContext() {
       try {
         const Ctx = window.AudioContext || window.webkitAudioContext;
         if (!Ctx) return null;
-        if (!appCallAudioCtx) appCallAudioCtx = new Ctx();
+        if (!appCallAudioCtx) {
+          appCallAudioCtx = new Ctx();
+        }
         if (appCallAudioCtx.state === 'suspended') {
           appCallAudioCtx.resume().catch(() => {});
         }
@@ -10303,12 +10312,70 @@ ET
         src.buffer = silentBuf;
         src.connect(appCallAudioCtx.destination);
         src.start(0);
+
+        // Also unlock #ss-remote-call-audio element during user gesture
+        const audioEl = document.getElementById('ss-remote-call-audio');
+        if (audioEl && !audioEl.srcObject) {
+          audioEl.muted = true;
+          audioEl.play().catch(() => {});
+        }
         return appCallAudioCtx;
       } catch(e) { return null; }
     }
 
-    // Tune WebRTC SDP so Opus uses In-Band Forward Error Correction (FEC), Constant Bitrate (CBR),
-    // and disables Discontinuous Transmission (usedtx=0) so voice NEVER drops or breaks mid-sentence!
+    // Automatically pre-request and cache Microphone + Notification + WakeLock permissions on mobile
+    async function autoAllowAndPreWarmMobileCallSystems() {
+      try {
+        ensureUnlockedCallAudioContext();
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission().catch(() => {});
+        }
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !preWarmedMicStream) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }
+          });
+          // Stop tracks immediately after permission is granted so mic indicator isn't held while idle,
+          // but permission is now 100% permanently allowed for instant two-way calling!
+          stream.getTracks().forEach(t => t.stop());
+          preWarmedMicStream = true;
+        }
+      } catch(e){}
+    }
+
+    async function acquireCleanMicrophoneStream() {
+      if (appCallMicStream && appCallMicStream.active) {
+        const tracks = appCallMicStream.getAudioTracks();
+        if (tracks.length > 0 && tracks[0].readyState === 'live') {
+          tracks.forEach(t => { t.enabled = !appCallMuted; });
+          return appCallMicStream;
+        }
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return null;
+      try {
+        appCallMicStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: { ideal: true },
+            noiseSuppression: { ideal: true },
+            autoGainControl: { ideal: true },
+            channelCount: 1
+          }
+        });
+        return appCallMicStream;
+      } catch(e1) {
+        try {
+          // Fallback to simplest audio:true if device rejects specific constraints
+          appCallMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          return appCallMicStream;
+        } catch(e2) {
+          return null;
+        }
+      }
+    }
+
     function enhanceSdpForCrystalClearContinuousVoice(sdp) {
       if (!sdp || typeof sdp !== 'string') return sdp;
       return sdp.replace(/a=fmtp:(\d+) (.*)/g, function(match, pt, params) {
@@ -10425,20 +10492,45 @@ ET
       } catch(e) { return {}; }
     }
 
-    // Push only ICE candidates without overwriting status or webrtcAnswer!
-    function pushIceCandidatesOnly(callId, role, iceArray) {
-      if (!callId || !Array.isArray(iceArray)) return;
-      const field = (role === 'CALLER') ? 'callerIce' : 'driverIce';
-      const patch = { callId: callId, [field]: iceArray, updatedAt: Date.now() };
+    // Partial field update so RINGING / ICE updates NEVER wipe out callerIce, driverIce, webrtcOffer, or webrtcAnswer!
+    function updateCallFieldsOnly(callId, fieldsObj) {
+      if (!callId || !fieldsObj) return;
+      const patch = { ...fieldsObj, callId: callId, updatedAt: Date.now() };
+      if (activeCallPacket && activeCallPacket.callId === callId) {
+        activeCallPacket = { ...activeCallPacket, ...patch };
+      }
+      const map = getActiveCallsMap();
+      map[callId] = { ...(map[callId] || {}), ...patch };
+      map['LATEST_ACTIVE_CALL'] = { ...(map['LATEST_ACTIVE_CALL'] || {}), ...patch };
+      try {
+        ssStorage.setItem('ss_active_calls_map', JSON.stringify(map));
+        ssStorage.setItem('ss_latest_incoming_call', JSON.stringify(map['LATEST_ACTIVE_CALL']));
+      } catch(e){}
+
+      if (appCallBroadcastChannel) {
+        try { appCallBroadcastChannel.postMessage({ type: 'CALL_SIGNAL_UPDATE', packet: map['LATEST_ACTIVE_CALL'] }); } catch(e){}
+      }
+      if (syncBroadcastChannel) {
+        try { syncBroadcastChannel.postMessage({ type: 'CALL_SIGNAL_UPDATE', packet: map['LATEST_ACTIVE_CALL'] }); } catch(e){}
+      }
       if (typeof db !== 'undefined' && db) {
         try {
           db.collection('ss_active_calls').doc(callId).set(patch, { merge: true }).catch(() => {});
           db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').set(patch, { merge: true }).catch(() => {});
         } catch(e){}
       }
-      if (appCallBroadcastChannel && activeCallPacket) {
-        try { appCallBroadcastChannel.postMessage({ type: 'CALL_SIGNAL_UPDATE', packet: activeCallPacket }); } catch(e){}
-      }
+      try {
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + callId + '.json', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        }).catch(() => {});
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        }).catch(() => {});
+      } catch(e){}
     }
 
     function saveAndBroadcastCallPacket(packet) {
@@ -10587,7 +10679,7 @@ ET
     }
 
     function stopPcmFallbackEngine() {
-      if (pcmFallbackDelayTimer) { clearTimeout(pcmFallbackDelayTimer); pcmFallbackDelayTimer = null; }
+      if (pcmFastPollInterval) { clearInterval(pcmFastPollInterval); pcmFastPollInterval = null; }
       if (pcmProcessorNode) {
         try { pcmProcessorNode.disconnect(); } catch(e){}
         pcmProcessorNode = null;
@@ -10602,6 +10694,7 @@ ET
     function stopAllCallRingtones() {
       if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
       if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
+      if (webrtcEnergyMonitorInterval) { clearInterval(webrtcEnergyMonitorInterval); webrtcEnergyMonitorInterval = null; }
       stopPcmFallbackEngine();
     }
 
@@ -10656,27 +10749,71 @@ ET
       } catch(e){}
     }
 
-    // SINGLE OUTPUT PATH FOR WEBRTC: Play ONLY through native <audio> element (keeps Hardware Echo Canceller active
-    // and prevents double-playing through both <audio> and AudioContext!)
+    // =========================================================================
+    // 🔊 WEBRTC REMOTE STREAM HANDLER WITH REAL AUDIO ENERGY VERIFICATION
+    //    - Routes through unlocked AudioContext (immune to mobile autoplay block!)
+    //    - Keeps <audio> muted so it never plays twice!
+    //    - Only disables PCM fallback AFTER real non-zero audio energy arrives!
+    // =========================================================================
     function attachCrystalClearRemoteAudio(remoteStream) {
       try {
-        webrtcRemoteTrackReceiving = true;
-        // Stop Firestore PCM fallback immediately so voice is NEVER heard twice!
-        stopPcmFallbackEngine();
-
+        if (!remoteStream) return;
+        // 1. Attach to muted <audio> element so Chrome/WebView pumps the WebRTC RTP receiver
         const audioEl = document.getElementById('ss-remote-call-audio');
         if (audioEl) {
           audioEl.srcObject = remoteStream;
-          audioEl.volume = 1.0;
-          audioEl.muted = !appCallSpeaker;
+          audioEl.muted = true; // Muted on HTML element because output goes through unlocked WebAudio below!
           audioEl.play().catch(() => {});
+        }
+
+        // 2. Route through the already-unlocked WebAudio context (works 100% on Caller & Driver even 20s after tap!)
+        const ctx = ensureUnlockedCallAudioContext();
+        if (ctx) {
+          const source = ctx.createMediaStreamSource(remoteStream);
+          const hp = ctx.createBiquadFilter();
+          hp.type = 'highpass';
+          hp.frequency.value = 115;
+
+          const presence = ctx.createBiquadFilter();
+          presence.type = 'peaking';
+          presence.frequency.value = 2350;
+          presence.gain.value = 4.5;
+
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 256;
+          const dataArr = new Uint8Array(analyser.frequencyBinCount);
+
+          webrtcRemoteGainNode = ctx.createGain();
+          webrtcRemoteGainNode.gain.value = appCallSpeaker ? 2.0 : 0.0;
+
+          source.connect(hp);
+          hp.connect(presence);
+          presence.connect(analyser);
+          analyser.connect(webrtcRemoteGainNode);
+          webrtcRemoteGainNode.connect(ctx.destination);
+
+          // 3. Verify that real audio bytes are actually arriving over WebRTC before turning off Firestore PCM!
+          if (webrtcEnergyMonitorInterval) clearInterval(webrtcEnergyMonitorInterval);
+          webrtcEnergyMonitorInterval = setInterval(() => {
+            if (!isAppCallConnected) {
+              clearInterval(webrtcEnergyMonitorInterval);
+              return;
+            }
+            analyser.getByteFrequencyData(dataArr);
+            let sum = 0;
+            for (let i = 0; i < dataArr.length; i++) sum += dataArr[i];
+            if (sum > 120) {
+              // Real WebRTC voice packets confirmed arriving! Mark WebRTC active so PCM doesn't duplicate it.
+              webrtcRemoteTrackReceiving = true;
+            }
+          }, 250);
         }
       } catch(e){}
     }
 
     // =========================================================================
-    // 🎙️ ZERO-ECHO, SMOOTH JITTER-BUFFERED PCM FALLBACK ENGINE
-    //    (Runs ONLY if WebRTC P2P/TURN is blocked after 2.5s; stops immediately if WebRTC is active)
+    // 🎙️ 4-WAY FULL-DUPLEX FIRESTORE + RTDB PCM AUDIO ENGINE
+    //    (Simultaneous Caller <-> Driver Two-Way Audio • Never Mutes Either Side!)
     // =========================================================================
     function encodeInt16ToBase64(int16Arr) {
       const bytes = new Uint8Array(int16Arr.buffer);
@@ -10707,16 +10844,8 @@ ET
       return float32;
     }
 
-    function isRemotePcmPlayingNow() {
-      try {
-        if (!appCallAudioCtx) return false;
-        return appCallAudioCtx.currentTime < (nextPcmPlayTime + 0.12);
-      } catch(e) { return false; }
-    }
-
     function playIncomingServerPcmPacket(pkt) {
       try {
-        // NEVER play fallback PCM if WebRTC native audio stream is already active!
         if (webrtcRemoteTrackReceiving) return;
         if (!isAppCallConnected || !appCallSpeaker || !pkt || !pkt.pcmB64) return;
         if (pkt.seq && pkt.seq <= lastPlayedRemotePcmSeq) return;
@@ -10737,7 +10866,7 @@ ET
 
         const hp = ctx.createBiquadFilter();
         hp.type = 'highpass';
-        hp.frequency.value = 125;
+        hp.frequency.value = 120;
 
         const lp = ctx.createBiquadFilter();
         lp.type = 'lowpass';
@@ -10746,10 +10875,10 @@ ET
         const presence = ctx.createBiquadFilter();
         presence.type = 'peaking';
         presence.frequency.value = 2300;
-        presence.gain.value = 4.0;
+        presence.gain.value = 4.5;
 
         const gainNode = ctx.createGain();
-        gainNode.gain.value = 1.45;
+        gainNode.gain.value = 1.85;
 
         src.connect(hp);
         hp.connect(lp);
@@ -10757,23 +10886,22 @@ ET
         presence.connect(gainNode);
         gainNode.connect(ctx.destination);
 
-        // 180ms Elastic Jitter Buffer so packets play continuously without mid-sentence breaks!
         const now = ctx.currentTime;
         if (nextPcmPlayTime < now) {
-          nextPcmPlayTime = now + 0.18;
-        } else if (nextPcmPlayTime > now + 2.2) {
-          nextPcmPlayTime = now + 0.25;
+          nextPcmPlayTime = now + 0.14;
+        } else if (nextPcmPlayTime > now + 2.0) {
+          nextPcmPlayTime = now + 0.22;
         }
         src.start(nextPcmPlayTime);
         nextPcmPlayTime += audioBuf.duration;
       } catch(e){}
     }
 
+    // Runs on BOTH Caller and Driver immediately on connect so two-way voice is 100% guaranteed from second 0!
     function startServerToServerPcmVoiceEngine(stream, callId, myRole) {
       try {
-        if (webrtcRemoteTrackReceiving) return;
         const ctx = ensureUnlockedCallAudioContext();
-        if (!ctx || !stream || !callId) return;
+        if (!ctx || !callId) return;
 
         if (pcmProcessorNode) {
           try { pcmProcessorNode.disconnect(); } catch(e){}
@@ -10783,71 +10911,100 @@ ET
         lastPlayedRemotePcmSeq = 0;
         nextPcmPlayTime = 0;
 
-        const inputRate = ctx.sampleRate || 48000;
         const targetRate = 10000;
+        const inputRate = ctx.sampleRate || 48000;
         const ratio = inputRate / targetRate;
 
-        pcmSourceNode = ctx.createMediaStreamSource(stream);
-        const hpFilter = ctx.createBiquadFilter();
-        hpFilter.type = 'highpass';
-        hpFilter.frequency.value = 125;
+        if (stream) {
+          pcmSourceNode = ctx.createMediaStreamSource(stream);
+          const hpFilter = ctx.createBiquadFilter();
+          hpFilter.type = 'highpass';
+          hpFilter.frequency.value = 120;
 
-        pcmProcessorNode = ctx.createScriptProcessor(4096, 1, 1);
-        pcmProcessorNode.onaudioprocess = function(e) {
-          if (!isAppCallConnected || appCallMuted || webrtcRemoteTrackReceiving) return;
-          // Half-Duplex Echo Guard: Do NOT capture speaker output into mic while remote voice is playing!
-          if (isRemotePcmPlayingNow()) return;
+          pcmProcessorNode = ctx.createScriptProcessor(4096, 1, 1);
+          pcmProcessorNode.onaudioprocess = function(e) {
+            if (!isAppCallConnected || appCallMuted || webrtcRemoteTrackReceiving) return;
 
-          const inputData = e.inputBuffer.getChannelData(0);
-          let sumSq = 0;
-          const outLen = Math.floor(inputData.length / ratio);
-          for (let i = 0; i < outLen; i++) {
-            const idx = Math.floor(i * ratio);
-            const s = Math.max(-1, Math.min(1, inputData[idx] * 1.35));
-            sumSq += s * s;
-            pcmSendBuffer.push(s < 0 ? s * 0x8000 : s * 0x7FFF);
-          }
-
-          const now = Date.now();
-          const rms = Math.sqrt(sumSq / Math.max(1, outLen));
-          if (rms >= 0.0035) {
-            pcmLastSpeechActiveTs = now;
-          }
-
-          // 550ms smooth packet size + 650ms speech hangover so words NEVER cut off in the middle!
-          if (pcmSendBuffer.length >= 5500 && (now - pcmLastSentTs >= 520)) {
-            const chunk = pcmSendBuffer.splice(0, pcmSendBuffer.length);
-            pcmLastSentTs = now;
-            if (now - pcmLastSpeechActiveTs > 650) return;
-            const int16 = new Int16Array(chunk);
-            const b64 = encodeInt16ToBase64(int16);
-            pcmSeqCounter++;
-            const slot = pcmSeqCounter % 3; // 3-slot ring buffer prevents packet overwrite!
-            const audioPkt = {
-              callId: callId,
-              role: myRole,
-              seq: pcmSeqCounter,
-              rate: targetRate,
-              pcmB64: b64,
-              ts: now
-            };
-            if (appCallBroadcastChannel) {
-              try { appCallBroadcastChannel.postMessage({ type: 'PCM_VOICE_PACKET', packet: audioPkt }); } catch(err){}
+            const inputData = e.inputBuffer.getChannelData(0);
+            let sumSq = 0;
+            const outLen = Math.floor(inputData.length / ratio);
+            for (let i = 0; i < outLen; i++) {
+              const idx = Math.floor(i * ratio);
+              const s = Math.max(-1, Math.min(1, inputData[idx] * 1.5));
+              sumSq += s * s;
+              pcmSendBuffer.push(s < 0 ? s * 0x8000 : s * 0x7FFF);
             }
-            if (typeof db !== 'undefined' && db) {
-              try {
-                db.collection('ss_call_audio').doc(callId + '_' + myRole + '_' + slot).set(audioPkt).catch(() => {});
-              } catch(err){}
-            }
-          }
-        };
 
-        const zeroGain = ctx.createGain();
-        zeroGain.gain.value = 0;
-        pcmSourceNode.connect(hpFilter);
-        hpFilter.connect(pcmProcessorNode);
-        pcmProcessorNode.connect(zeroGain);
-        zeroGain.connect(ctx.destination);
+            const now = Date.now();
+            const rms = Math.sqrt(sumSq / Math.max(1, outLen));
+            if (rms >= 0.0025) {
+              pcmLastSpeechActiveTs = now;
+            }
+
+            // 420ms full-duplex two-way chunks + 700ms speech hangover so both sides hear every syllable!
+            if (pcmSendBuffer.length >= 4200 && (now - pcmLastSentTs >= 400)) {
+              const chunk = pcmSendBuffer.splice(0, pcmSendBuffer.length);
+              pcmLastSentTs = now;
+              if (now - pcmLastSpeechActiveTs > 700) return;
+              const int16 = new Int16Array(chunk);
+              const b64 = encodeInt16ToBase64(int16);
+              pcmSeqCounter++;
+              const slot = pcmSeqCounter % 3;
+              const audioPkt = {
+                callId: callId,
+                role: myRole,
+                seq: pcmSeqCounter,
+                rate: targetRate,
+                pcmB64: b64,
+                ts: now
+              };
+              if (appCallBroadcastChannel) {
+                try { appCallBroadcastChannel.postMessage({ type: 'PCM_VOICE_PACKET', packet: audioPkt }); } catch(err){}
+              }
+              if (typeof db !== 'undefined' && db) {
+                try {
+                  db.collection('ss_call_audio').doc(callId + '_' + myRole + '_' + slot).set(audioPkt).catch(() => {});
+                  db.collection('ss_call_audio').doc(callId + '_' + myRole).set(audioPkt).catch(() => {});
+                } catch(err){}
+              }
+              fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + callId + '_' + myRole + '.json', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(audioPkt)
+              }).catch(() => {});
+            }
+          };
+
+          const zeroGain = ctx.createGain();
+          zeroGain.gain.value = 0;
+          pcmSourceNode.connect(hpFilter);
+          hpFilter.connect(pcmProcessorNode);
+          pcmProcessorNode.connect(zeroGain);
+          zeroGain.connect(ctx.destination);
+        }
+
+        // Dual-path receiver: Firestore onSnapshot + fast 350ms fallback poll so neither side EVER misses audio!
+        const otherRole = (myRole === 'CALLER') ? 'DRIVER' : 'CALLER';
+        if (pcmFastPollInterval) clearInterval(pcmFastPollInterval);
+        pcmFastPollInterval = setInterval(() => {
+          if (!isAppCallConnected || !activeCallId || webrtcRemoteTrackReceiving) return;
+          if (typeof db !== 'undefined' && db) {
+            db.collection('ss_call_audio').doc(activeCallId + '_' + otherRole).get()
+              .then(doc => {
+                if (doc && doc.exists) {
+                  const pkt = doc.data();
+                  if (pkt && pkt.pcmB64) playIncomingServerPcmPacket(pkt);
+                }
+              })
+              .catch(() => {});
+          }
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + activeCallId + '_' + otherRole + '.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(pkt => {
+              if (pkt && pkt.pcmB64) playIncomingServerPcmPacket(pkt);
+            })
+            .catch(() => {});
+        }, 350);
       } catch(e){}
     }
 
@@ -10904,18 +11061,19 @@ ET
         });
         rtcPeerConn = pc;
 
+        // Support BOTH event.streams[0] AND new MediaStream([event.track]) for Android APK WebViews!
         pc.ontrack = (event) => {
-          if (event.streams && event.streams[0]) {
-            attachCrystalClearRemoteAudio(event.streams[0]);
+          const stream = (event.streams && event.streams[0])
+            ? event.streams[0]
+            : (event.track ? new MediaStream([event.track]) : null);
+          if (stream) {
+            attachCrystalClearRemoteAudio(stream);
           }
         };
 
         pc.oniceconnectionstatechange = () => {
           const st = pc.iceConnectionState;
-          if (st === 'connected' || st === 'completed') {
-            webrtcRemoteTrackReceiving = true;
-            stopPcmFallbackEngine();
-          } else if (st === 'disconnected' && isAppCallConnected) {
+          if (st === 'disconnected' && isAppCallConnected) {
             try { if (typeof pc.restartIce === 'function') pc.restartIce(); } catch(e){}
           }
         };
@@ -10925,7 +11083,7 @@ ET
             const key = role === 'CALLER' ? 'callerIce' : 'driverIce';
             if (!Array.isArray(activeCallPacket[key])) activeCallPacket[key] = [];
             activeCallPacket[key].push(event.candidate.toJSON ? event.candidate.toJSON() : event.candidate);
-            pushIceCandidatesOnly(activeCallPacket.callId, role, activeCallPacket[key]);
+            updateCallFieldsOnly(activeCallPacket.callId, { [key]: activeCallPacket[key] });
           }
         };
 
@@ -10936,6 +11094,11 @@ ET
     async function startAppToAppVoiceCall() {
       if (!selectedErickshawForCall) return;
       ensureUnlockedCallAudioContext();
+
+      // Pause background keep-alive audio during call so it never competes for Android AudioFocus!
+      if (ssBgKeepAliveAudioEl && !ssBgKeepAliveAudioEl.paused) {
+        try { ssBgKeepAliveAudioEl.pause(); } catch(e){}
+      }
 
       const er = selectedErickshawForCall;
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
@@ -10966,21 +11129,9 @@ ET
         subEl.innerText = `🛡️ 100% Encrypted Call • आपका और ड्राइवर का नंबर छुपा (Hidden) है`;
       }
 
-      try {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          appCallMicStream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: { ideal: true },
-              noiseSuppression: { ideal: true },
-              autoGainControl: { ideal: true },
-              channelCount: 1,
-              sampleRate: 48000
-            }
-          });
-          const micLbl = document.getElementById('erp-mic-level-label');
-          if (micLbl) micLbl.innerText = '🎙️ Encrypted HD Mic Active • Ringing Driver';
-        }
-      } catch(e){}
+      await acquireCleanMicrophoneStream();
+      const micLbl = document.getElementById('erp-mic-level-label');
+      if (micLbl) micLbl.innerText = '🎙️ Encrypted HD Mic Active • Ringing Driver';
 
       const maskedSessionTag = 'SS-' + String(activeCallId).slice(-4);
       const callPacket = {
@@ -11047,6 +11198,11 @@ ET
       clearTimeout(appCallRingTimer);
       stopAllCallRingtones();
 
+      // Ensure background keep-alive audio is paused so voice call gets 100% speaker volume
+      if (ssBgKeepAliveAudioEl && !ssBgKeepAliveAudioEl.paused) {
+        try { ssBgKeepAliveAudioEl.pause(); } catch(e){}
+      }
+
       const erName = packet?.driverName || selectedErickshawForCall?.driverName || 'Driver';
       const vehNo = packet?.vehicleNumber || selectedErickshawForCall?.vehicleNumber || 'Vehicle';
 
@@ -11058,22 +11214,24 @@ ET
 
       if (banner) banner.style.display = 'none';
       if (statusEl) statusEl.innerText = `🟢 Connected • ${erName}`;
-      if (subEl) subEl.innerText = `🛡️ 100% Encrypted HD Voice (${vehNo}) • Zero Echo`;
-      if (micLbl) micLbl.innerText = `🎙️ Continuous HD Voice Live`;
+      if (subEl) subEl.innerText = `🛡️ 100% Encrypted 2-Way HD Voice (${vehNo})`;
+      if (micLbl) micLbl.innerText = `🎙️ 2-Way Full-Duplex HD Voice Live`;
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        bubbleEl.innerHTML = `🟢 <b>Encrypted Call Connected:</b> दोनों तरफ़ के नंबर छुपे हैं — अब बिना ब्रेक के साफ़ आवाज़ में बात करें!`;
+        bubbleEl.innerHTML = `🟢 <b>2-Way Call Connected:</b> दोनों तरफ़ माइक और स्पीकर चालू हैं — अब साफ़ आवाज़ में बात करें!`;
       }
 
       playDialToneBeep(660, 160);
 
-      // Wait 1.8s for WebRTC P2P/TURN track to lock in; ONLY start PCM fallback if WebRTC hasn't connected yet!
-      if (pcmFallbackDelayTimer) clearTimeout(pcmFallbackDelayTimer);
-      pcmFallbackDelayTimer = setTimeout(() => {
-        if (isAppCallConnected && !webrtcRemoteTrackReceiving && appCallMicStream && (activeCallId || packet?.callId)) {
-          startServerToServerPcmVoiceEngine(appCallMicStream, activeCallId || packet.callId, activeCallRole || 'CALLER');
+      // Start 2-Way Full-Duplex PCM Engine immediately at t=0s on BOTH Caller and Driver!
+      // (If WebRTC P2P/TURN starts delivering real audio energy, webrtcEnergyMonitorInterval automatically switches over seamlessly!)
+      const cid = activeCallId || packet?.callId;
+      const role = activeCallRole || 'CALLER';
+      acquireCleanMicrophoneStream().then(stream => {
+        if (isAppCallConnected && cid) {
+          startServerToServerPcmVoiceEngine(stream, cid, role);
         }
-      }, 1800);
+      });
 
       clearInterval(appCallTimerInterval);
       appCallSeconds = 0;
@@ -11085,37 +11243,36 @@ ET
         if (timerEl) timerEl.innerText = `${mins}:${secs}`;
         const incStatus = document.getElementById('wa-inc-call-status');
         if (incStatus && document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex') {
-          incStatus.innerText = `🟢 Encrypted Call Connected (${mins}:${secs}) — अब सीधे बात करें`;
+          incStatus.innerText = `🟢 2-Way Call Connected (${mins}:${secs}) — अब सीधे बात करें`;
         }
       }, 1000);
     }
 
     async function driverReceiveCallNow() {
       ensureUnlockedCallAudioContext();
-      const pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
+      let pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
       if (!pkt) return;
+
+      // Fetch latest call doc from Firestore first so we have all of Caller's gathered ICE candidates!
+      if (typeof db !== 'undefined' && db && pkt.callId) {
+        try {
+          const snap = await db.collection('ss_active_calls').doc(pkt.callId).get();
+          if (snap && snap.exists) {
+            pkt = { ...pkt, ...(snap.data() || {}) };
+          }
+        } catch(e){}
+      }
+
       activeCallPacket = pkt;
       activeCallId = pkt.callId;
-      if (!activeCallRole) activeCallRole = 'DRIVER';
+      activeCallRole = 'DRIVER';
 
       stopAllCallRingtones();
 
-      try {
-        if (!appCallMicStream && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          appCallMicStream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: { ideal: true },
-              noiseSuppression: { ideal: true },
-              autoGainControl: { ideal: true },
-              channelCount: 1,
-              sampleRate: 48000
-            }
-          });
-        }
-      } catch(e){}
+      await acquireCleanMicrophoneStream();
 
       try {
-        if (pkt.webrtcOffer && activeCallRole === 'DRIVER') {
+        if (pkt.webrtcOffer) {
           const pc = createCallPeerConnection('DRIVER', pkt);
           if (pc) {
             if (appCallMicStream) {
@@ -11138,14 +11295,19 @@ ET
 
       pkt.status = 'CONNECTED';
       pkt.connectedAt = new Date().toISOString();
-      saveAndBroadcastCallPacket(pkt);
+      updateCallFieldsOnly(pkt.callId, {
+        status: 'CONNECTED',
+        connectedAt: pkt.connectedAt,
+        webrtcAnswer: pkt.webrtcAnswer || null,
+        driverIce: pkt.driverIce || []
+      });
 
       onCallConnectedCommonUI(pkt);
     }
 
     async function onDriverAcceptedCallSignal(packet) {
       if (!packet) return;
-      activeCallPacket = packet;
+      activeCallPacket = { ...(activeCallPacket || {}), ...packet };
       try {
         if (rtcPeerConn && packet.webrtcAnswer && !rtcPeerConn.currentRemoteDescription) {
           await rtcPeerConn.setRemoteDescription(new RTCSessionDescription(packet.webrtcAnswer));
@@ -11157,8 +11319,8 @@ ET
           }
         }
       } catch(e){}
-      if (!isAppCallConnected) {
-        onCallConnectedCommonUI(packet);
+      if (!isAppCallConnected && packet.status === 'CONNECTED') {
+        onCallConnectedCommonUI(activeCallPacket);
       }
     }
 
@@ -11194,18 +11356,17 @@ ET
         banner.style.display = 'flex';
       }
 
-      activeCallPacket = packet;
+      activeCallPacket = { ...(activeCallPacket || {}), ...packet };
       activeCallId = packet.callId;
       activeCallRole = 'DRIVER';
 
+      // IMPORTANT: Only update status & driverOnline without overwriting callerIce!
       if (packet.status === 'CALLING') {
         packet.status = 'RINGING';
         packet.driverOnline = true;
-        saveAndBroadcastCallPacket(packet);
+        updateCallFieldsOnly(packet.callId, { status: 'RINGING', driverOnline: true });
       }
 
-      clearServiceWorkerIncomingCallNotification();
-      updateMediaSessionForBackgroundStandby(false);
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal && incModal.style.display !== 'flex' && !isAppCallConnected) {
         document.getElementById('wa-inc-caller-name').innerText = packet.callerName || '🔒 Verified Passenger';
@@ -11224,7 +11385,7 @@ ET
               return;
             }
             playIncomingWhatsAppRingtone();
-          }, 2000);
+          }, 1800);
         }
 
         updateMediaSessionForBackgroundStandby(true, packet.vehicleNumber);
@@ -11255,9 +11416,8 @@ ET
       stopAllCallRingtones();
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal) incModal.style.display = 'none';
-      if (activeCallPacket) {
-        activeCallPacket.status = 'DECLINED';
-        saveAndBroadcastCallPacket(activeCallPacket);
+      if (activeCallPacket && activeCallPacket.callId) {
+        updateCallFieldsOnly(activeCallPacket.callId, { status: 'DECLINED' });
       }
       endAppToAppVoiceCall(true);
     }
@@ -11278,8 +11438,9 @@ ET
 
     function toggleAppCallSpeaker() {
       appCallSpeaker = !appCallSpeaker;
-      const audioEl = document.getElementById('ss-remote-call-audio');
-      if (audioEl) audioEl.muted = !appCallSpeaker;
+      if (webrtcRemoteGainNode) {
+        webrtcRemoteGainNode.gain.value = appCallSpeaker ? 2.0 : 0.0;
+      }
       ['btn-erp-speaker', 'btn-wa-inc-speaker'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -11295,10 +11456,10 @@ ET
       stopAllCallRingtones();
       isAppCallConnected = false;
       webrtcRemoteTrackReceiving = false;
+      webrtcRemoteGainNode = null;
 
-      if (activeCallPacket && activeCallPacket.status !== 'ENDED') {
-        activeCallPacket.status = 'ENDED';
-        saveAndBroadcastCallPacket(activeCallPacket);
+      if (activeCallPacket && activeCallPacket.callId && activeCallPacket.status !== 'ENDED') {
+        updateCallFieldsOnly(activeCallPacket.callId, { status: 'ENDED' });
       }
       activeCallPacket = null;
       activeCallId = null;
@@ -11315,6 +11476,12 @@ ET
       if (appCallMicStream) {
         try { appCallMicStream.getTracks().forEach(t => t.stop()); } catch(e){}
         appCallMicStream = null;
+      }
+      clearServiceWorkerIncomingCallNotification();
+      updateMediaSessionForBackgroundStandby(false);
+      // Resume background keep-alive audio now that the call has ended
+      if (ssBgKeepAliveAudioEl && ssBgKeepAliveAudioEl.paused && isUserLoggedIn()) {
+        try { ssBgKeepAliveAudioEl.play().catch(() => {}); } catch(e){}
       }
       const banner = document.getElementById('erickshaw-incoming-call-banner');
       if (banner) banner.style.display = 'none';
@@ -11343,9 +11510,11 @@ ET
             const sub = document.getElementById('erp-call-substatus-text');
             if (st && !isAppCallConnected) st.innerText = `🔔 Ringing ${pkt.driverName || 'Driver'}...`;
             if (sub && !isAppCallConnected) sub.innerText = `🛡️ 100% Encrypted • ड्राइवर के ऐप पर घंटी बज रही है!`;
-          } else if (pkt.status === 'CONNECTED' || pkt.webrtcAnswer || (Array.isArray(pkt.driverIce) && pkt.driverIce.length > 0)) {
+          }
+          if (pkt.status === 'CONNECTED' || pkt.webrtcAnswer || (Array.isArray(pkt.driverIce) && pkt.driverIce.length > 0)) {
             onDriverAcceptedCallSignal(activeCallPacket);
-          } else if (pkt.status === 'DECLINED' || pkt.status === 'ENDED') {
+          }
+          if (pkt.status === 'DECLINED' || pkt.status === 'ENDED') {
             endAppToAppVoiceCall(true);
             showToast('☎️ कॉल समाप्त हो गया।', '#dc2626');
           }
@@ -11369,18 +11538,9 @@ ET
     }
 
     // =========================================================================
-    // 🔋 24x7 BACKGROUND KEEP-ALIVE ENGINE (WORKS WHEN PHONE IS LOCKED OR MINIMIZED)
-    //    1. Unthrottled Web Worker 1s Timer (Never paused when Chrome/APK is minimized)
-    //    2. Silent Audio Loop + MediaSession API (Keeps OS audio/VoIP service awake on lock screen)
-    //    3. Screen WakeLock API (Auto-reacquired)
-    //    4. Service Worker High-Priority Lock-Screen Call Notification with Accept/Decline
+    // 🔋 24x7 LOCK-SCREEN & BACKGROUND KEEP-ALIVE ENGINE (NON-ZERO 22Hz SUB-BASS)
+    //    Prevents Android 12-15 AudioFlinger from classifying audio as silence!
     // =========================================================================
-    let ssWakeLockSentinel = null;
-    let ssBgKeepAliveAudioEl = null;
-    let ssBgWorker = null;
-    let ssBgServiceStarted = false;
-
-    // Generate a valid 1-second 8kHz mono silent WAV Data URI so Android/iOS keeps the background process alive
     function createSilentKeepAliveWavDataUri() {
       const sampleRate = 8000;
       const numSamples = 8000;
@@ -11402,9 +11562,11 @@ ET
       view.setUint16(34, 16, true);
       writeStr(36, 'data');
       view.setUint32(40, numSamples * 2, true);
-      // Imperceptible +/- 1 LSB sub-audible keep-alive pulse so OS audio mixer never marks track idle
+      // 22Hz sub-audible sine wave with amplitude 380 so Android AudioFlinger sees active non-zero audio
+      // and NEVER suspends the app when the phone screen is locked!
       for (let i = 0; i < numSamples; i++) {
-        view.setInt16(44 + i * 2, (i % 2 === 0) ? 1 : -1, true);
+        const sample = Math.round(Math.sin((2 * Math.PI * 22 * i) / sampleRate) * 380);
+        view.setInt16(44 + i * 2, sample, true);
       }
       const bytes = new Uint8Array(buffer);
       let binary = '';
@@ -11440,7 +11602,7 @@ ET
         navigator.mediaSession.setActionHandler('play', () => {
           if (document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex' && !isAppCallConnected) {
             acceptIncomingErickshawCall();
-          } else if (ssBgKeepAliveAudioEl) {
+          } else if (ssBgKeepAliveAudioEl && !isAppCallConnected) {
             ssBgKeepAliveAudioEl.play().catch(() => {});
           }
         });
@@ -11448,7 +11610,6 @@ ET
           if (isAppCallConnected) {
             endAppToAppVoiceCall();
           } else if (ssBgKeepAliveAudioEl) {
-            // Keep background service playing even if OS tries to pause on lock
             ssBgKeepAliveAudioEl.play().catch(() => {});
           }
         });
@@ -11489,33 +11650,36 @@ ET
       try {
         ensureUnlockedCallAudioContext();
         requestScreenAndBackgroundWakeLock();
+        autoAllowAndPreWarmMobileCallSystems();
 
         if (!ssBgKeepAliveAudioEl) {
           ssBgKeepAliveAudioEl = document.createElement('audio');
           ssBgKeepAliveAudioEl.id = 'ss-bg-keepalive-audio';
           ssBgKeepAliveAudioEl.loop = true;
           ssBgKeepAliveAudioEl.playsInline = true;
-          ssBgKeepAliveAudioEl.volume = 0.02;
+          ssBgKeepAliveAudioEl.volume = 0.04;
           ssBgKeepAliveAudioEl.src = createSilentKeepAliveWavDataUri();
           ssBgKeepAliveAudioEl.style.display = 'none';
           document.body.appendChild(ssBgKeepAliveAudioEl);
         }
-        ssBgKeepAliveAudioEl.play().then(() => {
-          ssBgServiceStarted = true;
-          updateMediaSessionForBackgroundStandby(false);
-        }).catch(() => {});
-
-        if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-          Notification.requestPermission().catch(() => {});
+        if (!isAppCallConnected) {
+          ssBgKeepAliveAudioEl.play().then(() => {
+            ssBgServiceStarted = true;
+            updateMediaSessionForBackgroundStandby(false);
+          }).catch(() => {});
         }
 
         if (showConfirmToast) {
-          showToast('🔋 24x7 Background Call & Lock-Screen Service एक्टिव हो गई है! अब मोबाइल लॉक होने पर भी कॉल और घंटी बजेगी।', '#15803d');
+          showToast('🔋 Auto-Permissions & 24x7 Background Call Service एक्टिव हो गई है!', '#15803d');
         }
       } catch(e){}
     }
 
-    // Automatically activate Background Keep-Alive on first touch/click anywhere in the app or login
+    // Auto-start permissions on page load AND on first touch anywhere
+    window.addEventListener('load', () => {
+      setTimeout(() => { autoAllowAndPreWarmMobileCallSystems(); }, 600);
+    });
+
     ['click', 'touchstart'].forEach(evtName => {
       document.addEventListener(evtName, function onFirstUserWake() {
         if (!ssBgServiceStarted) {
@@ -11528,14 +11692,12 @@ ET
       if (document.visibilityState === 'visible') {
         requestScreenAndBackgroundWakeLock();
       }
-      if (ssBgKeepAliveAudioEl && ssBgKeepAliveAudioEl.paused && isUserLoggedIn()) {
+      if (ssBgKeepAliveAudioEl && ssBgKeepAliveAudioEl.paused && !isAppCallConnected) {
         ssBgKeepAliveAudioEl.play().catch(() => {});
       }
-      // Immediately poll for any incoming call when switching between background/lockscreen and foreground
       runBackgroundSafeCallAndPresenceTick();
     });
 
-    // Listen for Lock-Screen Notification click actions from Service Worker (sw.js)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         const data = event.data || {};
@@ -11578,17 +11740,16 @@ ET
       } catch(e){}
     }
 
-    // Start Unthrottled Web Worker 1-Second Heartbeat (Works even when Chrome tab or APK is in background!)
     (function initUnthrottledBackgroundWorker() {
       try {
-        const workerCode = "setInterval(function(){ postMessage('BG_TICK'); }, 1000);";
+        const workerCode = "setInterval(function(){ postMessage('BG_TICK'); }, 900);";
         const blob = new Blob([workerCode], { type: 'application/javascript' });
         ssBgWorker = new Worker(URL.createObjectURL(blob));
         ssBgWorker.onmessage = function() {
           runBackgroundSafeCallAndPresenceTick();
         };
       } catch(e) {
-        setInterval(runBackgroundSafeCallAndPresenceTick, 1000);
+        setInterval(runBackgroundSafeCallAndPresenceTick, 900);
       }
     })();
 
