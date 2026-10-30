@@ -137,8 +137,8 @@ async function checkCloudForIncomingCallInSw() {
       vibrate: [600, 200, 600, 200, 600, 200, 1000],
       data: { callId: pkt.callId || '', packet: pkt },
       actions: [
-        { action: 'accept', title: '📞 Accept Call (उठाएं)' },
-        { action: 'decline', title: '❌ Decline (काटें)' }
+        { action: 'accept', title: '📞 Accept Call' },
+        { action: 'decline', title: '❌ Decline' }
       ]
     };
     await self.registration.showNotification(title, options);
@@ -210,8 +210,8 @@ self.addEventListener('message', (event) => {
       vibrate: [600, 200, 600, 200, 600, 200, 1000],
       data: { callId: pkt.callId || '', packet: pkt },
       actions: [
-        { action: 'accept', title: '📞 Accept Call (उठाएं)' },
-        { action: 'decline', title: '❌ Decline (काटें)' }
+        { action: 'accept', title: '📞 Accept Call' },
+        { action: 'decline', title: '❌ Decline' }
       ]
     };
     event.waitUntil(self.registration.showNotification(title, options));
