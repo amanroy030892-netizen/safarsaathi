@@ -1,15 +1,17 @@
 /*
-  SafarSaathi 24x7 Autonomous Background Call, Lock-Screen Ringing & 12h Live GPS Service Worker
-  (Version: v118-autonomous-12h-live-and-closed-app-call)
-  Works even when Phone is Locked or App is Minimized/Cut!
+  SafarSaathi 24x7 Autonomous Background Call, Auto-Connect & 12h Pinpoint Road-GPS Service Worker
+  (Version: v120-pinpoint-road-gps-and-autoconnect)
+  Keeps Driver 100% Online & Connects Incoming Calls even when Phone is Locked or Chrome/App is Cut!
 */
-const CACHE_NAME = 'safarsaathi-v118-autonomous-12h-live-and-closed-app-call';
-const RTDB_LATEST_CALL_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json';
+const CACHE_NAME = 'safarsaathi-v120-pinpoint-road-gps-and-autoconnect';
+const RTDB_BASE_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com';
+const RTDB_LATEST_CALL_URL = RTDB_BASE_URL + '/ss_active_calls/LATEST_ACTIVE_CALL.json';
 const FIRESTORE_LATEST_CALL_URL = 'https://firestore.googleapis.com/v1/projects/safarsaathi-1de86/databases/(default)/documents/ss_active_calls/LATEST_ACTIVE_CALL';
 
 let swDriverIdentity = null;
 let swLastNotifiedCallId = '';
 let swWatchLoopTimer = null;
+let swLastPresencePushMs = 0;
 
 function readDriverIdentityFromIdb() {
   return new Promise((resolve) => {
@@ -75,8 +77,36 @@ function parseFirestoreRestDoc(docJson) {
   return out;
 }
 
+async function maintainDriver12hOnlineInSw() {
+  try {
+    const now = Date.now();
+    if (now - swLastPresencePushMs < 12000) return;
+    swLastPresencePushMs = now;
+    if (!swDriverIdentity) {
+      swDriverIdentity = await readDriverIdentityFromIdb();
+    }
+    if (!swDriverIdentity || (!swDriverIdentity.phone && !swDriverIdentity.deviceId)) return;
+
+    const entry = {
+      phone: swDriverIdentity.phone || '',
+      name: swDriverIdentity.name || 'Active Driver',
+      deviceId: swDriverIdentity.deviceId || '',
+      lastSeen: now,
+      status: 'ONLINE'
+    };
+    const key = entry.phone || ('DEV_' + entry.deviceId);
+    fetch(`${RTDB_BASE_URL}/ss_online_presence/${encodeURIComponent(key)}.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    }).catch(() => {});
+  } catch (e) {}
+}
+
 async function checkCloudForIncomingCallInSw() {
   try {
+    await maintainDriver12hOnlineInSw();
+
     if (!swDriverIdentity) {
       swDriverIdentity = await readDriverIdentityFromIdb();
     }
@@ -108,37 +138,50 @@ async function checkCloudForIncomingCallInSw() {
 
     // Do not ring on the Caller's own phone
     if (swDriverIdentity && swDriverIdentity.deviceId && pkt.callerDeviceId === swDriverIdentity.deviceId) {
-      return;
+      const isSameDriverAccount = swDriverIdentity.phone && pkt.driverPhone && String(swDriverIdentity.phone).trim() === String(pkt.driverPhone).trim();
+      if (!isSameDriverAccount) return;
     }
 
-    // Acknowledge RINGING back to RTDB so Caller sees "🔔 Ringing..." even when Driver's phone is locked/closed!
+    // Acknowledge RINGING back to RTDB immediately so Caller hears ringing even when Driver's Chrome/App is closed!
     if (pkt.status === 'CALLING') {
       try {
         fetch(RTDB_LATEST_CALL_URL, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'RINGING', driverOnline: true, updatedAt: Date.now() })
+          body: JSON.stringify({ status: 'RINGING', sipMethod: '180_RINGING', driverOnline: true, updatedAt: Date.now() })
         }).catch(() => {});
       } catch (e) {}
     }
+
+    // If any open/minimized window client exists, wake it and trigger auto-connect immediately!
+    try {
+      const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      for (const client of clientList) {
+        client.postMessage({
+          type: 'SW_INCOMING_CALL_ACTION',
+          action: 'accept',
+          packet: pkt
+        });
+      }
+    } catch (e) {}
 
     if (swLastNotifiedCallId === pkt.callId) return;
     swLastNotifiedCallId = pkt.callId;
 
     const veh = pkt.vehicleNumber || 'Live Vehicle';
-    const title = '🔔 SafarSaathi Incoming Voice Call';
+    const title = '🔔 SafarSaathi Incoming Call (Auto-Connecting)';
     const options = {
-      body: `🔒 Verified Passenger is calling for ${veh} (Number Hidden). Tap Accept to Talk!`,
+      body: `🔒 Verified Passenger calling for ${veh}. Tap anywhere to talk now!`,
       icon: 'icon-192.png',
       badge: 'icon-192.png',
       tag: 'safarsaathi-incoming-call',
       renotify: true,
       requireInteraction: true,
-      vibrate: [600, 200, 600, 200, 600, 200, 1000],
+      vibrate: [700, 180, 700, 180, 700, 180, 1200],
       data: { callId: pkt.callId || '', packet: pkt },
       actions: [
-        { action: 'accept', title: '📞 Accept Call' },
-        { action: 'decline', title: '❌ Decline' }
+        { action: 'accept', title: '📞 Talk Now (Connected)' },
+        { action: 'decline', title: '❌ End / Decline' }
       ]
     };
     await self.registration.showNotification(title, options);
@@ -149,7 +192,7 @@ function ensureSwBackgroundWatchLoop() {
   if (swWatchLoopTimer) return;
   swWatchLoopTimer = setInterval(() => {
     checkCloudForIncomingCallInSw();
-  }, 1500);
+  }, 1400);
 }
 
 self.addEventListener('install', (event) => {
@@ -195,23 +238,24 @@ self.addEventListener('message', (event) => {
   if (data.type === 'REGISTER_DRIVER_BG_IDENTITY' && data.identity) {
     swDriverIdentity = data.identity;
     saveDriverIdentityToIdb(data.identity);
+    maintainDriver12hOnlineInSw();
   } else if (data.type === 'SHOW_INCOMING_CALL_NOTIFICATION') {
     const pkt = data.packet || {};
     swLastNotifiedCallId = pkt.callId || '';
     const veh = pkt.vehicleNumber || 'Live Vehicle';
-    const title = '🔔 SafarSaathi Incoming Voice Call';
+    const title = '🔔 SafarSaathi Incoming Call (Auto-Connecting)';
     const options = {
-      body: `🔒 Verified Passenger is calling for ${veh} (Number Hidden). Tap to Accept & Talk!`,
+      body: `🔒 Verified Passenger calling for ${veh}. Tap anywhere to talk now!`,
       icon: 'icon-192.png',
       badge: 'icon-192.png',
       tag: 'safarsaathi-incoming-call',
       renotify: true,
       requireInteraction: true,
-      vibrate: [600, 200, 600, 200, 600, 200, 1000],
+      vibrate: [700, 180, 700, 180, 700, 180, 1200],
       data: { callId: pkt.callId || '', packet: pkt },
       actions: [
-        { action: 'accept', title: '📞 Accept Call' },
-        { action: 'decline', title: '❌ Decline' }
+        { action: 'accept', title: '📞 Talk Now (Connected)' },
+        { action: 'decline', title: '❌ End / Decline' }
       ]
     };
     event.waitUntil(self.registration.showNotification(title, options));
@@ -224,7 +268,6 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Wake up / open app window and auto-connect call even if the app was completely closed/cut!
 self.addEventListener('notificationclick', (event) => {
   const action = event.action || 'accept';
   const notifData = event.notification ? event.notification.data : {};
