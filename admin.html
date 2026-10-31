@@ -86,7 +86,7 @@
       padding: 0;
       overflow: hidden;
       overscroll-behavior: none;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
       color: #0f172a;
       -webkit-font-smoothing: antialiased;
       -webkit-tap-highlight-color: transparent;
@@ -100,13 +100,13 @@
       flex-direction: column;
       overflow: hidden;
       position: relative;
-      background: #f8fafc;
+      background: rgba(248, 250, 252, 0.54); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%);
     }
 
     .admin-top-bar {
       flex: 0 0 auto;
       width: 100%;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       z-index: 1000;
       border-bottom: 1.5px solid #e2e8f0;
@@ -142,7 +142,7 @@
     }
 
     .admin-nav-btn {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
       border: 1.5px solid #cbd5e1;
       border-radius: 10px;
       padding: 0.42rem 0.2rem;
@@ -214,7 +214,7 @@
 
     .card {
       width: 100%;
-      background: #0f172a;
+      background: rgba(15, 23, 42, 0.76); backdrop-filter: blur(18px) saturate(185%); -webkit-backdrop-filter: blur(18px) saturate(185%);
       color: #ffffff;
       border: 2px solid #16a34a;
       border-radius: 16px;
@@ -272,7 +272,7 @@
     }
 
     .modal-box {
-      background: #0f172a;
+      background: rgba(15, 23, 42, 0.76); backdrop-filter: blur(18px) saturate(185%); -webkit-backdrop-filter: blur(18px) saturate(185%);
       border: 2px solid #16a34a;
       border-radius: 18px;
       padding: 1.15rem;
@@ -280,6 +280,76 @@
       max-width: 440px;
       color: #ffffff;
     }
+  
+    /* =========================================================================
+       💎 SAFARSAATHI ADMIN PORTAL — COMPLETE GLASSMORPHISM ("GLASS DESIGN")
+       ========================================================================= */
+    html, body {
+      background:
+        radial-gradient(circle at 14% 16%, rgba(16, 185, 129, 0.34) 0%, transparent 42%),
+        radial-gradient(circle at 86% 20%, rgba(6, 182, 212, 0.32) 0%, transparent 44%),
+        radial-gradient(circle at 80% 82%, rgba(59, 130, 246, 0.28) 0%, transparent 46%),
+        radial-gradient(circle at 18% 84%, rgba(34, 197, 94, 0.30) 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #064e3b 100%) !important;
+      background-attachment: fixed !important;
+    }
+
+    #admin-app-shell {
+      background:
+        radial-gradient(circle at 22% 28%, rgba(16, 185, 129, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 78% 72%, rgba(56, 189, 248, 0.20) 0%, transparent 45%),
+        rgba(15, 23, 42, 0.35) !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .admin-top-bar {
+      background: rgba(15, 23, 42, 0.52) !important;
+      backdrop-filter: blur(22px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(22px) saturate(190%) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.22) !important;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, rgba(6, 95, 70, 0.78), rgba(16, 185, 129, 0.70), rgba(14, 116, 144, 0.74)) !important;
+      backdrop-filter: blur(20px) saturate(195%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(195%) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.32) !important;
+    }
+
+    .admin-nav-btn {
+      background: rgba(255, 255, 255, 0.72) !important;
+      backdrop-filter: blur(16px) saturate(185%) !important;
+      -webkit-backdrop-filter: blur(16px) saturate(185%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.85) !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), inset 0 1px 1.5px rgba(255, 255, 255, 0.9) !important;
+    }
+
+    .admin-nav-btn.active {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.88), rgba(5, 150, 105, 0.92)) !important;
+      border-color: rgba(167, 243, 208, 0.95) !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.42), inset 0 1.5px 2px rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .card, .modal-box {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.68), rgba(30, 41, 59, 0.58)) !important;
+      backdrop-filter: blur(24px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.26) !important;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.22) !important;
+    }
+
+    .form-control {
+      background: rgba(15, 23, 42, 0.56) !important;
+      backdrop-filter: blur(14px) !important;
+      -webkit-backdrop-filter: blur(14px) !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.25) !important;
+    }
+
   </style>
 </head>
 <body>
@@ -305,7 +375,7 @@
           <button type="button" onclick="syncAdminWithCloud(true)" style="background: rgba(255,255,255,0.18); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
             🔄 Sync
           </button>
-          <button type="button" onclick="window.location.assign('index.' + 'html')" style="background: #ffffff; color: #15803d; border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.7rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+          <button type="button" onclick="window.location.assign('index.' + 'html')" style="background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #15803d; border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.7rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
             🚗 App ➔
           </button>
           <button type="button" id="btn-top-adm-logout" onclick="logoutAdmin()" style="display: none; background: #dc2626; color: #ffffff; border: none; border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
@@ -370,14 +440,14 @@
 
     <main id="admin-main-scroll">
       <!-- 🔐 LOGIN CARD (SHOWN BEFORE AUTHENTICATION) -->
-      <div id="admin-login-card" class="card" style="max-width: 400px; margin: 1.5rem auto; text-align: center; background: #ffffff; color: #0f172a; border: 2px solid #16a34a;">
+      <div id="admin-login-card" class="card" style="max-width: 400px; margin: 1.5rem auto; text-align: center; background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #0f172a; border: 2px solid #16a34a;">
         <div style="font-size: 2.1rem; margin-bottom: 0.3rem;">🔐</div>
         <h2 style="font-size: 1.12rem; font-weight: 900; margin-bottom: 0.25rem; color: #0f172a;">SafarSaathi Admin App Login</h2>
         <p style="font-size: 0.74rem; color: #475569; margin-bottom: 0.75rem;">
           Admin Secret Key  —       Click & Flip  :
         </p>
 
-        <input type="password" id="admin-pin-input" class="form-control" placeholder="Enter Admin Secret Key" onkeypress="if(event.key==='Enter') verifyAdminPin()" style="text-align: center; font-size: 1rem; letter-spacing: 2px; margin-bottom: 0.75rem; background: #f8fafc; color: #0f172a; border: 1.5px solid #16a34a; font-weight: 900;">
+        <input type="password" id="admin-pin-input" class="form-control" placeholder="Enter Admin Secret Key" onkeypress="if(event.key==='Enter') verifyAdminPin()" style="text-align: center; font-size: 1rem; letter-spacing: 2px; margin-bottom: 0.75rem; background: rgba(248, 250, 252, 0.54); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); color: #0f172a; border: 1.5px solid #16a34a; font-weight: 900;">
         <button type="button" id="btn-admin-login" class="btn btn-primary" onclick="verifyAdminPin()" style="width: 100%; padding: 0.7rem; font-size: 0.88rem;">
           🔓 Open Click & Flip Admin App ➔
         </button>
@@ -1476,7 +1546,7 @@
               ${erList.map(er => `
                 <div style="background:rgba(2,6,23,0.9); border:1.5px solid #22c55e; border-radius:9px; padding:0.55rem 0.7rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
                   <div>
-                    <div style="font-size:0.82rem; font-weight:900; color:#ffffff;">🛺 ${er.driverName} <span style="background:#fef08a; color:#0f172a; padding:1px 6px; border-radius:4px; font-size:0.7rem;">${er.vehicleNumber}</span></div>
+                    <div style="font-size:0.82rem; font-weight:900; color:#ffffff;">🛺 ${er.driverName} <span style="background: rgba(254, 240, 138, 0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color:#0f172a; padding:1px 6px; border-radius:4px; font-size:0.7rem;">${er.vehicleNumber}</span></div>
                     <div style="font-size:0.72rem; color:#cbd5e1;">📞 +91 ${er.driverPhone || 'N/A'} • 🛣️ ${er.standArea}</div>
                     <div style="font-size:0.7rem; color:#fbbf24; font-family:monospace; font-weight:900;">💰 ₹100 Bank UTR: ${er.utrNumber || 'VERIFIED'} • 📍 GPS: ${(Number(er.lat)||26.1445).toFixed(4)}°N, ${(Number(er.lng)||91.7362).toFixed(4)}°E</div>
                   </div>
@@ -1547,7 +1617,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 6px;">
               <div>
                 <strong style="color: #ffffff; font-size: 0.96rem;">${r.vehicleModel || 'Car'}</strong>
-                <span style="background: #ffffff; color: #000000; font-family: monospace; font-size: 0.76rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; margin-left: 5px;">
+                <span style="background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #000000; font-family: monospace; font-size: 0.76rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; margin-left: 5px;">
                   ${r.vehicleNumber || 'AS 01'}
                 </span>
               </div>
@@ -2355,7 +2425,7 @@
           <div style="background: rgba(15,23,42,0.92); border: 1.5px solid ${isConfirmed ? '#22c55e' : '#fbbf24'}; border-radius: 10px; padding: 0.7rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
             <div>
               <div style="font-size: 0.86rem; font-weight: 900; color: #86efac;">
-                🛺 ${er.driverName} <span style="background:#fef08a; color:#0f172a; padding:1px 6px; border-radius:4px; font-size:0.72rem;">${er.vehicleNumber}</span> • 🟢 1s Live Route GPS
+                🛺 ${er.driverName} <span style="background: rgba(254, 240, 138, 0.68); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color:#0f172a; padding:1px 6px; border-radius:4px; font-size:0.72rem;">${er.vehicleNumber}</span> • 🟢 1s Live Route GPS
               </div>
               <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 2px;">
                 🛣️ Roaming Route: <b>${er.standArea}</b> • 📞 Mobile: <b style="color:#38bdf8;">+91 ${er.driverPhone || 'N/A'}</b>
