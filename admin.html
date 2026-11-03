@@ -444,7 +444,7 @@
         <div style="font-size: 2.1rem; margin-bottom: 0.3rem;">🔐</div>
         <h2 style="font-size: 1.12rem; font-weight: 900; margin-bottom: 0.25rem; color: #0f172a;">SafarSaathi Admin App Login</h2>
         <p style="font-size: 0.74rem; color: #475569; margin-bottom: 0.75rem;">
-          Admin Secret Key  —       Click & Flip  :
+          Enter Admin Secret Key to unlock all 8 Click & Flip management categories:
         </p>
 
         <input type="password" id="admin-pin-input" class="form-control" placeholder="Enter Admin Secret Key" onkeypress="if(event.key==='Enter') verifyAdminPin()" style="text-align: center; font-size: 1rem; letter-spacing: 2px; margin-bottom: 0.75rem; background: rgba(248, 250, 252, 0.54); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); color: #0f172a; border: 1.5px solid #16a34a; font-weight: 900;">
@@ -470,7 +470,7 @@
                   <span>🪙</span> <span>Category 1: Game Coin UTR Verification (1x Exact Credit)</span>
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                     (50 / 100 / 200 / 500)  UTR , Confirm   <b>     </b>  (Double/Repeat Credit Lock Active):
+                     Verify submitted (50 / 100 / 200 / 500) UTR requests and click Confirm to credit <b>exact 1x coins once</b> (Double/Repeat Credit Lock Active):
                 </span>
               </div>
               <button type="button" class="btn btn-secondary" onclick="syncAdminWithCloud(true)" style="font-size: 0.72rem; padding: 4px 9px;">
@@ -485,7 +485,7 @@
                   💼 Local / Test Player Wallet Balance: <span id="adm-current-wallet-coins" style="color: #fde047; font-size: 0.95rem; font-family: monospace;">100</span> Coins
                 </div>
                 <div style="font-size: 0.65rem; color: #cbd5e1;">
-                              ,        :
+Adjust or reset local test player coin balance directly from here:
                 </div>
               </div>
               <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
@@ -514,7 +514,7 @@
                   🚗 Category 2: Driver ₹100 Platform Fee UTR & Fleet (<span id="adm-stat-total">0</span> Total • <span id="adm-stat-active" style="color:#4ade80;">0</span> Live)
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                    ₹100   UTR          UTR  :
+                    Verify Driver ₹100 Platform Fee UTR to keep car listings live or reject invalid UTRs:
                 </span>
               </div>
               <div style="display: flex; gap: 5px;">
@@ -542,7 +542,7 @@
                   🎟️ Category 3: Passenger Bookings & Boarding Pass UTRs
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                     UTR  , PDF     WhatsApp  :
+                     Verify passenger seat booking UTRs, download boarding pass PDFs, or contact via WhatsApp:
                 </span>
               </div>
               <button type="button" class="btn btn-secondary" onclick="syncAdminWithCloud(true)" style="font-size: 0.72rem; padding: 5px 9px;">
@@ -565,7 +565,7 @@
                   🚴 Category 4: Live 3D Cycle Race Bet Pool & 2x Rule Monitor
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                                 <b>   (Lowest Bet)</b>     :
+                                 Live round monitor — Rider with the <b>Lowest Total Coins</b> wins the round:
                 </span>
               </div>
               <span id="adm-game-round-pill" style="background: #14532d; color: #a3e635; border: 1px solid #a3e635; padding: 3px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 900; font-family: monospace;">
@@ -578,9 +578,9 @@
             </div>
 
             <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid #334155; border-radius: 10px; padding: 0.65rem; font-size: 0.74rem; color: #cbd5e1; line-height: 1.5;">
-              <div>✅ <b> 1 (Lowest Bet Wins):</b> Rider A, Rider B, Rider C (LowestBetBikeRace)           ,    -   #1  </div>
-              <div>✅ <b> 2 (Exact 2.0x Payout):</b>        ,   <b>2  (Bet × 2)</b>  </div>
-              <div>✅ <b> 3 (Customer Own Bet Visibility):</b>               ,        </div>
+              <div>✅ <b>Rule 1 (Lowest Pool Wins):</b> Among Rider A, Rider B, and Rider C, the rider with the lowest total pool finishes #1.</div>
+              <div>✅ <b>Rule 2 (Exact 2.0x Reward):</b> Winning rider picks receive <b>2x Free Play Coins (Pick × 2)</b>.</div>
+              <div>✅ <b>Rule 3 (Live Selection Visibility):</b> Players can view their active rider selections in real time during the race.</div>
             </div>
           </div>
         </section>
@@ -596,7 +596,7 @@
                   👥 Category 5: KYC Users, 🎁 Referral Stock & 🔟 10-Ride Completion Tracker
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                         ,  10   ,         :
+                         Track Aadhaar-verified users, ₹100 referral balances, 10-ride milestones, and ₹20 payout requests:
                 </span>
               </div>
               <button type="button" class="btn btn-secondary" onclick="syncAdminWithCloud(true)" style="font-size: 0.72rem; padding: 5px 9px;">
@@ -622,7 +622,7 @@
                   🎬 Category 6: Profile Home Sponsor Video Ad Manager
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                              :
+Manage and publish the sponsor video ad shown on the Profile home screen:
                 </span>
               </div>
             </div>
@@ -697,7 +697,7 @@
                   🛺 Category 7: 12-Hour Live E-Rickshaws (₹100 Charge • Direct App Voice Call)
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                      - 12              :
+                      Verify ₹100 UTRs for 12-Hour Live E-Rickshaw GPS listings and manage active drivers:
                 </span>
               </div>
               <button type="button" class="btn btn-secondary" onclick="renderAdminErickshaws()" style="font-size: 0.72rem; padding: 4px 10px;">
@@ -719,7 +719,7 @@
                   🚨 Category 8: Customer & Driver Complaints Box
                 </h3>
                 <span style="font-size: 0.7rem; color: #cbd5e1;">
-                             Resolve :
+                             Review customer and driver complaints and mark them Resolved:
                 </span>
               </div>
               <button type="button" class="btn btn-secondary" onclick="renderAdminComplaints()" style="font-size: 0.72rem; padding: 4px 10px;">
@@ -1326,7 +1326,7 @@
       if (coinRequests.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; color: #94a3b8; padding: 1.25rem 1rem; background: rgba(2,6,23,0.55); border: 1.5px dashed #475569; border-radius: 12px; font-size: 0.8rem;">
-            🪙    Game Coin UTR   
+            🪙 Pending Game Coin UTR   
           </div>
         `;
         return;
@@ -2044,10 +2044,13 @@
 
         return `
           <div style="background: rgba(2,6,23,0.92); border: 1.5px solid ${hasPendingEdit ? '#f59e0b' : (ridesCnt >= 10 ? '#22c55e' : '#4f46e5')}; border-radius: 12px; padding: 0.75rem; font-size: 0.74rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 6px; flex-wrap: wrap;">
-              <strong style="color: #ffffff; font-size: 0.88rem;">👤 ${u.name || 'User'}</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 6px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <img src="${u.profilePhoto || u.dailySelfiePhoto || 'driver_photo_avatar.png'}" alt="User Photo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #22c55e;">
+                <strong style="color: #ffffff; font-size: 0.88rem;">${u.name || 'User'}</strong>
+              </div>
               <span style="background: #14532d; color: #86efac; border: 1px solid #22c55e; font-size: 0.6rem; font-weight: 900; padding: 1px 6px; border-radius: 999px;">
-                🪪 Aadhaar Matched ✓
+                🪪 Aadhaar ${u.dailySelfieDate ? '• 🤳 Selfie ✓' : 'Matched ✓'}
               </span>
             </div>
             <div style="color: #cbd5e1;">📱 Permanent ID: <b style="color: #38bdf8; font-family: monospace;">+91 ${uid}</b> 🔒</div>
@@ -2055,7 +2058,7 @@
 
             <!-- 🎁 Referral Stock Info -->
             <div style="background: rgba(20,83,45,0.35); border: 1px solid #22c55e; border-radius: 8px; padding: 5px 7px; margin-bottom: 6px; font-size: 0.68rem;">
-              <div style="color: #86efac; font-weight: 900;">🎁 Referral Stock: <b>${refsDone} Completed</b> •    (Deposited): <b style="color:#fde047;">₹${refBal}</b></div>
+              <div style="color: #86efac; font-weight: 900;">🎁 Referral Stock: <b>${refsDone} Completed</b> • Wallet Balance (Deposited): <b style="color:#fde047;">₹${refBal}</b></div>
               <div style="color: #cbd5e1; font-size: 0.64rem; margin-top: 2px;">
                 Referred By: <b>${u.referredBy ? ('+91 ' + u.referredBy + (u.referralRewardCredited ? ' (✅ ₹100 Credited)' : ' (⏳ Waiting 1st Ride/Post)')) : 'Direct Organic User'}</b>
               </div>
@@ -2412,7 +2415,7 @@
       if (!container) return;
 
       if (list.length === 0) {
-        container.innerHTML = `<div style="padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.8rem; background: rgba(15,23,42,0.6); border-radius: 10px;">0 Fake Data!     ₹100   12-  UTR   -  ,  1        !</div>`;
+        container.innerHTML = `<div style="padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.8rem; background: rgba(15,23,42,0.6); border-radius: 10px;">0 Fake Data! When a driver pays ₹100 and submits a 12-digit UTR to post an E-Rickshaw, it will appear here in 1 second!</div>`;
         return;
       }
 

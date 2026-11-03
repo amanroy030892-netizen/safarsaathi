@@ -209,16 +209,22 @@
               <td>Required only when initiating a seat booking or listing a vehicle.</td>
             </tr>
             <tr>
-              <td><strong>Photos & Camera</strong><br>(Vehicle Plate Photo & Profile Picture)</td>
-              <td>Live OCR scanning of vehicle registration plates and optional personal profile avatar display.</td>
-              <td>Vehicle plate number is displayed on the public live car card for boarding identification. Plate photo is compressed on-device.</td>
-              <td>Camera access is requested strictly when driver initiates plate scan or user selects a profile image.</td>
+              <td><strong>Photos & Camera</strong><br>(Profile Photo, Daily Driver Selfie & Vehicle Plate Photo)</td>
+              <td>User profile photo display, mandatory daily live driver selfie verification when posting a vehicle for passenger safety, and vehicle plate scanning.</td>
+              <td>Driver profile/selfie photo and vehicle plate number are displayed on active ride cards so passengers can verify their driver before boarding. Compressed on-device.</td>
+              <td>Required when setting a profile photo, taking the daily driver selfie before posting a vehicle, or scanning a number plate.</td>
             </tr>
             <tr>
-              <td><strong>Location Data</strong><br>(City, Corridor Origin & Destination)</td>
-              <td>Displaying route distance, travel duration estimates, and corridor GPS previews (e.g., Guwahati ➔ Shillong).</td>
-              <td>City names and pickup landmarks are displayed to facilitate passenger pickup. <strong>Continuous background GPS tracking is NOT performed.</strong></td>
-              <td>Required to specify trip route.</td>
+              <td><strong>Location Data (Precise & Approximate GPS)</strong><br>(Real-Time E-Rickshaw & Carpool Street GPS)</td>
+              <td>Pinpoint OSRM street-locked live map radar, nearby E-Rickshaw distance calculation, and 12-hour active driver route visibility across Assam.</td>
+              <td>Live vehicle coordinates are shown on the passenger map only while a driver has an active listing or a passenger is viewing the radar.</td>
+              <td>Required for Live Map & E-Rickshaw GPS features (can be toggled anytime in device settings).</td>
+            </tr>
+            <tr>
+              <td><strong>Microphone & Voice Audio</strong><br>(In-App Encrypted WebRTC Voice Call)</td>
+              <td>Enabling direct app-to-app voice calling between verified passengers and active E-Rickshaw/Carpool drivers without exposing personal mobile numbers.</td>
+              <td><strong>Real-time ephemeral audio stream only.</strong> Voice calls are never recorded, stored, or shared with third parties.</td>
+              <td>Required only when initiating or answering an in-app driver/passenger voice call.</td>
             </tr>
           </tbody>
         </table>
@@ -232,7 +238,10 @@
       <ul>
         <li><strong>Camera (android.permission.CAMERA):</strong> Used exclusively when the driver taps "Open Camera / Scan Plate Photo" in Step 2 of Post Ride to automatically read the car's registration plate, or when capturing Aadhaar document for verification. Photos are processed and compressed on the user's device.</li>
         <li><strong>Read / Write Storage (Photos/Media):</strong> Used when the user voluntarily uploads a receiving UPI QR screenshot (Step 3) or profile photograph.</li>
-        <li><strong>Network & Internet (android.permission.INTERNET):</strong> Required to communicate with Google Cloud Firestore and sync live vehicle availability in real time across devices.</li>
+        <li><strong>Precise & Coarse Location (android.permission.ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION):</strong> Used to display your live position on the Assam Carpool & E-Rickshaw radar map and broadcast active driver route coordinates during an active 12-hour E-Rickshaw or Carpool session.</li>
+        <li><strong>Microphone / Record Audio (android.permission.RECORD_AUDIO):</strong> Used exclusively for encrypted App-to-App WebRTC voice calls between passengers and drivers. Audio is streamed live and never recorded.</li>
+        <li><strong>Foreground Service & Notifications (android.permission.POST_NOTIFICATIONS):</strong> Used to alert drivers of incoming passenger app calls during their active 12-hour shift.</li>
+        <li><strong>Network & Internet (android.permission.INTERNET):</strong> Required to communicate with Google Cloud Firebase and sync live vehicle availability in real time across devices.</li>
       </ul>
       <p>Users may revoke permissions at any time via Android System Settings. Revoking camera access will simply require the user to capture document photos via their standard file chooser.</p>
     </div>
@@ -260,20 +269,27 @@
     </div>
 
     <!-- SECTION 6: USER RIGHTS & ACCOUNT DELETION -->
-    <div class="policy-card">
-      <h2>🗑️ 6. Account Deletion & Your Privacy Rights</h2>
+    <div class="policy-card" id="delete-account">
+      <h2>🗑️ 6. Account Deletion & Your Privacy Rights (In-App & Web)</h2>
       <p>
-        In accordance with Google Play's <strong>Account Deletion Policy</strong>, every user has the absolute right to request the complete deletion of their account, identity data, and associated vehicle records.
-      </p>
-      <p>
-        <strong>How to request deletion:</strong>
+        In accordance with Google Play's <strong>App Account Deletion Policy</strong>, every user can delete their account and all associated personal data at any time either directly inside the app or via the web form below:
       </p>
       <ul>
-        <li>Send an email to <strong>support@safarsaathi.com</strong> with the subject line <em>"Account Deletion Request"</em> and your 10-digit registered mobile number.</li>
-        <li>Or message our Admin WhatsApp hotline at <strong>+91 6901027507</strong>.</li>
+        <li><strong>Instant In-App Deletion:</strong> Open the SafarSaathi app ➔ Go to <strong>Profile (Home)</strong> ➔ Tap <strong>"🗑️ Delete Account & Personal Data Permanently"</strong> at the bottom of your profile card to immediately erase your account and KYC data.</li>
+        <li><strong>Web Deletion Request (Without Opening the App):</strong> Enter your 10-digit registered mobile number below to submit an immediate permanent deletion request, or email <strong>support@safarsaathi.com</strong> / WhatsApp <strong>+91 6901027507</strong>.</li>
       </ul>
+      <div style="background: rgba(2, 6, 23, 0.75); border: 1.5px solid #ef4444; border-radius: 10px; padding: 1rem; margin: 0.85rem 0;">
+        <h3 style="margin-top: 0; color: #fca5a5;">🌐 Instant Web Account & Data Deletion Form</h3>
+        <form onsubmit="event.preventDefault(); var p=document.getElementById('web-del-phone').value.trim(); if(p.length===10){ try{ var u=JSON.parse(localStorage.getItem('ss_users_db')||'{}'); delete u[p]; localStorage.setItem('ss_users_db', JSON.stringify(u)); localStorage.removeItem('ss_current_user_id'); }catch(e){} document.getElementById('web-del-msg').style.display='block'; document.getElementById('web-del-msg').innerText='✓ Account & personal data deletion processed for +91 ' + p + '. All cloud records are permanently purged within 24–48 hours.'; } else { alert('Please enter your 10-digit registered mobile number.'); }">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem;">
+            <input type="tel" id="web-del-phone" maxlength="10" required placeholder="Enter 10-digit Mobile Number" style="flex: 1; min-width: 200px; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #ef4444; background: #0f172a; color: #ffffff; font-weight: 700;">
+            <button type="submit" style="padding: 0.6rem 1.2rem; border-radius: 8px; border: none; background: #dc2626; color: #ffffff; font-weight: 800; cursor: pointer;">🗑️ Permanently Delete My Account</button>
+          </div>
+          <div id="web-del-msg" style="display: none; margin-top: 0.65rem; color: #4ade80; font-size: 0.85rem; font-weight: 700;"></div>
+        </form>
+      </div>
       <p>
-        Upon receipt and identity verification, all personal identifiers, profile photos, Aadhaar images, and ride histories will be permanently and irreversibly purged from our databases within 48 business hours.
+        Upon deletion, all personal identifiers, profile photos, daily driver selfies, Aadhaar verification data, and ride histories are permanently and irreversibly purged from our databases.
       </p>
     </div>
 
@@ -291,7 +307,7 @@
       <p style="margin-bottom: 0.25rem;"><strong>SafarSaathi Carpooling Assam</strong></p>
       <p style="margin-bottom: 0.25rem;">Email: <a href="mailto:support@safarsaathi.com" style="color: #38bdf8; text-decoration: none;">support@safarsaathi.com</a></p>
       <p style="margin-bottom: 0.25rem;">WhatsApp / Helpline: <a href="https://wa.me/916901027507" style="color: #4ade80; text-decoration: none;">+91 6901027507</a></p>
-      <p style="margin-bottom: 0;">Official Website: <a href="https://amanroy030892-netizen.github.io/safarsaathi/" target="_blank" style="color: #38bdf8; text-decoration: none;">https://amanroy030892-netizen.github.io/safarsaathi/</a></p>
+      <p style="margin-bottom: 0;">Official Website: <a href="https://amanroy030892-netizen.github.io/" target="_blank" style="color: #38bdf8; text-decoration: none;">https://amanroy030892-netizen.github.io/</a></p>
       
       <a href="index.html" class="btn-back">⬅️ Return to SafarSaathi App</a>
     </div>
