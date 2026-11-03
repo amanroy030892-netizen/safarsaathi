@@ -186,12 +186,10 @@
 
             const secProf = document.getElementById('section-profile');
             if (secProf && secProf.style.display !== 'none' && profVidBox && profVidBox.style.display !== 'none') {
-              const over = secProf.offsetHeight - availH;
-              if (over > 0) {
-                autoProfVidH = Math.max(48, autoProfVidH - over - 2);
-                profVidBox.style.height = `${autoProfVidH}px`;
-                profVidBox.style.maxHeight = `${autoProfVidH}px`;
-              }
+              const nonVidH = Math.max(0, secProf.offsetHeight - profVidBox.offsetHeight);
+              const exactVidH = Math.max(64, Math.min(availH - nonVidH - 4, 165));
+              profVidBox.style.height = `${exactVidH}px`;
+              profVidBox.style.maxHeight = `${exactVidH}px`;
             }
 
             const secLiveEr = document.getElementById('section-live-erickshaw');
@@ -420,28 +418,28 @@
     .header-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       white-space: nowrap;
-      overflow: hidden;
+      overflow: visible;
+      flex-shrink: 0;
     }
 
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       text-decoration: none;
       color: #ffffff;
-      font-size: 1.25rem;
+      font-size: 1.18rem;
       font-weight: 900;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
       white-space: nowrap;
       flex-shrink: 0;
     }
 
     .brand-logo .brand-highlight {
-      background: linear-gradient(135deg, #dcfce7, #86efac);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #86efac !important;
+      -webkit-text-fill-color: #86efac !important;
     }
 
     .live-status-pill {
@@ -1280,23 +1278,23 @@
 
   <!-- 📱 PINNED TOP BAR: HEADER + 6 NAVIGATION BUTTONS (NEVER SCROLLS AWAY) -->
   <header id="app-top-header" class="app-top-header">
-    <div class="app-header">
-      <div class="header-left">
-        <a href="#" class="brand-logo" onclick="showSection('profile'); return false;" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-          <img src="safarsaathi_logo_transparent.png" alt="SafarSaathi Logo" style="height: 32px; width: auto; object-fit: contain; vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
-          <span style="font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px; color: #ffffff;">Safar<span class="brand-highlight" style="color: #86efac;">Saathi</span></span>
+    <div class="app-header" style="gap: 6px;">
+      <div class="header-left" style="flex-shrink: 0; overflow: visible;">
+        <a href="#" class="brand-logo" onclick="showSection('profile'); return false;" style="display: flex; align-items: center; gap: 6px; text-decoration: none; flex-shrink: 0;">
+          <img src="safarsaathi_logo_transparent.png" alt="SafarSaathi Logo" style="height: 28px; width: auto; object-fit: contain; vertical-align: middle; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); flex-shrink: 0;">
+          <span style="font-size: 1.16rem; font-weight: 900; letter-spacing: -0.3px; color: #ffffff; white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.28);">Safar<span class="brand-highlight" style="color: #86efac;">Saathi</span></span>
         </a>
       </div>
-      <div class="header-right" style="display: flex; gap: 8px; align-items: center;">
-        <!-- 🎮 GAMING ZONE TOGGLE BUTTON -->
-        <button type="button" id="btn-toggle-top-gaming" class="header-action-btn" onclick="toggleGamingZone()" title="RUSH Cycle Race Gaming Zone" style="font-size: 0.76rem; padding: 5px 12px; width: auto; border-radius: 20px; background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 6px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.12); cursor: pointer; white-space: nowrap;">
+      <div class="header-right" style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
+        <!-- 🎮 COMPACT GAMING ZONE BUTTON (Coins shown inside Gaming Zone only) -->
+        <button type="button" id="btn-toggle-top-gaming" class="header-action-btn" onclick="toggleGamingZone()" title="Gaming Zone" style="font-size: 0.72rem; padding: 4px 10px; height: 31px; width: auto; border-radius: 999px; background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1.5px solid #16a34a; color: #15803d; display: inline-flex; align-items: center; gap: 4px; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.12); cursor: pointer; white-space: nowrap; flex-shrink: 0;">
           <span>🎮</span>
           <span id="top-gaming-btn-text">Gaming Zone</span>
-          <span id="top-coins-badge" style="background: #16a34a; color: #ffffff; padding: 2px 7px; border-radius: 9999px; font-size: 0.68rem; font-weight: 900; display: inline-flex; align-items: center; gap: 3px;">🪙 <span id="top-coins-count">100</span></span>
+          <span id="top-coins-badge" style="display: none !important;">🪙 <span id="top-coins-count">100</span></span>
         </button>
         <!-- 👤 PROFILE BUTTON -->
-        <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1.5px solid #16a34a; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; flex-shrink: 0;">
-          <span id="header-user-avatar">👤</span>
+        <button type="button" class="header-action-btn" onclick="showSection('profile')" title="My Profile & KYC" style="width: 33px; height: 33px; border-radius: 50%; background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); border: 1.5px solid #16a34a; color: #15803d; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; cursor: pointer; flex-shrink: 0; padding: 0; overflow: hidden;">
+          <span id="header-user-avatar" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">👤</span>
         </button>
       </div>
     </div>
@@ -1490,18 +1488,18 @@
           </div>
 
           <!-- 🤳 Mandatory Daily Driver Live Selfie Box (Car Post) -->
-          <div style="background: rgba(239, 246, 255, 0.62); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #0284c7; border-radius: 10px; padding: 0.5rem 0.65rem; margin-bottom: 0.65rem; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="background: rgba(239, 246, 255, 0.62); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #0284c7; border-radius: 10px; padding: 0.45rem 0.6rem; margin-bottom: 0.55rem; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-              <img id="df-selfie-preview-img" src="driver_photo_avatar.png" alt="Driver Selfie" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #0284c7; flex-shrink: 0;">
+              <img id="df-selfie-preview-img" src="driver_photo_avatar.png" alt="Driver Selfie" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #0284c7; flex-shrink: 0; cursor: pointer;" onclick="document.getElementById('df-daily-selfie-input').click()">
               <div style="min-width: 0;">
-                <div style="font-size: 0.72rem; font-weight: 900; color: #0f172a;">🤳 Daily Driver Live Selfie*</div>
-                <div id="df-daily-selfie-status" style="font-size: 0.6rem; font-weight: 800; color: #d97706;">⏳ Mandatory: Take 1 live selfie today</div>
+                <div style="font-size: 0.7rem; font-weight: 900; color: #0f172a;">🤳 Daily Driver Face Selfie*</div>
+                <div id="df-daily-selfie-status" style="font-size: 0.58rem; font-weight: 800; color: #d97706;">⏳ Mandatory: Take & crop face today</div>
               </div>
             </div>
-            <label for="df-daily-selfie-input" id="df-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.68rem; font-weight: 900; padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+            <label for="df-daily-selfie-input" id="df-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.66rem; font-weight: 900; padding: 5px 9px; border-radius: 8px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
               📸 Take Selfie
             </label>
-            <input type="file" id="df-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="handleDailyDriverSelfieCapture(event, 'car')">
+            <input type="file" id="df-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'car')">
           </div>
 
           <div class="form-grid-2" style="margin-bottom: 0.85rem;">
@@ -2394,126 +2392,113 @@
             🚀 Log In to Profile ➔
           </button>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.35rem; padding: 0 2px;">
-            <a href="privacy.html" target="_blank" rel="noopener" style="font-size: 0.68rem; color: #0284c7; text-decoration: underline; font-weight: 800;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.28rem; padding: 0 2px;">
+            <a href="privacy.html" target="_blank" rel="noopener" style="font-size: 0.66rem; color: #0284c7; text-decoration: underline; font-weight: 800;">
               🔒 Privacy Policy & Data Safety
             </a>
-            <a href="#" id="btn-forgot-password-link" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.72rem; color: #16a34a; text-decoration: none; font-weight: 800;">
+            <a href="#" id="btn-forgot-password-link" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.7rem; color: #16a34a; text-decoration: none; font-weight: 800;">
               ❓ Forgot Password?
             </a>
           </div>
-
-          <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (AUTOMATIC SOUND ON PROFILE HOME) -->
-          <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.28rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: var(--auto-prof-vid-height, 145px); max-height: 165px;">
-            <video id="profile-video-player" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; pointer-events: none; border-radius: 8px;"></video>
-            
-
-          </div>
         </div>
 
-        <!-- Logged In Profile Card View (Connected Hub for E-Rickshaw, Car, Passenger & Profile Edit) -->
+        <!-- Logged In Profile Card View (Zero-Scroll Compact Connected Hub) -->
         <div id="prof-card-view" style="display: none;">
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 0.35rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.35rem; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <!-- Clickable Profile Photo Avatar with Camera Badge -->
-              <label for="prof-photo-upload-input" title="Tap to upload or change your Profile Photo" style="position: relative; width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; flex-shrink: 0; cursor: pointer; border: 2px solid #16a34a; box-shadow: 0 2px 8px rgba(22,163,74,0.28); overflow: visible;">
-                <img id="prof-card-avatar-img" src="driver_photo_avatar.png" alt="Profile Photo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
-                <span style="position: absolute; bottom: -2px; right: -2px; background: #15803d; color: #ffffff; border: 1.5px solid #ffffff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.58rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.3);">📷</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 0.28rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.28rem;">
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+              <!-- Clickable Circular Profile Face Photo Avatar -->
+              <label for="prof-photo-upload-input" title="Tap to take Selfie & crop Face for Profile Photo" style="position: relative; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0; cursor: pointer; border: 2px solid #16a34a; box-shadow: 0 2px 8px rgba(22,163,74,0.28); overflow: visible;">
+                <img id="prof-card-avatar-img" src="driver_photo_avatar.png" alt="Profile Face" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                <span style="position: absolute; bottom: -2px; right: -2px; background: #0284c7; color: #ffffff; border: 1.5px solid #ffffff; border-radius: 50%; width: 17px; height: 17px; font-size: 0.54rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.3);">🤳</span>
               </label>
-              <input type="file" id="prof-photo-upload-input" accept="image/*" style="display: none;" onchange="handleProfilePhotoUpload(event)">
-              <div>
-                <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-                  <h3 id="prof-card-name" style="font-size: 0.94rem; font-weight: 900; color: #000000; margin: 0;">User Name</h3>
-                  <span class="rc-verified-shield" style="font-size: 0.56rem; padding: 1px 5px;">🛡️ Verified</span>
+              <input type="file" id="prof-photo-upload-input" accept="image/*" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'profile')">
+              <input type="file" id="prof-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'selfie')">
+              <div style="min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 4px; flex-wrap: nowrap;">
+                  <h3 id="prof-card-name" style="font-size: 0.88rem; font-weight: 900; color: #000000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">User Name</h3>
+                  <span class="rc-verified-shield" style="font-size: 0.54rem; padding: 1px 4px; flex-shrink: 0;">🛡️ KYC</span>
                 </div>
-                <div id="prof-card-phone" style="font-size: 0.7rem; color: var(--accent); font-weight: 800; margin-top: 1px;">📱 +91 ----------</div>
-                <div id="prof-card-addr" style="font-size: 0.64rem; color: var(--text-muted); margin-top: 1px;">📍 Assam, India</div>
+                <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 1px;">
+                  <span id="prof-card-phone" style="font-size: 0.66rem; color: var(--accent); font-weight: 800;">📱 +91 ----------</span>
+                  <span id="prof-daily-selfie-status" style="font-size: 0.55rem; font-weight: 900; color: #d97706; background: rgba(254,243,199,0.75); padding: 1px 5px; border-radius: 999px; border: 1px solid #f59e0b;">⏳ Daily Selfie Needed</span>
+                </div>
+                <div id="prof-card-addr" style="font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">📍 Assam, India</div>
               </div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
-              <label for="prof-photo-upload-input" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 1px solid #065f46; border-radius: 7px; padding: 3px 8px; font-size: 0.62rem; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 5px rgba(22,163,74,0.2);">
-                📷 Profile Photo
+            <div style="display: flex; flex-direction: column; gap: 3px; align-items: flex-end; flex-shrink: 0;">
+              <label for="prof-daily-selfie-input" id="prof-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1px solid #075985; border-radius: 6px; padding: 3px 7px; font-size: 0.6rem; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 5px rgba(2,132,199,0.22);">
+                🤳 Selfie / Face
               </label>
-              <button type="button" id="btn-open-edit-profile" onclick="openEditProfileModal()" style="background: rgba(220, 252, 231, 0.62); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: #15803d; border: 1px solid #16a34a; border-radius: 7px; padding: 3px 8px; font-size: 0.62rem; font-weight: 900; cursor: pointer;">
-                📧 Request Edit
+              <button type="button" id="btn-open-edit-profile" onclick="openEditProfileModal()" style="background: rgba(220, 252, 231, 0.68); color: #15803d; border: 1px solid #16a34a; border-radius: 6px; padding: 2px 7px; font-size: 0.58rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
+                📧 Edit KYC
               </button>
             </div>
-          </div>
-
-          <!-- 🤳 DAILY DRIVER LIVE SELFIE VERIFICATION BAR (MANDATORY ONCE PER DAY FOR VEHICLE POSTING) -->
-          <div id="prof-daily-selfie-bar" style="background: rgba(240, 253, 244, 0.64); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #16a34a; border-radius: 9px; padding: 4px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-              <img id="prof-daily-selfie-thumb" src="driver_photo_avatar.png" alt="Daily Selfie" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 1.5px solid #16a34a; flex-shrink: 0;">
-              <div style="min-width: 0;">
-                <div style="font-size: 0.63rem; font-weight: 900; color: #065f46; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🤳 Daily Driver Selfie (For Vehicle Post)</div>
-                <div id="prof-daily-selfie-status" style="font-size: 0.56rem; font-weight: 800; color: #d97706;">⏳ Take 1 live selfie today before posting a vehicle</div>
-              </div>
-            </div>
-            <label for="prof-daily-selfie-input" id="prof-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.6rem; font-weight: 900; padding: 4px 8px; border-radius: 6px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 5px rgba(2,132,199,0.25);">
-              📸 Take Selfie
-            </label>
-            <input type="file" id="prof-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="handleDailyDriverSelfieCapture(event, 'profile')">
           </div>
 
           <!-- 🧭 POST-LOGIN CHOICE HUB: CHOOSE E-RICKSHAW OR CAR (DRIVER OR PASSENGER) -->
-          <div style="background: rgba(248, 250, 252, 0.54); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.4rem 0.5rem; margin-bottom: 0.4rem;">
-            <div style="font-size: 0.68rem; font-weight: 900; color: #0f172a; margin-bottom: 0.3rem; text-align: center;">
-              Select an option below:
-            </div>
+          <div style="background: rgba(248, 250, 252, 0.54); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #cbd5e1; border-radius: 9px; padding: 0.3rem 0.42rem; margin-bottom: 0.28rem;">
             <!-- Row 1: Driver Post Options (E-Rickshaw vs Car) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px;">
-              <button type="button" onclick="openConnectedPostErickshaw()" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 1.5px solid #065f46; border-radius: 9px; padding: 0.45rem 0.35rem; font-size: 0.72rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 3px 8px rgba(22,163,74,0.25);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
+              <button type="button" onclick="openConnectedPostErickshaw()" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 1.5px solid #065f46; border-radius: 8px; padding: 0.34rem 0.25rem; font-size: 0.68rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; box-shadow: 0 2px 6px rgba(22,163,74,0.22);">
                 <span>🛺 Post E-Rickshaw</span>
-                <span style="font-size: 0.56rem; color: #dcfce7; font-weight: 800;">₹100 / 12h Live GPS</span>
+                <span style="font-size: 0.52rem; color: #dcfce7; font-weight: 800;">₹100 • 12h GPS + Selfie</span>
               </button>
-              <button type="button" onclick="openConnectedPostCar()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1.5px solid #075985; border-radius: 9px; padding: 0.45rem 0.35rem; font-size: 0.72rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 3px 8px rgba(2,132,199,0.25);">
+              <button type="button" onclick="openConnectedPostCar()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1.5px solid #075985; border-radius: 8px; padding: 0.34rem 0.25rem; font-size: 0.68rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; box-shadow: 0 2px 6px rgba(2,132,199,0.22);">
                 <span>🚗 Post Car</span>
-                <span style="font-size: 0.56rem; color: #e0f2fe; font-weight: 800;">₹100 / Seat Booking</span>
+                <span style="font-size: 0.52rem; color: #e0f2fe; font-weight: 800;">₹100 • Seat + Selfie</span>
               </button>
             </div>
             <!-- Row 2: Passenger Live Map & Fleet Options -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-              <button type="button" onclick="showSection('live-erickshaw')" style="background: rgba(240, 253, 244, 0.58); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); color: #15803d; border: 1.5px solid #16a34a; border-radius: 8px; padding: 0.38rem 0.3rem; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+              <button type="button" onclick="showSection('live-erickshaw')" style="background: rgba(240, 253, 244, 0.65); color: #15803d; border: 1.5px solid #16a34a; border-radius: 7px; padding: 0.3rem 0.25rem; font-size: 0.65rem; font-weight: 900; cursor: pointer;">
                 🟢 Live E-Rickshaw Map
               </button>
-              <button type="button" onclick="showSection('live-cars')" style="background: rgba(239, 246, 255, 0.58); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); color: #1d4ed8; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 0.38rem 0.3rem; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
+              <button type="button" onclick="showSection('live-cars')" style="background: rgba(239, 246, 255, 0.65); color: #1d4ed8; border: 1.5px solid #3b82f6; border-radius: 7px; padding: 0.3rem 0.25rem; font-size: 0.65rem; font-weight: 900; cursor: pointer;">
                 💺 Book Car Seat / Map
               </button>
             </div>
           </div>
 
-          <!-- Dynamic Connected Vehicle Status Strip (Shows User's Active E-Rickshaws & Cars) -->
           <!-- 🎁 REFERRAL (₹100) & 10-RIDE (₹20 WITHDRAWAL UNLOCK) SUMMARY BAR -->
-          <div id="prof-referral-milestone-bar" onclick="openReferralAndRewardsModal()" style="background: linear-gradient(90deg, rgba(254, 252, 232, 0.64), rgba(240, 253, 244, 0.64)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid #16a34a; border-radius: 9px; padding: 5px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 6px; cursor: pointer;">
-            <div style="font-size: 0.65rem; font-weight: 900; color: #0f172a; line-height: 1.25;">
- 🎁 <span>Referral Wallet: <b id="prof-ref-bal-txt" style="color:#15803d;">₹0</b></span> • 💸 <span>10-Ride Unlock: <b id="prof-unlock-bal-txt" style="color:#0284c7;">₹0</b> (<span id="prof-rides-count-txt">0/10</span>)</span>
+          <div id="prof-referral-milestone-bar" onclick="openReferralAndRewardsModal()" style="background: linear-gradient(90deg, rgba(254, 252, 232, 0.64), rgba(240, 253, 244, 0.64)); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid #16a34a; border-radius: 8px; padding: 4px 7px; margin-bottom: 0.25rem; display: flex; justify-content: space-between; align-items: center; gap: 5px; cursor: pointer;">
+            <div style="font-size: 0.61rem; font-weight: 900; color: #0f172a; line-height: 1.2;">
+              🎁 <span>Wallet: <b id="prof-ref-bal-txt" style="color:#15803d;">₹0</b></span> • 💸 <span>10-Ride Unlock: <b id="prof-unlock-bal-txt" style="color:#0284c7;">₹0</b> (<span id="prof-rides-count-txt">0/10</span>)</span>
             </div>
-            <span style="background: #16a34a; color: #ffffff; font-size: 0.62rem; font-weight: 900; padding: 3px 7px; border-radius: 6px; white-space: nowrap; flex-shrink: 0;">
-              📲 Refer & Withdraw ➔
+            <span style="background: #16a34a; color: #ffffff; font-size: 0.58rem; font-weight: 900; padding: 2px 6px; border-radius: 5px; white-space: nowrap; flex-shrink: 0;">
+              📲 Refer ➔
             </span>
           </div>
 
-          <div id="prof-connected-vehicles-strip" style="margin-bottom: 0.35rem;"></div>
+          <div id="prof-connected-vehicles-strip" style="margin-bottom: 0.25rem;"></div>
 
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
-            <button type="button" class="btn btn-secondary" onclick="showSection('driver-fleet')" style="padding: 0.38rem 0.15rem; font-size: 0.62rem; font-weight: 900; color: #15803d; border-color: #16a34a;">
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;">
+            <button type="button" class="btn btn-secondary" onclick="showSection('driver-fleet')" style="padding: 0.28rem 0.1rem; font-size: 0.58rem; font-weight: 900; color: #15803d; border-color: #16a34a;">
               🚙 Fleet
             </button>
-            <button type="button" class="btn btn-secondary" onclick="openChangePasswordModal()" style="padding: 0.38rem 0.15rem; font-size: 0.62rem;">
+            <button type="button" class="btn btn-secondary" onclick="openChangePasswordModal()" style="padding: 0.28rem 0.1rem; font-size: 0.58rem;">
               🔑 Pass
             </button>
-            <button type="button" class="btn btn-secondary" onclick="window.open('privacy.html', '_blank')" style="padding: 0.38rem 0.15rem; font-size: 0.62rem; color: #0284c7; border-color: #38bdf8;">
-              🔒 Privacy
+            <button type="button" class="btn btn-secondary" onclick="window.open('privacy.html', '_blank')" style="padding: 0.28rem 0.1rem; font-size: 0.58rem; color: #0284c7; border-color: #38bdf8;">
+              🔒 Policy
             </button>
-            <button type="button" class="btn btn-danger" onclick="logoutUserProfile()" style="padding: 0.38rem 0.15rem; font-size: 0.62rem;">
+            <button type="button" class="btn btn-secondary" onclick="deleteUserAccountPermanently()" style="padding: 0.28rem 0.1rem; font-size: 0.58rem; color: #dc2626; border-color: #fca5a5;">
+              🗑️ Delete
+            </button>
+            <button type="button" class="btn btn-danger" onclick="logoutUserProfile()" style="padding: 0.28rem 0.1rem; font-size: 0.58rem;">
               🚪 Exit
             </button>
           </div>
-          <div style="text-align: center; margin-top: 3px;">
-            <a href="#" onclick="deleteUserAccountPermanently(); return false;" style="font-size: 0.6rem; color: #dc2626; font-weight: 800; text-decoration: underline;">
-              🗑️ Delete Account & Personal Data Permanently
-            </a>
+        </div>
+
+        <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (VISIBLE ON PROFILE HOME BOTH BEFORE & AFTER LOGIN) -->
+        <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.28rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: var(--auto-prof-vid-height, 130px); max-height: 165px;">
+          <video id="profile-video-player" src="promo_ad.mp4" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; border-radius: 8px;"></video>
+          <div style="position: absolute; top: 5px; left: 6px; background: rgba(6, 95, 70, 0.82); color: #ffffff; font-size: 0.54rem; font-weight: 900; padding: 2px 6px; border-radius: 999px; border: 1px solid #86efac; pointer-events: none;">
+            🎬 Sponsor Ad
           </div>
+          <button type="button" id="btn-prof-vid-mute-toggle" onclick="toggleProfileVideoMute(event)" style="position: absolute; top: 4px; right: 6px; background: rgba(15, 23, 42, 0.78); color: #ffffff; border: 1px solid rgba(255,255,255,0.45); border-radius: 999px; padding: 2px 7px; font-size: 0.56rem; font-weight: 900; cursor: pointer; z-index: 5;">
+            🔊 Sound
+          </button>
         </div>
       </div>
     </section>
@@ -2578,18 +2563,18 @@
         </div>
 
         <!-- 🤳 Mandatory Daily Driver Live Selfie Row (1 Selfie Per Day Required Before Posting) -->
-        <div style="background: rgba(239, 246, 255, 0.62); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #0284c7; border-radius: 9px; padding: 4px 8px; margin-bottom: 0.35rem; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+        <div style="background: rgba(239, 246, 255, 0.62); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #0284c7; border-radius: 9px; padding: 4px 8px; margin-bottom: 0.32rem; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
           <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
-            <img id="er-selfie-preview-img" src="driver_photo_avatar.png" alt="Driver Selfie" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid #0284c7; flex-shrink: 0;">
+            <img id="er-selfie-preview-img" src="driver_photo_avatar.png" alt="Driver Selfie" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid #0284c7; flex-shrink: 0; cursor: pointer;" onclick="document.getElementById('er-daily-selfie-input').click()">
             <div style="min-width: 0;">
-              <div style="font-size: 0.65rem; font-weight: 900; color: #0f172a;">🤳 Daily Driver Live Selfie (Mandatory)*</div>
-              <div id="er-daily-selfie-status" style="font-size: 0.56rem; font-weight: 800; color: #d97706;">⏳ Take 1 live selfie today before posting</div>
+              <div style="font-size: 0.64rem; font-weight: 900; color: #0f172a;">🤳 Daily Driver Face Selfie (Mandatory)*</div>
+              <div id="er-daily-selfie-status" style="font-size: 0.55rem; font-weight: 800; color: #d97706;">⏳ Take & crop face today before posting</div>
             </div>
           </div>
-          <label for="er-daily-selfie-input" id="er-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.62rem; font-weight: 900; padding: 4px 9px; border-radius: 7px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
+          <label for="er-daily-selfie-input" id="er-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.6rem; font-weight: 900; padding: 4px 8px; border-radius: 7px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
             📸 Take Selfie
           </label>
-          <input type="file" id="er-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="handleDailyDriverSelfieCapture(event, 'erickshaw')">
+          <input type="file" id="er-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'erickshaw')">
         </div>
 
         <!-- 🎁 Referral ₹20 Per-Trip Discount Option -->
@@ -6679,38 +6664,6 @@ ET
       return !!(user.dailySelfiePhoto && user.dailySelfieDate === getTodayDateString());
     }
 
-    function compressImageFileToDataUrl(file, maxDim = 220, quality = 0.78) {
-      return new Promise((resolve) => {
-        if (!file) { resolve(''); return; }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const rawUrl = e.target.result;
-          const img = new Image();
-          img.onload = function() {
-            try {
-              const canvas = document.createElement('canvas');
-              let w = img.width || 200;
-              let h = img.height || 200;
-              const size = Math.min(w, h);
-              const sx = Math.max(0, Math.floor((w - size) / 2));
-              const sy = Math.max(0, Math.floor((h - size) / 2));
-              canvas.width = maxDim;
-              canvas.height = maxDim;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, sx, sy, size, size, 0, 0, maxDim, maxDim);
-              resolve(canvas.toDataURL('image/jpeg', quality));
-            } catch (err) {
-              resolve(rawUrl);
-            }
-          };
-          img.onerror = () => resolve(rawUrl);
-          img.src = rawUrl;
-        };
-        reader.onerror = () => resolve('');
-        reader.readAsDataURL(file);
-      });
-    }
-
     function propagateDriverPhotoToActiveListings(phone, photoDataUrl) {
       if (!phone || !photoDataUrl) return;
       try {
@@ -6743,51 +6696,179 @@ ET
       } catch(e){}
     }
 
-    async function handleProfilePhotoUpload(event) {
+    // =========================================================================
+    // 🤳 INTERACTIVE FACE CROPPER & DRAG/ZOOM POSITIONING ENGINE
+    // Allows user to move photo Up/Down/Left/Right & Zoom so ONLY their Face fits cleanly in Profile!
+    // =========================================================================
+    let _cropRawImage = null;
+    let _cropZoom = 1.35;
+    let _cropOffsetX = 0;
+    let _cropOffsetY = 0;
+    let _cropIsDragging = false;
+    let _cropDragStartX = 0;
+    let _cropDragStartY = 0;
+    let _cropSourceContext = 'profile';
+
+    function openSelfieFaceCropperFromInput(event, sourceContext) {
       const file = event && event.target && event.target.files ? event.target.files[0] : null;
       if (!file) return;
       const user = getActiveUserProfile();
       if (!user || !user.phone) {
-        showToast('⚠️ Please log in first to set your Profile Photo!', '#dc2626');
+        showToast('⚠️ Please log in first to set your Profile & Selfie Photo!', '#dc2626');
         return;
       }
-      const compressed = await compressImageFileToDataUrl(file, 220, 0.8);
-      if (!compressed) return;
-      let users = {};
-      try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
-      user.profilePhoto = compressed;
-      if (!user.dailySelfiePhoto || user.dailySelfieDate !== getTodayDateString()) {
-        user.dailySelfiePhoto = compressed;
-        user.dailySelfieDate = getTodayDateString();
-      }
-      user.updatedAt = new Date().toISOString();
-      users[user.phone] = user;
-      ssStorage.setItem('ss_users_db', JSON.stringify(users));
-      try { broadcastUsersEverywhere(users); } catch(e){}
-      if (typeof db !== 'undefined' && db) {
-        try { db.collection('ss_users').doc(user.phone).set(user, { merge: true }); } catch(e){}
-      }
-      propagateDriverPhotoToActiveListings(user.phone, compressed);
-      refreshProfileAndSelfieUi();
-      showToast('✅ Profile Photo updated & displayed on your profile!', '#15803d');
+      _cropSourceContext = sourceContext || 'profile';
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          _cropRawImage = img;
+          // Default slight zoom (1.35x) and slight upper-center bias so face is framed nicely
+          _cropZoom = 1.35;
+          _cropOffsetX = 0;
+          _cropOffsetY = Math.round((img.height > img.width) ? (img.height * 0.06) : 0);
+          const zoomSlider = document.getElementById('selfie-crop-zoom-slider');
+          if (zoomSlider) zoomSlider.value = '1.35';
+          const modal = document.getElementById('selfie-crop-modal');
+          if (modal) modal.style.display = 'flex';
+          initSelfieCropCanvasListeners();
+          renderSelfieFaceCropCanvas();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      try { event.target.value = ''; } catch(e){}
     }
 
-    async function handleDailyDriverSelfieCapture(event, sourceContext) {
-      const file = event && event.target && event.target.files ? event.target.files[0] : null;
-      if (!file) return;
+    function initSelfieCropCanvasListeners() {
+      const canvas = document.getElementById('selfie-crop-canvas');
+      if (!canvas || canvas._hasDragListeners) return;
+      canvas._hasDragListeners = true;
+
+      const startDrag = (clientX, clientY) => {
+        _cropIsDragging = true;
+        _cropDragStartX = clientX - _cropOffsetX;
+        _cropDragStartY = clientY - _cropOffsetY;
+      };
+      const moveDrag = (clientX, clientY) => {
+        if (!_cropIsDragging) return;
+        _cropOffsetX = clientX - _cropDragStartX;
+        _cropOffsetY = clientY - _cropDragStartY;
+        renderSelfieFaceCropCanvas();
+      };
+      const endDrag = () => { _cropIsDragging = false; };
+
+      canvas.addEventListener('mousedown', (e) => { startDrag(e.clientX, e.clientY); });
+      window.addEventListener('mousemove', (e) => { moveDrag(e.clientX, e.clientY); });
+      window.addEventListener('mouseup', endDrag);
+
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          e.preventDefault();
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+      canvas.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          e.preventDefault();
+          moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+      canvas.addEventListener('touchend', endDrag);
+    }
+
+    function nudgeSelfieFaceCrop(dx, dy) {
+      _cropOffsetX += dx;
+      _cropOffsetY += dy;
+      renderSelfieFaceCropCanvas();
+    }
+
+    function updateSelfieFaceCropZoom(val) {
+      _cropZoom = Math.max(1.0, Math.min(3.8, parseFloat(val) || 1.35));
+      renderSelfieFaceCropCanvas();
+    }
+
+    function resetSelfieFaceCropPosition() {
+      _cropZoom = 1.35;
+      _cropOffsetX = 0;
+      _cropOffsetY = 0;
+      const zoomSlider = document.getElementById('selfie-crop-zoom-slider');
+      if (zoomSlider) zoomSlider.value = '1.35';
+      renderSelfieFaceCropCanvas();
+    }
+
+    function renderSelfieFaceCropCanvas() {
+      const canvas = document.getElementById('selfie-crop-canvas');
+      if (!canvas || !_cropRawImage) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, W, H);
+
+      const iw = _cropRawImage.width || 220;
+      const ih = _cropRawImage.height || 220;
+      const baseScale = Math.max(W / iw, H / ih);
+      const scale = baseScale * _cropZoom;
+      const drawW = iw * scale;
+      const drawH = ih * scale;
+      const dx = (W - drawW) / 2 + _cropOffsetX;
+      const dy = (H - drawH) / 2 + _cropOffsetY;
+
+      ctx.drawImage(_cropRawImage, dx, dy, drawW, drawH);
+
+      // Draw darkened mask outside the circular Face Frame so user clearly sees ONLY their Face inside the circle!
+      ctx.save();
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.58)';
+      ctx.beginPath();
+      ctx.rect(0, 0, W, H);
+      ctx.arc(W / 2, H / 2, (W / 2) - 10, 0, Math.PI * 2, true);
+      ctx.fill();
+
+      // Circular Green Face Ring + Crosshair ticks
+      ctx.strokeStyle = '#22c55e';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(W / 2, H / 2, (W / 2) - 10, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function confirmAndSaveCroppedFaceSelfie() {
+      if (!_cropRawImage) return;
       const user = getActiveUserProfile();
-      if (!user || !user.phone) {
-        showToast('⚠️ Please log in first to capture your Daily Driver Selfie!', '#dc2626');
-        return;
-      }
-      const compressed = await compressImageFileToDataUrl(file, 220, 0.8);
-      if (!compressed) return;
+      if (!user || !user.phone) return;
+
+      // Export clean 220x220 cropped face image without the guide ring overlay
+      const outCanvas = document.createElement('canvas');
+      const W = 220;
+      const H = 220;
+      outCanvas.width = W;
+      outCanvas.height = H;
+      const ctx = outCanvas.getContext('2d');
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, W, H);
+
+      const iw = _cropRawImage.width || 220;
+      const ih = _cropRawImage.height || 220;
+      const baseScale = Math.max(W / iw, H / ih);
+      const scale = baseScale * _cropZoom;
+      const drawW = iw * scale;
+      const drawH = ih * scale;
+      const dx = (W - drawW) / 2 + _cropOffsetX;
+      const dy = (H - drawH) / 2 + _cropOffsetY;
+      ctx.drawImage(_cropRawImage, dx, dy, drawW, drawH);
+
+      const croppedDataUrl = outCanvas.toDataURL('image/jpeg', 0.82);
       const todayStr = getTodayDateString();
+
       let users = {};
       try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
-      user.dailySelfiePhoto = compressed;
+      user.profilePhoto = croppedDataUrl;
+      user.dailySelfiePhoto = croppedDataUrl;
       user.dailySelfieDate = todayStr;
-      user.profilePhoto = compressed;
       user.updatedAt = new Date().toISOString();
       users[user.phone] = user;
       ssStorage.setItem('ss_users_db', JSON.stringify(users));
@@ -6795,16 +6876,23 @@ ET
       if (typeof db !== 'undefined' && db) {
         try { db.collection('ss_users').doc(user.phone).set(user, { merge: true }); } catch(e){}
       }
-      propagateDriverPhotoToActiveListings(user.phone, compressed);
+
+      propagateDriverPhotoToActiveListings(user.phone, croppedDataUrl);
+      closeSelfieFaceCropperModal();
       refreshProfileAndSelfieUi();
-      showToast('🤳 Today\'s Live Driver Selfie verified & saved to Profile!', '#15803d');
+      showToast('✅ Face Photo saved to Profile & Verified for Today\'s Vehicle Post!', '#15803d');
+    }
+
+    function closeSelfieFaceCropperModal() {
+      const modal = document.getElementById('selfie-crop-modal');
+      if (modal) modal.style.display = 'none';
+      _cropRawImage = null;
     }
 
     function refreshProfileAndSelfieUi() {
       const user = getActiveUserProfile();
       const headerAvatar = document.getElementById('header-user-avatar');
       const profAvatarImg = document.getElementById('prof-card-avatar-img');
-      const profSelfieThumb = document.getElementById('prof-daily-selfie-thumb');
       const erSelfieImg = document.getElementById('er-selfie-preview-img');
       const dfSelfieImg = document.getElementById('df-selfie-preview-img');
 
@@ -6812,21 +6900,32 @@ ET
       const selfieSrc = (user && (user.dailySelfiePhoto || user.profilePhoto)) ? (user.dailySelfiePhoto || user.profilePhoto) : 'driver_photo_avatar.png';
 
       if (profAvatarImg) profAvatarImg.src = photoSrc;
-      if (profSelfieThumb) profSelfieThumb.src = selfieSrc;
       if (erSelfieImg) erSelfieImg.src = selfieSrc;
       if (dfSelfieImg) dfSelfieImg.src = selfieSrc;
 
       if (headerAvatar) {
         if (user && (user.profilePhoto || user.dailySelfiePhoto)) {
-          headerAvatar.innerHTML = `<img src="${photoSrc}" alt="Profile" style="width:32px; height:32px; border-radius:50%; object-fit:cover; display:block;">`;
+          headerAvatar.innerHTML = `<img src="${photoSrc}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;">`;
         } else {
           headerAvatar.innerText = '👤';
         }
       }
 
       const okToday = hasValidDailySelfieToday(user);
+      const profSt = document.getElementById('prof-daily-selfie-status');
+      const profBtn = document.getElementById('prof-daily-selfie-btn-lbl');
+      if (profSt) {
+        profSt.style.color = okToday ? '#15803d' : '#b45309';
+        profSt.style.background = okToday ? 'rgba(220,252,231,0.85)' : 'rgba(254,243,199,0.85)';
+        profSt.style.borderColor = okToday ? '#16a34a' : '#f59e0b';
+        profSt.innerText = okToday ? '✅ Today Selfie OK' : '⏳ Daily Selfie Needed';
+      }
+      if (profBtn) {
+        profBtn.style.background = okToday ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #0284c7, #0369a1)';
+        profBtn.innerText = okToday ? '🤳 Change Face' : '🤳 Selfie / Face';
+      }
+
       const statusPairs = [
-        ['prof-daily-selfie-status', 'prof-daily-selfie-btn-lbl'],
         ['er-daily-selfie-status', 'er-daily-selfie-btn-lbl'],
         ['df-daily-selfie-status', 'df-daily-selfie-btn-lbl']
       ];
@@ -6836,12 +6935,12 @@ ET
         if (stEl) {
           stEl.style.color = okToday ? '#15803d' : '#d97706';
           stEl.innerText = okToday
-            ? `✅ Today's Driver Selfie Verified (${getTodayDateString()})`
-            : '⏳ Mandatory: Take 1 live selfie today before posting';
+            ? `✅ Today's Face Selfie Verified (${getTodayDateString()})`
+            : '⏳ Mandatory: Take & crop face today before posting';
         }
         if (btnEl) {
           btnEl.style.background = okToday ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #0284c7, #0369a1)';
-          btnEl.innerText = okToday ? '🔄 Retake Selfie' : '📸 Take Selfie';
+          btnEl.innerText = okToday ? '🔄 Retake Face' : '📸 Take Selfie';
         }
       });
     }
@@ -6859,7 +6958,6 @@ ET
         setAuthMode('login');
         resumeProfileHomeVideoAdIfNeeded();
       } else {
-        stopProfileHomeVideoAd();
         if (authView) authView.style.display = 'none';
         if (cardView) {
           cardView.style.display = 'block';
@@ -6870,9 +6968,13 @@ ET
           renderProfileConnectedVehiclesStrip();
           try { renderProfileReferralSummary(); } catch(e){}
         }
+        resumeProfileHomeVideoAdIfNeeded();
       }
       updateNavCounts();
-      if (typeof window.calibrateScreenFit === 'function') window.calibrateScreenFit();
+      if (typeof window.calibrateScreenFit === 'function') {
+        window.calibrateScreenFit();
+        setTimeout(window.calibrateScreenFit, 60);
+      }
     }
 
     function deleteUserAccountPermanently() {
@@ -13056,10 +13158,25 @@ ET
     let userManuallyMutedProfileVideo = false;
 
     function isProfileVideoAllowedToPlay() {
-      const user = getActiveUserProfile();
       const secProf = document.getElementById('section-profile');
       const isProfVisible = !secProf || secProf.style.display !== 'none';
-      return (window.activeAppSection === 'profile') && !user && isProfVisible;
+      return (window.activeAppSection === 'profile') && isProfVisible;
+    }
+
+    function toggleProfileVideoMute(evt) {
+      if (evt) evt.stopPropagation();
+      const vid = document.getElementById('profile-video-player');
+      const btn = document.getElementById('btn-prof-vid-mute-toggle');
+      if (!vid) return;
+      userManuallyMutedProfileVideo = !vid.muted;
+      vid.muted = userManuallyMutedProfileVideo;
+      vid.volume = userManuallyMutedProfileVideo ? 0 : 1.0;
+      if (!userManuallyMutedProfileVideo && vid.paused) {
+        vid.play().catch(()=>{});
+      }
+      if (btn) {
+        btn.innerText = vid.muted ? '🔇 Muted' : '🔊 Sound';
+      }
     }
 
     function initProfileHomeVideoAd() {
@@ -13586,5 +13703,48 @@ ET
   </div>
   <audio id="ss-remote-call-audio" autoplay playsinline style="display:none;"></audio>
 
+
+  <!-- ==================== 🤳 INTERACTIVE SELFIE FACE CROPPER & UP/DOWN POSITION MODAL ==================== -->
+  <div class="modal-backdrop" id="selfie-crop-modal" style="display: none; z-index: 10060; background: rgba(2, 6, 23, 0.88);" onclick="if(event.target===this) closeSelfieFaceCropperModal();">
+    <div class="modal-card" style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px) saturate(190%); -webkit-backdrop-filter: blur(20px) saturate(190%); color: #0f172a; border: 2.5px solid #16a34a; border-radius: 20px; max-width: 360px; width: 92vw; padding: 0.9rem; text-align: center; box-shadow: 0 18px 45px rgba(0,0,0,0.65);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 1.15rem;">🤳</span>
+          <div style="text-align: left;">
+            <h3 style="font-size: 0.92rem; font-weight: 900; color: #065f46; margin: 0;">Adjust Face for Profile Photo</h3>
+            <div style="font-size: 0.6rem; color: #475569; font-weight: 700;">Drag photo Up/Down or use arrows so only your face fits in the circle</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeSelfieFaceCropperModal()" style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; width: 26px; height: 26px; border-radius: 50%; font-weight: 900; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- Interactive Circular Face Crop Canvas (Touch Drag + Mouse Drag) -->
+      <div style="position: relative; width: 220px; height: 220px; margin: 0 auto 0.5rem auto; border-radius: 16px; overflow: hidden; border: 2px solid #16a34a; box-shadow: 0 4px 16px rgba(22,163,74,0.25); touch-action: none;">
+        <canvas id="selfie-crop-canvas" width="220" height="220" style="width: 220px; height: 220px; display: block; cursor: grab; touch-action: none;"></canvas>
+        <div style="position: absolute; bottom: 5px; left: 0; right: 0; pointer-events: none; font-size: 0.56rem; font-weight: 900; color: #86efac; text-shadow: 0 1px 3px #000;">
+          👆 Touch & Drag Photo Up / Down to Center Face
+        </div>
+      </div>
+
+      <!-- Up / Down / Left / Right Fine-Tuning Buttons -->
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 0.45rem;">
+        <button type="button" onclick="nudgeSelfieFaceCrop(0, -14)" style="background: #f0fdf4; border: 1.5px solid #16a34a; color: #15803d; border-radius: 8px; padding: 5px 0; font-size: 0.7rem; font-weight: 900; cursor: pointer;">⬆️ Up</button>
+        <button type="button" onclick="nudgeSelfieFaceCrop(0, 14)" style="background: #f0fdf4; border: 1.5px solid #16a34a; color: #15803d; border-radius: 8px; padding: 5px 0; font-size: 0.7rem; font-weight: 900; cursor: pointer;">⬇️ Down</button>
+        <button type="button" onclick="nudgeSelfieFaceCrop(-14, 0)" style="background: #f0fdf4; border: 1.5px solid #16a34a; color: #15803d; border-radius: 8px; padding: 5px 0; font-size: 0.7rem; font-weight: 900; cursor: pointer;">⬅️ Left</button>
+        <button type="button" onclick="nudgeSelfieFaceCrop(14, 0)" style="background: #f0fdf4; border: 1.5px solid #16a34a; color: #15803d; border-radius: 8px; padding: 5px 0; font-size: 0.7rem; font-weight: 900; cursor: pointer;">➡️ Right</button>
+        <button type="button" onclick="resetSelfieFaceCropPosition()" style="background: #f8fafc; border: 1.5px solid #94a3b8; color: #334155; border-radius: 8px; padding: 5px 0; font-size: 0.68rem; font-weight: 900; cursor: pointer;">🔄 Reset</button>
+      </div>
+
+      <!-- Zoom In / Out Slider for Face Framing -->
+      <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 9px; padding: 5px 10px; margin-bottom: 0.55rem;">
+        <span style="font-size: 0.66rem; font-weight: 900; color: #0f172a; white-space: nowrap;">🔍 Face Zoom:</span>
+        <input type="range" id="selfie-crop-zoom-slider" min="1.0" max="3.5" step="0.05" value="1.35" oninput="updateSelfieFaceCropZoom(this.value)" style="flex: 1; accent-color: #16a34a; cursor: pointer;">
+      </div>
+
+      <button type="button" onclick="confirmAndSaveCroppedFaceSelfie()" style="width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 10px; padding: 0.65rem; font-size: 0.86rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 14px rgba(22,163,74,0.35);">
+        ✅ Save Face to Profile & Verify Selfie ➔
+      </button>
+    </div>
+  </div>
 </body>
 </html>
