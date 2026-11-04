@@ -197,15 +197,9 @@ function ensureSwBackgroundWatchLoop() {
 }
 
 const CORE_OFFLINE_ASSETS = [
-  './',
-  './index.html',
-  './privacy.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png',
-  './driver_photo_avatar.png',
-  './mitali_qr_compact.svg',
-  './safarsaathi_logo_transparent.png'
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
