@@ -112,7 +112,8 @@ async function checkCloudForIncomingCallInSw() {
     }
     let pkt = null;
     try {
-      const res = await fetch(RTDB_LATEST_CALL_URL + '?t=' + Date.now(), { cache: 'no-store' });
+      const targetCallUrl = (swDriverIdentity && swDriverIdentity.phone) ? (RTDB_BASE_URL + '/ss_driver_calls/' + encodeURIComponent(String(swDriverIdentity.phone).trim()) + '.json?t=' + Date.now()) : (RTDB_LATEST_CALL_URL + '?t=' + Date.now());
+      const res = await fetch(targetCallUrl, { cache: 'no-store' });
       if (res && res.ok) {
         const data = await res.json();
         if (data && data.callId) pkt = data;

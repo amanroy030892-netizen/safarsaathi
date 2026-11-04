@@ -26,8 +26,27 @@
         }
       },
       setItem: function(k, v) {
-        window._ssMemStore[k] = String(v);
-        try { window.localStorage.setItem(k, String(v)); } catch (e) {}
+        var strVal = String(v);
+        window._ssMemStore[k] = strVal;
+        try {
+          window.localStorage.setItem(k, strVal);
+        } catch (e) {
+          // Auto-heal 5MB LocalStorage quota overflow by pruning heavy transient caches
+          try {
+            window.localStorage.removeItem('ss_online_presence');
+            window.localStorage.removeItem('ss_active_calls_map');
+            var curUid = window.localStorage.getItem('ss_current_user_id') || '';
+            if (curUid && k !== 'ss_users_db') {
+              var uRaw = JSON.parse(window.localStorage.getItem('ss_users_db') || '{}');
+              if (uRaw && uRaw[curUid]) {
+                var slimUsers = {};
+                slimUsers[curUid] = uRaw[curUid];
+                window.localStorage.setItem('ss_users_db', JSON.stringify(slimUsers));
+              }
+            }
+            window.localStorage.setItem(k, strVal);
+          } catch (e2) {}
+        }
       },
       removeItem: function(k) {
         delete window._ssMemStore[k];
@@ -3459,7 +3478,7 @@
           ssStorage.setItem('ss_deleted_erickshaw_ids', JSON.stringify(Array.from(removedIds)));
         } catch(e){}
 
-        const merged = Object.values(byId);
+        const merged = Object.values(byId).slice(0, 250);
         // Check if Admin just confirmed any of this user's E-Rickshaws!
         try {
           const myUser = getActiveUserProfile();
@@ -3493,14 +3512,16 @@
       } catch(err) {}
     }
 
+    window._hasNodeSyncBackend = !(/github\.io$/i.test(window.location.hostname || ''));
     function pushStateToBackendServer(partialPayload) {
       try {
+        if (!window._hasNodeSyncBackend) return;
         if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
           fetch(window.location.origin + '/api/sync/state', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(partialPayload)
-          }).catch(() => {});
+          }).then(r => { if (r && r.status === 404) window._hasNodeSyncBackend = false; }).catch(() => { window._hasNodeSyncBackend = false; });
         }
       } catch(e){}
     }
@@ -3668,17 +3689,36 @@
         } catch(e){}
       }
       try {
-        fetch(FIREBASE_RTDB_USERS_URL, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(usersObj)
-        }).catch(() => {});
+        const curUid = ssStorage.getItem('ss_current_user_id');
+        if (curUid && usersObj && usersObj[curUid]) {
+          // Only PATCH the active user (2 KB instead of full 100,000-user table, and NEVER overwrites other users!)
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users/' + encodeURIComponent(curUid) + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(usersObj[curUid])
+          }).catch(() => {});
+        } else if (usersObj && typeof usersObj === 'object') {
+          fetch(FIREBASE_RTDB_USERS_URL, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(usersObj)
+          }).catch(() => {});
+        }
       } catch(e){}
     }
 
     function mergeIncomingCloudBookings(cloudBookings) {
       if (!Array.isArray(cloudBookings)) return;
-      bookings = cloudBookings;
+      const byId = {};
+      (Array.isArray(bookings) ? bookings : []).forEach(b => {
+        const bid = b && (b.bookingId || b.id);
+        if (bid) byId[bid] = b;
+      });
+      cloudBookings.forEach(b => {
+        const bid = b && (b.bookingId || b.id);
+        if (bid) byId[bid] = { ...(byId[bid] || {}), ...b };
+      });
+      bookings = Object.values(byId).slice(0, 250);
       try { ssStorage.setItem('ss_bookings', JSON.stringify(bookings)); } catch(e){}
       try { renderPassengerBookings(); } catch(e){}
       try { renderDriverFleet(); } catch(e){}
@@ -3840,8 +3880,9 @@
       setTimeout(() => { _isCloudSyncInFlight = false; }, 850);
 
       try {
-        // 0. Sync from Same-Origin Heavy Node Server (/api/sync/state) if running on Node backend
-        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        window._cloudSyncTickCount = (window._cloudSyncTickCount || 0) + 1;
+        // 0. Sync from Same-Origin Heavy Node Server (/api/sync/state) ONLY if running on Node backend
+        if (window._hasNodeSyncBackend && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
           fetch(window.location.origin + '/api/sync/state')
             .then(res => res.ok ? res.json() : null)
             .then(sData => {
@@ -3903,16 +3944,20 @@
           })
           .catch(() => {});
 
-        // 5. Sync Registered Users from RTDB (so any Passenger/Driver registration or Profile Edit is live everywhere)
-        fetch(FIREBASE_RTDB_USERS_URL)
-          .then(res => res.ok ? res.json() : null)
-          .then(data => {
-            if (data && typeof data === 'object') {
-              const localU = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
-              ssStorage.setItem('ss_users_db', JSON.stringify({ ...localU, ...data }));
-            }
-          })
-          .catch(() => {});
+        // 5. High-Scale Per-User Sync: Only sync the currently logged-in user's profile (1 KB instead of 100,000 users!)
+        const activeUid = ssStorage.getItem('ss_current_user_id');
+        if (activeUid && (window._cloudSyncTickCount % 3 === 1)) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users/' + encodeURIComponent(activeUid) + '.json')
+            .then(res => res.ok ? res.json() : null)
+            .then(uData => {
+              if (uData && (uData.phone || uData.userId)) {
+                const localU = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+                localU[activeUid] = { ...(localU[activeUid] || {}), ...uData };
+                ssStorage.setItem('ss_users_db', JSON.stringify(localU));
+              }
+            })
+            .catch(() => {});
+        }
       } catch(e) {
         _isCloudSyncInFlight = false;
       }
@@ -3926,7 +3971,7 @@
     });
 
     // Continuous 1-Second (1000ms) Crash-Proof Live Cloud Sync with Admin Panel & Other Devices
-    setInterval(executeAiCloudSync, 1000);
+    setInterval(executeAiCloudSync, 2500);
 
 // 1. Data Store Initialization (Preserves real rides and bookings)
     const todayStr = new Date().toISOString().split('T')[0];
@@ -6571,7 +6616,20 @@ ET
           renderProfileView();
           return;
         }
-        const existing = users[uid];
+        let existing = users[uid];
+        if (!existing) {
+          try {
+            const cRes = await fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users/' + encodeURIComponent(uid) + '.json');
+            if (cRes && cRes.ok) {
+              const cUser = await cRes.json();
+              if (cUser && (cUser.phone || cUser.userId)) {
+                existing = cUser;
+                users[uid] = cUser;
+                ssStorage.setItem('ss_users_db', JSON.stringify(users));
+              }
+            }
+          } catch(e){}
+        }
         if (!existing) {
           showToast("ℹ️ Account not found. Please register your new account below!", "#0284c7");
           setAuthMode('register');
@@ -6967,8 +7025,8 @@ ET
       if (!user || !user.phone) return;
 
       const outCanvas = document.createElement('canvas');
-      const W = 220;
-      const H = 220;
+      const W = 160;
+      const H = 160;
       outCanvas.width = W;
       outCanvas.height = H;
       const ctx = outCanvas.getContext('2d');
@@ -6985,7 +7043,7 @@ ET
       const dy = (H - drawH) / 2 + _cropOffsetY;
       ctx.drawImage(_cropRawImage, dx, dy, drawW, drawH);
 
-      const croppedDataUrl = outCanvas.toDataURL('image/jpeg', 0.82);
+      const croppedDataUrl = outCanvas.toDataURL('image/jpeg', 0.74);
       const todayStr = getTodayDateString();
 
       let users = {};
@@ -8214,7 +8272,7 @@ ET
         byId[r.id] = { ...(byId[r.id] || {}), ...r };
       });
 
-      rides = Object.values(byId);
+      rides = Object.values(byId).slice(0, 250);
       ssStorage.setItem('ss_rides', JSON.stringify(rides));
       renderLiveCarsHome();
       renderDriverFleet();
@@ -8312,18 +8370,21 @@ ET
               }, err => {});
             } catch(e){}
 
-            // 6. Live Users Real-Time Firestore Sync
+            // 6. High-Scale Active User Firestore Sync (Only listens to logged-in user doc instead of 100,000 users!)
             try {
-              db.collection('ss_users').onSnapshot(snapshot => {
-                const uMap = { ...(JSON.parse(ssStorage.getItem('ss_users_db') || '{}')) };
-                snapshot.forEach(doc => {
-                  const data = doc.data();
-                  if (data && (data.userId || data.phone)) {
-                    uMap[data.userId || data.phone] = data;
+              const myCurUid = ssStorage.getItem('ss_current_user_id');
+              if (myCurUid) {
+                db.collection('ss_users').doc(myCurUid).onSnapshot(doc => {
+                  if (doc && doc.exists) {
+                    const data = doc.data();
+                    if (data && (data.userId || data.phone)) {
+                      const uMap = { ...(JSON.parse(ssStorage.getItem('ss_users_db') || '{}')) };
+                      uMap[myCurUid] = data;
+                      ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
+                    }
                   }
-                });
-                ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
-              }, err => {});
+                }, err => {});
+              }
             } catch(e){}
 
             // 7A. REAL-TIME ENCRYPTED APP-TO-APP VOICE CALL SIGNALING (FIRESTORE WEBSOCKET)
@@ -8340,9 +8401,9 @@ ET
               });
             } catch(e){}
 
-            // 7B. REAL-TIME ENCRYPTED 2-WAY HD VOICE STREAM (FIRESTORE WEBSOCKET - ONLY WHEN WEBRTC P2P NOT YET ACTIVE)
+            // 7B. HIGH-SCALE AUDIO STREAM (Handled on-demand per activeCallId via RTDB/WebRTC so idle phones use 0 reads!)
             try {
-              db.collection('ss_call_audio').onSnapshot(snapshot => {
+              if (false) db.collection('ss_call_audio').onSnapshot(snapshot => {
                 if (!isAppCallConnected || !activeCallId || webrtcRemoteTrackReceiving) return;
                 const otherRole = (activeCallRole === 'CALLER') ? 'DRIVER' : 'CALLER';
                 const prefix = activeCallId + '_' + otherRole;
@@ -11689,6 +11750,14 @@ ET
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(patch)
         }).catch(() => {});
+        const targetDrvPhone = (map[callId] && map[callId].driverPhone) || (activeCallPacket && activeCallPacket.driverPhone) || '';
+        if (targetDrvPhone) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(targetDrvPhone).trim()) + '.json', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(patch)
+          }).catch(() => {});
+        }
       } catch(e){}
     }
 
@@ -11739,6 +11808,13 @@ ET
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(packet)
         }).catch(() => {});
+        if (packet.driverPhone) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(packet.driverPhone).trim()) + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(packet)
+          }).catch(() => {});
+        }
       } catch(e){}
     }
 
@@ -13038,12 +13114,23 @@ ET
             })
             .catch(() => {});
         }
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json?t=' + Date.now(), { cache: 'no-store' })
-          .then(r => r.ok ? r.json() : null)
-          .then(pkt => {
-            if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
-          })
-          .catch(() => {});
+        const myProfForCall = getActiveUserProfile();
+        if (myProfForCall && myProfForCall.phone) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(myProfForCall.phone).trim()) + '.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(pkt => {
+              if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
+            })
+            .catch(() => {});
+        }
+        if (activeCallId) {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + encodeURIComponent(activeCallId) + '.json?t=' + Date.now(), { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(pkt => {
+              if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
+            })
+            .catch(() => {});
+        }
       } catch(e){}
     }
 

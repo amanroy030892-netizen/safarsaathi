@@ -1890,7 +1890,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       pushAdminStateToBackend({ users: usersObj });
       try {
         fetch(RTDB_USERS_URL, {
-          method: 'PUT',
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(usersObj)
         }).catch(() => {});
