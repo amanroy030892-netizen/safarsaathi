@@ -209,7 +209,6 @@ const CORE_OFFLINE_ASSETS = [
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
-  ensureSwBackgroundWatchLoop();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(CORE_OFFLINE_ASSETS).catch(() => {});
@@ -218,7 +217,6 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  ensureSwBackgroundWatchLoop();
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve())));
@@ -227,7 +225,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  ensureSwBackgroundWatchLoop();
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
   // Network-First with Offline Cache Fallback (guarantees instant live updates online + zero crash in Airplane Mode during Play Store review!)

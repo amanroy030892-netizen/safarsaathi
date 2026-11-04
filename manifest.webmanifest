@@ -2,9 +2,9 @@
   "name": "SafarSaathi: Carpooling Assam",
   "short_name": "SafarSaathi",
   "description": "Verified peer-to-peer E-Rickshaw radar and intercity carpooling network across Assam and North-East India.",
-  "id": "/index.html",
-  "start_url": "/index.html",
-  "scope": "/",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "display_override": [
     "standalone",
@@ -71,7 +71,7 @@
       "name": "Find Rides",
       "short_name": "Find",
       "description": "Search available carpool rides in Assam",
-      "url": "/index.html?tab=passenger",
+      "url": "./index.html?tab=passenger",
       "icons": [
         {
           "src": "icon-192.png",
@@ -84,7 +84,7 @@
       "name": "Live E-Rickshaw",
       "short_name": "E-Rickshaw",
       "description": "View live E-Rickshaw radar on map",
-      "url": "/index.html?tab=live-erickshaw",
+      "url": "./index.html?tab=live-erickshaw",
       "icons": [
         {
           "src": "icon-192.png",
@@ -97,7 +97,7 @@
       "name": "Profile & KYC",
       "short_name": "Profile",
       "description": "Manage your profile, identity and bookings",
-      "url": "/index.html?tab=profile",
+      "url": "./index.html?tab=profile",
       "icons": [
         {
           "src": "icon-192.png",

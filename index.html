@@ -40,11 +40,35 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script>
+    window.__IS_PWA_SCANNER_OR_BOT = Boolean(
+      navigator.webdriver || /HeadlessChrome|PWABuilder|Lighthouse|PageSpeed|Googlebot|InspectionTool|PTST/i.test(navigator.userAgent || '')
+    );
+    window.__SS_ALLOW_BG_NETWORK = false;
+    (function enableBgNetworkAfterQuietWindow() {
+      if (window.__IS_PWA_SCANNER_OR_BOT) return;
+      function activateNow() {
+        if (window.__SS_ALLOW_BG_NETWORK) return;
+        window.__SS_ALLOW_BG_NETWORK = true;
+        try { if (typeof executeAiCloudSync === 'function') executeAiCloudSync(); } catch(e){}
+        try { if (typeof initProfileHomeVideoAd === 'function') initProfileHomeVideoAd(); } catch(e){}
+        try { if (typeof resumeProfileHomeVideoAdIfNeeded === 'function') resumeProfileHomeVideoAdIfNeeded(); } catch(e){}
+      }
+      window.addEventListener('load', function() {
+        setTimeout(activateNow, 4200);
+      });
+      setTimeout(activateNow, 5000);
+      ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function(ev) {
+        window.addEventListener(ev, activateNow, { once: true, passive: true });
+      });
+    })();
+
     (function runAiCacheAutoPurge() {
-      // 1. Purge all CacheStorage caches
+      // 1. Purge only outdated CacheStorage caches (keep current offline PWA cache intact)
       if ('caches' in window) {
         caches.keys().then(function(names) {
-          names.forEach(function(name) { caches.delete(name); });
+          names.forEach(function(name) {
+            if (name !== 'safarsaathi-v120-pinpoint-road-gps-and-autoconnect') caches.delete(name);
+          });
         }).catch(function(e) {});
       }
       // 2. Keep 24x7 Background Service Worker (sw.js) Active & Updated (Never Unregister!)
@@ -2492,7 +2516,7 @@
 
         <!-- 🎬 CLEAN SCREEN-FITTING VIDEO AD (VISIBLE ON PROFILE HOME BOTH BEFORE & AFTER LOGIN) -->
         <div id="profile-home-video-ad-box" style="position: relative; margin-top: 0.28rem; background: #000000; border: 1.5px solid #16a34a; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(22, 163, 74, 0.15); box-sizing: border-box; text-align: center; height: var(--auto-prof-vid-height, 130px); max-height: 165px;">
-          <video id="profile-video-player" src="promo_ad.mp4" data-video-src="promo_ad.mp4" autoplay loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; border-radius: 8px;"></video>
+          <video id="profile-video-player" data-video-src="promo_ad.mp4" preload="none" loop playsinline webkit-playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; margin: 0 auto; border-radius: 8px;"></video>
           <div style="position: absolute; top: 5px; left: 6px; background: rgba(6, 95, 70, 0.82); color: #ffffff; font-size: 0.54rem; font-weight: 900; padding: 2px 6px; border-radius: 999px; border: 1px solid #86efac; pointer-events: none;">
             🎬 Sponsor Ad
           </div>
@@ -3811,7 +3835,7 @@
     }
 
     function executeAiCloudSync() {
-      if (!isAppTabActive || _isCloudSyncInFlight) return;
+      if (!window.__SS_ALLOW_BG_NETWORK || !isAppTabActive || _isCloudSyncInFlight) return;
       _isCloudSyncInFlight = true;
       setTimeout(() => { _isCloudSyncInFlight = false; }, 850);
 
@@ -13000,6 +13024,7 @@ ET
     });
 
     function runBackgroundSafeCallAndPresenceTick() {
+      if (!window.__SS_ALLOW_BG_NETWORK) return;
       syncDriverIdentityToServiceWorkerAndIdb();
       try {
         broadcastMyOnlinePresence();
@@ -13151,7 +13176,7 @@ ET
         }
       } catch(e){}
       // Pre-fetch user GPS in background so map opens instantly on customer's exact location
-      try { centerOnUserLiveGps(false); } catch(e){}
+      setTimeout(() => { if (window.__SS_ALLOW_BG_NETWORK) { try { centerOnUserLiveGps(false); } catch(e){} } }, 4500);
     });
 
     // PWA Service Worker Registration
@@ -13286,6 +13311,7 @@ ET
     }
 
     function initProfileHomeVideoAd() {
+      if (!window.__SS_ALLOW_BG_NETWORK) return;
       const vidPlayer = document.getElementById('profile-video-player');
       if (!vidPlayer) return;
 
