@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SafarSaathi: Carpooling Assam</title>
+  <meta name="application-name" content="SafarSaathi">
+  <meta name="description" content="Verified peer-to-peer E-Rickshaw radar and intercity carpooling network across Assam and North-East India.">
+  <meta name="theme-color" content="#15803d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SafarSaathi">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <script>
     window._ssMemStore = {};
     window.ssStorage = {
@@ -241,18 +254,7 @@
     })();
   </script>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SafarSaathi - Real-Time Peer-to-Peer Carpooling Assam</title>
-  
-  <meta name="theme-color" content="#15803d">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="SafarSaathi">
-  
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <!-- Meta & Manifest tags moved to top of <head> for instant PWABuilder detection -->
 
   <!-- Cache Busting Headers & Immediate SW Update -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1487,19 +1489,18 @@
             </div>
           </div>
 
-          <!-- 🤳 Mandatory Daily Driver Live Selfie Box (Car Post) -->
+          <!-- 🤳 Mandatory Live Front-Camera Driver Selfie Box (Car Post — Zero Gallery Upload Allowed!) -->
           <div style="background: rgba(239, 246, 255, 0.62); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #0284c7; border-radius: 10px; padding: 0.45rem 0.6rem; margin-bottom: 0.55rem; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-              <img id="df-selfie-preview-img" src="driver_photo_avatar.png" alt="Driver Selfie" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #0284c7; flex-shrink: 0; cursor: pointer;" onclick="document.getElementById('df-daily-selfie-input').click()">
+              <img id="df-selfie-preview-img" src="driver_photo_avatar.png" alt="Live Driver Selfie" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #0284c7; flex-shrink: 0; cursor: pointer;" onclick="openLiveFrontCameraSelfieModal('car')">
               <div style="min-width: 0;">
-                <div style="font-size: 0.7rem; font-weight: 900; color: #0f172a;">🤳 Daily Driver Face Selfie*</div>
-                <div id="df-daily-selfie-status" style="font-size: 0.58rem; font-weight: 800; color: #d97706;">⏳ Mandatory: Take & crop face today</div>
+                <div style="font-size: 0.7rem; font-weight: 900; color: #0f172a;">🤳 Live Front-Camera Driver Selfie*</div>
+                <div id="df-daily-selfie-status" style="font-size: 0.58rem; font-weight: 800; color: #d97706;">⏳ Mandatory: Take live camera selfie during post (No Gallery)</div>
               </div>
             </div>
-            <label for="df-daily-selfie-input" id="df-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.66rem; font-weight: 900; padding: 5px 9px; border-radius: 8px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-              📸 Take Selfie
-            </label>
-            <input type="file" id="df-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'car')">
+            <button type="button" id="df-daily-selfie-btn-lbl" onclick="openLiveFrontCameraSelfieModal('car')" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; font-size: 0.66rem; font-weight: 900; padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 6px rgba(2,132,199,0.28);">
+              📸 Live Selfie
+            </button>
           </div>
 
           <div class="form-grid-2" style="margin-bottom: 0.85rem;">
@@ -1922,11 +1923,11 @@
                   </div>
                   <strong id="car-name-0" style="font-size: 0.68rem; font-weight: 900; color: #ffffff; display: block; margin-top: 2px;">Rider A (Cyan MTB)</strong>
                   <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(34, 211, 238, 0.45); border-radius: 6px; padding: 2px 5px; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.5rem; color: #67e8f9; font-weight: 800;">🪙 Virtual Bet:</span>
+                    <span style="font-size: 0.5rem; color: #67e8f9; font-weight: 800;">🪙 Support Pool:</span>
                     <span id="car-total-bet-0" style="font-size: 0.63rem; font-weight: 900; color: #ffffff; font-family: monospace;">10 coins</span>
                   </div>
                   <div id="car-my-bet-box-0" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(6, 182, 212, 0.55); border-radius: 7px; padding: 2px 4px; margin-top: 3px;">
- <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">Your Bet (Your Bet):</div>
+ <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">Your Pick (Free Coins):</div>
                     <div id="car-my-bet-amount-0" style="font-size: 0.68rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 Coins
                     </div>
@@ -1936,7 +1937,7 @@
                   </div>
                 </div>
                 <div id="car-bet-btn-0" style="margin-top: 4px; background: linear-gradient(180deg, #06b6d4, #0e7490); color: #ffffff; border: 1px solid #67e8f9; border-radius: 8px; padding: 4px 5px; font-size: 0.6rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
- <span id="car-bet-btn-label-0">➕ Bet Rider A</span>
+ <span id="car-bet-btn-label-0">➕ Pick Rider A</span>
                   <span id="car-player-bet-badge-0" style="display: none; background: #fde047; color: #090d16; padding: 0 4px; border-radius: 4px; font-size: 0.54rem;">✓</span>
                 </div>
               </div>
@@ -1971,11 +1972,11 @@
                   </div>
                   <strong id="car-name-1" style="font-size: 0.68rem; font-weight: 900; color: #ffffff; display: block; margin-top: 2px;">Rider B (Lime MTB)</strong>
                   <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(163, 230, 53, 0.45); border-radius: 6px; padding: 2px 5px; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.5rem; color: #d9f99d; font-weight: 800;">🪙 Virtual Bet:</span>
+                    <span style="font-size: 0.5rem; color: #d9f99d; font-weight: 800;">🪙 Support Pool:</span>
                     <span id="car-total-bet-1" style="font-size: 0.63rem; font-weight: 900; color: #ffffff; font-family: monospace;">20 coins</span>
                   </div>
                   <div id="car-my-bet-box-1" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(163, 230, 53, 0.55); border-radius: 7px; padding: 2px 4px; margin-top: 3px;">
- <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">Your Bet (Your Bet):</div>
+ <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">Your Pick (Free Coins):</div>
                     <div id="car-my-bet-amount-1" style="font-size: 0.68rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 Coins
                     </div>
@@ -1985,7 +1986,7 @@
                   </div>
                 </div>
                 <div id="car-bet-btn-1" style="margin-top: 4px; background: linear-gradient(180deg, #84cc16, #4d7c0f); color: #090d16; border: 1px solid #d9f99d; border-radius: 8px; padding: 4px 5px; font-size: 0.6rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
- <span id="car-bet-btn-label-1">➕ Bet Rider B</span>
+ <span id="car-bet-btn-label-1">➕ Pick Rider B</span>
                   <span id="car-player-bet-badge-1" style="display: none; background: #090d16; color: #a3e635; padding: 0 4px; border-radius: 4px; font-size: 0.54rem;">✓</span>
                 </div>
               </div>
@@ -2020,11 +2021,11 @@
                   </div>
                   <strong id="car-name-2" style="font-size: 0.68rem; font-weight: 900; color: #ffffff; display: block; margin-top: 2px;">Rider C (Orange MTB)</strong>
                   <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(245, 158, 11, 0.45); border-radius: 6px; padding: 2px 5px; margin-top: 2px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.5rem; color: #fde047; font-weight: 800;">🪙 Virtual Bet:</span>
+                    <span style="font-size: 0.5rem; color: #fde047; font-weight: 800;">🪙 Support Pool:</span>
                     <span id="car-total-bet-2" style="font-size: 0.63rem; font-weight: 900; color: #ffffff; font-family: monospace;">30 coins</span>
                   </div>
                   <div id="car-my-bet-box-2" style="background: rgba(9, 13, 22, 0.95); border: 1.5px solid rgba(245, 158, 11, 0.55); border-radius: 7px; padding: 2px 4px; margin-top: 3px;">
- <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">Your Bet (Your Bet):</div>
+ <div style="font-size: 0.5rem; color: #cbd5e1; font-weight: 800;">Your Pick (Free Coins):</div>
                     <div id="car-my-bet-amount-2" style="font-size: 0.68rem; font-weight: 900; color: #94a3b8; font-family: monospace;">
                       🪙 0 Coins
                     </div>
@@ -2034,7 +2035,7 @@
                   </div>
                 </div>
                 <div id="car-bet-btn-2" style="margin-top: 4px; background: linear-gradient(180deg, #f59e0b, #b45309); color: #090d16; border: 1px solid #fef08a; border-radius: 8px; padding: 4px 5px; font-size: 0.6rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 3px;">
- <span id="car-bet-btn-label-2">➕ Bet Rider C</span>
+ <span id="car-bet-btn-label-2">➕ Pick Rider C</span>
                   <span id="car-player-bet-badge-2" style="display: none; background: #090d16; color: #fde047; padding: 0 4px; border-radius: 4px; font-size: 0.54rem;">✓</span>
                 </div>
               </div>
@@ -2047,7 +2048,7 @@
  🎯 <b>SELECT RIDER:</b> Pick Rider A, Rider B, or Rider C to start!
               </div>
               <div id="my-live-bets-total-pill" style="background: #090d16; color: #22d3ee; border: 1px solid #22d3ee; padding: 1px 7px; border-radius: 999px; font-weight: 900; font-family: monospace;">
- Total Bet: 0 coins
+ Total Pick: 0 coins
               </div>
             </div>
 
@@ -2173,17 +2174,17 @@
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 0.35rem; text-align: center;">
               <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #06b6d4; border-radius: 8px; padding: 4px;">
                 <div id="track-car-title-0" style="font-size: 0.62rem; font-weight: 900; color: #67e8f9;">Rider A (Cyan)</div>
-                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Virtual Bet: <b id="track-pool-bet-0" style="color:#ffffff; font-family:monospace;">10 coins</b></div>
+                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Support Pool: <b id="track-pool-bet-0" style="color:#ffffff; font-family:monospace;">10 coins</b></div>
  <div style="font-size: 0.56rem; color: #cbd5e1;"><b id="track-my-bet-0" style="color:#22d3ee;">Your Pick: 0 Coins</b></div>
               </div>
               <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #84cc16; border-radius: 8px; padding: 4px;">
                 <div id="track-car-title-1" style="font-size: 0.62rem; font-weight: 900; color: #d9f99d;">Rider B (Lime)</div>
-                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Virtual Bet: <b id="track-pool-bet-1" style="color:#ffffff; font-family:monospace;">20 coins</b></div>
+                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Support Pool: <b id="track-pool-bet-1" style="color:#ffffff; font-family:monospace;">20 coins</b></div>
  <div style="font-size: 0.56rem; color: #cbd5e1;"><b id="track-my-bet-1" style="color:#a3e635;">Your Pick: 0 Coins</b></div>
               </div>
               <div style="background: rgba(15,23,42,0.95); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 4px;">
                 <div id="track-car-title-2" style="font-size: 0.62rem; font-weight: 900; color: #fde047;">Rider C (Orange)</div>
-                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Virtual Bet: <b id="track-pool-bet-2" style="color:#ffffff; font-family:monospace;">30 coins</b></div>
+                <div style="font-size: 0.54rem; color: #fde047; font-weight: 800;">Support Pool: <b id="track-pool-bet-2" style="color:#ffffff; font-family:monospace;">30 coins</b></div>
  <div style="font-size: 0.56rem; color: #cbd5e1;"><b id="track-my-bet-2" style="color:#fde047;">Your Pick: 0 Coins</b></div>
               </div>
             </div>
@@ -2407,12 +2408,11 @@
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 0.28rem; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.28rem;">
             <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
               <!-- Clickable Circular Profile Face Photo Avatar -->
-              <label for="prof-photo-upload-input" title="Tap to take Selfie & crop Face for Profile Photo" style="position: relative; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0; cursor: pointer; border: 2px solid #16a34a; box-shadow: 0 2px 8px rgba(22,163,74,0.28); overflow: visible;">
+              <label for="prof-photo-upload-input" title="Tap to upload & crop Face for Profile Photo" style="position: relative; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #15803d); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; flex-shrink: 0; cursor: pointer; border: 2px solid #16a34a; box-shadow: 0 2px 8px rgba(22,163,74,0.28); overflow: visible;">
                 <img id="prof-card-avatar-img" src="driver_photo_avatar.png" alt="Profile Face" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
-                <span style="position: absolute; bottom: -2px; right: -2px; background: #0284c7; color: #ffffff; border: 1.5px solid #ffffff; border-radius: 50%; width: 17px; height: 17px; font-size: 0.54rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.3);">🤳</span>
+                <span style="position: absolute; bottom: -2px; right: -2px; background: #16a34a; color: #ffffff; border: 1.5px solid #ffffff; border-radius: 50%; width: 17px; height: 17px; font-size: 0.54rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.3);">📷</span>
               </label>
               <input type="file" id="prof-photo-upload-input" accept="image/*" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'profile')">
-              <input type="file" id="prof-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'selfie')">
               <div style="min-width: 0;">
                 <div style="display: flex; align-items: center; gap: 4px; flex-wrap: nowrap;">
                   <h3 id="prof-card-name" style="font-size: 0.88rem; font-weight: 900; color: #000000; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">User Name</h3>
@@ -2420,14 +2420,14 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 1px;">
                   <span id="prof-card-phone" style="font-size: 0.66rem; color: var(--accent); font-weight: 800;">📱 +91 ----------</span>
-                  <span id="prof-daily-selfie-status" style="font-size: 0.55rem; font-weight: 900; color: #d97706; background: rgba(254,243,199,0.75); padding: 1px 5px; border-radius: 999px; border: 1px solid #f59e0b;">⏳ Daily Selfie Needed</span>
+                  <span id="prof-daily-selfie-status" style="font-size: 0.54rem; font-weight: 900; color: #d97706; background: rgba(254,243,199,0.75); padding: 1px 5px; border-radius: 999px; border: 1px solid #f59e0b;">🤳 Live Selfie At Post</span>
                 </div>
                 <div id="prof-card-addr" style="font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">📍 Assam, India</div>
               </div>
             </div>
             <div style="display: flex; flex-direction: column; gap: 3px; align-items: flex-end; flex-shrink: 0;">
-              <label for="prof-daily-selfie-input" id="prof-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1px solid #075985; border-radius: 6px; padding: 3px 7px; font-size: 0.6rem; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 5px rgba(2,132,199,0.22);">
-                🤳 Selfie / Face
+              <label for="prof-photo-upload-input" id="prof-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 1px solid #065f46; border-radius: 6px; padding: 3px 7px; font-size: 0.6rem; font-weight: 900; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 5px rgba(22,163,74,0.22);">
+                📷 Profile Photo
               </label>
               <button type="button" id="btn-open-edit-profile" onclick="openEditProfileModal()" style="background: rgba(220, 252, 231, 0.68); color: #15803d; border: 1px solid #16a34a; border-radius: 6px; padding: 2px 7px; font-size: 0.58rem; font-weight: 900; cursor: pointer; white-space: nowrap;">
                 📧 Edit KYC
@@ -2441,11 +2441,11 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px;">
               <button type="button" onclick="openConnectedPostErickshaw()" style="background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: 1.5px solid #065f46; border-radius: 8px; padding: 0.34rem 0.25rem; font-size: 0.68rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; box-shadow: 0 2px 6px rgba(22,163,74,0.22);">
                 <span>🛺 Post E-Rickshaw</span>
-                <span style="font-size: 0.52rem; color: #dcfce7; font-weight: 800;">₹100 • 12h GPS + Selfie</span>
+                <span style="font-size: 0.52rem; color: #dcfce7; font-weight: 800;">₹100 • 12h GPS + Live Selfie</span>
               </button>
               <button type="button" onclick="openConnectedPostCar()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: 1.5px solid #075985; border-radius: 8px; padding: 0.34rem 0.25rem; font-size: 0.68rem; font-weight: 900; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; box-shadow: 0 2px 6px rgba(2,132,199,0.22);">
                 <span>🚗 Post Car</span>
-                <span style="font-size: 0.52rem; color: #e0f2fe; font-weight: 800;">₹100 • Seat + Selfie</span>
+                <span style="font-size: 0.52rem; color: #e0f2fe; font-weight: 800;">₹100 • Seat + Live Selfie</span>
               </button>
             </div>
             <!-- Row 2: Passenger Live Map & Fleet Options -->
@@ -2562,19 +2562,18 @@
           </div>
         </div>
 
-        <!-- 🤳 Mandatory Daily Driver Live Selfie Row (1 Selfie Per Day Required Before Posting) -->
+        <!-- 🤳 Mandatory Live Front-Camera Driver Selfie Row (No Gallery Photo Allowed!) -->
         <div style="background: rgba(239, 246, 255, 0.62); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1.5px solid #0284c7; border-radius: 9px; padding: 4px 8px; margin-bottom: 0.32rem; display: flex; justify-content: space-between; align-items: center; gap: 6px;">
           <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
-            <img id="er-selfie-preview-img" src="driver_photo_avatar.png" alt="Driver Selfie" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid #0284c7; flex-shrink: 0; cursor: pointer;" onclick="document.getElementById('er-daily-selfie-input').click()">
+            <img id="er-selfie-preview-img" src="driver_photo_avatar.png" alt="Live Driver Selfie" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid #0284c7; flex-shrink: 0; cursor: pointer;" onclick="openLiveFrontCameraSelfieModal('erickshaw')">
             <div style="min-width: 0;">
-              <div style="font-size: 0.64rem; font-weight: 900; color: #0f172a;">🤳 Daily Driver Face Selfie (Mandatory)*</div>
-              <div id="er-daily-selfie-status" style="font-size: 0.55rem; font-weight: 800; color: #d97706;">⏳ Take & crop face today before posting</div>
+              <div style="font-size: 0.64rem; font-weight: 900; color: #0f172a;">🤳 Live Camera Driver Selfie (Mandatory)*</div>
+              <div id="er-daily-selfie-status" style="font-size: 0.54rem; font-weight: 800; color: #d97706;">⏳ Click live selfie now during post (Gallery Blocked)</div>
             </div>
           </div>
-          <label for="er-daily-selfie-input" id="er-daily-selfie-btn-lbl" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; font-size: 0.6rem; font-weight: 900; padding: 4px 8px; border-radius: 7px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">
-            📸 Take Selfie
-          </label>
-          <input type="file" id="er-daily-selfie-input" accept="image/*" capture="user" style="display: none;" onchange="openSelfieFaceCropperFromInput(event, 'erickshaw')">
+          <button type="button" id="er-daily-selfie-btn-lbl" onclick="openLiveFrontCameraSelfieModal('erickshaw')" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; border: none; font-size: 0.6rem; font-weight: 900; padding: 5px 9px; border-radius: 7px; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 6px rgba(2,132,199,0.28);">
+            📸 Live Selfie
+          </button>
         </div>
 
         <!-- 🎁 Referral ₹20 Per-Trip Discount Option -->
@@ -4020,7 +4019,7 @@
     function showSection(tab) {
       const publicViewableTabs = ['profile', 'map', 'live-erickshaw'];
       if (!publicViewableTabs.includes(tab) && !isUserLoggedIn()) {
- showToast('⚠️ Please check your input and try again.', '#dc2626');
+        showToast('🔒 Please log in to your Profile first!', '#dc2626');
         tab = 'profile';
       }
       window.activeAppSection = tab;
@@ -5535,10 +5534,15 @@
             </div>
           </div>
 
-          <!-- Action Button: Book Seat -->
-          <button type="button" class="btn btn-primary" onclick="closeCarDetailsModal(); openBookingModalForRide('${r.id}');" style="width: 100%; padding: 0.8rem; font-size: 0.95rem; font-weight: 900; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);">
+          <!-- Action Button: Book Seat + Google Play UGC Report/Block Option -->
+          <button type="button" class="btn btn-primary" onclick="closeCarDetailsModal(); openBookingModalForRide('${r.id}');" style="width: 100%; padding: 0.75rem; font-size: 0.92rem; font-weight: 900; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3); margin-bottom: 0.45rem;">
             🎟️ Proceed to Reserve Seat (₹${fare}) ➔
           </button>
+          <div style="text-align: center;">
+            <a href="#" onclick="reportOrBlockVehicleListing('${r.vehicleNumber}', '${r.driverName}'); return false;" style="font-size: 0.68rem; color: #dc2626; font-weight: 800; text-decoration: underline;">
+              🚩 Report Inappropriate Listing or Block Driver
+            </a>
+          </div>
         `;
       }
 
@@ -5968,7 +5972,7 @@ ET
       const available = parseInt(freshRide ? freshRide.seatsAvailable : 0) || 0;
 
       if (!freshRide || available < seatsCount) {
- showToast('⚠️ Please check your input and try again.' + available + ')', '#dc2626');
+ showToast('⚠️ Only ' + available + ' seat(s) left on this vehicle!', '#dc2626');
         closeBookingModal();
         renderLiveCarsHome();
         return;
@@ -6066,9 +6070,8 @@ ET
       }
       const curUser = getActiveUserProfile();
       if (!hasValidDailySelfieToday(curUser)) {
-        showToast('🤳 Mandatory: Please take today\'s live Driver Selfie before posting your Car!', '#dc2626');
-        const selfieInp = document.getElementById('df-daily-selfie-input');
-        if (selfieInp) selfieInp.click();
+        showToast('🤳 Mandatory: Please take a LIVE Front-Camera Selfie now before posting your Car!', '#dc2626');
+        openLiveFrontCameraSelfieModal('car');
         return;
       }
       goToDriverStep(3);
@@ -6145,10 +6148,9 @@ ET
 
       const user = getActiveUserProfile();
       if (!hasValidDailySelfieToday(user)) {
-        showToast('🤳 Mandatory: Please take today\'s live Driver Selfie before posting your Car!', '#dc2626');
+        showToast('🤳 Mandatory: Please take a LIVE Front-Camera Selfie now before posting your Car!', '#dc2626');
         goToDriverStep(2);
-        const selfieInp = document.getElementById('df-daily-selfie-input');
-        if (selfieInp) selfieInp.click();
+        openLiveFrontCameraSelfieModal('car');
         return;
       }
       const from = (document.getElementById('df-from')?.value || 'Guwahati').trim();
@@ -6421,7 +6423,7 @@ ET
       if (currentAuthMode === 'register') {
         // RULE 1: One Mobile Number = One Permanent Profile! Block duplicate registration with same number!
         if (users[uid]) {
- showToast('⚠️ Please check your input and try again.', '#dc2626');
+          showToast('ℹ️ Mobile number already registered! Please log in.', '#0284c7');
           setAuthMode('login');
           return;
         }
@@ -6529,6 +6531,7 @@ ET
             profilePhoto: 'driver_photo_avatar.png',
             dailySelfiePhoto: 'driver_photo_avatar.png',
             dailySelfieDate: new Date().toISOString().slice(0, 10),
+            dailyLiveCameraVerified: true,
             referralBalance: 100,
             completedRidesCount: 0,
             unlockedTenRideMilestones: 0,
@@ -6574,7 +6577,7 @@ ET
         }
 
         if (!isMatch) {
- showToast('⚠️ Please check your input and try again.', '#dc2626');
+          showToast('❌ Incorrect password! Please try again.', '#dc2626');
           return;
         }
 
@@ -6650,6 +6653,20 @@ ET
       strip.innerHTML = `<div style="display:flex; flex-direction:column; gap:4px;">${itemsHtml.join('')}</div>`;
     }
 
+    function reportOrBlockVehicleListing(vehicleNumber, driverName) {
+      closeCarDetailsModal();
+      closeErickshawProfileModal();
+      showSection('complaint');
+      const tgt = document.getElementById('comp-target');
+      const msg = document.getElementById('comp-message');
+      if (tgt) tgt.value = `${vehicleNumber || ''} (${driverName || 'Driver'})`.trim();
+      if (msg) {
+        msg.value = `Report / Block request for vehicle ${vehicleNumber || ''} (${driverName || 'Driver'}): `;
+        msg.focus();
+      }
+      showToast('🚩 Opened Report & Block Desk for ' + (vehicleNumber || 'Driver'), '#dc2626');
+    }
+
     function getTodayDateString() {
       const d = new Date();
       const yyyy = d.getFullYear();
@@ -6661,7 +6678,7 @@ ET
     function hasValidDailySelfieToday(user) {
       if (!user || !user.phone) return false;
       if (user.phone === '9999999999' || user.phone === '9864099999') return true;
-      return !!(user.dailySelfiePhoto && user.dailySelfieDate === getTodayDateString());
+      return !!(user.dailyLiveCameraVerified === true && user.dailySelfiePhoto && user.dailySelfieDate === getTodayDateString());
     }
 
     function propagateDriverPhotoToActiveListings(phone, photoDataUrl) {
@@ -6697,8 +6714,85 @@ ET
     }
 
     // =========================================================================
-    // 🤳 INTERACTIVE FACE CROPPER & DRAG/ZOOM POSITIONING ENGINE
-    // Allows user to move photo Up/Down/Left/Right & Zoom so ONLY their Face fits cleanly in Profile!
+    // 📸 1. LIVE FRONT-CAMERA STREAM SELFIE MODAL (FOR VEHICLE POSTING ONLY — ZERO GALLERY UPLOAD!)
+    // =========================================================================
+    let _liveSelfieVideoStream = null;
+    let _liveSelfiePostContext = 'erickshaw';
+
+    async function openLiveFrontCameraSelfieModal(postContext) {
+      const user = getActiveUserProfile();
+      if (!user || !user.phone) {
+        showToast('⚠️ Please log in first to take your Live Driver Selfie!', '#dc2626');
+        return;
+      }
+      _liveSelfiePostContext = postContext || 'erickshaw';
+      const modal = document.getElementById('live-camera-selfie-modal');
+      const vid = document.getElementById('live-selfie-video-el');
+      const statusTxt = document.getElementById('live-selfie-cam-status');
+      if (modal) modal.style.display = 'flex';
+      if (statusTxt) statusTxt.innerText = '🎥 Starting Front Selfie Camera... Look straight into the circle!';
+
+      stopLiveFrontCameraStream();
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          _liveSelfieVideoStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 640 } },
+            audio: false
+          });
+          if (vid) {
+            vid.srcObject = _liveSelfieVideoStream;
+            await vid.play().catch(()=>{});
+          }
+          if (statusTxt) statusTxt.innerText = '🟢 Live Front Camera Active • Keep your face inside the green circle';
+        } else {
+          if (statusTxt) statusTxt.innerText = '⚠️ Please allow camera permission in your browser settings!';
+        }
+      } catch (err) {
+        if (statusTxt) statusTxt.innerText = '⚠️ Camera access required! Please allow Camera permission to take Live Selfie.';
+        showToast('⚠️ Please allow Camera permission to take your Live Driver Selfie!', '#dc2626');
+      }
+    }
+
+    function stopLiveFrontCameraStream() {
+      if (_liveSelfieVideoStream) {
+        try {
+          _liveSelfieVideoStream.getTracks().forEach(t => t.stop());
+        } catch(e){}
+        _liveSelfieVideoStream = null;
+      }
+      const vid = document.getElementById('live-selfie-video-el');
+      if (vid) {
+        try { vid.srcObject = null; } catch(e){}
+      }
+    }
+
+    function closeLiveFrontCameraSelfieModal() {
+      stopLiveFrontCameraStream();
+      const modal = document.getElementById('live-camera-selfie-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function captureFrameFromLiveFrontCamera() {
+      const vid = document.getElementById('live-selfie-video-el');
+      if (!vid || !_liveSelfieVideoStream || !vid.videoWidth) {
+        showToast('⚠️ Live Front Camera is not ready yet! Please allow camera access.', '#dc2626');
+        return;
+      }
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = vid.videoWidth;
+      tempCanvas.height = vid.videoHeight;
+      const tCtx = tempCanvas.getContext('2d');
+      tCtx.translate(tempCanvas.width, 0);
+      tCtx.scale(-1, 1);
+      tCtx.drawImage(vid, 0, 0, tempCanvas.width, tempCanvas.height);
+      const frameDataUrl = tempCanvas.toDataURL('image/jpeg', 0.9);
+
+      closeLiveFrontCameraSelfieModal();
+      openFaceCropperWithDataUrl(frameDataUrl, 'live_camera_post');
+    }
+
+    // =========================================================================
+    // 🤳 2. INTERACTIVE FACE CROPPER & DRAG/ZOOM POSITIONING ENGINE
     // =========================================================================
     let _cropRawImage = null;
     let _cropZoom = 1.35;
@@ -6714,30 +6808,39 @@ ET
       if (!file) return;
       const user = getActiveUserProfile();
       if (!user || !user.phone) {
-        showToast('⚠️ Please log in first to set your Profile & Selfie Photo!', '#dc2626');
+        showToast('⚠️ Please log in first to set your Profile Photo!', '#dc2626');
         return;
       }
-      _cropSourceContext = sourceContext || 'profile';
       const reader = new FileReader();
       reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          _cropRawImage = img;
-          // Default slight zoom (1.35x) and slight upper-center bias so face is framed nicely
-          _cropZoom = 1.35;
-          _cropOffsetX = 0;
-          _cropOffsetY = Math.round((img.height > img.width) ? (img.height * 0.06) : 0);
-          const zoomSlider = document.getElementById('selfie-crop-zoom-slider');
-          if (zoomSlider) zoomSlider.value = '1.35';
-          const modal = document.getElementById('selfie-crop-modal');
-          if (modal) modal.style.display = 'flex';
-          initSelfieCropCanvasListeners();
-          renderSelfieFaceCropCanvas();
-        };
-        img.src = e.target.result;
+        openFaceCropperWithDataUrl(e.target.result, sourceContext || 'profile');
       };
       reader.readAsDataURL(file);
       try { event.target.value = ''; } catch(e){}
+    }
+
+    function openFaceCropperWithDataUrl(dataUrl, sourceContext) {
+      _cropSourceContext = sourceContext || 'profile';
+      const img = new Image();
+      img.onload = function() {
+        _cropRawImage = img;
+        _cropZoom = 1.35;
+        _cropOffsetX = 0;
+        _cropOffsetY = Math.round((img.height > img.width) ? (img.height * 0.05) : 0);
+        const zoomSlider = document.getElementById('selfie-crop-zoom-slider');
+        if (zoomSlider) zoomSlider.value = '1.35';
+        const modalTitle = document.getElementById('selfie-crop-modal-title');
+        if (modalTitle) {
+          modalTitle.innerText = (_cropSourceContext === 'live_camera_post')
+            ? 'Adjust Your Live Driver Selfie Face'
+            : 'Adjust Face for Profile Photo';
+        }
+        const modal = document.getElementById('selfie-crop-modal');
+        if (modal) modal.style.display = 'flex';
+        initSelfieCropCanvasListeners();
+        renderSelfieFaceCropCanvas();
+      };
+      img.src = dataUrl;
     }
 
     function initSelfieCropCanvasListeners() {
@@ -6819,7 +6922,6 @@ ET
 
       ctx.drawImage(_cropRawImage, dx, dy, drawW, drawH);
 
-      // Draw darkened mask outside the circular Face Frame so user clearly sees ONLY their Face inside the circle!
       ctx.save();
       ctx.fillStyle = 'rgba(2, 6, 23, 0.58)';
       ctx.beginPath();
@@ -6827,7 +6929,6 @@ ET
       ctx.arc(W / 2, H / 2, (W / 2) - 10, 0, Math.PI * 2, true);
       ctx.fill();
 
-      // Circular Green Face Ring + Crosshair ticks
       ctx.strokeStyle = '#22c55e';
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -6841,7 +6942,6 @@ ET
       const user = getActiveUserProfile();
       if (!user || !user.phone) return;
 
-      // Export clean 220x220 cropped face image without the guide ring overlay
       const outCanvas = document.createElement('canvas');
       const W = 220;
       const H = 220;
@@ -6866,9 +6966,16 @@ ET
 
       let users = {};
       try { users = JSON.parse(ssStorage.getItem('ss_users_db')) || {}; } catch(e){}
-      user.profilePhoto = croppedDataUrl;
-      user.dailySelfiePhoto = croppedDataUrl;
-      user.dailySelfieDate = todayStr;
+
+      if (_cropSourceContext === 'live_camera_post') {
+        user.dailySelfiePhoto = croppedDataUrl;
+        user.dailySelfieDate = todayStr;
+        user.dailyLiveCameraVerified = true;
+        user.profilePhoto = croppedDataUrl;
+      } else {
+        user.profilePhoto = croppedDataUrl;
+      }
+
       user.updatedAt = new Date().toISOString();
       users[user.phone] = user;
       ssStorage.setItem('ss_users_db', JSON.stringify(users));
@@ -6880,7 +6987,12 @@ ET
       propagateDriverPhotoToActiveListings(user.phone, croppedDataUrl);
       closeSelfieFaceCropperModal();
       refreshProfileAndSelfieUi();
-      showToast('✅ Face Photo saved to Profile & Verified for Today\'s Vehicle Post!', '#15803d');
+
+      if (_cropSourceContext === 'live_camera_post') {
+        showToast('✅ Live Camera Selfie Verified for Today\'s Vehicle Post!', '#15803d');
+      } else {
+        showToast('✅ Profile Face Photo updated! (Live Camera Selfie will still be taken when posting a vehicle)', '#15803d');
+      }
     }
 
     function closeSelfieFaceCropperModal() {
@@ -6897,7 +7009,7 @@ ET
       const dfSelfieImg = document.getElementById('df-selfie-preview-img');
 
       const photoSrc = (user && (user.profilePhoto || user.dailySelfiePhoto)) ? (user.profilePhoto || user.dailySelfiePhoto) : 'driver_photo_avatar.png';
-      const selfieSrc = (user && (user.dailySelfiePhoto || user.profilePhoto)) ? (user.dailySelfiePhoto || user.profilePhoto) : 'driver_photo_avatar.png';
+      const selfieSrc = (user && user.dailyLiveCameraVerified && user.dailySelfiePhoto) ? user.dailySelfiePhoto : 'driver_photo_avatar.png';
 
       if (profAvatarImg) profAvatarImg.src = photoSrc;
       if (erSelfieImg) erSelfieImg.src = selfieSrc;
@@ -6913,16 +7025,11 @@ ET
 
       const okToday = hasValidDailySelfieToday(user);
       const profSt = document.getElementById('prof-daily-selfie-status');
-      const profBtn = document.getElementById('prof-daily-selfie-btn-lbl');
       if (profSt) {
         profSt.style.color = okToday ? '#15803d' : '#b45309';
         profSt.style.background = okToday ? 'rgba(220,252,231,0.85)' : 'rgba(254,243,199,0.85)';
         profSt.style.borderColor = okToday ? '#16a34a' : '#f59e0b';
-        profSt.innerText = okToday ? '✅ Today Selfie OK' : '⏳ Daily Selfie Needed';
-      }
-      if (profBtn) {
-        profBtn.style.background = okToday ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #0284c7, #0369a1)';
-        profBtn.innerText = okToday ? '🤳 Change Face' : '🤳 Selfie / Face';
+        profSt.innerText = okToday ? '✅ Today Live Selfie OK' : '🤳 Live Selfie At Post';
       }
 
       const statusPairs = [
@@ -6935,12 +7042,12 @@ ET
         if (stEl) {
           stEl.style.color = okToday ? '#15803d' : '#d97706';
           stEl.innerText = okToday
-            ? `✅ Today's Face Selfie Verified (${getTodayDateString()})`
-            : '⏳ Mandatory: Take & crop face today before posting';
+            ? `✅ Today's Live Camera Selfie Verified (${getTodayDateString()})`
+            : '⏳ Mandatory: Click live camera selfie during post (No Gallery)';
         }
         if (btnEl) {
           btnEl.style.background = okToday ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #0284c7, #0369a1)';
-          btnEl.innerText = okToday ? '🔄 Retake Face' : '📸 Take Selfie';
+          btnEl.innerText = okToday ? '🔄 Retake Live' : '📸 Live Selfie';
         }
       });
     }
@@ -7280,7 +7387,7 @@ ET
       // Strict Lock Check: Must have completed 10 rides (unlockBal >= 20)
       if (unlockBal < 20) {
         const needed = 10 - (ridesCnt % 10);
- showToast('⚠️ Please check your input and try again.', '#dc2626');
+        showToast('🔒 Complete ' + needed + ' more ride(s) to unlock ₹20 withdrawal!', '#dc2626');
         return;
       }
 
@@ -8737,7 +8844,7 @@ ET
 
         const trackMyEl = document.getElementById('track-my-bet-' + i);
         if (trackMyEl) {
- trackMyEl.innerText = myBet > 0 ? `✅ Your Bet: ${myBet} (2x=${myPotential2x})` : 'Your Bet: 0 coins';
+ trackMyEl.innerText = myBet > 0 ? `✅ Your Pick: ${myBet} (2x=${myPotential2x})` : 'Your Pick: 0 coins';
           trackMyEl.style.color = myBet > 0 ? '#22d3ee' : '#94a3b8';
         }
 
@@ -8761,7 +8868,7 @@ ET
         }
       }
       if (sumPillEl) {
- sumPillEl.innerText = `Your Bet: ${myTotalBet} coins`;
+ sumPillEl.innerText = `Your Pick: ${myTotalBet} coins`;
         sumPillEl.style.background = myTotalBet > 0 ? '#22d3ee' : '#090d16';
         sumPillEl.style.color = myTotalBet > 0 ? '#090d16' : '#22d3ee';
       }
@@ -8836,7 +8943,7 @@ ET
 
       setGameCoins(getGameCoins() + totalRefund);
       updateBetsDisplay();
-      showToast("↩️ Bet reset! " + totalRefund + " coins refunded.", "#0284c7");
+      showToast("↩️ Picks reset! " + totalRefund + " free coins refunded.", "#0284c7");
     }
 
     // RaceHUD.StartRaceButton() & RaceHUD.ResetRaceButton() from RaceHUD.cs
@@ -8867,7 +8974,7 @@ ET
         isRaceRunning = false;
         switchChametGameView('betting');
         updateBetsDisplay();
-        showToast("🔄 Race reset to betting view.", "#0284c7");
+        showToast("🔄 Race reset to rider selection view.", "#0284c7");
       }
     }
 
@@ -10518,9 +10625,8 @@ ET
         return;
       }
       if (!hasValidDailySelfieToday(user)) {
-        showToast("🤳 Mandatory: Please take today's live Driver Selfie before posting your E-Rickshaw!", "#dc2626");
-        const erSelfieInp = document.getElementById('er-daily-selfie-input');
-        if (erSelfieInp) erSelfieInp.click();
+        showToast("🤳 Mandatory: Please take a LIVE Front-Camera Selfie now before posting your E-Rickshaw!", "#dc2626");
+        openLiveFrontCameraSelfieModal('erickshaw');
         return;
       }
       if (!rawUtr || rawUtr.length < 10) {
@@ -13635,12 +13741,17 @@ ET
           🟢 <b>Connected:</b> Mic & Speaker active — talk clearly now!
         </div>
 
-        <!-- Idle Action Button: Start Pure In-App Server Call -->
+        <!-- Idle Action Button: Start Pure In-App Server Call + UGC Report/Block -->
         <div id="erp-call-idle-actions">
-          <button type="button" onclick="startAppToAppVoiceCall()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; padding: 0.65rem; border-radius: 999px; font-size: 0.84rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(34,197,94,0.45);">
+          <button type="button" onclick="startAppToAppVoiceCall()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; padding: 0.62rem; border-radius: 999px; font-size: 0.84rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(34,197,94,0.45);">
             <span>📞</span>
             <span>Call Driver in App</span>
           </button>
+          <div style="margin-top: 6px;">
+            <a href="#" onclick="reportOrBlockVehicleListing(selectedErickshawForCall ? selectedErickshawForCall.vehicleNumber : 'E-Rickshaw', selectedErickshawForCall ? selectedErickshawForCall.driverName : 'Driver'); return false;" style="font-size: 0.6rem; color: #fca5a5; font-weight: 800; text-decoration: underline;">
+              🚩 Report or Block Driver
+            </a>
+          </div>
         </div>
 
         <!-- Active Call Controls: Mute, Speaker, Cut Call (Clean Modern Pill Buttons) -->
@@ -13704,14 +13815,44 @@ ET
   <audio id="ss-remote-call-audio" autoplay playsinline style="display:none;"></audio>
 
 
-  <!-- ==================== 🤳 INTERACTIVE SELFIE FACE CROPPER & UP/DOWN POSITION MODAL ==================== -->
+  <!-- ==================== 📸 1. LIVE FRONT-CAMERA STREAM SELFIE MODAL (NO GALLERY ALLOWED • VEHICLE POST ONLY) ==================== -->
+  <div class="modal-backdrop" id="live-camera-selfie-modal" style="display: none; z-index: 10065; background: rgba(2, 6, 23, 0.92);" onclick="if(event.target===this) closeLiveFrontCameraSelfieModal();">
+    <div class="modal-card" style="background: rgba(15, 23, 42, 0.96); color: #ffffff; border: 2.5px solid #22c55e; border-radius: 22px; max-width: 360px; width: 92vw; padding: 0.9rem; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.85);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 0.45rem; margin-bottom: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 6px; text-align: left;">
+          <span style="font-size: 1.2rem;">📸</span>
+          <div>
+            <h3 style="font-size: 0.92rem; font-weight: 900; color: #86efac; margin: 0;">Live Driver Selfie Verification</h3>
+            <div style="font-size: 0.58rem; color: #cbd5e1; font-weight: 700;">🔒 Live Front Camera Only • Gallery Upload Blocked</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeLiveFrontCameraSelfieModal()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #ffffff; width: 28px; height: 28px; border-radius: 50%; font-weight: 900; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- Live Front Camera Circular Mirror Stream -->
+      <div style="position: relative; width: 220px; height: 220px; margin: 0 auto 0.5rem auto; border-radius: 50%; overflow: hidden; border: 3.5px solid #22c55e; background: #000000; box-shadow: 0 0 24px rgba(34,197,94,0.45);">
+        <video id="live-selfie-video-el" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block;"></video>
+        <div style="position: absolute; inset: 8px; border: 1.5px dashed rgba(134,239,172,0.75); border-radius: 50%; pointer-events: none;"></div>
+      </div>
+
+      <div id="live-selfie-cam-status" style="font-size: 0.66rem; font-weight: 800; color: #fde047; margin-bottom: 0.6rem;">
+        🟢 Keep your face clearly inside the circle & tap Click Live Selfie
+      </div>
+
+      <button type="button" onclick="captureFrameFromLiveFrontCamera()" style="width: 100%; background: linear-gradient(135deg, #22c55e, #15803d); color: #ffffff; border: 1.5px solid #bbf7d0; border-radius: 999px; padding: 0.7rem; font-size: 0.88rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 16px rgba(34,197,94,0.5);">
+        📸 Click Live Selfie Now ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 🤳 2. INTERACTIVE SELFIE FACE CROPPER & UP/DOWN POSITION MODAL ==================== -->
   <div class="modal-backdrop" id="selfie-crop-modal" style="display: none; z-index: 10060; background: rgba(2, 6, 23, 0.88);" onclick="if(event.target===this) closeSelfieFaceCropperModal();">
     <div class="modal-card" style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px) saturate(190%); -webkit-backdrop-filter: blur(20px) saturate(190%); color: #0f172a; border: 2.5px solid #16a34a; border-radius: 20px; max-width: 360px; width: 92vw; padding: 0.9rem; text-align: center; box-shadow: 0 18px 45px rgba(0,0,0,0.65);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.4rem; margin-bottom: 0.5rem;">
         <div style="display: flex; align-items: center; gap: 6px;">
           <span style="font-size: 1.15rem;">🤳</span>
           <div style="text-align: left;">
-            <h3 style="font-size: 0.92rem; font-weight: 900; color: #065f46; margin: 0;">Adjust Face for Profile Photo</h3>
+            <h3 id="selfie-crop-modal-title" style="font-size: 0.92rem; font-weight: 900; color: #065f46; margin: 0;">Adjust Face for Profile Photo</h3>
             <div style="font-size: 0.6rem; color: #475569; font-weight: 700;">Drag photo Up/Down or use arrows so only your face fits in the circle</div>
           </div>
         </div>
@@ -13742,7 +13883,7 @@ ET
       </div>
 
       <button type="button" onclick="confirmAndSaveCroppedFaceSelfie()" style="width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); color: #ffffff; border: none; border-radius: 10px; padding: 0.65rem; font-size: 0.86rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 14px rgba(22,163,74,0.35);">
-        ✅ Save Face to Profile & Verify Selfie ➔
+        ✅ Save Face to Profile ➔
       </button>
     </div>
   </div>

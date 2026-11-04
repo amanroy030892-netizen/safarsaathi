@@ -195,16 +195,33 @@ function ensureSwBackgroundWatchLoop() {
   }, 1400);
 }
 
+const CORE_OFFLINE_ASSETS = [
+  './',
+  './index.html',
+  './privacy.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './driver_photo_avatar.png',
+  './mitali_qr_compact.svg',
+  './safarsaathi_logo_transparent.png'
+];
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   ensureSwBackgroundWatchLoop();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(CORE_OFFLINE_ASSETS).catch(() => {});
+    })
+  );
 });
 
 self.addEventListener('activate', (event) => {
   ensureSwBackgroundWatchLoop();
   event.waitUntil(
     caches.keys().then((keys) => {
-      return Promise.all(keys.map((k) => caches.delete(k)));
+      return Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve())));
     }).then(() => self.clients.claim())
   );
 });
@@ -213,9 +230,24 @@ self.addEventListener('fetch', (event) => {
   ensureSwBackgroundWatchLoop();
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) return;
 
+  // Network-First with Offline Cache Fallback (guarantees instant live updates online + zero crash in Airplane Mode during Play Store review!)
   event.respondWith(
-    fetch(event.request, { cache: 'no-store' }).catch(() => {
-      return caches.match(event.request);
+    fetch(event.request, { cache: 'no-store' }).then((networkRes) => {
+      if (networkRes && networkRes.ok && event.request.url.startsWith(self.location.origin)) {
+        const resClone = networkRes.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, resClone).catch(() => {});
+        });
+      }
+      return networkRes;
+    }).catch(() => {
+      return caches.match(event.request).then((cachedRes) => {
+        if (cachedRes) return cachedRes;
+        if (event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+        return cachedRes;
+      });
     })
   );
 });
