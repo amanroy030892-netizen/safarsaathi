@@ -68,6 +68,7 @@
       function activateNow() {
         if (window.__SS_ALLOW_BG_NETWORK) return;
         window.__SS_ALLOW_BG_NETWORK = true;
+        try { if (typeof initFirebase === 'function') initFirebase(); } catch(e){}
         try { if (typeof executeAiCloudSync === 'function') executeAiCloudSync(); } catch(e){}
         try { if (typeof initProfileHomeVideoAd === 'function') initProfileHomeVideoAd(); } catch(e){}
         try { if (typeof resumeProfileHomeVideoAdIfNeeded === 'function') resumeProfileHomeVideoAdIfNeeded(); } catch(e){}
@@ -8282,6 +8283,8 @@ ET
     }
 
     function initFirebase() {
+      if (!window.__SS_ALLOW_BG_NETWORK || window._ssFirebaseInitialized) return;
+      window._ssFirebaseInitialized = true;
       if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
         try {
           if (!firebase.apps.length) {
@@ -12971,9 +12974,7 @@ ET
     }
 
     // Auto-start permissions on page load AND on first touch anywhere
-    window.addEventListener('load', () => {
-      setTimeout(() => { autoAllowAndPreWarmMobileCallSystems(); }, 600);
-    });
+    // Google Play Policy Compliance: Only request Microphone/Notification permissions on user interaction or call action, never automatically 600ms after page load
 
     ['click', 'touchstart'].forEach(evtName => {
       document.addEventListener(evtName, function onFirstUserWake() {
