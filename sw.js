@@ -85,7 +85,7 @@ async function maintainDriver12hOnlineInSw() {
     if (!swDriverIdentity) {
       swDriverIdentity = await readDriverIdentityFromIdb();
     }
-    if (!swDriverIdentity || (!swDriverIdentity.phone && !swDriverIdentity.deviceId)) return;
+    if (!swDriverIdentity || !swDriverIdentity.phone) return;
 
     const entry = {
       phone: swDriverIdentity.phone || '',
@@ -257,7 +257,7 @@ self.addEventListener('periodicsync', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-  ensureSwBackgroundWatchLoop();
+  if (event.data && event.data.identity && event.data.identity.phone) { ensureSwBackgroundWatchLoop(); }
   const data = event.data || {};
   if (data.type === 'REGISTER_DRIVER_BG_IDENTITY' && data.identity) {
     swDriverIdentity = data.identity;
