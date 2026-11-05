@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SafarSaathi: Carpooling Assam</title>
   <meta name="application-name" content="SafarSaathi">
@@ -3670,11 +3671,7 @@
         }).catch(() => {});
       } catch(e){}
       try {
-        fetch(MULTI_CLOUD_SYNC_KV, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedRides)
-        }).catch(() => {});
+        // Removed dead kvdb.io 404 endpoint (synced via Firebase RTDB & Firestore)
       } catch(e){}
     }
 
@@ -3730,7 +3727,7 @@
         const curUid = ssStorage.getItem('ss_current_user_id');
         if (curUid && usersObj && usersObj[curUid]) {
           // Only PATCH the active user (2 KB instead of full 100,000-user table, and NEVER overwrites other users!)
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users/' + encodeURIComponent(curUid) + '.json', {
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(curUid) + '.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(usersObj[curUid])
@@ -3985,7 +3982,7 @@
         // 5. High-Scale Per-User Sync: Only sync the currently logged-in user's profile (1 KB instead of 100,000 users!)
         const activeUid = ssStorage.getItem('ss_current_user_id');
         if (activeUid && (window._cloudSyncTickCount % 3 === 1)) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users/' + encodeURIComponent(activeUid) + '.json')
+          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(activeUid) + '.json')
             .then(res => res.ok ? res.json() : null)
             .then(uData => {
               if (uData && (uData.phone || uData.userId)) {
@@ -6657,7 +6654,7 @@ ET
         let existing = users[uid];
         if (!existing) {
           try {
-            const cRes = await fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users/' + encodeURIComponent(uid) + '.json');
+            const cRes = await fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json');
             if (cRes && cRes.ok) {
               const cUser = await cRes.json();
               if (cUser && (cUser.phone || cUser.userId)) {
@@ -7224,7 +7221,7 @@ ET
           try { db.collection('ss_users').doc(uid).delete(); } catch(e){}
         }
         if (typeof FIREBASE_RTDB_BASE !== 'undefined') {
-          try { fetch(FIREBASE_RTDB_BASE + '/ss_users/' + encodeURIComponent(uid) + '.json', { method: 'DELETE' }).catch(()=>{}); } catch(e){}
+          try { fetch(FIREBASE_RTDB_BASE + '/ss_users_db/' + encodeURIComponent(uid) + '.json', { method: 'DELETE' }).catch(()=>{}); } catch(e){}
         }
         showToast('🗑️ Your account and personal data have been permanently deleted.', '#15803d');
         renderProfileView();
