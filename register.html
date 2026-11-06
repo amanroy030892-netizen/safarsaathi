@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const fbCfg = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86"
+    };
+    try { if (!firebase.apps.length) firebase.initializeApp(fbCfg); } catch(e){}
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SafarSaathi - Register Account (Aadhaar Name Match Locked)</title>
@@ -99,7 +109,12 @@
         };
         localStorage.setItem('ss_users_db', JSON.stringify(users));
         localStorage.setItem('ss_current_user_id', phone);
-        window.location.href = 'index.html';
+        try {
+          if (firebase && firebase.firestore) {
+            firebase.firestore().collection('ss_users').doc(phone).set(users[phone], { merge: true }).catch(function(){});
+          }
+        } catch(e){}
+        setTimeout(function(){ window.location.href = 'index.html'; }, 200);
       }
     </script>
 

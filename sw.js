@@ -110,26 +110,22 @@ async function checkCloudForIncomingCallInSw() {
     if (!swDriverIdentity) {
       swDriverIdentity = await readDriverIdentityFromIdb();
     }
+    // Strict Isolation: Only check dedicated driver call endpoint for logged-in driver phone!
+    if (!swDriverIdentity || !swDriverIdentity.phone) return;
+    const myPhone = String(swDriverIdentity.phone).trim().replace(/\D/g, '');
+    if (!myPhone) return;
+
     let pkt = null;
     try {
-      const targetCallUrl = (swDriverIdentity && swDriverIdentity.phone) ? (RTDB_BASE_URL + '/ss_driver_calls/' + encodeURIComponent(String(swDriverIdentity.phone).trim()) + '.json?t=' + Date.now()) : (RTDB_LATEST_CALL_URL + '?t=' + Date.now());
+      const targetCallUrl = RTDB_BASE_URL + '/ss_driver_calls/' + encodeURIComponent(myPhone) + '.json?t=' + Date.now();
       const res = await fetch(targetCallUrl, { cache: 'no-store' });
       if (res && res.ok) {
         const data = await res.json();
-        if (data && data.callId) pkt = data;
+        if (data && data.callId && String(data.driverPhone || '').trim().replace(/\D/g, '') === myPhone) {
+          pkt = data;
+        }
       }
     } catch (e) {}
-
-    if (!pkt) {
-      try {
-        const res2 = await fetch(FIRESTORE_LATEST_CALL_URL + '?t=' + Date.now(), { cache: 'no-store' });
-        if (res2 && res2.ok) {
-          const docJson = await res2.json();
-          const parsed = parseFirestoreRestDoc(docJson);
-          if (parsed && parsed.callId) pkt = parsed;
-        }
-      } catch (e) {}
-    }
 
     if (!pkt || !pkt.callId) return;
     if (pkt.status !== 'CALLING' && pkt.status !== 'RINGING') return;
@@ -143,10 +139,10 @@ async function checkCloudForIncomingCallInSw() {
       if (!isSameDriverAccount) return;
     }
 
-    // Acknowledge RINGING back to RTDB immediately so Caller hears ringing even when Driver's Chrome/App is closed!
-    if (pkt.status === 'CALLING') {
+    // Acknowledge RINGING back to dedicated callId endpoint only!
+    if (pkt.status === 'CALLING' && pkt.callId) {
       try {
-        fetch(RTDB_LATEST_CALL_URL, {
+        fetch(RTDB_BASE_URL + '/ss_active_calls/' + encodeURIComponent(pkt.callId) + '.json', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'RINGING', sipMethod: '180_RINGING', driverOnline: true, updatedAt: Date.now() })

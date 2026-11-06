@@ -1,8 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
+  <!-- ⚡ Instant High-Scale Real-Time Firebase Firestore Cloud Sync -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    window.defaultFirebaseConfig = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86",
+      storageBucket: "safarsaathi-1de86.firebasestorage.app",
+      messagingSenderId: "560392119536",
+      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
+      measurementId: "G-0PB4K9PWVD"
+    };
+    window.firebaseConfig = window.defaultFirebaseConfig;
+    try {
+      var _cfg = JSON.parse(localStorage.getItem('ss_fb_config'));
+      if (_cfg && _cfg.apiKey) window.firebaseConfig = _cfg;
+    } catch(e){}
+  </script>
   <meta charset="UTF-8">
-  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SafarSaathi: Carpooling Assam</title>
   <meta name="application-name" content="SafarSaathi">
@@ -71,11 +88,9 @@
     window.__IS_PWA_SCANNER_OR_BOT = Boolean(
       navigator.webdriver || /HeadlessChrome|PWABuilder|Lighthouse|PageSpeed|Googlebot|InspectionTool|PTST/i.test(navigator.userAgent || '')
     );
-    window.__SS_ALLOW_BG_NETWORK = false;
-    (function enableBgNetworkAfterQuietWindow() {
-      if (window.__IS_PWA_SCANNER_OR_BOT) return;
+    window.__SS_ALLOW_BG_NETWORK = true;
+    (function enableImmediateRealtimeSync() {
       function activateNow() {
-        if (window.__SS_ALLOW_BG_NETWORK) return;
         window.__SS_ALLOW_BG_NETWORK = true;
         try { if (typeof window.loadExternalMapAndFirebaseSdks === 'function') window.loadExternalMapAndFirebaseSdks(); } catch(e){}
         try { if (typeof initFirebase === 'function') initFirebase(); } catch(e){}
@@ -83,13 +98,13 @@
         try { if (typeof initProfileHomeVideoAd === 'function') initProfileHomeVideoAd(); } catch(e){}
         try { if (typeof resumeProfileHomeVideoAdIfNeeded === 'function') resumeProfileHomeVideoAdIfNeeded(); } catch(e){}
       }
-      window.addEventListener('load', function() {
-        setTimeout(activateNow, 13000);
-      });
-      setTimeout(activateNow, 14500);
-      ['pointerdown', 'touchstart', 'mousemove', 'keydown', 'wheel', 'scroll', 'click'].forEach(function(ev) {
-        window.addEventListener(ev, activateNow, { once: true, passive: true });
-      });
+      activateNow();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', activateNow);
+      }
+      window.addEventListener('load', activateNow);
+      setTimeout(activateNow, 300);
+      setTimeout(activateNow, 1200);
     })();
 
     (function runAiCacheAutoPurge() {
@@ -109,7 +124,7 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V120_PINPOINT_ROAD_GPS_AND_AUTOCONNECT';
+        const CURRENT_VERSION = 'SS_PROD_V130_INSTANT_SYNC_CLEAN_TEST_RESET';
         const lastVer = ssStorage.getItem('ss_build_ver');
         const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
         const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
@@ -3663,6 +3678,17 @@
           syncBroadcastChannel.postMessage({ type: 'RIDES_UPDATED', rides: updatedRides, timestamp: Date.now() });
         } catch(e){}
       }
+      if (typeof db !== 'undefined' && db && Array.isArray(updatedRides)) {
+        try {
+          updatedRides.slice(0, 15).forEach(r => {
+            if (r && r.id && !r.isDemo) {
+              const cleanDoc = { ...r };
+              if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) cleanDoc.driverQr = 'mitali_qr_compact.svg';
+              db.collection('ss_rides').doc(r.id).set(cleanDoc, { merge: true });
+            }
+          });
+        } catch(e){}
+      }
       try {
         fetch(FIREBASE_RTDB_SYNC_URL, {
           method: 'PUT',
@@ -5440,8 +5466,9 @@
       // STRICT ZERO DEMO POLICY: Only real rides posted by drivers and active
       const activeCars = rides.filter(r => {
         if (r.id === 'RIDE-DB-8287' || r.isDemo || r.driverPhone === '9864012345') return false;
+        if (r.removedByAdmin === true || r.status === 'REJECTED_UTR') return false;
         if ((r.status || '').toUpperCase() !== 'ACTIVE') return false;
-        if (r.removedByAdmin === true) return false;
+        if (r.adminUtrStatus !== 'CONFIRMED' && r.verifiedByAdmin !== true) return false;
 
         // ⏱️ 48-HOUR STRICT AUTO-HIDE GATE: Automatically hide any ride older than 48 hours
         const rideTime = r.approvedAt || r.postedAt || r.createdAt;
@@ -6307,6 +6334,13 @@ ET
       rides.unshift(newRide);
       ssStorage.setItem('ss_rides', JSON.stringify(rides));
       broadcastRidesLocally(rides); // Instant (<50ms) push to Admin Portal & Cloud!
+      if (typeof db !== 'undefined' && db) {
+        try {
+          const cleanDoc = { ...newRide };
+          if (cleanDoc.driverQr && cleanDoc.driverQr.length > 300000) cleanDoc.driverQr = 'mitali_qr_compact.svg';
+          db.collection('ss_rides').doc(newRide.id).set(cleanDoc, { merge: true });
+        } catch(e) { console.warn('Firestore direct ride write error:', e); }
+      }
 
       // Award +100 Free Gaming Coins & complete referral if 1st action!
       awardRideOrPostGameCoins(100, "Car Post");
@@ -6652,6 +6686,16 @@ ET
           return;
         }
         let existing = users[uid];
+        if (!existing && typeof db !== 'undefined' && db) {
+          try {
+            const uDoc = await db.collection('ss_users').doc(uid).get();
+            if (uDoc && uDoc.exists) {
+              existing = uDoc.data();
+              users[uid] = existing;
+              ssStorage.setItem('ss_users_db', JSON.stringify(users));
+            }
+          } catch(e) { console.warn('Firestore user fetch:', e); }
+        }
         if (!existing) {
           try {
             const cRes = await fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json');
@@ -6887,6 +6931,18 @@ ET
       stopLiveFrontCameraStream();
       const modal = document.getElementById('live-camera-selfie-modal');
       if (modal) modal.style.display = 'none';
+    }
+
+    
+    function handleSelfieFallbackUpload(event) {
+      const file = event?.target?.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        closeLiveFrontCameraSelfieModal();
+        openFaceCropperWithDataUrl(e.target.result, 'live_camera_post');
+      };
+      reader.readAsDataURL(file);
     }
 
     function captureFrameFromLiveFrontCamera() {
@@ -7191,6 +7247,24 @@ ET
           refreshProfileAndSelfieUi();
           renderProfileConnectedVehiclesStrip();
           try { renderProfileReferralSummary(); } catch(e){}
+          if (typeof db !== 'undefined' && db && user.phone && !window._profCloudSyncInFlight) {
+            window._profCloudSyncInFlight = true;
+            setTimeout(() => { window._profCloudSyncInFlight = false; }, 2500);
+            db.collection('ss_users').doc(user.phone).get().then(doc => {
+              if (doc && doc.exists) {
+                const cloudU = doc.data();
+                if (cloudU && cloudU.phone) {
+                  const uMap = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+                  uMap[user.phone] = { ...user, ...cloudU };
+                  ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
+                  document.getElementById('prof-card-name').innerText = uMap[user.phone].name;
+                  document.getElementById('prof-card-addr').innerText = '📍 ' + (uMap[user.phone].address || 'Assam, India');
+                  refreshProfileAndSelfieUi();
+                  try { renderProfileReferralSummary(); } catch(e){}
+                }
+              }
+            }).catch(() => {});
+          }
         }
         resumeProfileHomeVideoAdIfNeeded();
       }
@@ -7232,8 +7306,21 @@ ET
 
     function logoutUserProfile() {
       ssStorage.removeItem('ss_current_user_id');
+      ssStorage.removeItem('ss_my_posted_erickshaw_ids');
+      ssStorage.removeItem('ss_active_calls_map');
+      ssStorage.removeItem('ss_latest_incoming_call');
+      try {
+        const uInp = document.getElementById('auth-input-userid');
+        if (uInp) uInp.value = '';
+        const pInp = document.getElementById('auth-input-password');
+        if (pInp) pInp.value = '';
+      } catch(e){}
+      updateNavCounts();
+      updateErickshawNavBadge();
       renderProfileView();
-      showToast("👋 Logged out successfully.", "#475569");
+      try { renderPassengerBookings(); } catch(e){}
+      try { renderDriverFleet(); } catch(e){}
+      showToast("👋 Logged out. Switched to clean guest session.", "#475569");
     }
 
     let editedProfileAadhaarData = null;
@@ -7788,6 +7875,10 @@ ET
       delete user.password;
       users[user.userId] = user;
       ssStorage.setItem('ss_users_db', JSON.stringify(users));
+      broadcastUsersEverywhere(users);
+      if (typeof db !== 'undefined' && db) {
+        try { db.collection('ss_users').doc(user.userId).set(user, { merge: true }); } catch(e){}
+      }
 
       document.getElementById('cp-current-password').value = '';
       document.getElementById('cp-new-password').value = '';
@@ -7831,6 +7922,10 @@ ET
       users[uid] = user;
       ssStorage.setItem('ss_users_db', JSON.stringify(users));
       ssStorage.setItem('ss_current_user_id', uid);
+      broadcastUsersEverywhere(users);
+      if (typeof db !== 'undefined' && db) {
+        try { db.collection('ss_users').doc(uid).set(user, { merge: true }); } catch(e){}
+      }
 
       document.getElementById('fp-input-new-password').value = '';
       document.getElementById('fp-input-confirm-password').value = '';
@@ -8407,21 +8502,18 @@ ET
               }, err => {});
             } catch(e){}
 
-            // 6. High-Scale Active User Firestore Sync (Only listens to logged-in user doc instead of 100,000 users!)
+            // 6. Real-Time Registered Users Firestore Sync (Instant Multi-Device Sync for All Testers & Admins)
             try {
-              const myCurUid = ssStorage.getItem('ss_current_user_id');
-              if (myCurUid) {
-                db.collection('ss_users').doc(myCurUid).onSnapshot(doc => {
-                  if (doc && doc.exists) {
-                    const data = doc.data();
-                    if (data && (data.userId || data.phone)) {
-                      const uMap = { ...(JSON.parse(ssStorage.getItem('ss_users_db') || '{}')) };
-                      uMap[myCurUid] = data;
-                      ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
-                    }
+              db.collection('ss_users').onSnapshot(snapshot => {
+                const uMap = { ...(JSON.parse(ssStorage.getItem('ss_users_db') || '{}')) };
+                snapshot.forEach(doc => {
+                  const data = doc.data();
+                  if (data && (data.userId || data.phone)) {
+                    uMap[data.userId || data.phone] = data;
                   }
-                }, err => {});
-              }
+                });
+                ssStorage.setItem('ss_users_db', JSON.stringify(uMap));
+              }, err => {});
             } catch(e){}
 
             // 7A. REAL-TIME ENCRYPTED APP-TO-APP VOICE CALL SIGNALING (FIRESTORE WEBSOCKET)
@@ -8701,17 +8793,24 @@ ET
     }
 
     function getGameCoins() {
-      let coins = ssStorage.getItem('ss_user_coins');
+      const u = getActiveUserProfile();
+      const k = (u && u.phone) ? ('ss_user_coins_' + u.phone) : 'ss_user_coins_guest';
+      let coins = ssStorage.getItem(k);
       if (coins === null) {
-        coins = 100;
-        ssStorage.setItem('ss_user_coins', '100');
+        coins = (u && typeof u.coins === 'number') ? u.coins : 100;
+        ssStorage.setItem(k, String(coins));
       }
       return parseInt(coins) || 0;
     }
 
     function setGameCoins(amount) {
+      const u = getActiveUserProfile();
+      const k = (u && u.phone) ? ('ss_user_coins_' + u.phone) : 'ss_user_coins_guest';
       const valid = Math.max(0, parseInt(amount) || 0);
-      ssStorage.setItem('ss_user_coins', valid.toString());
+      ssStorage.setItem(k, valid.toString());
+      if (u && u.phone && typeof db !== 'undefined' && db) {
+        try { db.collection('ss_users').doc(u.phone).set({ coins: valid }, { merge: true }).catch(() => {}); } catch(e){}
+      }
       updateAllCoinDisplays();
       return valid;
     }
@@ -10631,7 +10730,7 @@ ET
       const t = new Date(isoDateStr).getTime();
       if (isNaN(t)) return false;
       const diff = Date.now() - t;
-      return diff >= -60000 && diff <= ERICKSHAW_VALIDITY_MS;
+      return diff >= -3600000 && diff <= ERICKSHAW_VALIDITY_MS;
     }
 
     function getRemaining12HrText(isoDateStr) {
@@ -11775,7 +11874,7 @@ ET
       if (typeof db !== 'undefined' && db) {
         try {
           db.collection('ss_active_calls').doc(callId).set(patch, { merge: true }).catch(() => {});
-          db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').set(patch, { merge: true }).catch(() => {});
+          // Dedicated callId doc only (Zero Cross-Talk)
         } catch(e){}
       }
       try {
@@ -11784,11 +11883,7 @@ ET
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(patch)
         }).catch(() => {});
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(patch)
-        }).catch(() => {});
+        
         const targetDrvPhone = (map[callId] && map[callId].driverPhone) || (activeCallPacket && activeCallPacket.driverPhone) || '';
         if (targetDrvPhone) {
           fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(targetDrvPhone).trim()) + '.json', {
@@ -11829,7 +11924,7 @@ ET
       if (typeof db !== 'undefined' && db) {
         try {
           db.collection('ss_active_calls').doc(packet.callId).set(packet, { merge: true }).catch(() => {});
-          db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').set(packet, { merge: true }).catch(() => {});
+          // Dedicated callId doc only (Zero Cross-Talk)
           if (packet.erickshawId) {
             db.collection('ss_active_calls').doc('ER_' + packet.erickshawId).set(packet, { merge: true }).catch(() => {});
           }
@@ -11842,11 +11937,7 @@ ET
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(packet)
         }).catch(() => {});
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(packet)
-        }).catch(() => {});
+        
         if (packet.driverPhone) {
           fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(packet.driverPhone).trim()) + '.json', {
             method: 'PUT',
@@ -12656,20 +12747,37 @@ ET
 
     function isIncomingCallForThisDriver(packet) {
       if (!packet || !packet.callId) return false;
-
-      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
       const me = getActiveUserProfile();
+      if (!me) return false; // Non-logged-in users NEVER ring for driver calls!
 
+      // Do not ring the caller who initiated the call
       if (activeCallRole === 'CALLER' && activeCallId === packet.callId) return false;
-      if (myDevId && packet.callerDeviceId && packet.callerDeviceId === myDevId) {
-        const isExactDriverAccount = me && (
-          (me.phone && packet.driverPhone && String(packet.driverPhone).trim() === String(me.phone).trim()) ||
-          (me.name && packet.driverName && String(packet.driverName).trim().toLowerCase() === String(me.name).trim().toLowerCase())
-        );
-        if (!isExactDriverAccount) return false;
+      const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
+      if (myDevId && packet.callerDeviceId && packet.callerDeviceId === myDevId) return false;
+
+      const myPhone = String(me.phone || me.userId || '').trim().replace(/\D/g, '');
+      const targetDriverPhone = String(packet.driverPhone || '').trim().replace(/\D/g, '');
+
+      // Strict Match 1: By Driver Phone Number
+      if (myPhone && targetDriverPhone && myPhone === targetDriverPhone) return true;
+
+      // Strict Match 2: By E-Rickshaw ID ownership in my fleet
+      if (packet.erickshawId) {
+        try {
+          const myIds = JSON.parse(ssStorage.getItem('ss_my_posted_erickshaw_ids') || '[]');
+          if (Array.isArray(myIds) && myIds.includes(packet.erickshawId)) return true;
+        } catch(e){}
       }
 
-      return true;
+      // Strict Match 3: By exact driver name on this vehicle
+      const myName = String(me.name || '').trim().toLowerCase();
+      const targetDriverName = String(packet.driverName || '').trim().toLowerCase();
+      if (myName && targetDriverName && myName === targetDriverName && packet.vehicleNumber) {
+        return true;
+      }
+
+      // Block all other drivers and passengers from ringing!
+      return false;
     }
 
     function triggerDriverIncomingCallBanner(packet) {
@@ -13142,8 +13250,8 @@ ET
       syncDriverIdentityToServiceWorkerAndIdb();
       try {
         broadcastMyOnlinePresence();
-        if (typeof db !== 'undefined' && db) {
-          db.collection('ss_active_calls').doc('LATEST_ACTIVE_CALL').get()
+        if (typeof db !== 'undefined' && db && activeCallId) {
+          db.collection('ss_active_calls').doc(activeCallId).get()
             .then(doc => {
               if (doc && doc.exists) {
                 const pkt = doc.data();

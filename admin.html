@@ -375,6 +375,9 @@
           <button type="button" onclick="syncAdminWithCloud(true)" style="background: rgba(255,255,255,0.18); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
             🔄 Sync
           </button>
+          <button type="button" onclick="purgeAllCloudTestData()" style="background: #dc2626; color: #ffffff; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(220,38,38,0.4);" title="Delete all test rides, bookings, and e-rickshaws for fresh testing">
+            🧹 Reset Test Data
+          </button>
           <button type="button" onclick="window.location.assign('index.' + 'html')" style="background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #15803d; border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.7rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
             🚗 App ➔
           </button>
@@ -1069,6 +1072,44 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       if (inp) inp.value = '100';
       updateAdminWalletDisplay();
       showAdminToast('🔄 Player Wallet Balance reset to 🪙 100 Coins!');
+    }
+
+    
+    async function purgeAllCloudTestData() {
+      if (!confirm('⚠️ Are you sure you want to delete all test rides, e-rickshaws, bookings, and coin requests from cloud and local storage? This gives a 100% clean start for fresh testing.')) return;
+      showAdminToast('⏳ Purging all cloud test data...');
+      try {
+        if (adminDb) {
+          const collectionsToClean = ['ss_rides', 'ss_erickshaws', 'ss_bookings', 'ss_coin_requests'];
+          for (const col of collectionsToClean) {
+            try {
+              const snap = await adminDb.collection(col).get();
+              const batch = adminDb.batch();
+              snap.forEach(doc => batch.delete(doc.ref));
+              await batch.commit();
+            } catch(err) {
+              console.warn('Error clearing ' + col, err);
+            }
+          }
+        }
+      } catch(e) {
+        console.warn('Purge error:', e);
+      }
+
+      rides = [];
+      bookings = [];
+      coinRequests = [];
+      localStorage.setItem('ss_rides', '[]');
+      localStorage.setItem('ss_erickshaws', '[]');
+      localStorage.setItem('ss_bookings', '[]');
+      localStorage.setItem('ss_coin_requests', '[]');
+
+      renderAdminVehicles();
+      renderAdminErickshaws();
+      renderAdminBookings();
+      renderAdminCoinRequests();
+      try { renderGlobalLiveUtrQueue(); } catch(e){}
+      showAdminToast('✅ All test rides and data wiped 100% clean for fresh testing!');
     }
 
     function initAdminFirebase() {
@@ -2534,6 +2575,13 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         showAdminDashboardView();
       }
     });
-  </script>
+  
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        initAdminFirebase();
+      } catch(e){}
+    });
+
+</script>
 </body>
 </html>
