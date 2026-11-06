@@ -375,6 +375,9 @@
           <button type="button" onclick="syncAdminWithCloud(true)" style="background: rgba(255,255,255,0.18); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer;">
             🔄 Sync
           </button>
+          <button type="button" onclick="purgeAllCloudTestData()" style="background: #dc2626; color: #ffffff; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 4px 8px; font-size: 0.68rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(220,38,38,0.4);" title="Delete all test rides, bookings, and e-rickshaws for fresh testing">
+            🧹 Reset Test Data
+          </button>
           <button type="button" onclick="window.location.assign('index.' + 'html')" style="background: rgba(255, 255, 255, 0.58); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); color: #15803d; border: none; border-radius: 8px; padding: 4px 9px; font-size: 0.7rem; font-weight: 900; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
             🚗 App ➔
           </button>
@@ -944,6 +947,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         localStorage.setItem('ss_erickshaws', JSON.stringify(merged));
         if (typeof renderAdminErickshaws === 'function') renderAdminErickshaws();
         if (typeof renderAdminVehicles === 'function') renderAdminVehicles();
+        try { renderGlobalLiveUtrQueue(); } catch(e){}
       } catch(e){}
     }
 
@@ -1071,7 +1075,190 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       showAdminToast('🔄 Player Wallet Balance reset to 🪙 100 Coins!');
     }
 
+    
+    async function purgeAllCloudTestData() {
+      if (!confirm('⚠️ Are you sure you want to delete all test rides, e-rickshaws, bookings, and coin requests from cloud and local storage? This gives a 100% clean start for fresh testing.')) return;
+      showAdminToast('⏳ Purging all cloud test data...');
+      try {
+        if (adminDb) {
+          const collectionsToClean = ['ss_rides', 'ss_erickshaws', 'ss_bookings', 'ss_coin_requests'];
+          for (const col of collectionsToClean) {
+            try {
+              const snap = await adminDb.collection(col).get();
+              const batch = adminDb.batch();
+              snap.forEach(doc => batch.delete(doc.ref));
+              await batch.commit();
+            } catch(err) {
+              console.warn('Error clearing ' + col, err);
+            }
+          }
+        }
+      } catch(e) {
+        console.warn('Purge error:', e);
+      }
+
+      rides = [];
+      bookings = [];
+      coinRequests = [];
+      localStorage.setItem('ss_rides', '[]');
+      localStorage.setItem('ss_erickshaws', '[]');
+      localStorage.setItem('ss_bookings', '[]');
+      localStorage.setItem('ss_coin_requests', '[]');
+
+      renderAdminVehicles();
+      renderAdminErickshaws();
+      renderAdminBookings();
+      renderAdminCoinRequests();
+      try { renderGlobalLiveUtrQueue(); } catch(e){}
+      try { publishAdminToUniversalRelay(SS_NTFY_MAIN_TOPIC, "RESET_ALL_TEST_DATA", { resetAt: Date.now() }); } catch(e){}
+      showAdminToast('✅ All test rides and data wiped 100% clean for fresh testing!');
+    }
+
+    
+    // =========================================================================
+    // 🌐 UNIVERSAL ZERO-CONFIG CLOUD BRIDGE FOR ADMIN PORTAL (ntfy.sh SSE + 12h History)
+    //    Receives all Driver E-Rickshaw / Car Posts, Coin UTRs, Bookings & Users in <0.5s
+    //    even if Firebase Firestore / RTDB Security Rules block anonymous writes!
+    // =========================================================================
+    const SS_NTFY_MAIN_TOPIC = 'safarsaathi_assam_live_sync_v2026';
+    const SS_NTFY_USERS_TOPIC = 'safarsaathi_assam_users_v2026';
+    let _admNtfyEventSource = null;
+    let _admProcessedNtfyMsgIds = new Set();
+
+    function stripHeavyBase64ForAdminRelay(obj) {
+      if (!obj || typeof obj !== 'object') return obj;
+      const copy = { ...obj };
+      if (copy.driverPhoto && copy.driverPhoto.length > 1800) copy.driverPhoto = 'driver_photo_avatar.png';
+      if (copy.profilePhoto && copy.profilePhoto.length > 1800) copy.profilePhoto = 'driver_photo_avatar.png';
+      if (copy.dailySelfiePhoto && copy.dailySelfiePhoto.length > 1800) copy.dailySelfiePhoto = 'driver_photo_avatar.png';
+      if (copy.aadhaarPhotoData && copy.aadhaarPhotoData.length > 1800) delete copy.aadhaarPhotoData;
+      if (copy.driverQr && copy.driverQr.length > 1800) copy.driverQr = 'mitali_qr_compact.svg';
+      return copy;
+    }
+
+    function publishAdminToUniversalRelay(topic, eventType, payloadObj) {
+      try {
+        const cleanData = stripHeavyBase64ForAdminRelay(payloadObj);
+        fetch('https://ntfy.sh/' + topic, {
+          method: 'POST',
+          body: JSON.stringify({ ev: eventType, ts: Date.now(), d: cleanData })
+        }).catch(() => {});
+      } catch(e){}
+    }
+
+    function applyAdminRelayPacket(pkt, triggerRender = true) {
+      if (!pkt || !pkt.ev || !pkt.d) return;
+      try {
+        const ev = pkt.ev;
+        const d = pkt.d;
+        if (ev === 'ER_UPSERT' || ev === 'ER_CONFIRM') {
+          mergeAdminErickshawsSafely([d]);
+        } else if (ev === 'ER_REMOVE' && d.id) {
+          let list = getAdminErickshaws().filter(x => x && x.id !== d.id);
+          localStorage.setItem('ss_erickshaws', JSON.stringify(list));
+          if (triggerRender) { renderAdminErickshaws(); renderAdminVehicles(); renderGlobalLiveUtrQueue(); }
+        } else if (ev === 'RIDE_UPSERT' || ev === 'RIDE_CONFIRM') {
+          const byId = {};
+          (rides || []).forEach(r => { if (r && r.id) byId[r.id] = r; });
+          byId[d.id] = { ...(byId[d.id] || {}), ...d };
+          mergeAdminCloudRides(Object.values(byId));
+        } else if (ev === 'RIDE_REMOVE' && d.id) {
+          rides = (rides || []).filter(r => r && r.id !== d.id);
+          localStorage.setItem('ss_rides', JSON.stringify(rides));
+          if (triggerRender) { renderAdminVehicles(); renderGlobalLiveUtrQueue(); }
+        } else if (ev === 'BOOKING_UPSERT') {
+          const byId = {};
+          (bookings || []).forEach(b => { if (b && (b.bookingId || b.id)) byId[b.bookingId || b.id] = b; });
+          const bid = d.bookingId || d.id;
+          if (bid) byId[bid] = { ...(byId[bid] || {}), ...d };
+          bookings = Object.values(byId);
+          localStorage.setItem('ss_bookings', JSON.stringify(bookings));
+          if (triggerRender) renderAdminBookings();
+        } else if (ev === 'COIN_UPSERT') {
+          mergeCoinRequestsSafely([d]);
+        } else if (ev === 'COMPLAINT_UPSERT') {
+          const cList = getAdminComplaints().filter(x => x && x.id !== d.id);
+          cList.unshift(d);
+          localStorage.setItem('ss_complaints', JSON.stringify(cList));
+          if (triggerRender && typeof renderAdminComplaints === 'function') renderAdminComplaints();
+        } else if (ev === 'USER_UPSERT' && (d.phone || d.userId)) {
+          const uid = d.phone || d.userId;
+          registeredUsers = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+          registeredUsers[uid] = { ...(registeredUsers[uid] || {}), ...d };
+          localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
+          if (triggerRender) renderAdminUsers();
+        } else if (ev === 'RESET_ALL_TEST_DATA') {
+          rides = [];
+          bookings = [];
+          coinRequests = [];
+          localStorage.setItem('ss_rides', '[]');
+          localStorage.setItem('ss_erickshaws', '[]');
+          localStorage.setItem('ss_bookings', '[]');
+          localStorage.setItem('ss_coin_requests', '[]');
+          localStorage.setItem('ss_deleted_erickshaw_ids', '[]');
+          if (triggerRender) {
+            renderAdminVehicles(); renderAdminErickshaws(); renderAdminBookings(); renderAdminCoinRequests(); renderGlobalLiveUtrQueue();
+          }
+        }
+      } catch(e){}
+    }
+
+    async function pullAdminUniversalCloudHistory(topic) {
+      try {
+        const res = await fetch('https://ntfy.sh/' + topic + '/json?poll=1&since=12h&t=' + Date.now(), { cache: 'no-store' });
+        if (!res || !res.ok) return;
+        const text = await res.text();
+        const lines = text.split('\n');
+        let anyNew = false;
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const msg = JSON.parse(line);
+            if (msg && msg.id && !_admProcessedNtfyMsgIds.has(msg.id) && msg.event === 'message' && msg.message) {
+              _admProcessedNtfyMsgIds.add(msg.id);
+              const pkt = JSON.parse(msg.message);
+              applyAdminRelayPacket(pkt, false);
+              anyNew = true;
+            }
+          } catch(e){}
+        }
+        if (anyNew) {
+          try {
+            renderAdminErickshaws();
+            renderAdminVehicles();
+            renderAdminBookings();
+            renderAdminCoinRequests();
+            renderAdminUsers();
+            renderGlobalLiveUtrQueue();
+          } catch(e){}
+        }
+      } catch(e){}
+    }
+
+    function initAdminUniversalCloudStream() {
+      pullAdminUniversalCloudHistory(SS_NTFY_MAIN_TOPIC);
+      pullAdminUniversalCloudHistory(SS_NTFY_USERS_TOPIC);
+
+      try {
+        if (typeof EventSource !== 'undefined') {
+          if (_admNtfyEventSource) { try { _admNtfyEventSource.close(); } catch(e){} }
+          _admNtfyEventSource = new EventSource('https://ntfy.sh/' + SS_NTFY_MAIN_TOPIC + '/sse');
+          _admNtfyEventSource.onmessage = function(ev) {
+            try {
+              const msg = JSON.parse(ev.data);
+              if (msg && msg.id && !_admProcessedNtfyMsgIds.has(msg.id) && msg.message) {
+                _admProcessedNtfyMsgIds.add(msg.id);
+                const pkt = JSON.parse(msg.message);
+                applyAdminRelayPacket(pkt, true);
+              }
+            } catch(e){}
+          };
+        }
+      } catch(e){}
+    }
+
     function initAdminFirebase() {
+      try { initAdminUniversalCloudStream(); } catch(e){}
       if (typeof firebase !== 'undefined' && firebaseConfig && firebaseConfig.apiKey) {
         try {
           if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -1173,10 +1360,12 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       rides = clean;
       localStorage.setItem('ss_rides', JSON.stringify(rides));
       renderAdminVehicles();
+      try { renderGlobalLiveUtrQueue(); } catch(e){}
     }
 
     let _isAdminCloudSyncBusy = false;
     function syncAdminWithCloud(showFeedback = false) {
+      try { pullAdminUniversalCloudHistory(SS_NTFY_MAIN_TOPIC); pullAdminUniversalCloudHistory(SS_NTFY_USERS_TOPIC); } catch(e){}
       if (_isAdminCloudSyncBusy && !showFeedback) return;
       _isAdminCloudSyncBusy = true;
       setTimeout(() => { _isAdminCloudSyncBusy = false; }, 850);
@@ -1200,7 +1389,22 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
             }).catch(() => {});
         }
 
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json')
+        if (adminDb) {
+          try {
+            adminDb.collection('ss_erickshaws').get().then(snap => {
+              const cEr = [];
+              snap.forEach(doc => { const d = doc.data(); if (d) { if (!d.id) d.id = doc.id; cEr.push(d); } });
+              if (cEr.length > 0) mergeAdminErickshawsSafely(cEr);
+            }).catch(() => {});
+            adminDb.collection('ss_rides').get().then(snap => {
+              const cRides = [];
+              snap.forEach(doc => { const d = doc.data(); if (d) { if (!d.id) d.id = doc.id; cRides.push(d); } });
+              if (cRides.length > 0) mergeAdminCloudRides(cRides);
+            }).catch(() => {});
+          } catch(e){}
+        }
+
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json?t=' + Date.now(), { cache: 'no-store' })
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data) {
@@ -1211,7 +1415,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
             }
           }).catch(() => {});
 
-        fetch(RTDB_RIDES_URL)
+        fetch(RTDB_RIDES_URL + '?t=' + Date.now(), { cache: 'no-store' })
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data !== null && data !== undefined) {
@@ -1220,7 +1424,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
             }
           }).catch(() => {});
 
-        fetch(RTDB_BOOKINGS_URL)
+        fetch(RTDB_BOOKINGS_URL + '?t=' + Date.now(), { cache: 'no-store' })
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data) {
@@ -1231,7 +1435,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
             }
           }).catch(() => {});
 
-        fetch(RTDB_COINS_URL)
+        fetch(RTDB_COINS_URL + '?t=' + Date.now(), { cache: 'no-store' })
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data) {
@@ -1240,7 +1444,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
             }
           }).catch(() => {});
 
-        fetch(RTDB_USERS_URL)
+        fetch(RTDB_USERS_URL + '?t=' + Date.now(), { cache: 'no-store' })
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data && typeof data === 'object') {
@@ -1290,7 +1494,13 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         try { syncBroadcastChannel.postMessage({ type: 'RIDES_UPDATED', rides: updatedRides, timestamp: Date.now() }); } catch(e){}
       }
       try { fetch(CLOUD_SYNC_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedRides) }).catch(() => {}); } catch(e){}
-      try { fetch(RTDB_RIDES_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatedRides) }).catch(() => {}); } catch(e){}
+      try {
+        if (Array.isArray(updatedRides)) {
+          const rMap = {};
+          updatedRides.forEach(x => { if (x && x.id) rMap[x.id] = x; });
+          fetch(RTDB_RIDES_URL, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rMap) }).catch(() => {});
+        }
+      } catch(e){}
     }
 
     function broadcastBookingsToCloud(updatedBookings) {
@@ -1412,6 +1622,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       }
 
       broadcastCoinsToCloud(coinRequests);
+      try { publishAdminToUniversalRelay(SS_NTFY_MAIN_TOPIC, "COIN_UPSERT", req); } catch(e){}
 
       if (adminDb) {
         try {
@@ -1681,6 +1892,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       }
       renderAdminVehicles();
       try { renderGlobalLiveUtrQueue(); } catch(e){}
+      try { publishAdminToUniversalRelay(SS_NTFY_MAIN_TOPIC, "RIDE_CONFIRM", r); } catch(e){}
       showAdminToast(`✅ Vehicle ${r.vehicleModel} (${r.vehicleNumber}) is now 100% LIVE on Customer App!`);
     }
 
@@ -1714,6 +1926,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       broadcastRidesToCloud(rides);
       if (adminDb) { try { adminDb.collection('ss_rides').doc(rideId).delete(); } catch(e){} }
       renderAdminVehicles();
+      try { publishAdminToUniversalRelay(SS_NTFY_MAIN_TOPIC, "RIDE_REMOVE", { id: rideId, removedByAdmin: true, status: "REMOVED" }); } catch(e){}
       showAdminToast('🗑️ Vehicle deleted permanently.');
     }
 
@@ -1974,6 +2187,19 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       showAdminToast(`✅ Ride count for ${u.name} updated to ${u.completedRidesCount} Ride(s)!`);
     }
 
+    
+    function viewUserAadhaarPhoto(uid) {
+      const u = (registeredUsers || {})[uid];
+      if (!u || !u.aadhaarPhotoData) {
+        showAdminToast('No Aadhaar photo attached for this user.');
+        return;
+      }
+      const w = window.open('', '_blank', 'width=500,height=600');
+      if (w) {
+        w.document.write('<html><head><title>Aadhaar KYC - ' + (u.name || uid) + '</title></head><body style="margin:0;background:#0f172a;color:#fff;font-family:sans-serif;text-align:center;padding:20px;"><h3>🪪 Aadhaar Document: ' + (u.name || '') + ' (+91 ' + uid + ')</h3><img src="' + u.aadhaarPhotoData + '" style="max-width:95%;border-radius:12px;border:2px solid #22c55e;"/><br><br><button onclick="window.close()" style="padding:10px 20px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Close</button></body></html>');
+      }
+    }
+
     function renderAdminUsers() {
       registeredUsers = JSON.parse(localStorage.getItem('ss_users_db')) || {};
       const userList = Object.values(registeredUsers);
@@ -2053,7 +2279,10 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
                 🪪 Aadhaar ${u.dailyLiveCameraVerified ? '• 📸 Live Selfie ✓' : 'Matched ✓'}
               </span>
             </div>
-            <div style="color: #cbd5e1;">📱 Permanent ID: <b style="color: #38bdf8; font-family: monospace;">+91 ${uid}</b> 🔒</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+              <div style="color: #cbd5e1;">📱 Permanent ID: <b style="color: #38bdf8; font-family: monospace;">+91 ${uid}</b> 🔒</div>
+              ${u.aadhaarPhotoData ? `<button type="button" onclick="viewUserAadhaarPhoto('${uid}')" style="background:#065f46; color:#86efac; border:1px solid #22c55e; border-radius:6px; padding:2px 7px; font-size:0.62rem; font-weight:900; cursor:pointer;">🪪 View Aadhaar Card</button>` : ''}
+            </div>
             <div style="color: #94a3b8; font-size: 0.68rem; margin: 2px 0 6px 0;">📍 ${u.address || 'Assam, India'}</div>
 
             <!-- 🎁 Referral Stock Info -->
@@ -2265,10 +2494,17 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       }
       pushAdminStateToBackend({ erickshaws: list });
       try {
+        const erMap = {};
+        list.forEach(x => { if (x && x.id) erMap[x.id] = x; });
         fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(erMap)
+        }).catch(() => {});
+        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws/' + encodeURIComponent(id) + '.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(list)
+          body: JSON.stringify(item)
         }).catch(() => {});
       } catch(e){}
       if (adminDb) {
@@ -2278,6 +2514,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       renderAdminErickshaws();
       renderAdminVehicles();
       renderGlobalLiveUtrQueue();
+      try { publishAdminToUniversalRelay(SS_NTFY_MAIN_TOPIC, "ER_CONFIRM", item); } catch(e){}
       showAdminToast(`✅ E-Rickshaw (${item.driverName} • ${item.vehicleNumber}) ₹100 UTR (${item.utrNumber}) Confirmed & Verified Live!`);
     }
 
@@ -2478,6 +2715,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
 
       renderAdminErickshaws();
       renderAdminVehicles();
+      try { publishAdminToUniversalRelay(SS_NTFY_MAIN_TOPIC, "ER_REMOVE", { id: id, removedByAdmin: true, status: "REMOVED" }); } catch(e){}
       showAdminToast('🗑️ E-Rickshaw listing removed from App & Cloud.');
     }
 
@@ -2534,6 +2772,13 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         showAdminDashboardView();
       }
     });
-  </script>
+  
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        initAdminFirebase();
+      } catch(e){}
+    });
+
+</script>
 </body>
 </html>

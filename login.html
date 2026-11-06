@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const fbCfg = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86"
+    };
+    try { if (!firebase.apps.length) firebase.initializeApp(fbCfg); } catch(e){}
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SafarSaathi - User Login</title>
@@ -30,17 +40,28 @@
       <button type="submit" class="btn-green">🚀 Log In to Profile ➔</button>
     </form>
     <script>
-      function handleStandaloneLogin(e) {
+      async function handleStandaloneLogin(e) {
         e.preventDefault();
         try {
           var phone = (document.getElementById('st-login-phone').value || '').trim();
           var pwd = (document.getElementById('st-login-pwd').value || '').trim();
           if (phone.length === 10) {
             var users = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
+            if (!users[phone] && firebase && firebase.firestore) {
+              try {
+                var docSnap = await firebase.firestore().collection('ss_users').doc(phone).get();
+                if (docSnap && docSnap.exists) {
+                  users[phone] = docSnap.data();
+                }
+              } catch(err){}
+            }
             if (!users[phone]) {
               users[phone] = { userId: phone, phone: phone, name: 'SafarSaathi User (' + phone.slice(-4) + ')', password: pwd, address: 'Assam, India', hasAadhaar: true, registeredAt: new Date().toISOString() };
-              localStorage.setItem('ss_users_db', JSON.stringify(users));
+              if (firebase && firebase.firestore) {
+                firebase.firestore().collection('ss_users').doc(phone).set(users[phone], { merge: true }).catch(function(){});
+              }
             }
+            localStorage.setItem('ss_users_db', JSON.stringify(users));
             localStorage.setItem('ss_current_user_id', phone);
           }
         } catch(err) {}

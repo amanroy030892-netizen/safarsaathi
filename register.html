@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const fbCfg = {
+      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
+      authDomain: "safarsaathi-1de86.firebaseapp.com",
+      projectId: "safarsaathi-1de86"
+    };
+    try { if (!firebase.apps.length) firebase.initializeApp(fbCfg); } catch(e){}
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SafarSaathi - Register Account (Aadhaar Name Match Locked)</title>
@@ -81,25 +91,32 @@
         var aFile = document.getElementById('st-reg-aadhaar-file').files[0];
         if (phone.length !== 10) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ 10-digit Mobile Number required!'; return; }
         if (pwd !== conf) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ Passwords do not match!'; return; }
-        if (!aFile) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ Compulsory Aadhaar Card Photo required!'; return; }
+        if (!aFile) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ 1-Time Mandatory Aadhaar Card Photo required!'; return; }
         if (normName(name) !== normName(aName)) { msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c'; msg.innerText='⚠️ Name ('+name+') and Name on Aadhaar ('+aName+') must match 100%!'; return; }
+        
+        
         var users = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
         if (users[phone]) {
           msg.style.display='block'; msg.style.background='#fef2f2'; msg.style.color='#b91c1c';
           msg.innerText='🔒 Only 1 Profile is allowed per Mobile Number! Please login or email support@safarsaathi.com for edits.';
           return;
         }
-        var fp = (aFile.name || 'aadhaar') + '_' + (aFile.size || 0);
+        var fp = aFile ? ((aFile.name || 'aadhaar') + '_' + (aFile.size || 0)) : 'verified';
         users[phone] = {
           userId: phone, phone: phone, name: name, aadhaarName: aName, aadhaarMatched: true,
-          aadhaarFileName: aFile.name, aadhaarFingerprint: fp, profileLocked: true,
+          aadhaarFileName: aFile ? aFile.name : '', aadhaarFingerprint: fp, profileLocked: true,
           password: pwd, address: addr, hasAadhaar: true, myRefCode: 'SS' + phone.slice(-6),
           referredByCode: ref, referralCompleted: false, referralStockCount: 0,
           completedPassengerRides: 0, registeredAt: new Date().toISOString()
         };
         localStorage.setItem('ss_users_db', JSON.stringify(users));
         localStorage.setItem('ss_current_user_id', phone);
-        window.location.href = 'index.html';
+        try {
+          if (firebase && firebase.firestore) {
+            firebase.firestore().collection('ss_users').doc(phone).set(users[phone], { merge: true }).catch(function(){});
+          }
+        } catch(e){}
+        setTimeout(function(){ window.location.href = 'index.html'; }, 200);
       }
     </script>
 
