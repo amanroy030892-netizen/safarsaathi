@@ -5,36 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SafarSaathi - Live Ride & Rickshaw Tracking</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="app-header">
-        <h2>SafarSaathi</h2>
+        <h2>🛺 SafarSaathi Live</h2>
         <div class="nav-buttons">
-            <button onclick="switchTab('home')">Profile (Home)</button>
             <button onclick="switchTab('post')">Post Ride</button>
             <button onclick="switchTab('fleet')">Driver Fleet</button>
-            <button onclick="switchTab('live')">Live Map</button>
         </div>
     </div>
 
     <div id="main-content" class="container">
-        <!-- Post Ride Form -->
         <div id="post-section" class="card">
             <h3>🛺 Post E-Rickshaw / Car Ride</h3>
             <form id="ride-form">
                 <input type="text" id="driver-name" placeholder="Driver Name" required>
                 <input type="text" id="vehicle-no" placeholder="Vehicle No. (e.g. AS-01-ER-4021)" required>
                 <input type="text" id="route-info" placeholder="Route (e.g. Nagaon to Guwahati)" required>
-                <input type="number" id="utr-number" placeholder="UTR / Transaction No. (100 INR)" required>
+                <input type="text" id="utr-number" placeholder="UTR / Transaction No." required>
                 <button type="submit" class="btn-submit">Submit Ride Post</button>
             </form>
         </div>
 
-        <!-- Real-time Fleet List -->
         <div class="card">
             <h3>🚗 Driver Fleet & Active Rides (Live Sync)</h3>
             <div id="rides-list" class="rides-grid">

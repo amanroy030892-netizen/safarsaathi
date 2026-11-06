@@ -1,24 +1,28 @@
-// Firebase Configuration - Paste your Firebase Console Config Details Here
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "safarsaathi.firebaseapp.com",
-    projectId: "safarsaathi",
-    storageBucket: "safarsaathi.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef"
+    apiKey: "AIzaSyD6duAA-IgREunOMqe9WSHgvd6JPBGw2fw",
+    authDomain: "safarsaathi-1de86.firebaseapp.com",
+    databaseURL: "https://safarsaathi-1de86-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "safarsaathi-1de86",
+    storageBucket: "safarsaathi-1de86.appspot.com",
+    messagingSenderId: "560392119536",
+    appId: "1:560392119536:web:e05ea0af4804b86fc2ce35",
+    measurementId: "G-4E5YGMH43H"
 };
 
-// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
 
-// Real-time listener for Posts
 db.collection("rides").onSnapshot((snapshot) => {
     const listContainer = document.getElementById("rides-list");
     if (!listContainer) return;
     listContainer.innerHTML = "";
+
+    if (snapshot.empty) {
+        listContainer.innerHTML = "<p>Abhi koi live rides active nahi hain.</p>";
+        return;
+    }
 
     snapshot.forEach((doc) => {
         const data = doc.data();
@@ -35,7 +39,6 @@ db.collection("rides").onSnapshot((snapshot) => {
     });
 });
 
-// Handle Form Submit
 document.getElementById("ride-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("driver-name").value;
@@ -52,6 +55,6 @@ document.getElementById("ride-form")?.addEventListener("submit", async (e) => {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    alert("Post Submitted! Pending Admin UTR Confirmation.");
+    alert("Post Submit Ho Gaya Hai! Admin Panel Par UTR Confirmation Ke Liye Bhej Diya Gaya Hai.");
     e.target.reset();
 });
