@@ -5,13 +5,13 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
     window.defaultFirebaseConfig = {
-      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
-      authDomain: "safarsaathi-1de86.firebaseapp.com",
-      projectId: "safarsaathi-1de86",
-      storageBucket: "safarsaathi-1de86.firebasestorage.app",
-      messagingSenderId: "560392119536",
-      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
-      measurementId: "G-0PB4K9PWVD"
+      apiKey: "AIzaSyAlY9Km4ZfzTJIiNmEYoaubn77G1pGiZHM",
+      authDomain: "safar-saathi-e9f53.firebaseapp.com",
+      projectId: "safar-saathi-e9f53",
+      storageBucket: "safar-saathi-e9f53.firebasestorage.app",
+      messagingSenderId: "967763623210",
+      appId: "1:967763623210:web:5b6e01a11e6c325f787253",
+      measurementId: "G-4DBT1GQJR5"
     };
     window.firebaseConfig = window.defaultFirebaseConfig;
     try {
@@ -3473,7 +3473,7 @@
     // Connects Rides, Bookings, Coin UTR Requests, Users & Video Ads
     // =========================================================================
     const MULTI_CLOUD_SYNC_KV = 'https://kvdb.io/safarsaathi_assam_2026/rides';
-    const FIREBASE_RTDB_BASE = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com';
+    const FIREBASE_RTDB_BASE = 'https://safar-saathi-e9f53-default-rtdb.firebaseio.com';
     const FIREBASE_RTDB_SYNC_URL = FIREBASE_RTDB_BASE + '/ss_rides.json';
     const FIREBASE_RTDB_BOOKINGS_URL = FIREBASE_RTDB_BASE + '/ss_bookings.json';
     const FIREBASE_RTDB_COINS_URL = FIREBASE_RTDB_BASE + '/ss_coin_requests.json';
@@ -3768,7 +3768,7 @@
         const curUid = ssStorage.getItem('ss_current_user_id');
         if (curUid && usersObj && usersObj[curUid]) {
           // Only PATCH the active user (2 KB instead of full 100,000-user table, and NEVER overwrites other users!)
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(curUid) + '.json', {
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(curUid) + '.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(usersObj[curUid])
@@ -4023,7 +4023,7 @@
         // 5. High-Scale Per-User Sync: Only sync the currently logged-in user's profile (1 KB instead of 100,000 users!)
         const activeUid = ssStorage.getItem('ss_current_user_id');
         if (activeUid && (window._cloudSyncTickCount % 3 === 1)) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(activeUid) + '.json')
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(activeUid) + '.json')
             .then(res => res.ok ? res.json() : null)
             .then(uData => {
               if (uData && (uData.phone || uData.userId)) {
@@ -4080,13 +4080,13 @@
 
     // Firebase Config for Cross-Device Sync
     const defaultFirebaseConfig = {
-      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
-      authDomain: "safarsaathi-1de86.firebaseapp.com",
-      projectId: "safarsaathi-1de86",
-      storageBucket: "safarsaathi-1de86.firebasestorage.app",
-      messagingSenderId: "560392119536",
-      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
-      measurementId: "G-0PB4K9PWVD"
+      apiKey: "AIzaSyAlY9Km4ZfzTJIiNmEYoaubn77G1pGiZHM",
+      authDomain: "safar-saathi-e9f53.firebaseapp.com",
+      projectId: "safar-saathi-e9f53",
+      storageBucket: "safar-saathi-e9f53.firebasestorage.app",
+      messagingSenderId: "967763623210",
+      appId: "1:967763623210:web:5b6e01a11e6c325f787253",
+      measurementId: "G-4DBT1GQJR5"
     };
 
     let firebaseConfig = JSON.parse(ssStorage.getItem('ss_fb_config')) || defaultFirebaseConfig;
@@ -6635,7 +6635,7 @@ ET
         }
         if (!cloudExisting) {
           try {
-            const rRes = await fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json?t=' + Date.now(), { cache: 'no-store' });
+            const rRes = await fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json?t=' + Date.now(), { cache: 'no-store' });
             if (rRes && rRes.ok) {
               const rUser = await rRes.json();
               if (rUser && (rUser.phone || rUser.userId)) cloudExisting = rUser;
@@ -6693,7 +6693,7 @@ ET
           try { cloudSaves.push(db.collection('ss_users').doc(uid).set(newUser, { merge: true })); } catch(e){}
         }
         try {
-          cloudSaves.push(fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json', {
+          cloudSaves.push(fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newUser)
@@ -6757,7 +6757,7 @@ ET
         }
         if (!existing) {
           try {
-            const cRes = await fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json?t=' + Date.now(), { cache: 'no-store' });
+            const cRes = await fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(uid) + '.json?t=' + Date.now(), { cache: 'no-store' });
             if (cRes && cRes.ok) {
               const cUser = await cRes.json();
               if (cUser && (cUser.phone || cUser.userId)) {
@@ -8857,7 +8857,7 @@ ET
     //   • RaceHUD.cs:
     //       StartRaceButton(), ResetRaceButton(), RefreshBets() ("VIRTUAL BETS\nRider A: ... coins")
     // =========================================================================
-    const LIVE_GAME_RTDB_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_live_game';
+    const LIVE_GAME_RTDB_URL = 'https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_live_game';
     const BETTING_DURATION_SEC = 30;
     const RACE_DURATION_SEC = 60;
     const RESULT_DURATION_SEC = 5;
@@ -9150,7 +9150,7 @@ ET
         } catch(e){}
       }
 
-      fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_live_game/round_${roundId}.json`, {
+      fetch(`https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_live_game/round_${roundId}.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -9177,7 +9177,7 @@ ET
         }
       } catch(e){}
 
-      fetch(`https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_live_game/round_${roundId}.json`)
+      fetch(`https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_live_game/round_${roundId}.json`)
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (data && Array.isArray(data.bets) && data.roundId === roundId) {
@@ -12076,7 +12076,7 @@ ET
         }
         try {
           if (entry.phone) {
-            fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_online_presence/' + entry.phone + '.json', {
+            fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_online_presence/' + entry.phone + '.json', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(entry)
@@ -12135,7 +12135,7 @@ ET
         } catch(e){}
       }
       try {
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + callId + '.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_active_calls/' + callId + '.json', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(patch)
@@ -12143,7 +12143,7 @@ ET
         
         const targetDrvPhone = (map[callId] && map[callId].driverPhone) || (activeCallPacket && activeCallPacket.driverPhone) || '';
         if (targetDrvPhone) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(targetDrvPhone).trim()) + '.json', {
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(targetDrvPhone).trim()) + '.json', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(patch)
@@ -12206,14 +12206,14 @@ ET
       }
 
       try {
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + packet.callId + '.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_active_calls/' + packet.callId + '.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(packet)
         }).catch(() => {});
         
         if (packet.driverPhone) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(packet.driverPhone).trim()) + '.json', {
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(String(packet.driverPhone).trim()) + '.json', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(packet)
@@ -12604,7 +12604,7 @@ ET
                   db.collection('ss_call_audio').doc(callId + '_' + myRole).set(audioPkt).catch(() => {});
                 } catch(err){}
               }
-              fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + callId + '_' + myRole + '.json', {
+              fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_call_audio/' + callId + '_' + myRole + '.json', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(audioPkt)
@@ -12634,7 +12634,7 @@ ET
               })
               .catch(() => {});
           }
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_call_audio/' + activeCallId + '_' + otherRole + '.json?t=' + Date.now(), { cache: 'no-store' })
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_call_audio/' + activeCallId + '_' + otherRole + '.json?t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.ok ? r.json() : null)
             .then(pkt => {
               if (pkt && pkt.pcmB64) playIncomingServerPcmPacket(pkt);
@@ -13500,7 +13500,7 @@ ET
             .then(doc => { if (doc && doc.exists) attemptAutoJoin(doc.data()); })
             .catch(() => {});
         }
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json?t=' + Date.now(), { cache: 'no-store' })
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_active_calls/LATEST_ACTIVE_CALL.json?t=' + Date.now(), { cache: 'no-store' })
           .then(r => r.ok ? r.json() : null)
           .then(pkt => { if (pkt && pkt.callId) attemptAutoJoin(pkt); })
           .catch(() => {});
@@ -13537,7 +13537,7 @@ ET
         const myProfForCall = getActiveUserProfile();
         if (myProfForCall && myProfForCall.phone) {
           const cleanMyPhone = String(myProfForCall.phone).trim().replace(/\D/g, '');
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(cleanMyPhone) + '.json?t=' + Date.now(), { cache: 'no-store' })
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_driver_calls/' + encodeURIComponent(cleanMyPhone) + '.json?t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.ok ? r.json() : null)
             .then(pkt => {
               if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
@@ -13561,7 +13561,7 @@ ET
             .catch(() => {});
         }
         if (activeCallId) {
-          fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_active_calls/' + encodeURIComponent(activeCallId) + '.json?t=' + Date.now(), { cache: 'no-store' })
+          fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_active_calls/' + encodeURIComponent(activeCallId) + '.json?t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.ok ? r.json() : null)
             .then(pkt => {
               if (pkt && pkt.callId) processIncomingCallPacketSignal(pkt);
@@ -13642,7 +13642,7 @@ ET
         if (typeof db !== 'undefined' && db) {
           db.collection('ss_complaints').doc(compObj.id).set(compObj, { merge: true });
         }
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_complaints.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_complaints.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(list)

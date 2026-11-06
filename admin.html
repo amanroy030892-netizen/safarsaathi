@@ -770,13 +770,13 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
 
   <script>
     const defaultFirebaseConfig = {
-      apiKey: "AIzaSyD6duAA-IgREunoMQe9WSHgvd6JPBGw2fw",
-      authDomain: "safarsaathi-1de86.firebaseapp.com",
-      projectId: "safarsaathi-1de86",
-      storageBucket: "safarsaathi-1de86.firebasestorage.app",
-      messagingSenderId: "560392119536",
-      appId: "1:560392119536:web:d5d601c0c9a92e72c2ce35",
-      measurementId: "G-0PB4K9PWVD"
+      apiKey: "AIzaSyAlY9Km4ZfzTJIiNmEYoaubn77G1pGiZHM",
+      authDomain: "safar-saathi-e9f53.firebaseapp.com",
+      projectId: "safar-saathi-e9f53",
+      storageBucket: "safar-saathi-e9f53.firebasestorage.app",
+      messagingSenderId: "967763623210",
+      appId: "1:967763623210:web:5b6e01a11e6c325f787253",
+      measurementId: "G-4DBT1GQJR5"
     };
     let firebaseConfig = defaultFirebaseConfig;
     try { firebaseConfig = JSON.parse(localStorage.getItem('ss_fb_config')) || defaultFirebaseConfig; } catch(e) {}
@@ -840,7 +840,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
     let registeredUsers = JSON.parse(localStorage.getItem('ss_users_db')) || {};
 
     const CLOUD_SYNC_URL = 'https://kvdb.io/safarsaathi_assam_2026/rides';
-    const RTDB_BASE = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com';
+    const RTDB_BASE = 'https://safar-saathi-e9f53-default-rtdb.firebaseio.com';
     const RTDB_RIDES_URL = RTDB_BASE + '/ss_rides.json';
     const RTDB_BOOKINGS_URL = RTDB_BASE + '/ss_bookings.json';
     const RTDB_COINS_URL = RTDB_BASE + '/ss_coin_requests.json';
@@ -1404,7 +1404,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
           } catch(e){}
         }
 
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json?t=' + Date.now(), { cache: 'no-store' })
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_erickshaws.json?t=' + Date.now(), { cache: 'no-store' })
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data) {
@@ -1454,7 +1454,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
             }
           }).catch(() => {});
 
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_complaints.json')
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_complaints.json')
           .then(res => res.ok ? res.json() : null)
           .then(data => {
             if (data) {
@@ -2496,12 +2496,12 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       try {
         const erMap = {};
         list.forEach(x => { if (x && x.id) erMap[x.id] = x; });
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_erickshaws.json', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(erMap)
         }).catch(() => {});
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws/' + encodeURIComponent(id) + '.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_erickshaws/' + encodeURIComponent(id) + '.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(item)
@@ -2538,7 +2538,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       }
       pushAdminStateToBackend({ withdrawalRequests: list });
       try {
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_withdrawal_requests.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_withdrawal_requests.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(list)
@@ -2703,7 +2703,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         try { syncBroadcastChannel.postMessage({ type: 'ERICKSHAWS_UPDATED', erickshaws: list, timestamp: Date.now() }); } catch(e){}
       }
       try {
-        fetch('https://safarsaathi-1de86-default-rtdb.firebaseio.com/ss_erickshaws.json', {
+        fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_erickshaws.json', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(list)

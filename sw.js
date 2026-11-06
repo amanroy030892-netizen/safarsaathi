@@ -4,9 +4,9 @@
   Keeps Driver 100% Online & Connects Incoming Calls even when Phone is Locked or Chrome/App is Cut!
 */
 const CACHE_NAME = 'safarsaathi-v120-pinpoint-road-gps-and-autoconnect';
-const RTDB_BASE_URL = 'https://safarsaathi-1de86-default-rtdb.firebaseio.com';
+const RTDB_BASE_URL = 'https://safar-saathi-e9f53-default-rtdb.firebaseio.com';
 const RTDB_LATEST_CALL_URL = RTDB_BASE_URL + '/ss_active_calls/LATEST_ACTIVE_CALL.json';
-const FIRESTORE_LATEST_CALL_URL = 'https://firestore.googleapis.com/v1/projects/safarsaathi-1de86/databases/(default)/documents/ss_active_calls/LATEST_ACTIVE_CALL';
+const FIRESTORE_LATEST_CALL_URL = 'https://firestore.googleapis.com/v1/projects/safar-saathi-e9f53/databases/(default)/documents/ss_active_calls/LATEST_ACTIVE_CALL';
 
 let swDriverIdentity = null;
 let swLastNotifiedCallId = '';
