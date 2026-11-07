@@ -11974,24 +11974,40 @@ ET
     }
 
     // 2. WhatsApp-Grade Opus Codec Tuning (Low-Bitrate 2G/3G/4G/5G HD Voice + In-Band FEC + Packet Loss Concealment)
+    // Low-Bandwidth 16-24 kbps Opus Codec with Built-in Packet Loss Concealment (PLC) & In-Band FEC
     function enhanceSdpForCrystalClearContinuousVoice(sdp) {
       if (!sdp || typeof sdp !== 'string') return sdp;
       return sdp.replace(/a=fmtp:(\d+) (.*)/g, function(match, pt, params) {
-        if (params.indexOf('minptime') !== -1 || params.indexOf('useinbandfec') !== -1) {
-          let clean = params
-            .replace(/usedtx=1/g, 'usedtx=0')
-            .replace(/useinbandfec=0/g, 'useinbandfec=1');
-          if (clean.indexOf('useinbandfec=') === -1) clean += ';useinbandfec=1';
-          if (clean.indexOf('usedtx=') === -1) clean += ';usedtx=0';
-          if (clean.indexOf('cbr=') === -1) clean += ';cbr=1';
-          if (clean.indexOf('maxaveragebitrate=') === -1) clean += ';maxaveragebitrate=36000';
-          if (clean.indexOf('maxplaybackrate=') === -1) clean += ';maxplaybackrate=48000';
-          if (clean.indexOf('stereo=') === -1) clean += ';stereo=0';
-          if (clean.indexOf('ptime=') === -1) clean += ';ptime=20';
-          return 'a=fmtp:' + pt + ' ' + clean;
-        }
-        return match;
+        let clean = params;
+        clean = clean.replace(/useinbandfec=\d+/g, 'useinbandfec=1');
+        clean = clean.replace(/usedtx=\d+/g, 'usedtx=1');
+        clean = clean.replace(/maxaveragebitrate=\d+/g, 'maxaveragebitrate=24000');
+        if (clean.indexOf('useinbandfec=') === -1) clean += ';useinbandfec=1';
+        if (clean.indexOf('usedtx=') === -1) clean += ';usedtx=1';
+        if (clean.indexOf('maxaveragebitrate=') === -1) clean += ';maxaveragebitrate=24000';
+        if (clean.indexOf('minptime=') === -1) clean += ';minptime=10';
+        if (clean.indexOf('cbr=') === -1) clean += ';cbr=0';
+        return 'a=fmtp:' + pt + ' ' + clean;
       });
+    }
+
+    // Apply Low-Bandwidth Bitrate Constraints (16-24 kbps) to RTCRtpSender
+    function applyLowBandwidthOpusConstraints(pc) {
+      try {
+        if (!pc || typeof pc.getSenders !== 'function') return;
+        pc.getSenders().forEach(sender => {
+          if (sender.track && sender.track.kind === 'audio') {
+            const params = sender.getParameters();
+            if (!params.encodings || params.encodings.length === 0) {
+              params.encodings = [{}];
+            }
+            params.encodings[0].maxBitrate = 24000; // 24 kbps max bitrate for 2G/3G slow network
+            params.encodings[0].priority = 'high';
+            params.encodings[0].networkPriority = 'high';
+            sender.setParameters(params).catch(() => {});
+          }
+        });
+      } catch(e){}
     }
 
     function getOnlinePresenceMap() {
@@ -12805,6 +12821,7 @@ ET
           const offer = await pc.createOffer({ offerToReceiveAudio: true });
           const tunedOffer = { type: offer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(offer.sdp) };
           await pc.setLocalDescription(tunedOffer);
+          applyLowBandwidthOpusConstraints(pc);
           await new Promise(resolve => {
             if (pc.iceGatheringState === 'complete') return resolve();
             const t = setTimeout(resolve, 550);
@@ -12841,11 +12858,16 @@ ET
         if (!isAppCallConnected) {
           stopAllCallRingtones();
           const st = document.getElementById('erp-call-status-text');
-          if (st) st.innerText = `No Answer from ${er.driverName}`;
+          if (st) st.innerText = `⏱️ Missed Call: No Answer from ${er.driverName}`;
           const sb = document.getElementById('erp-call-substatus-text');
-          if (sb) sb.innerText = `Driver did not answer yet — please try calling again`;
+          if (sb) sb.innerText = `Call timed out after 30 seconds. Tap Call to retry.`;
+          showToast('⏱️ Call timed out: No answer from driver.', '#d97706');
+          if (activeCallPacket && activeCallPacket.callId) {
+            updateCallFieldsOnly(activeCallPacket.callId, { status: 'MISSED', sipMethod: 'TIMEOUT' });
+          }
+          setTimeout(() => { endAppToAppVoiceCall(true); }, 2500);
         }
-      }, 45000);
+      }, 30000); // Strict 30-Second Missed Call Timeout
     }
 
     function onCallConnectedCommonUI(packet) {
@@ -12943,6 +12965,7 @@ ET
             const answer = await pc.createAnswer();
             const tunedAnswer = { type: answer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(answer.sdp) };
             await pc.setLocalDescription(tunedAnswer);
+            applyLowBandwidthOpusConstraints(pc);
             await new Promise(resolve => {
               if (pc.iceGatheringState === 'complete') return resolve();
               const t = setTimeout(resolve, 550);
@@ -13080,7 +13103,7 @@ ET
         document.getElementById('wa-inc-caller-name').innerText = packet.callerName || '🔒 Verified Passenger';
         document.getElementById('wa-inc-caller-phone').innerText = '🛡️ 100% Encrypted • Mobile Number & Details Hidden';
         document.getElementById('wa-inc-vehicle-info').innerText = `🛺 Incoming Call for ${packet.vehicleNumber || 'Live Vehicle'} (${packet.driverName || 'Driver'})`;
-        document.getElementById('wa-inc-call-status').innerText = '🔔 Ringing... Auto-Connecting on Speaker in 2s (Hands-Free)!';
+        document.getElementById('wa-inc-call-status').innerText = '🔔 Incoming Call... Tap Accept to Answer';
         document.getElementById('wa-inc-ringing-btns').style.display = 'grid';
         document.getElementById('wa-inc-connected-btns').style.display = 'none';
         incModal.style.display = 'flex';
@@ -13096,15 +13119,21 @@ ET
           }, 1800);
         }
 
-        // HANDS-FREE AUTO-CONNECT: Automatically answer on Speakerphone after 2.0 seconds of ringing
-        // so the Driver does NOT have to hold or unlock their phone while driving!
-        if (window._driverHandsFreeAutoAnswerTimer) clearTimeout(window._driverHandsFreeAutoAnswerTimer);
-        window._driverHandsFreeAutoAnswerTimer = setTimeout(() => {
-          if (!isAppCallConnected && activeCallRole === 'DRIVER' && activeCallPacket && (activeCallPacket.status === 'RINGING' || activeCallPacket.status === 'CALLING')) {
-            appCallSpeaker = true;
-            acceptIncomingErickshawCall();
+        // ZERO AUTO-CONNECT: Driver MUST explicitly tap Accept to answer incoming calls!
+        if (window._driverHandsFreeAutoAnswerTimer) {
+          clearTimeout(window._driverHandsFreeAutoAnswerTimer);
+          window._driverHandsFreeAutoAnswerTimer = null;
+        }
+        // 30-Second Incoming Ring Timeout
+        if (window._driverIncomingCallRingTimeout) clearTimeout(window._driverIncomingCallRingTimeout);
+        window._driverIncomingCallRingTimeout = setTimeout(() => {
+          if (!isAppCallConnected && activeCallRole === 'DRIVER') {
+            stopAllCallRingtones();
+            const incModal = document.getElementById('whatsapp-incoming-call-modal');
+            if (incModal) incModal.style.display = 'none';
+            showToast('⏱️ Missed Call: Call timed out after 30 seconds.', '#d97706');
           }
-        }, 2000);
+        }, 30000);
 
         updateMediaSessionForBackgroundStandby(true, packet.vehicleNumber);
         notifyServiceWorkerIncomingCall(packet);
@@ -13132,12 +13161,17 @@ ET
 
     function declineIncomingErickshawCall() {
       stopAllCallRingtones();
+      if (window._driverIncomingCallRingTimeout) {
+        clearTimeout(window._driverIncomingCallRingTimeout);
+        window._driverIncomingCallRingTimeout = null;
+      }
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal) incModal.style.display = 'none';
       if (activeCallPacket && activeCallPacket.callId) {
         updateCallFieldsOnly(activeCallPacket.callId, { status: 'DECLINED', sipMethod: 'BYE' });
       }
       endAppToAppVoiceCall(true);
+      showToast('❌ Call Declined', '#dc2626');
     }
 
     function toggleAppCallMute() {
@@ -13230,7 +13264,20 @@ ET
           if (pkt.status === 'CONNECTED' || pkt.webrtcAnswer || (Array.isArray(pkt.driverIce) && pkt.driverIce.length > 0)) {
             onDriverAcceptedCallSignal(activeCallPacket);
           }
-          if (pkt.status === 'DECLINED' || pkt.status === 'ENDED') {
+          if (pkt.status === 'DECLINED' || pkt.status === 'REJECTED' || pkt.status === 'BUSY') {
+            stopAllCallRingtones();
+            const st = document.getElementById('erp-call-status-text');
+            if (st) st.innerText = '❌ Call Declined by Driver';
+            const sb = document.getElementById('erp-call-substatus-text');
+            if (sb) sb.innerText = 'Driver is busy or declined your call.';
+            showToast('❌ Call Declined by Driver', '#dc2626');
+            setTimeout(() => { endAppToAppVoiceCall(true); }, 2000);
+          } else if (pkt.status === 'MISSED' || pkt.status === 'TIMEOUT') {
+            stopAllCallRingtones();
+            const st = document.getElementById('erp-call-status-text');
+            if (st) st.innerText = '⏱️ Call Timed Out (No Answer)';
+            endAppToAppVoiceCall(true);
+          } else if (pkt.status === 'ENDED') {
             endAppToAppVoiceCall(true);
             showToast('☎️ Call Ended.', '#dc2626');
           }
@@ -13489,9 +13536,11 @@ ET
           activeCallRole = 'DRIVER';
           if (autoAction === 'decline') {
             declineIncomingErickshawCall();
+          } else if (autoAction === 'accept') {
+            triggerDriverIncomingCallBanner(pkt);
+            acceptIncomingErickshawCall();
           } else {
             triggerDriverIncomingCallBanner(pkt);
-            setTimeout(() => { acceptIncomingErickshawCall(); }, 250);
           }
         };
 
