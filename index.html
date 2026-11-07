@@ -5,7 +5,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    
   // =========================================================================
   // 🎙️ AGORA SD-RTN™ LOW-BANDWIDTH AUDIO CLOUD ENGINE (16-24kbps OPUS)
   // =========================================================================
@@ -42,7 +41,7 @@
   function advanceAgoraPoolAccount(reason = "") {
     currentAgoraPoolIndex = (currentAgoraPoolIndex + 1) % AGORA_APP_POOL.length;
     try { localStorage.setItem('ss_agora_active_pool_idx', String(currentAgoraPoolIndex)); } catch(e){}
-    console.log(`[Agora Cloud] Switched to Account ${currentAgoraPoolIndex + 1} (${AGORA_APP_POOL[currentAgoraPoolIndex].name}) - Reason: ${reason}`);
+    console.log("[Agora Cloud] Switched to Account " + (currentAgoraPoolIndex + 1) + " (" + AGORA_APP_POOL[currentAgoraPoolIndex].name + ") - Reason: " + reason);
   }
 
   function agoraCrc32(str) {
@@ -60,71 +59,198 @@
     return (crc ^ (-1)) >>> 0;
   }
 
+  function sha256Bytes(bytes) {
+    function rightRotate(value, amount) {
+      return (value >>> amount) | (value << (32 - amount));
+    }
+    const K = [
+      0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+      0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+      0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+      0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+      0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+      0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+      0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+      0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+    ];
+    let H = [
+      0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+    ];
+    const l = bytes.length;
+    const bitLen = l * 8;
+    const newLen = (((l + 8) >> 6) + 1) << 6;
+    const padded = new Uint8Array(newLen);
+    padded.set(bytes);
+    padded[l] = 0x80;
+    const pView = new DataView(padded.buffer);
+    pView.setUint32(newLen - 4, bitLen, false);
+
+    const W = new Uint32Array(64);
+    for (let i = 0; i < newLen; i += 64) {
+      for (let t = 0; t < 16; t++) {
+        W[t] = pView.getUint32(i + (t << 2), false);
+      }
+      for (let t = 16; t < 64; t++) {
+        const s0 = rightRotate(W[t - 15], 7) ^ rightRotate(W[t - 15], 18) ^ (W[t - 15] >>> 3);
+        const s1 = rightRotate(W[t - 2], 17) ^ rightRotate(W[t - 2], 19) ^ (W[t - 2] >>> 10);
+        W[t] = (W[t - 16] + s0 + W[t - 7] + s1) | 0;
+      }
+      let [a, b, c, d, e, f, g, h] = H;
+      for (let t = 0; t < 64; t++) {
+        const S1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
+        const ch = (e & f) ^ ((~e) & g);
+        const temp1 = (h + S1 + ch + K[t] + W[t]) | 0;
+        const S0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
+        const maj = (a & b) ^ (a & c) ^ (b & c);
+        const temp2 = (S0 + maj) | 0;
+        h = g; g = f; f = e; e = (d + temp1) | 0;
+        d = c; c = b; b = a; a = (temp1 + temp2) | 0;
+      }
+      H[0] = (H[0] + a) | 0;
+      H[1] = (H[1] + b) | 0;
+      H[2] = (H[2] + c) | 0;
+      H[3] = (H[3] + d) | 0;
+      H[4] = (H[4] + e) | 0;
+      H[5] = (H[5] + f) | 0;
+      H[6] = (H[6] + g) | 0;
+      H[7] = (H[7] + h) | 0;
+    }
+    const out = new Uint8Array(32);
+    const outView = new DataView(out.buffer);
+    for (let i = 0; i < 8; i++) {
+      outView.setUint32(i << 2, H[i], false);
+    }
+    return out;
+  }
+
+  function pureHmacSha256(keyStr, dataBytes) {
+    let key = new TextEncoder().encode(keyStr);
+    const blockSize = 64;
+    if (key.length > blockSize) {
+      key = sha256Bytes(key);
+    }
+    const kPad = new Uint8Array(blockSize);
+    kPad.set(key);
+    const oKeyPad = new Uint8Array(blockSize);
+    const iKeyPad = new Uint8Array(blockSize);
+    for (let i = 0; i < blockSize; i++) {
+      oKeyPad[i] = kPad[i] ^ 0x5c;
+      iKeyPad[i] = kPad[i] ^ 0x36;
+    }
+    const inner = new Uint8Array(blockSize + dataBytes.length);
+    inner.set(iKeyPad, 0);
+    inner.set(dataBytes, blockSize);
+    const innerHash = sha256Bytes(inner);
+
+    const outer = new Uint8Array(blockSize + 32);
+    outer.set(oKeyPad, 0);
+    outer.set(innerHash, blockSize);
+    return sha256Bytes(outer);
+  }
+
   async function computeHmacSha256(keyStr, dataBytes) {
-    if (window.crypto && window.crypto.subtle) {
-      try {
+    try {
+      if (window.crypto && window.crypto.subtle) {
         const keyData = new TextEncoder().encode(keyStr);
         const cryptoKey = await window.crypto.subtle.importKey(
           "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
         );
         const signature = await window.crypto.subtle.sign("HMAC", cryptoKey, dataBytes);
         return new Uint8Array(signature);
-      } catch(e){}
-    }
-    return null;
+      }
+    } catch(e){}
+    return pureHmacSha256(keyStr, dataBytes);
   }
 
-  async function generateAgoraRtcToken(appId, appCert, channel, uid = 0, expireSeconds = 7200) {
-    const now = Math.floor(Date.now() / 1000);
-    const expire = now + expireSeconds;
-    const salt = 1;
-    
-    const privileges = [[1, expire], [2, expire], [3, expire], [4, expire]];
-    const msgLen = 4 + 4 + 2 + privileges.length * 6;
-    const msgBuf = new Uint8Array(msgLen);
-    const view = new DataView(msgBuf.buffer);
-    view.setUint32(0, salt, true);
-    view.setUint32(4, expire, true);
-    view.setUint16(8, privileges.length, true);
-    let offset = 10;
-    for (const [k, v] of privileges) {
-      view.setUint16(offset, k, true);
-      view.setUint32(offset + 2, v, true);
-      offset += 6;
+  function generateAgoraRtcToken(appId, appCert, channel, uid = 0, expireSeconds = 7200) {
+    try {
+      const now = Math.floor(Date.now() / 1000);
+      const expire = now + expireSeconds;
+      const salt = 1;
+      
+      const privileges = [[1, expire], [2, expire], [3, expire], [4, expire]];
+      const msgLen = 4 + 4 + 2 + privileges.length * 6;
+      const msgBuf = new Uint8Array(msgLen);
+      const view = new DataView(msgBuf.buffer);
+      view.setUint32(0, salt, true);
+      view.setUint32(4, expire, true);
+      view.setUint16(8, privileges.length, true);
+      let offset = 10;
+      for (const [k, v] of privileges) {
+        view.setUint16(offset, k, true);
+        view.setUint32(offset + 2, v, true);
+        offset += 6;
+      }
+
+      const enc = new TextEncoder();
+      const appBytes = enc.encode(appId);
+      const chBytes = enc.encode(channel);
+      const uidBytes = enc.encode(String(uid));
+
+      const totalLen = appBytes.length + chBytes.length + uidBytes.length + msgLen;
+      const valBuf = new Uint8Array(totalLen);
+      valBuf.set(appBytes, 0);
+      valBuf.set(chBytes, appBytes.length);
+      valBuf.set(uidBytes, appBytes.length + chBytes.length);
+      valBuf.set(msgBuf, appBytes.length + chBytes.length + uidBytes.length);
+
+      const sig = pureHmacSha256(appCert, valBuf);
+      if (!sig) return null;
+
+      const crcChannel = agoraCrc32(channel);
+      const crcUid = agoraCrc32(String(uid));
+
+      const contentLen = sig.length + 4 + 4 + 2 + msgLen;
+      const content = new Uint8Array(contentLen);
+      content.set(sig, 0);
+      const cView = new DataView(content.buffer);
+      cView.setUint32(sig.length, crcChannel, true);
+      cView.setUint32(sig.length + 4, crcUid, true);
+      cView.setUint16(sig.length + 8, msgLen, true);
+      content.set(msgBuf, sig.length + 10);
+
+      let binary = "";
+      for (let i = 0; i < content.byteLength; i++) {
+        binary += String.fromCharCode(content[i]);
+      }
+      return "006" + appId + btoa(binary);
+    } catch(err) {
+      console.warn("[Agora Token] Error building token:", err);
+      return null;
     }
+  }
 
-    const enc = new TextEncoder();
-    const appBytes = enc.encode(appId);
-    const chBytes = enc.encode(channel);
-    const uidBytes = enc.encode(String(uid));
+  async function joinAgoraWithFallback(client, channelName, uid) {
+    if (!client || typeof AgoraRTC === 'undefined') return null;
+    for (let i = 0; i < AGORA_APP_POOL.length; i++) {
+      const poolIdx = (currentAgoraPoolIndex + i) % AGORA_APP_POOL.length;
+      const cfg = AGORA_APP_POOL[poolIdx];
+      console.log("[Agora Cloud] Attempting connect via " + cfg.name + " (App ID: " + cfg.appId + ")...");
 
-    const totalLen = appBytes.length + chBytes.length + uidBytes.length + msgLen;
-    const valBuf = new Uint8Array(totalLen);
-    valBuf.set(appBytes, 0);
-    valBuf.set(chBytes, appBytes.length);
-    valBuf.set(uidBytes, appBytes.length + chBytes.length);
-    valBuf.set(msgBuf, appBytes.length + chBytes.length + uidBytes.length);
+      // Try 1: with generated token
+      try {
+        const token = generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, uid);
+        await client.join(cfg.appId, channelName, token || null, uid);
+        console.log("[Agora Cloud] Joined channel " + channelName + " using " + cfg.name + " (Token Mode).");
+        currentAgoraPoolIndex = poolIdx;
+        try { localStorage.setItem('ss_agora_active_pool_idx', String(currentAgoraPoolIndex)); } catch(e){}
+        return cfg;
+      } catch(tokenErr) {
+        console.warn("[Agora Cloud] Join with token failed on " + cfg.name + ":", tokenErr);
+      }
 
-    const sig = await computeHmacSha256(appCert, valBuf);
-    if (!sig) return null;
-
-    const crcChannel = agoraCrc32(channel);
-    const crcUid = agoraCrc32(String(uid));
-
-    const contentLen = sig.length + 4 + 4 + 2 + msgLen;
-    const content = new Uint8Array(contentLen);
-    content.set(sig, 0);
-    const cView = new DataView(content.buffer);
-    cView.setUint32(sig.length, crcChannel, true);
-    cView.setUint32(sig.length + 4, crcUid, true);
-    cView.setUint16(sig.length + 8, msgLen, true);
-    content.set(msgBuf, sig.length + 10);
-
-    let binary = '';
-    for (let i = 0; i < content.byteLength; i++) {
-      binary += String.fromCharCode(content[i]);
+      // Try 2: without token (null) for App ID only mode
+      try {
+        await client.join(cfg.appId, channelName, null, uid);
+        console.log("[Agora Cloud] Joined channel " + channelName + " using " + cfg.name + " (App ID Mode).");
+        currentAgoraPoolIndex = poolIdx;
+        try { localStorage.setItem('ss_agora_active_pool_idx', String(currentAgoraPoolIndex)); } catch(e){}
+        return cfg;
+      } catch(nullErr) {
+        console.warn("[Agora Cloud] Join without token failed on " + cfg.name + ":", nullErr);
+      }
     }
-    return '006' + appId + btoa(binary);
+    throw new Error('All Agora accounts in pool failed to connect.');
   }
 
     window.defaultFirebaseConfig = {
@@ -13116,6 +13242,7 @@ ET
     }
 
     // 4. PJSIP / SIP INVITE -> 180 RINGING -> 200 OK -> ACK State Machine
+        // 4. Agora SD-RTN Cloud Audio Call Engine: Caller joins channel & connects HD Voice
     async function startAppToAppVoiceCall() {
       if (!selectedErickshawForCall) return;
       ensureUnlockedCallAudioContext();
@@ -13150,58 +13277,19 @@ ET
           : `📞 Calling ${er.driverName}...`;
       }
       if (subEl) {
-        subEl.innerText = `🛡️ SIP/Opus Encrypted VoIP • Numbers Hidden`;
-      }
-
-      await acquireCleanMicrophoneStream();
-
-      // Join Agora Voice Cloud as Driver
-      try {
-        if (typeof AgoraRTC !== 'undefined') {
-          if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
-          agoraRtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "opus" });
-
-          agoraRtcClient.on("user-published", async (remoteUser, mediaType) => {
-            try {
-              await agoraRtcClient.subscribe(remoteUser, mediaType);
-              if (mediaType === "audio" && remoteUser.audioTrack) {
-                remoteUser.audioTrack.play();
-                isAppCallConnected = true;
-                agoraCallStartTime = Date.now();
-                stopAllCallRingtones();
-                const st = document.getElementById('wa-inc-call-status');
-                if (st) st.innerText = '🟢 Agora HD Voice Live • Speak now!';
-              }
-            } catch(subErr) {
-              console.warn('[Agora] Driver subscribe error:', subErr);
-            }
-          });
-
-          const cfg = getActiveAgoraConfig();
-          const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
-          const channelName = pkt.channelName || ('call_' + cleanPhone);
-          const rtcToken = await generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
-
-          await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 2002);
-          agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-            encoderConfig: "speech_low_quality",
-            AEC: true,
-            ANS: true,
-            AGC: true
-          });
-          await agoraRtcClient.publish([agoraLocalAudioTrack]);
-          console.log('[Agora Cloud] Driver published to channel:', channelName);
-        }
-      } catch(agoraErr) {
-        console.warn('[Agora Cloud] Driver join error:', agoraErr);
+        subEl.innerText = '🛡️ Agora SD-RTN™ VoIP • Numbers Hidden';
       }
 
       const micLbl = document.getElementById('erp-mic-level-label');
-      if (micLbl) micLbl.innerText = '🎙️ Opus HD Mic Active • Sending SIP INVITE';
+      if (micLbl) micLbl.innerText = '🎙️ Opus HD Mic Active • Connecting Cloud Call';
 
+      const cleanPhone = String(driverPhone).replace(/\D/g, '');
+      const agoraChannel = 'call_' + (cleanPhone || String(activeCallId).replace(/\D/g, ''));
       const maskedSessionTag = 'SS-' + String(activeCallId).slice(-4);
+
       const callPacket = {
         callId: activeCallId,
+        agoraChannel: agoraChannel,
         sipMethod: 'INVITE',
         sipAck: false,
         erickshawId: er.id,
@@ -13215,45 +13303,13 @@ ET
         encrypted: true,
         status: online ? 'RINGING' : 'CALLING',
         driverOnline: online,
-        callerIce: [],
-        driverIce: [],
         startedAt: new Date().toISOString(),
         updatedAt: Date.now()
       };
       activeCallPacket = callPacket;
-
-      try {
-        const pc = createCallPeerConnection('CALLER', callPacket);
-        if (pc) {
-          if (appCallMicStream) {
-            appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
-          } else if (typeof pc.addTransceiver === 'function') {
-            pc.addTransceiver('audio', { direction: 'sendrecv' });
-          }
-          const offer = await pc.createOffer({ offerToReceiveAudio: true });
-          const tunedOffer = { type: offer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(offer.sdp) };
-          await pc.setLocalDescription(tunedOffer);
-          await new Promise(resolve => {
-            if (pc.iceGatheringState === 'complete') return resolve();
-            const t = setTimeout(resolve, 550);
-            pc.addEventListener('icegatheringstatechange', () => {
-              if (pc.iceGatheringState === 'complete') { clearTimeout(t); resolve(); }
-            });
-          });
-          if (pc.localDescription) {
-            callPacket.webrtcOffer = {
-              type: pc.localDescription.type,
-              sdp: enhanceSdpForCrystalClearContinuousVoice(pc.localDescription.sdp)
-            };
-          } else {
-            callPacket.webrtcOffer = tunedOffer;
-          }
-        }
-      } catch(e){}
-
       saveAndBroadcastCallPacket(callPacket);
 
-      // Join Agora Voice Cloud as Caller
+      // Join Agora Voice Cloud as Caller (UID 1001)
       try {
         if (typeof AgoraRTC !== 'undefined') {
           if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
@@ -13264,6 +13320,10 @@ ET
               await agoraRtcClient.subscribe(remoteUser, mediaType);
               if (mediaType === "audio" && remoteUser.audioTrack) {
                 remoteUser.audioTrack.play();
+                try {
+                  const stream = new MediaStream([remoteUser.audioTrack.getMediaStreamTrack()]);
+                  attachCrystalClearRemoteAudio(stream);
+                } catch(e){}
                 isAppCallConnected = true;
                 agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
@@ -13271,17 +13331,18 @@ ET
                 if (st) st.innerText = '🟢 Agora HD Voice Connected';
                 const sb = document.getElementById('erp-call-substatus-text');
                 if (sb) sb.innerText = '⚡ Agora SD-RTN™ Active • 16-24kbps Low Bandwidth';
+                const bubbleEl = document.getElementById('erp-driver-speech-bubble');
+                if (bubbleEl) {
+                  bubbleEl.style.display = 'block';
+                  bubbleEl.innerHTML = '🟢 <b>Connected:</b> Two-way Agora HD Audio Live!';
+                }
               }
             } catch(subErr) {
-              console.warn('[Agora] Subscribe error:', subErr);
+              console.warn('[Agora Cloud] Caller subscribe error:', subErr);
             }
           });
 
-          const cfg = getActiveAgoraConfig();
-          const channelName = 'call_' + String(driverPhone).replace(/\D/g, '');
-          const rtcToken = await generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
-
-          await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 1001);
+          await joinAgoraWithFallback(agoraRtcClient, agoraChannel, 1001);
           agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
             encoderConfig: "speech_low_quality",
             AEC: true,
@@ -13289,12 +13350,11 @@ ET
             AGC: true
           });
           await agoraRtcClient.publish([agoraLocalAudioTrack]);
-          console.log('[Agora Cloud] Caller published to channel:', channelName);
+          console.log('[Agora Cloud] Caller published to channel:', agoraChannel);
         }
       } catch(agoraErr) {
         console.warn('[Agora Cloud] Caller join error:', agoraErr);
       }
-
 
       playDialToneBeep(425, 320);
       setTimeout(() => playDialToneBeep(425, 320), 450);
@@ -13314,7 +13374,7 @@ ET
           const st = document.getElementById('erp-call-status-text');
           if (st) st.innerText = `No Answer from ${er.driverName}`;
           const sb = document.getElementById('erp-call-substatus-text');
-          if (sb) sb.innerText = `Driver did not answer yet — please try calling again`;
+          if (sb) sb.innerText = 'Driver did not answer yet — please try calling again';
         }
       }, 45000);
     }
@@ -13350,13 +13410,7 @@ ET
 
       playDialToneBeep(660, 160);
 
-      const cid = activeCallId || packet?.callId;
-      const role = activeCallRole || 'CALLER';
-      acquireCleanMicrophoneStream().then(stream => {
-        if (isAppCallConnected && cid) {
-          startServerToServerPcmVoiceEngine(stream, cid, role);
-        }
-      });
+      // Agora HD Audio active - PCM fallback disabled
 
       clearInterval(appCallTimerInterval);
       appCallSeconds = 0;
@@ -13374,6 +13428,7 @@ ET
     }
 
     // Driver accepts call -> Sends SIP 200 OK with WebRTC Answer and retransmits every 750ms until Caller sends SIP ACK!
+        // Driver accepts call -> Joins Agora Cloud Channel & connects 2-Way HD Voice
     async function driverReceiveCallNow() {
       ensureUnlockedCallAudioContext();
       let pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
@@ -13394,10 +13449,12 @@ ET
 
       if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
       if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
+      stopAllCallRingtones();
 
-      await acquireCleanMicrophoneStream();
+      const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
+      const agoraChannel = pkt.agoraChannel || ('call_' + (cleanPhone || String(pkt.callId).replace(/\D/g, '')));
 
-      // Join Agora Voice Cloud as Driver
+      // Join Agora Voice Cloud as Driver (UID 2002)
       try {
         if (typeof AgoraRTC !== 'undefined') {
           if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
@@ -13408,6 +13465,10 @@ ET
               await agoraRtcClient.subscribe(remoteUser, mediaType);
               if (mediaType === "audio" && remoteUser.audioTrack) {
                 remoteUser.audioTrack.play();
+                try {
+                  const stream = new MediaStream([remoteUser.audioTrack.getMediaStreamTrack()]);
+                  attachCrystalClearRemoteAudio(stream);
+                } catch(e){}
                 isAppCallConnected = true;
                 agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
@@ -13415,16 +13476,11 @@ ET
                 if (st) st.innerText = '🟢 Agora HD Voice Live • Speak now!';
               }
             } catch(subErr) {
-              console.warn('[Agora] Driver subscribe error:', subErr);
+              console.warn('[Agora Cloud] Driver subscribe error:', subErr);
             }
           });
 
-          const cfg = getActiveAgoraConfig();
-          const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
-          const channelName = pkt.channelName || ('call_' + cleanPhone);
-          const rtcToken = await generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
-
-          await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 2002);
+          await joinAgoraWithFallback(agoraRtcClient, agoraChannel, 2002);
           agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
             encoderConfig: "speech_low_quality",
             AEC: true,
@@ -13432,81 +13488,22 @@ ET
             AGC: true
           });
           await agoraRtcClient.publish([agoraLocalAudioTrack]);
-          console.log('[Agora Cloud] Driver published to channel:', channelName);
+          console.log('[Agora Cloud] Driver published to channel:', agoraChannel);
         }
       } catch(agoraErr) {
         console.warn('[Agora Cloud] Driver join error:', agoraErr);
       }
 
-
-      try {
-        if (pkt.webrtcOffer) {
-          const pc = createCallPeerConnection('DRIVER', pkt);
-          if (pc) {
-            if (appCallMicStream) {
-              appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
-            }
-            await pc.setRemoteDescription(new RTCSessionDescription(pkt.webrtcOffer));
-            if (Array.isArray(pkt.callerIce)) {
-              for (const c of pkt.callerIce) {
-                await addOrQueueRemoteIceCandidate(c);
-              }
-            }
-            await flushPendingRemoteIceCandidates();
-            const answer = await pc.createAnswer();
-            const tunedAnswer = { type: answer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(answer.sdp) };
-            await pc.setLocalDescription(tunedAnswer);
-            await new Promise(resolve => {
-              if (pc.iceGatheringState === 'complete') return resolve();
-              const t = setTimeout(resolve, 550);
-              pc.addEventListener('icegatheringstatechange', () => {
-                if (pc.iceGatheringState === 'complete') { clearTimeout(t); resolve(); }
-              });
-            });
-            if (pc.localDescription) {
-              pkt.webrtcAnswer = {
-                type: pc.localDescription.type,
-                sdp: enhanceSdpForCrystalClearContinuousVoice(pc.localDescription.sdp)
-              };
-            } else {
-              pkt.webrtcAnswer = tunedAnswer;
-            }
-          }
-        }
-      } catch(e){}
-
       pkt.status = 'CONNECTED';
-      pkt.sipMethod = '200_OK';
       pkt.connectedAt = new Date().toISOString();
-
-      const push200Ok = () => {
-        updateCallFieldsOnly(pkt.callId, {
-          status: 'CONNECTED',
-          sipMethod: '200_OK',
-          connectedAt: pkt.connectedAt,
-          webrtcAnswer: pkt.webrtcAnswer || null,
-          driverIce: activeCallPacket?.driverIce || pkt.driverIce || []
-        });
-      };
-      push200Ok();
-
-      // PJSIP Timer G: Retransmit SIP 200 OK every 750ms (up to 8 times) until Caller sends sipAck: true!
-      let retries = 0;
-      if (sip200OkRetransmitInterval) clearInterval(sip200OkRetransmitInterval);
-      sip200OkRetransmitInterval = setInterval(() => {
-        retries++;
-        if (!isAppCallConnected || retries > 8 || (activeCallPacket && activeCallPacket.sipAck === true)) {
-          clearInterval(sip200OkRetransmitInterval);
-          sip200OkRetransmitInterval = null;
-          return;
-        }
-        push200Ok();
-      }, 750);
+      updateCallFieldsOnly(pkt.callId, {
+        status: 'CONNECTED',
+        connectedAt: pkt.connectedAt
+      });
 
       onCallConnectedCommonUI(pkt);
     }
 
-    // Caller receives SIP 200 OK -> Sets Remote Description, flushes Driver ICE, and sends SIP ACK!
     async function onDriverAcceptedCallSignal(packet) {
       if (!packet) return;
       activeCallPacket = { ...(activeCallPacket || {}), ...packet };
@@ -13660,6 +13657,9 @@ ET
 
     function toggleAppCallMute() {
       appCallMuted = !appCallMuted;
+      if (agoraLocalAudioTrack) {
+        try { agoraLocalAudioTrack.setEnabled(!appCallMuted); } catch(e){}
+      }
       if (appCallMicStream) {
         appCallMicStream.getAudioTracks().forEach(t => { t.enabled = !appCallMuted; });
       }
