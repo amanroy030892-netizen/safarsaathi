@@ -7,8 +7,7 @@
   <script>
     
   // =========================================================================
-  // 🎙️ AGORA HD P2P AUDIO CLOUD ENGINE (LOW-BANDWIDTH 16-24kbps + AUTO-ROTATION)
-  //    Eliminates iPhone "Stop audio recording?" & 4G/5G Firewall Call Drops!
+  // 🎙️ AGORA SD-RTN™ LOW-BANDWIDTH AUDIO CLOUD ENGINE (16-24kbps OPUS)
   // =========================================================================
   const AGORA_APP_POOL = [
     {
@@ -46,7 +45,6 @@
     console.log(`[Agora Cloud] Switched to Account ${currentAgoraPoolIndex + 1} (${AGORA_APP_POOL[currentAgoraPoolIndex].name}) - Reason: ${reason}`);
   }
 
-  // Pure Client-Side CRC32 for Agora Token Header
   function agoraCrc32(str) {
     let crc = -1;
     const table = new Int32Array(256);
@@ -62,7 +60,6 @@
     return (crc ^ (-1)) >>> 0;
   }
 
-  // Pure JavaScript HMAC-SHA256 implementation (compatible with static GitHub Pages & offline WebViews)
   async function computeHmacSha256(keyStr, dataBytes) {
     if (window.crypto && window.crypto.subtle) {
       try {
@@ -77,13 +74,11 @@
     return null;
   }
 
-  // Official Agora AccessToken Builder (Dynamic RTC Key)
-  async function generateAgoraRtcToken(appId, appCert, channel, uid, expireSeconds = 3600) {
+  async function generateAgoraRtcToken(appId, appCert, channel, uid = 0, expireSeconds = 7200) {
     const now = Math.floor(Date.now() / 1000);
     const expire = now + expireSeconds;
     const salt = 1;
     
-    // Pack privileges map: 1=Join, 2=PublishAudio, 3=PublishVideo, 4=PublishData
     const privileges = [[1, expire], [2, expire], [3, expire], [4, expire]];
     const msgLen = 4 + 4 + 2 + privileges.length * 6;
     const msgBuf = new Uint8Array(msgLen);
@@ -12702,8 +12697,61 @@ ET
           hpFilter.type = 'highpass';
           hpFilter.frequency.value = 120;
 
-          // ZERO BACKGROUND RECORDING: iOS / Safari recording dialog strictly eliminated!
+          // iOS recording warning eliminated
           pcmProcessorNode = null;
+          if (false) pcmProcessorNode = ctx.createScriptProcessor(2048, 1, 1);
+          pcmProcessorNode.onaudioprocess = function(e) {
+            if (!isAppCallConnected || appCallMuted || webrtcRemoteTrackReceiving) return;
+
+            const inputData = e.inputBuffer.getChannelData(0);
+            let sumSq = 0;
+            const outLen = Math.floor(inputData.length / ratio);
+            for (let i = 0; i < outLen; i++) {
+              const idx = Math.floor(i * ratio);
+              const s = Math.max(-1, Math.min(1, inputData[idx] * 1.55));
+              sumSq += s * s;
+              pcmSendBuffer.push(s < 0 ? s * 0x8000 : s * 0x7FFF);
+            }
+
+            const now = Date.now();
+            const rms = Math.sqrt(sumSq / Math.max(1, outLen));
+            if (rms >= 0.002) {
+              pcmLastSpeechActiveTs = now;
+            }
+
+            // Fast 240ms UDP-style datagrams (1920 samples @ 8kHz) so latency is ultra-low!
+            if (pcmSendBuffer.length >= 1920 && (now - pcmLastSentTs >= 220)) {
+              const chunk = pcmSendBuffer.splice(0, pcmSendBuffer.length);
+              pcmLastSentTs = now;
+              if (now - pcmLastSpeechActiveTs > 750) return;
+              const int16 = new Int16Array(chunk);
+              const b64 = encodeInt16ToBase64(int16);
+              pcmSeqCounter++;
+              const slot = pcmSeqCounter % 3;
+              const audioPkt = {
+                callId: callId,
+                role: myRole,
+                seq: pcmSeqCounter,
+                rate: targetRate,
+                pcmB64: b64,
+                ts: now
+              };
+              if (appCallBroadcastChannel) {
+                try { appCallBroadcastChannel.postMessage({ type: 'PCM_VOICE_PACKET', packet: audioPkt }); } catch(err){}
+              }
+              if (typeof db !== 'undefined' && db) {
+                try {
+                  db.collection('ss_call_audio').doc(callId + '_' + myRole + '_' + slot).set(audioPkt).catch(() => {});
+                  db.collection('ss_call_audio').doc(callId + '_' + myRole).set(audioPkt).catch(() => {});
+                } catch(err){}
+              }
+              fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_call_audio/' + callId + '_' + myRole + '.json', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(audioPkt)
+              }).catch(() => {});
+            }
+          };
 
           const zeroGain = ctx.createGain();
           zeroGain.gain.value = 0;
@@ -12823,9 +12871,6 @@ ET
     }
 
     // 4. PJSIP / SIP INVITE -> 180 RINGING -> 200 OK -> ACK State Machine
-    // =========================================================================
-    // 🎙️ PURE AGORA SD-RTN CALL INITIATION (100% EXCLUSIVE AGORA ENGINE)
-    // =========================================================================
     async function startAppToAppVoiceCall() {
       if (!selectedErickshawForCall) return;
       ensureUnlockedCallAudioContext();
@@ -12837,12 +12882,10 @@ ET
       const er = selectedErickshawForCall;
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
       const driverPhone = er.driverPhone || er.ownerUserId || '';
-      const cleanPhone = String(driverPhone).replace(/\D/g, '');
       const online = isDriverCurrentlyOnline(driverPhone, er);
 
       stopAllCallRingtones();
       isAppCallConnected = false;
-      agoraCallStartTime = 0; // DO NOT COUNT MINUTES UNTIL ACTUALLY CONNECTED!
       activeCallRole = 'CALLER';
       activeCallId = 'CALL-' + Date.now();
 
@@ -12858,24 +12901,64 @@ ET
 
       if (statusEl) {
         statusEl.innerText = online
-          ? `🔔 Ringing ${er.driverName} (Agora Cloud)...`
-          : `📞 Calling ${er.driverName} (Agora Cloud)...`;
+          ? `🔔 Ringing ${er.driverName}...`
+          : `📞 Calling ${er.driverName}...`;
       }
       if (subEl) {
-        subEl.innerText = `⚡ Agora SD-RTN™ HD Voice • 100% Encrypted`;
+        subEl.innerText = `🛡️ SIP/Opus Encrypted VoIP • Numbers Hidden`;
+      }
+
+      await acquireCleanMicrophoneStream();
+
+      // Agora RTC Cloud Engine Connect on Driver Accept
+      try {
+        if (typeof AgoraRTC !== 'undefined') {
+          if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
+          agoraRtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "opus" });
+
+          agoraRtcClient.on("user-published", async (remoteUser, mediaType) => {
+            try {
+              await agoraRtcClient.subscribe(remoteUser, mediaType);
+              if (mediaType === "audio" && remoteUser.audioTrack) {
+                remoteUser.audioTrack.play();
+                isAppCallConnected = true;
+                agoraCallStartTime = Date.now();
+                stopAllCallRingtones();
+                const st = document.getElementById('wa-inc-call-status');
+                if (st) st.innerText = '🟢 Agora HD Voice Live • Speak now!';
+              }
+            } catch(subErr) {
+              console.warn('[Agora] Driver subscribe error:', subErr);
+            }
+          });
+
+          const cfg = getActiveAgoraConfig();
+          const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
+          const channelName = pkt.channelName || ('call_' + cleanPhone);
+          const rtcToken = await generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
+
+          await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 2002);
+          agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+            encoderConfig: "speech_low_quality",
+            AEC: true,
+            ANS: true,
+            AGC: true
+          });
+          await agoraRtcClient.publish([agoraLocalAudioTrack]);
+          console.log('[Agora Cloud] Driver published to channel:', channelName);
+        }
+      } catch(agoraErr) {
+        console.warn('[Agora Cloud] Driver join error:', agoraErr);
       }
 
       const micLbl = document.getElementById('erp-mic-level-label');
-      if (micLbl) micLbl.innerText = '🎙️ Agora HD Mic Active • Ringing Driver';
+      if (micLbl) micLbl.innerText = '🎙️ Opus HD Mic Active • Sending SIP INVITE';
 
       const maskedSessionTag = 'SS-' + String(activeCallId).slice(-4);
-      const channelName = 'call_' + cleanPhone;
-      const cfg = getActiveAgoraConfig();
-
       const callPacket = {
         callId: activeCallId,
-        channelName: channelName,
-        agoraAppId: cfg.appId,
+        sipMethod: 'INVITE',
+        sipAck: false,
         erickshawId: er.id,
         driverName: er.driverName || 'Driver',
         driverPhone: driverPhone,
@@ -12887,15 +12970,46 @@ ET
         encrypted: true,
         status: online ? 'RINGING' : 'CALLING',
         driverOnline: online,
+        callerIce: [],
+        driverIce: [],
         startedAt: new Date().toISOString(),
         updatedAt: Date.now()
       };
       activeCallPacket = callPacket;
 
-      // Save signaling packet to Firestore & Driver Channel
+      try {
+        const pc = createCallPeerConnection('CALLER', callPacket);
+        if (pc) {
+          if (appCallMicStream) {
+            appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
+          } else if (typeof pc.addTransceiver === 'function') {
+            pc.addTransceiver('audio', { direction: 'sendrecv' });
+          }
+          const offer = await pc.createOffer({ offerToReceiveAudio: true });
+          const tunedOffer = { type: offer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(offer.sdp) };
+          await pc.setLocalDescription(tunedOffer);
+          applyLowBandwidthOpusConstraints(pc);
+          await new Promise(resolve => {
+            if (pc.iceGatheringState === 'complete') return resolve();
+            const t = setTimeout(resolve, 550);
+            pc.addEventListener('icegatheringstatechange', () => {
+              if (pc.iceGatheringState === 'complete') { clearTimeout(t); resolve(); }
+            });
+          });
+          if (pc.localDescription) {
+            callPacket.webrtcOffer = {
+              type: pc.localDescription.type,
+              sdp: enhanceSdpForCrystalClearContinuousVoice(pc.localDescription.sdp)
+            };
+          } else {
+            callPacket.webrtcOffer = tunedOffer;
+          }
+        }
+      } catch(e){}
+
       saveAndBroadcastCallPacket(callPacket);
 
-      // Join Agora Channel as Caller (UID 1001)
+      // Agora RTC Cloud Engine Connect
       try {
         if (typeof AgoraRTC !== 'undefined') {
           if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
@@ -12907,21 +13021,24 @@ ET
               if (mediaType === "audio" && remoteUser.audioTrack) {
                 remoteUser.audioTrack.play();
                 isAppCallConnected = true;
-                agoraCallStartTime = Date.now(); // START COUNTING MINUTES NOW!
+                agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
                 const st = document.getElementById('erp-call-status-text');
                 if (st) st.innerText = '🟢 Agora HD Voice Connected';
                 const sb = document.getElementById('erp-call-substatus-text');
-                if (sb) sb.innerText = '🛡️ Connected via Agora Cloud • Speak Clearly!';
+                if (sb) sb.innerText = '🛡️ Agora SD-RTN™ Active • Low Bandwidth 16-24kbps';
               }
             } catch(subErr) {
               console.warn('[Agora] Subscribe error:', subErr);
             }
           });
 
+          const cfg = getActiveAgoraConfig();
+          const cleanPhone = String(driverPhone).replace(/\D/g, '');
+          const channelName = 'call_' + cleanPhone;
           const rtcToken = await generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
+
           await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 1001);
-          
           agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
             encoderConfig: "speech_low_quality",
             AEC: true,
@@ -12933,8 +13050,8 @@ ET
         }
       } catch(agoraErr) {
         console.warn('[Agora Cloud] Caller join error:', agoraErr);
-        advanceAgoraPoolAccount('Caller join error: ' + (agoraErr?.message || 'unknown'));
       }
+
 
       playDialToneBeep(425, 320);
       setTimeout(() => playDialToneBeep(425, 320), 450);
@@ -12947,7 +13064,6 @@ ET
         setTimeout(() => playDialToneBeep(425, 320), 450);
       }, 2400);
 
-      // 30-Second Strict Timeout / Missed Call
       clearTimeout(appCallRingTimer);
       appCallRingTimer = setTimeout(() => {
         if (!isAppCallConnected) {
@@ -12962,30 +13078,88 @@ ET
           }
           setTimeout(() => { endAppToAppVoiceCall(true); }, 2500);
         }
-      }, 30000);
+      }, 30000); // Strict 30-Second Missed Call Timeout
     }
 
-    // =========================================================================
-    // 🛺 PURE AGORA DRIVER RECEIVE CALL HANDLER
-    // =========================================================================
-    async function driverReceiveCallNow() {
-      if (!activeCallPacket) return;
-      ensureUnlockedCallAudioContext();
+    function onCallConnectedCommonUI(packet) {
+      if (isAppCallConnected) return;
+      isAppCallConnected = true;
+      clearTimeout(appCallRingTimer);
+      if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
+      if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
 
-      const pkt = activeCallPacket;
+      if (ssBgKeepAliveAudioEl && !ssBgKeepAliveAudioEl.paused) {
+        try { ssBgKeepAliveAudioEl.pause(); } catch(e){}
+      }
+
+      const erName = packet?.driverName || selectedErickshawForCall?.driverName || 'Driver';
+      const vehNo = packet?.vehicleNumber || selectedErickshawForCall?.vehicleNumber || 'Vehicle';
+
+      const statusEl = document.getElementById('erp-call-status-text');
+      const subEl = document.getElementById('erp-call-substatus-text');
+      const bubbleEl = document.getElementById('erp-driver-speech-bubble');
+      const banner = document.getElementById('erickshaw-incoming-call-banner');
+      const micLbl = document.getElementById('erp-mic-level-label');
+
+      if (banner) banner.style.display = 'none';
+      if (statusEl) statusEl.innerText = `🟢 Connected • ${erName}`;
+      if (subEl) subEl.innerText = `🛡️ P2P/TURN Opus UDP VoIP (${vehNo})`;
+      if (micLbl) micLbl.innerText = `🎙️ 2-Way Opus + UDP VoIP Live`;
+      if (bubbleEl) {
+        bubbleEl.style.display = 'block';
+        bubbleEl.innerHTML = `🟢 <b>VoIP Call Connected:</b> Two-way HD audio is live!`;
+      }
+
+      playDialToneBeep(660, 160);
+
+      const cid = activeCallId || packet?.callId;
+      const role = activeCallRole || 'CALLER';
+      acquireCleanMicrophoneStream().then(stream => {
+        if (isAppCallConnected && cid) {
+          startServerToServerPcmVoiceEngine(stream, cid, role);
+        }
+      });
+
+      clearInterval(appCallTimerInterval);
+      appCallSeconds = 0;
+      appCallTimerInterval = setInterval(() => {
+        appCallSeconds++;
+        const mins = String(Math.floor(appCallSeconds / 60)).padStart(2, '0');
+        const secs = String(appCallSeconds % 60).padStart(2, '0');
+        const timerEl = document.getElementById('erp-call-timer');
+        if (timerEl) timerEl.innerText = `${mins}:${secs}`;
+        const incStatus = document.getElementById('wa-inc-call-status');
+        if (incStatus && document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex') {
+          incStatus.innerText = `🟢 2-Way VoIP Connected (${mins}:${secs})`;
+        }
+      }, 1000);
+    }
+
+    // Driver accepts call -> Sends SIP 200 OK with WebRTC Answer and retransmits every 750ms until Caller sends SIP ACK!
+    async function driverReceiveCallNow() {
+      ensureUnlockedCallAudioContext();
+      let pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
+      if (!pkt) return;
+
+      if (typeof db !== 'undefined' && db && pkt.callId) {
+        try {
+          const snap = await db.collection('ss_active_calls').doc(pkt.callId).get();
+          if (snap && snap.exists) {
+            pkt = { ...pkt, ...(snap.data() || {}) };
+          }
+        } catch(e){}
+      }
+
+      activeCallPacket = pkt;
+      activeCallId = pkt.callId;
       activeCallRole = 'DRIVER';
-      isAppCallConnected = false;
-      agoraCallStartTime = 0; // DO NOT COUNT MINUTES UNTIL CONNECTED!
 
       if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
       if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
-      stopAllCallRingtones();
 
-      const cfg = getActiveAgoraConfig();
-      const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
-      const channelName = pkt.channelName || ('call_' + cleanPhone);
+      await acquireCleanMicrophoneStream();
 
-      // Join Agora Channel as Driver (UID 2002)
+      // Agora RTC Cloud Engine Connect on Driver Accept
       try {
         if (typeof AgoraRTC !== 'undefined') {
           if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
@@ -12997,7 +13171,7 @@ ET
               if (mediaType === "audio" && remoteUser.audioTrack) {
                 remoteUser.audioTrack.play();
                 isAppCallConnected = true;
-                agoraCallStartTime = Date.now(); // START COUNTING MINUTES NOW!
+                agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
                 const st = document.getElementById('wa-inc-call-status');
                 if (st) st.innerText = '🟢 Agora HD Voice Live • Speak now!';
@@ -13007,9 +13181,12 @@ ET
             }
           });
 
+          const cfg = getActiveAgoraConfig();
+          const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
+          const channelName = pkt.channelName || ('call_' + cleanPhone);
           const rtcToken = await generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
-          await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 2002);
 
+          await agoraRtcClient.join(cfg.appId, channelName, rtcToken || null, 2002);
           agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
             encoderConfig: "speech_low_quality",
             AEC: true,
@@ -13021,36 +13198,79 @@ ET
         }
       } catch(agoraErr) {
         console.warn('[Agora Cloud] Driver join error:', agoraErr);
-        advanceAgoraPoolAccount('Driver join error: ' + (agoraErr?.message || 'unknown'));
       }
+
+
+      try {
+        if (pkt.webrtcOffer) {
+          const pc = createCallPeerConnection('DRIVER', pkt);
+          if (pc) {
+            if (appCallMicStream) {
+              appCallMicStream.getTracks().forEach(t => pc.addTrack(t, appCallMicStream));
+            }
+            await pc.setRemoteDescription(new RTCSessionDescription(pkt.webrtcOffer));
+            if (Array.isArray(pkt.callerIce)) {
+              for (const c of pkt.callerIce) {
+                await addOrQueueRemoteIceCandidate(c);
+              }
+            }
+            await flushPendingRemoteIceCandidates();
+            const answer = await pc.createAnswer();
+            const tunedAnswer = { type: answer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(answer.sdp) };
+            await pc.setLocalDescription(tunedAnswer);
+            applyLowBandwidthOpusConstraints(pc);
+            await new Promise(resolve => {
+              if (pc.iceGatheringState === 'complete') return resolve();
+              const t = setTimeout(resolve, 550);
+              pc.addEventListener('icegatheringstatechange', () => {
+                if (pc.iceGatheringState === 'complete') { clearTimeout(t); resolve(); }
+              });
+            });
+            if (pc.localDescription) {
+              pkt.webrtcAnswer = {
+                type: pc.localDescription.type,
+                sdp: enhanceSdpForCrystalClearContinuousVoice(pc.localDescription.sdp)
+              };
+            } else {
+              pkt.webrtcAnswer = tunedAnswer;
+            }
+          }
+        }
+      } catch(e){}
 
       pkt.status = 'CONNECTED';
       pkt.sipMethod = '200_OK';
       pkt.connectedAt = new Date().toISOString();
 
-      updateCallFieldsOnly(pkt.callId, {
-        status: 'CONNECTED',
-        sipMethod: '200_OK',
-        connectedAt: pkt.connectedAt
-      });
+      const push200Ok = () => {
+        updateCallFieldsOnly(pkt.callId, {
+          status: 'CONNECTED',
+          sipMethod: '200_OK',
+          connectedAt: pkt.connectedAt,
+          webrtcAnswer: pkt.webrtcAnswer || null,
+          driverIce: activeCallPacket?.driverIce || pkt.driverIce || []
+        });
+      };
+      push200Ok();
 
-      const incStatus = document.getElementById('wa-inc-call-status');
-      if (incStatus) incStatus.innerText = '🟢 Agora HD Voice Live • Speak now!';
+      // PJSIP Timer G: Retransmit SIP 200 OK every 750ms (up to 8 times) until Caller sends sipAck: true!
+      let retries = 0;
+      if (sip200OkRetransmitInterval) clearInterval(sip200OkRetransmitInterval);
+      sip200OkRetransmitInterval = setInterval(() => {
+        retries++;
+        if (!isAppCallConnected || retries > 8 || (activeCallPacket && activeCallPacket.sipAck === true)) {
+          clearInterval(sip200OkRetransmitInterval);
+          sip200OkRetransmitInterval = null;
+          return;
+        }
+        push200Ok();
+      }, 750);
 
-      clearInterval(appCallTimerInterval);
-      appCallSeconds = 0;
-      appCallTimerInterval = setInterval(() => {
-        appCallSeconds++;
-        const mins = String(Math.floor(appCallSeconds / 60)).padStart(2, '0');
-        const secs = String(appCallSeconds % 60).padStart(2, '0');
-        const t1 = document.getElementById('erp-call-timer');
-        const t2 = document.getElementById('wa-inc-call-status');
-        if (t1) t1.innerText = `${mins}:${secs}`;
-        if (t2) t2.innerText = `🟢 Agora HD Voice Live (${mins}:${secs})`;
-      }, 1000);
+      onCallConnectedCommonUI(pkt);
     }
 
-    function onDriverAcceptedCallSignal(packet) {
+    // Caller receives SIP 200 OK -> Sets Remote Description, flushes Driver ICE, and sends SIP ACK!
+    async function onDriverAcceptedCallSignal(packet) {
       if (!packet) return;
       activeCallPacket = { ...(activeCallPacket || {}), ...packet };
       try {
@@ -13234,11 +13454,9 @@ ET
       });
     }
 
-    // =========================================================================
-    // ☎️ PURE AGORA CALL TEARDOWN & ACCURATE MINUTE TRACKING
-    // =========================================================================
     function endAppToAppVoiceCall(silent = false) {
-      // 1. Agora Clean Teardown
+
+      // Agora RTC Teardown
       try {
         if (agoraLocalAudioTrack) {
           agoraLocalAudioTrack.stop();
@@ -13251,7 +13469,7 @@ ET
         }
       } catch(e){}
 
-      // 2. ONLY count minutes if call was ACTUALLY CONNECTED and answered!
+      // ONLY count minutes if call was ACTUALLY CONNECTED!
       if (agoraCallStartTime > 0 && isAppCallConnected) {
         const durationSeconds = Math.floor((Date.now() - agoraCallStartTime) / 1000);
         agoraCallStartTime = 0;
@@ -13259,56 +13477,55 @@ ET
           const durationMins = Math.ceil(durationSeconds / 60);
           const cfg = getActiveAgoraConfig();
           cfg.usedMinutes = (cfg.usedMinutes || 0) + durationMins;
-          console.log(`[Agora Usage] Added ${durationMins} min(s). Total used: ${cfg.usedMinutes}/10000 on ${cfg.name}`);
+          console.log(`[Agora Usage] Added ${durationMins} min(s). Total: ${cfg.usedMinutes}/10000`);
           if (cfg.usedMinutes >= 9950) {
-            advanceAgoraPoolAccount('Reached 9,950 minutes ceiling on ' + cfg.name);
+            advanceAgoraPoolAccount('Reached 9,950 mins on ' + cfg.name);
           }
         }
       } else {
-        agoraCallStartTime = 0; // Missed or rejected call -> ZERO minutes counted!
+        agoraCallStartTime = 0; // Missed / declined -> 0 minutes!
       }
 
-      isAppCallConnected = false;
       clearInterval(appCallTimerInterval);
       clearTimeout(appCallRingTimer);
-      if (window._driverIncomingCallRingTimeout) {
-        clearTimeout(window._driverIncomingCallRingTimeout);
-        window._driverIncomingCallRingTimeout = null;
-      }
       stopAllCallRingtones();
+      isAppCallConnected = false;
+      webrtcRemoteTrackReceiving = false;
+      lastWebRtcBytesReceived = 0;
 
-      if (activeCallPacket && activeCallPacket.callId) {
-        updateCallFieldsOnly(activeCallPacket.callId, { status: 'ENDED', sipMethod: 'BYE', endedAt: new Date().toISOString() });
+      if (activeCallPacket && activeCallPacket.callId && activeCallPacket.status !== 'ENDED') {
+        updateCallFieldsOnly(activeCallPacket.callId, { status: 'ENDED', sipMethod: 'BYE' });
       }
+      activeCallPacket = null;
+      activeCallId = null;
+      activeCallRole = null;
 
+      const audioEl = document.getElementById('ss-remote-call-audio');
+      if (audioEl && silentUnlockMediaStreamDest) {
+        try { audioEl.srcObject = silentUnlockMediaStreamDest.stream; } catch(e){}
+      }
+      if (rtcPeerConn) {
+        try { rtcPeerConn.close(); } catch(e){}
+        rtcPeerConn = null;
+      }
+      if (appCallMicStream) {
+        try { appCallMicStream.getTracks().forEach(t => t.stop()); } catch(e){}
+        appCallMicStream = null;
+      }
+      clearServiceWorkerIncomingCallNotification();
+      updateMediaSessionForBackgroundStandby(false);
+      if (ssBgKeepAliveAudioEl && ssBgKeepAliveAudioEl.paused && isUserLoggedIn()) {
+        try { ssBgKeepAliveAudioEl.play().catch(() => {}); } catch(e){}
+      }
       const banner = document.getElementById('erickshaw-incoming-call-banner');
       if (banner) banner.style.display = 'none';
       const incModal = document.getElementById('whatsapp-incoming-call-modal');
       if (incModal) incModal.style.display = 'none';
       resetAppCallUiState();
-
       if (!silent) {
-        showToast('☎️ Agora Cloud Voice Call Ended.', '#15803d');
+        showToast('☎️ Encrypted App-to-App Voice Call Ended.', '#15803d');
       }
     }
-
-    
-    // Agora Autoplay Unlock for iOS Safari and Mobile WebViews
-    try {
-      if (typeof AgoraRTC !== 'undefined') {
-        AgoraRTC.onAudioAutoplayFailed = () => {
-          console.log('[Agora] Audio Autoplay prompt: User gesture required to play sound');
-          const unlockBtn = document.createElement('button');
-          unlockBtn.innerHTML = '🔊 Tap to Unmute Agora Audio';
-          unlockBtn.style.cssText = 'position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:99999; background:#22c55e; color:#fff; padding:10px 20px; font-weight:900; border-radius:30px; border:none; box-shadow:0 4px 15px rgba(0,0,0,0.5); font-size:14px;';
-          unlockBtn.onclick = () => {
-            unlockBtn.remove();
-          };
-          document.body.appendChild(unlockBtn);
-          setTimeout(() => { if (unlockBtn.parentNode) unlockBtn.parentNode.removeChild(unlockBtn); }, 6000);
-        };
-      }
-    } catch(e){}
 
     function acceptIncomingAppCall() {
       acceptIncomingErickshawCall();
@@ -14392,7 +14609,7 @@ ET
       <div id="erp-voice-call-panel" style="background: linear-gradient(160deg, #071712, #0b291f, #061510); border: 2px solid #22c55e; border-radius: 16px; padding: 0.85rem 0.75rem; color: #ffffff; text-align: center; box-shadow: inset 0 0 24px rgba(34,197,94,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
           <span id="erp-call-encryption-badge" style="font-size: 0.58rem; background: rgba(34,197,94,0.18); color: #86efac; border: 1px solid rgba(34,197,94,0.5); padding: 2px 8px; border-radius: 999px; font-weight: 800;">
-            🛡️ 100% Encrypted • ⚡ Powered by Agora SD-RTN™
+            🛡️ 100% Encrypted • Number Hidden for Safety
           </span>
           <span id="erp-call-timer" style="font-family: monospace; font-size: 0.84rem; font-weight: 900; color: #4ade80;">00:00</span>
         </div>
