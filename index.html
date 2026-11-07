@@ -12048,21 +12048,10 @@ ET
     }
 
     async function autoAllowAndPreWarmMobileCallSystems() {
+      // NEVER touch microphone in background — ONLY request mic during an active call!
       try {
-        ensureUnlockedCallAudioContext();
         if ('Notification' in window && Notification.permission === 'default') {
           Notification.requestPermission().catch(() => {});
-        }
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !preWarmedMicStream) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true
-            }
-          });
-          stream.getTracks().forEach(t => t.stop());
-          preWarmedMicStream = true;
         }
       } catch(e){}
     }
@@ -13709,12 +13698,8 @@ ET
           ssBgKeepAliveAudioEl.style.display = 'none';
           document.body.appendChild(ssBgKeepAliveAudioEl);
         }
-        if (!isAppCallConnected) {
-          ssBgKeepAliveAudioEl.play().then(() => {
-            ssBgServiceStarted = true;
-            updateMediaSessionForBackgroundStandby(false);
-          }).catch(() => {});
-        }
+        // ZERO IDLE AUDIO: Do NOT play audio in background when no call is active!
+        ssBgServiceStarted = true;
 
         if (showConfirmToast) {
           showToast('🔋 Auto-Permissions & 24x7 Background Call Service Active!', '#15803d');
@@ -13728,7 +13713,7 @@ ET
     ['click', 'touchstart'].forEach(evtName => {
       document.addEventListener(evtName, function onFirstUserWake() {
         if (!ssBgServiceStarted) {
-          enableFullBackgroundCallAndGpsService(false);
+          ssBgServiceStarted = true;
         }
       }, { passive: true });
     });
