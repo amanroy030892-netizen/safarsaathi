@@ -33,14 +33,14 @@
         }).catch(function(e) {});
       }
       try {
-        const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
-        const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
-        const fakeErIds = ['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106'];
+        const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-AS-101', 'RIDE-AS-102', 'RIDE-AS-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
+        const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora', 'Farhan Choudhury', 'Kabul Choudhury', 'Mitali Kalita'];
+        const fakeErIds = ['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106', 'ER-AS-4021', 'ER-AS-4022', 'ER-AS-4023'];
         let raw = JSON.parse(localStorage.getItem('ss_rides')) || [];
-        let clean = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName));
+        let clean = raw.filter(r => r && !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName));
         localStorage.setItem('ss_rides', JSON.stringify(clean));
         let rawEr = JSON.parse(localStorage.getItem('ss_erickshaws')) || [];
-        let cleanEr = rawEr.filter(e => e && !(fakeErIds.includes(e.id) && !e.utrNumber));
+        let cleanEr = rawEr.filter(e => e && !fakeErIds.includes(e.id) && !demoNames.includes(e.driverName));
         localStorage.setItem('ss_erickshaws', JSON.stringify(cleanEr));
       } catch(e){}
     })();
@@ -913,7 +913,8 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         try { localArr = JSON.parse(localStorage.getItem('ss_erickshaws') || '[]'); } catch(e){ localArr = []; }
         if (!Array.isArray(localArr)) localArr = [];
 
-        const removedIds = new Set();
+        const removedIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106', 'ER-AS-4021', 'ER-AS-4022', 'ER-AS-4023']);
+        const bannedDemoNames = new Set(['Farhan Choudhury', 'Kabul Choudhury', 'Mitali Kalita', 'Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
         try {
           const delArr = JSON.parse(localStorage.getItem('ss_deleted_erickshaw_ids') || '[]');
           if (Array.isArray(delArr)) delArr.forEach(id => removedIds.add(id));
@@ -921,7 +922,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
 
         const byId = {};
         localArr.forEach(item => {
-          if (item && item.id && !removedIds.has(item.id) && item.removedByAdmin !== true) {
+          if (item && item.id && !removedIds.has(item.id) && !bannedDemoNames.has(item.driverName) && item.removedByAdmin !== true) {
             byId[item.id] = item;
           }
         });
@@ -929,7 +930,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
         const confirmedErIds = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_er_ids') || '[]'));
         arr.forEach(item => {
           if (!item || !item.id) return;
-          if (item.removedByAdmin === true || removedIds.has(item.id)) {
+          if (item.removedByAdmin === true || removedIds.has(item.id) || bannedDemoNames.has(item.driverName)) {
             removedIds.add(item.id);
             delete byId[item.id];
             return;
@@ -1255,7 +1256,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       try {
         if (typeof EventSource !== 'undefined') {
           if (_admNtfyEventSource) { try { _admNtfyEventSource.close(); } catch(e){} }
-          _admNtfyEventSource = new EventSource('https://ntfy.sh/' + SS_NTFY_MAIN_TOPIC + '/sse');
+          _admNtfyEventSource = new EventSource('https://ntfy.sh/' + SS_NTFY_MAIN_TOPIC + ',' + SS_NTFY_USERS_TOPIC + '/sse');
           _admNtfyEventSource.onmessage = function(ev) {
             try {
               const msg = JSON.parse(ev.data);
@@ -1435,6 +1436,20 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
               const cRides = [];
               snap.forEach(doc => { const d = doc.data(); if (d) { if (!d.id) d.id = doc.id; cRides.push(d); } });
               if (cRides.length > 0) mergeAdminCloudRides(cRides);
+            }).catch(() => {});
+            adminDb.collection('ss_users').get().then(snap => {
+              const uMap = { ...(JSON.parse(localStorage.getItem('ss_users_db')) || {}) };
+              let uChanged = false;
+              snap.forEach(doc => {
+                const d = doc.data();
+                const uid = d && (d.phone || d.userId || doc.id);
+                if (uid) { uMap[uid] = { ...(uMap[uid] || {}), ...d }; uChanged = true; }
+              });
+              if (uChanged) {
+                registeredUsers = uMap;
+                localStorage.setItem('ss_users_db', JSON.stringify(registeredUsers));
+                renderAdminUsers();
+              }
             }).catch(() => {});
           } catch(e){}
         }
@@ -2491,7 +2506,9 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       try {
         const raw = JSON.parse(localStorage.getItem('ss_erickshaws') || '[]');
         if (!Array.isArray(raw)) return [];
-        return raw.filter(x => x && x.removedByAdmin !== true && (x.status || 'ACTIVE').toUpperCase() !== 'REMOVED');
+        const bannedIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106', 'ER-AS-4021', 'ER-AS-4022', 'ER-AS-4023']);
+        const bannedNames = new Set(['Farhan Choudhury', 'Kabul Choudhury', 'Mitali Kalita', 'Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
+        return raw.filter(x => x && !bannedIds.has(x.id) && !bannedNames.has(x.driverName) && x.removedByAdmin !== true && (x.status || 'ACTIVE').toUpperCase() !== 'REMOVED' && (x.status || '').toUpperCase() !== 'DELETED');
       } catch(e) { return []; }
     }
 

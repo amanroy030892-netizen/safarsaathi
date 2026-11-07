@@ -434,23 +434,24 @@
       }
       // 3. STRICT 0% DEMO DATA PURGE & VERSION ENFORCEMENT
       try {
-        const CURRENT_VERSION = 'SS_PROD_V130_INSTANT_SYNC_CLEAN_TEST_RESET';
+        const CURRENT_VERSION = 'SS_PROD_V150_STRICT_P2P_ZERO_DEMO_USERS';
         const lastVer = ssStorage.getItem('ss_build_ver');
-        const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
-        const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora'];
-        const demoUtrs = ['987654321013', '987654321014', '987654321015', '987654321012'];
-        const fakeErIds = ['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106'];
+        const CURRENT_VERSION_P2P = 'SS_PROD_V150_STRICT_P2P_ZERO_DEMO_USERS';
+        const demoRideIds = ['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-AS-101', 'RIDE-AS-102', 'RIDE-AS-103', 'RIDE-4921', 'RIDE-2010', 'RIDE-1902', 'RIDE-3311'];
+        const demoNames = ['Bikram Das', 'Rahul Saikia', 'Pranab Bora', 'Farhan Choudhury', 'Kabul Choudhury', 'Mitali Kalita'];
+        const demoUtrs = ['987654321013', '987654321014', '987654321015', '987654321012', '645533566547', '645533566548', '645533566549'];
+        const fakeErIds = ['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106', 'ER-AS-4021', 'ER-AS-4022', 'ER-AS-4023'];
 
         let raw = JSON.parse(ssStorage.getItem('ss_rides')) || [];
         let hasDemo = raw.some(r => demoRideIds.includes(r.id) || demoNames.includes(r.driverName) || demoUtrs.includes(r.platformFeeUtr));
 
         let rawEr = JSON.parse(ssStorage.getItem('ss_erickshaws')) || [];
-        let hasFakeEr = rawEr.some(e => e && fakeErIds.includes(e.id) && !e.utrNumber);
+        let hasFakeEr = rawEr.some(e => e && (fakeErIds.includes(e.id) || demoNames.includes(e.driverName) || demoUtrs.includes(e.utrNumber)));
 
         if (lastVer !== CURRENT_VERSION || hasDemo || hasFakeEr) {
           let cleanRides = raw.filter(r => !demoRideIds.includes(r.id) && !demoNames.includes(r.driverName) && !demoUtrs.includes(r.platformFeeUtr));
           ssStorage.setItem('ss_rides', JSON.stringify(cleanRides));
-          let cleanEr = rawEr.filter(e => e && !(fakeErIds.includes(e.id) && !e.utrNumber));
+          let cleanEr = rawEr.filter(e => e && !fakeErIds.includes(e.id) && !demoNames.includes(e.driverName) && !demoUtrs.includes(e.utrNumber));
           ssStorage.setItem('ss_erickshaws', JSON.stringify(cleanEr));
           ssStorage.setItem('ss_build_ver', CURRENT_VERSION);
         }
@@ -3810,7 +3811,8 @@
         try { localArr = JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]'); } catch(e){ localArr = []; }
         if (!Array.isArray(localArr)) localArr = [];
 
-        const removedIds = new Set();
+        const removedIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106', 'ER-AS-4021', 'ER-AS-4022', 'ER-AS-4023']);
+        const bannedDemoErNames = new Set(['Farhan Choudhury', 'Kabul Choudhury', 'Mitali Kalita', 'Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
         try {
           const delArr = JSON.parse(ssStorage.getItem('ss_deleted_erickshaw_ids') || '[]');
           if (Array.isArray(delArr)) delArr.forEach(id => removedIds.add(id));
@@ -3818,14 +3820,14 @@
 
         const byId = {};
         localArr.forEach(item => {
-          if (item && item.id && !removedIds.has(item.id) && item.removedByAdmin !== true) {
+          if (item && item.id && !removedIds.has(item.id) && !bannedDemoErNames.has(item.driverName) && item.removedByAdmin !== true) {
             byId[item.id] = item;
           }
         });
 
         arr.forEach(item => {
           if (!item || !item.id) return;
-          if (item.removedByAdmin === true || removedIds.has(item.id)) {
+          if (item.removedByAdmin === true || removedIds.has(item.id) || bannedDemoErNames.has(item.driverName)) {
             removedIds.add(item.id);
             delete byId[item.id];
             return;
@@ -3858,7 +3860,7 @@
           const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
           merged.forEach(er => {
             if (!er) return;
-            const isMine = (myUser && er.driverPhone === myUser.phone) || (myDevId && er.deviceId === myDevId);
+            const isMine = !!(myUser && myUser.phone && (er.driverPhone === myUser.phone || er.ownerUserId === myUser.phone));
             if (isMine && er.adminUtrStatus === 'CONFIRMED' && !ssStorage.getItem('ss_er_conf_notified_' + er.id)) {
               ssStorage.setItem('ss_er_conf_notified_' + er.id, '1');
  showToast('✅ Action completed successfully!', '#15803d');
@@ -4072,6 +4074,7 @@
         const curUid = ssStorage.getItem('ss_current_user_id');
         if (curUid && usersObj && usersObj[curUid]) {
           publishToUniversalCloudRelay(SS_NTFY_USERS_TOPIC, 'USER_UPSERT', usersObj[curUid]);
+          publishToUniversalCloudRelay(SS_NTFY_MAIN_TOPIC, 'USER_UPSERT', usersObj[curUid]);
         }
       } catch(e){}
       try {
@@ -4207,9 +4210,9 @@
           }
         }
 
-        const isMyRequest = (req.deviceId && req.deviceId === myDevId) ||
-                            (myUser && req.userPhone && req.userPhone === myUser.phone) ||
-                            (myUser && req.userId && req.userId === myUser.userId);
+        const isMyRequest = myUser
+          ? ((req.userPhone && req.userPhone === myUser.phone) || (req.userId && req.userId === myUser.userId))
+          : (req.deviceId && req.deviceId === myDevId && (!req.userPhone || req.userPhone === 'Not Logged In'));
 
         if (isMyRequest) {
           if (req.status === 'APPROVED' && !hasCoinReqAlreadyBeenCredited(req)) {
@@ -4383,68 +4386,7 @@
       storedRides = JSON.parse(ssStorage.getItem('ss_rides')) || [];
     } catch(e) {}
 
-    const initialVerifiedAssamRides = [
-      {
-        id: 'RIDE-AS-101',
-        driverName: 'Bikram Das',
-        driverPhone: '9864011223',
-        driverPhoto: 'driver_verified_photo.png',
-        origin: 'Guwahati',
-        destination: 'Shillong',
-        date: tomorrowStr,
-        time: '08:30',
-        farePerSeat: 350,
-        seatsAvailable: 3,
-        totalSeats: 4,
-        vehicleModel: 'Swift Dzire',
-        vehicleNumber: 'AS-01-BP-4021',
-        status: 'ACTIVE',
-        adminUtrStatus: 'CONFIRMED',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        lastUpdated: Date.now()
-      },
-      {
-        id: 'RIDE-AS-102',
-        driverName: 'Rahul Saikia',
-        driverPhone: '9864022334',
-        driverPhoto: 'driver_verified_photo.png',
-        origin: 'Guwahati',
-        destination: 'Nagaon',
-        date: tomorrowStr,
-        time: '09:00',
-        farePerSeat: 300,
-        seatsAvailable: 2,
-        totalSeats: 4,
-        vehicleModel: 'Hyundai Aura',
-        vehicleNumber: 'AS-02-C-8821',
-        status: 'ACTIVE',
-        adminUtrStatus: 'CONFIRMED',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        lastUpdated: Date.now()
-      },
-      {
-        id: 'RIDE-AS-103',
-        driverName: 'Pranab Bora',
-        driverPhone: '9864033445',
-        driverPhoto: 'driver_verified_photo.png',
-        origin: 'Guwahati',
-        destination: 'Jorhat',
-        date: tomorrowStr,
-        time: '10:15',
-        farePerSeat: 550,
-        seatsAvailable: 3,
-        totalSeats: 4,
-        vehicleModel: 'Toyota Innova',
-        vehicleNumber: 'AS-03-F-1209',
-        status: 'ACTIVE',
-        adminUtrStatus: 'CONFIRMED',
-        verifiedByAdmin: true,
-        postedAt: new Date().toISOString(),
-        lastUpdated: Date.now()
-      }
-    ];
+    const initialVerifiedAssamRides = []; // 100% Real P2P Rides Only
 
     if (Array.isArray(storedRides) && storedRides.length > 0) {
       storedRides = storedRides.filter(r => r.id !== 'RIDE-DB-8287' && !r.isDemo && r.driverPhone !== '9864012345');
@@ -5769,7 +5711,6 @@
             if (!er || er.removedByAdmin) return;
             const isMine = (user && user.phone && er.driverPhone === user.phone) ||
                            (user && user.userId && er.ownerUserId === user.userId) ||
-                           (myDevId && er.deviceId === myDevId) ||
                            (typeof currentlySelectedErickshawId !== 'undefined' && er.id === currentlySelectedErickshawId && er.hasRealDeviceGps);
             if (isMine && isWithin12Hours(er.approvedAt || er.postedAt)) {
               er.lat = lat;
@@ -7809,10 +7750,10 @@ ET
       ssStorage.removeItem('ss_active_calls_map');
       ssStorage.removeItem('ss_latest_incoming_call');
       try {
-        const uInp = document.getElementById('auth-input-userid');
-        if (uInp) uInp.value = '';
-        const pInp = document.getElementById('auth-input-password');
-        if (pInp) pInp.value = '';
+        ['auth-input-userid', 'auth-input-password', 'auth-input-confirm-password', 'auth-input-name', 'auth-input-aadhaar-name', 'auth-input-address', 'auth-input-referral', 'er-driver-name', 'er-utr', 'df-utr'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
       } catch(e){}
       updateNavCounts();
       updateErickshawNavBadge();
@@ -8783,8 +8724,7 @@ ET
 
       const myErickshaws = (JSON.parse(ssStorage.getItem('ss_erickshaws') || '[]') || []).filter(er => er && !er.removedByAdmin && (
         (er.driverPhone && er.driverPhone === user.phone) ||
-        (er.ownerUserId && er.ownerUserId === user.userId) ||
-        (myDevId && er.deviceId === myDevId))
+        (er.ownerUserId && er.ownerUserId === user.userId))
       );
 
       updateNavCounts();
@@ -11200,8 +11140,9 @@ ET
       const myDevId = getClientDeviceId();
       const allReqs = getCoinRequestsList();
       const myReqs = allReqs.filter(r =>
-        (r.deviceId && r.deviceId === myDevId) ||
-        (myUser && r.userPhone && r.userPhone === myUser.phone)
+        myUser
+          ? ((r.userPhone && r.userPhone === myUser.phone) || (r.userId && r.userId === myUser.userId))
+          : (r.deviceId && r.deviceId === myDevId && (!r.userPhone || r.userPhone === 'Not Logged In'))
       ).slice(0, 3);
 
       if (myReqs.length === 0) {
@@ -11467,76 +11408,8 @@ ET
     }
 
     // 100% REAL DATA ONLY — ZERO FAKE E-RICKSHAWS!
-        function getDefaultNearbyErickshaws() {
-      const nowIso = new Date().toISOString();
-      return [
-        {
-          id: 'ER-AS-4021',
-          driverName: 'Mitali Kalita',
-          vehicleNumber: 'AS-01-ER-4021',
-          driverPhone: '9864012345',
-          driverPhoto: 'driver_verified_photo.png',
-          standArea: 'Paltan Bazaar / Guwahati Station',
-          currentPointLabel: 'Paltan Bazaar Road',
-          status: 'ACTIVE',
-          adminUtrStatus: 'CONFIRMED',
-          verifiedByAdmin: true,
-          utrNumber: '645533566547',
-          postedAt: nowIso,
-          approvedAt: nowIso,
-          lat: 26.1822,
-          lng: 91.7511,
-          baseLat: 26.1822,
-          baseLng: 91.7511,
-          distanceKm: 0.25,
-          batteryPercent: 88,
-          lastUpdated: Date.now()
-        },
-        {
-          id: 'ER-AS-4022',
-          driverName: 'Kabul Choudhury',
-          vehicleNumber: 'AS-01-ER-8820',
-          driverPhone: '9864023456',
-          driverPhoto: 'driver_verified_photo.png',
-          standArea: 'Ganeshguri / Dispur',
-          currentPointLabel: 'GS Road Flyover',
-          status: 'ACTIVE',
-          adminUtrStatus: 'CONFIRMED',
-          verifiedByAdmin: true,
-          utrNumber: '645533566548',
-          postedAt: nowIso,
-          approvedAt: nowIso,
-          lat: 26.1512,
-          lng: 91.7820,
-          baseLat: 26.1512,
-          baseLng: 91.7820,
-          distanceKm: 0.45,
-          batteryPercent: 92,
-          lastUpdated: Date.now()
-        },
-        {
-          id: 'ER-AS-4023',
-          driverName: 'Farhan Choudhury',
-          vehicleNumber: 'AS-01-ER-1092',
-          driverPhone: '9864034567',
-          driverPhoto: 'driver_verified_photo.png',
-          standArea: 'Jalukbari / Maligaon',
-          currentPointLabel: 'Jalukbari Rotary',
-          status: 'ACTIVE',
-          adminUtrStatus: 'CONFIRMED',
-          verifiedByAdmin: true,
-          utrNumber: '645533566549',
-          postedAt: nowIso,
-          approvedAt: nowIso,
-          lat: 26.1580,
-          lng: 91.6620,
-          baseLat: 26.1580,
-          baseLng: 91.6620,
-          distanceKm: 0.65,
-          batteryPercent: 79,
-          lastUpdated: Date.now()
-        }
-      ];
+    function getDefaultNearbyErickshaws() {
+      return []; // 100% Real Driver E-Rickshaws Only — Zero Fake Drivers (No Farhan/Kabul/Demo)
     }
 
     function isWithin12Hours(isoDateStr) {
@@ -11596,12 +11469,13 @@ ET
       } catch (e) { stored = []; }
       if (!Array.isArray(stored)) stored = [];
 
-      const fakeErIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106']);
+      const fakeErIds = new Set(['ER-101', 'ER-102', 'ER-103', 'ER-104', 'ER-105', 'ER-106', 'ER-AS-4021', 'ER-AS-4022', 'ER-AS-4023']);
+      const fakeErNames = new Set(['Farhan Choudhury', 'Kabul Choudhury', 'Mitali Kalita']);
 
       // Strictly show E-Rickshaws that have been Confirmed/Verified Live by Admin Panel and are within their 12-hour live window!
       const validCustom = stored.filter(item =>
         item &&
-        !(fakeErIds.has(item.id) && !item.utrNumber) &&
+        !fakeErIds.has(item.id) && !fakeErNames.has(item.driverName) &&
         isWithin12Hours(item.approvedAt || item.postedAt) &&
         item.removedByAdmin !== true &&
         (item.status || '').toUpperCase() === 'ACTIVE' &&
@@ -11671,11 +11545,22 @@ ET
         return;
       }
 
-      // Enforce Aadhaar-matched Profile Name on posted E-Rickshaw
-      if (user && user.name && driverName.toLowerCase() !== user.name.toLowerCase()) {
- showToast('⚠️ Please check your input and try again.', '#d97706');
+      // Use the exact driver name entered or Aadhaar-verified profile name
+      const verifiedDriverName = driverName || (user && user.name) || 'Verified Driver';
+      if (user && driverName && user.name !== driverName) {
+        user.name = driverName;
+        user.aadhaarVerifiedName = driverName;
+        try {
+          const uMap = JSON.parse(ssStorage.getItem('ss_users_db') || '{}');
+          if (user.phone) {
+            uMap[user.phone] = user;
+            broadcastUsersEverywhere(uMap);
+            if (typeof db !== 'undefined' && db) {
+              db.collection('ss_users').doc(user.phone).set(user, { merge: true }).catch(() => {});
+            }
+          }
+        } catch(e){}
       }
-      const verifiedDriverName = (user && user.name) ? user.name : driverName;
 
       const c = getBaseUserCenter();
       const myDevId = (typeof getClientDeviceId === 'function') ? getClientDeviceId() : '';
@@ -14470,7 +14355,8 @@ ET
       const container = document.getElementById('my-complaints-list-container');
       if (!container) return;
 
-      const list = getComplaintsList();
+      const user = getActiveUserProfile();
+      const list = getComplaintsList().filter(c => user && c && c.userPhone === user.phone);
       if (list.length === 0) {
         container.innerHTML = `
           <div style="background: rgba(248, 250, 252, 0.54); backdrop-filter: blur(14px) saturate(180%); -webkit-backdrop-filter: blur(14px) saturate(180%); border: 1px dashed #cbd5e1; border-radius: 8px; padding: 8px; text-align: center; font-size: 0.68rem; color: #64748b; font-weight: 700;">

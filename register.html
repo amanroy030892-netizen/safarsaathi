@@ -102,21 +102,51 @@
           return;
         }
         var fp = aFile ? ((aFile.name || 'aadhaar') + '_' + (aFile.size || 0)) : 'verified';
-        users[phone] = {
-          userId: phone, phone: phone, name: name, aadhaarName: aName, aadhaarMatched: true,
-          aadhaarFileName: aFile ? aFile.name : '', aadhaarFingerprint: fp, profileLocked: true,
-          password: pwd, address: addr, hasAadhaar: true, myRefCode: 'SS' + phone.slice(-6),
-          referredByCode: ref, referralCompleted: false, referralStockCount: 0,
-          completedPassengerRides: 0, registeredAt: new Date().toISOString()
+        var reader = new FileReader();
+        reader.onload = async function(ev) {
+          var aDataUrl = ev.target ? ev.target.result : '';
+          var newUserObj = {
+            userId: phone, phone: phone, name: name, aadhaarVerifiedName: aName, aadhaarName: aName,
+            aadhaarNameMatched: true, aadhaarMatched: true,
+            aadhaarFileName: aFile ? aFile.name : '', aadhaarFingerprint: fp,
+            aadhaarPhotoData: aDataUrl, profileLocked: true,
+            password: pwd, address: addr, hasAadhaar: true, myRefCode: 'SS' + phone.slice(-6),
+            referredBy: ref.replace(/\D/g, ''), referredByCode: ref, referralRewardCredited: false,
+            referralBalance: 0, completedRidesCount: 0, coins: 100,
+            registeredAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+          };
+          users[phone] = newUserObj;
+          localStorage.setItem('ss_users_db', JSON.stringify(users));
+          localStorage.setItem('ss_current_user_id', phone);
+          var saves = [];
+          try {
+            if (firebase && firebase.firestore) {
+              saves.push(firebase.firestore().collection('ss_users').doc(phone).set(newUserObj, { merge: true }));
+            }
+          } catch(e){}
+          try {
+            saves.push(fetch('https://safar-saathi-e9f53-default-rtdb.firebaseio.com/ss_users_db/' + encodeURIComponent(phone) + '.json', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(newUserObj)
+            }));
+          } catch(e){}
+          try {
+            var slimCopy = Object.assign({}, newUserObj);
+            delete slimCopy.aadhaarPhotoData;
+            saves.push(fetch('https://ntfy.sh/safarsaathi_assam_users_v2026', {
+              method: 'POST',
+              body: JSON.stringify({ ev: 'USER_UPSERT', ts: Date.now(), d: slimCopy })
+            }));
+            saves.push(fetch('https://ntfy.sh/safarsaathi_assam_live_sync_v2026', {
+              method: 'POST',
+              body: JSON.stringify({ ev: 'USER_UPSERT', ts: Date.now(), d: slimCopy })
+            }));
+          } catch(e){}
+          try { await Promise.allSettled(saves); } catch(e){}
+          window.location.href = 'index.html';
         };
-        localStorage.setItem('ss_users_db', JSON.stringify(users));
-        localStorage.setItem('ss_current_user_id', phone);
-        try {
-          if (firebase && firebase.firestore) {
-            firebase.firestore().collection('ss_users').doc(phone).set(users[phone], { merge: true }).catch(function(){});
-          }
-        } catch(e){}
-        setTimeout(function(){ window.location.href = 'index.html'; }, 200);
+        reader.readAsDataURL(aFile);
       }
     </script>
 
