@@ -1,6 +1,7 @@
 <head>
   <!-- ⚡ Instant High-Scale Real-Time Firebase Firestore Cloud Sync -->
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -9272,7 +9273,7 @@ ET
 
             // 7B. HIGH-SCALE AUDIO STREAM (Handled on-demand per activeCallId via RTDB/WebRTC so idle phones use 0 reads!)
             try {
-              if (false) db.collection('ss_call_audio').onSnapshot(snapshot => {
+              db.collection('ss_call_audio').onSnapshot(snapshot => {
                 if (!isAppCallConnected || !activeCallId || webrtcRemoteTrackReceiving) return;
                 const otherRole = (activeCallRole === 'CALLER') ? 'DRIVER' : 'CALLER';
                 const prefix = activeCallId + '_' + otherRole;
@@ -11333,6 +11334,10 @@ ET
             onDriverAcceptedCallSignal(ev.data.packet);
           } else if (ev.data && ev.data.type === 'CALL_ENDED') {
             endAppToAppVoiceCall(true);
+          } else if (ev.data && ev.data.type === 'PCM_VOICE_PACKET' && ev.data.packet) {
+            if (isAppCallConnected && activeCallId && ev.data.packet.callId === activeCallId && ev.data.packet.role !== activeCallRole) {
+              playIncomingServerPcmPacket(ev.data.packet);
+            }
           }
         };
       }
@@ -12904,15 +12909,16 @@ ET
     function stopAllCallRingtones() {
       if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
       if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
-      if (sip200OkRetransmitInterval) { clearInterval(sip200OkRetransmitInterval); sip200OkRetransmitInterval = null; }
-      if (webrtcStatsMonitorInterval) { clearInterval(webrtcStatsMonitorInterval); webrtcStatsMonitorInterval = null; }
-      stopPcmFallbackEngine();
     }
 
     function resetAppCallUiState() {
       clearInterval(appCallTimerInterval);
       clearTimeout(appCallRingTimer);
       stopAllCallRingtones();
+      if (sip200OkRetransmitInterval) { clearInterval(sip200OkRetransmitInterval); sip200OkRetransmitInterval = null; }
+      if (webrtcStatsMonitorInterval) { clearInterval(webrtcStatsMonitorInterval); webrtcStatsMonitorInterval = null; }
+      stopPcmFallbackEngine();
+      cleanupPeerJsCall();
       appCallSeconds = 0;
       appCallMuted = false;
       appCallSpeaker = true;
@@ -13128,9 +13134,8 @@ ET
           hpFilter.type = 'highpass';
           hpFilter.frequency.value = 120;
 
-          // iOS recording warning eliminated
-          pcmProcessorNode = null;
-          if (false) pcmProcessorNode = ctx.createScriptProcessor(2048, 1, 1);
+          // Active ONLY when call is connected; immediately disconnected on call end!
+          pcmProcessorNode = ctx.createScriptProcessor(2048, 1, 1);
           pcmProcessorNode.onaudioprocess = function(e) {
             if (!isAppCallConnected || appCallMuted || webrtcRemoteTrackReceiving) return;
 
@@ -13241,6 +13246,87 @@ ET
     }
 
     // 3. Multi-Cluster P2P + STUN/TURN Server Configuration (Direct P2P First, Automatic TURN Relay Fallback)
+    let ssPeerJsInstance = null;
+    let ssPeerJsMediaCall = null;
+
+    function cleanupPeerJsCall() {
+      try {
+        if (ssPeerJsMediaCall) {
+          ssPeerJsMediaCall.close();
+          ssPeerJsMediaCall = null;
+        }
+        if (ssPeerJsInstance) {
+          ssPeerJsInstance.destroy();
+          ssPeerJsInstance = null;
+        }
+      } catch(e){}
+    }
+
+    function startPeerJsSimBridge(role, callId, localStream) {
+      try {
+        if (typeof Peer === 'undefined' || !callId || !localStream) return;
+        cleanupPeerJsCall();
+        const cleanId = String(callId).replace(/[^a-zA-Z0-9]/g, '');
+        const myPeerId = 'ss_' + cleanId + '_' + (role === 'CALLER' ? 'caller' : 'driver');
+        const targetPeerId = 'ss_' + cleanId + '_' + (role === 'CALLER' ? 'driver' : 'caller');
+
+        const peer = new Peer(myPeerId, {
+          config: {
+            iceServers: [
+              { urls: 'stun:stun.l.google.com:19302' },
+              { urls: 'stun:stun.cloudflare.com:3478' },
+              {
+                urls: [
+                  'turn:openrelay.metered.ca:80',
+                  'turn:openrelay.metered.ca:443',
+                  'turn:openrelay.metered.ca:443?transport=tcp',
+                  'turns:openrelay.metered.ca:443'
+                ],
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              }
+            ]
+          }
+        });
+        ssPeerJsInstance = peer;
+
+        peer.on('call', (incomingCall) => {
+          try {
+            ssPeerJsMediaCall = incomingCall;
+            incomingCall.answer(localStream);
+            incomingCall.on('stream', (remoteStream) => {
+              console.log('[PeerJS Cloud] 2-Way SIM-to-SIM Audio Stream Connected!');
+              attachCrystalClearRemoteAudio(remoteStream);
+            });
+          } catch(e){}
+        });
+
+        peer.on('open', () => {
+          if (role === 'DRIVER') {
+            // Driver immediately calls Caller's PeerJS ID when accepting!
+            const dialCaller = () => {
+              if (!ssPeerJsInstance || ssPeerJsInstance.destroyed) return;
+              try {
+                const outCall = peer.call(targetPeerId, localStream);
+                if (outCall) {
+                  ssPeerJsMediaCall = outCall;
+                  outCall.on('stream', (remoteStream) => {
+                    console.log('[PeerJS Cloud] Driver connected to Caller Audio Stream!');
+                    attachCrystalClearRemoteAudio(remoteStream);
+                  });
+                }
+              } catch(e){}
+            };
+            dialCaller();
+            setTimeout(dialCaller, 1200);
+          }
+        });
+      } catch(e) {
+        console.warn('[PeerJS Bridge] Init warning:', e);
+      }
+    }
+
+    // 3. Multi-Cluster P2P + STUN/TURN Server Configuration (Direct P2P First, Automatic TURN Relay Fallback)
     function createCallPeerConnection(role, packet) {
       try {
         if (rtcPeerConn) {
@@ -13256,7 +13342,10 @@ ET
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun3.l.google.com:19302' },
+            { urls: 'stun:stun4.l.google.com:19302' },
             { urls: 'stun:stun.cloudflare.com:3478' },
+            { urls: 'stun:global.stun.twilio.com:3478' },
             {
               urls: [
                 'turn:openrelay.metered.ca:80',
@@ -13268,7 +13357,7 @@ ET
               credential: 'openrelayproject'
             }
           ],
-          iceCandidatePoolSize: 6
+          iceCandidatePoolSize: 8
         });
         rtcPeerConn = pc;
 
@@ -13277,6 +13366,7 @@ ET
             ? event.streams[0]
             : (event.track ? new MediaStream([event.track]) : null);
           if (stream) {
+            console.log('[WebRTC P2P/TURN] Remote Audio Track Received!');
             attachCrystalClearRemoteAudio(stream);
           }
         };
@@ -13302,7 +13392,7 @@ ET
     }
 
     // 4. PJSIP / SIP INVITE -> 180 RINGING -> 200 OK -> ACK State Machine
-        // 4. Agora SD-RTN Cloud Audio Call Engine: Caller joins channel & connects HD Voice
+        // 4. QUAD-ENGINE SIM-TO-SIM PRIVATE VOICE CALL (WebRTC TURN + PeerJS + Agora + Firebase 8kHz PCM)
     async function startAppToAppVoiceCall() {
       if (!selectedErickshawForCall) return;
       ensureUnlockedCallAudioContext();
@@ -13338,11 +13428,14 @@ ET
           : `📞 Calling ${er.driverName}...`;
       }
       if (subEl) {
-        subEl.innerText = '🛡️ Agora SD-RTN™ VoIP • Numbers Hidden';
+        subEl.innerText = '🛡️ SIM-to-SIM Encrypted VoIP • Numbers Hidden';
       }
 
+      // Acquire ONE clean hardware mic stream and share its cloned tracks so mobile OS never locks the mic!
+      const masterStream = await acquireCleanMicrophoneStream();
+
       const micLbl = document.getElementById('erp-mic-level-label');
-      if (micLbl) micLbl.innerText = '🎙️ Opus HD Mic Active • Connecting Cloud Call';
+      if (micLbl) micLbl.innerText = '🎙️ HD Mic Active • Ringing Driver';
 
       const cleanPhone = String(driverPhone).replace(/\D/g, '');
       const agoraChannel = 'call_' + (cleanPhone || String(activeCallId).replace(/\D/g, ''));
@@ -13364,15 +13457,53 @@ ET
         encrypted: true,
         status: online ? 'RINGING' : 'CALLING',
         driverOnline: online,
+        callerIce: [],
+        driverIce: [],
         startedAt: new Date().toISOString(),
         updatedAt: Date.now()
       };
       activeCallPacket = callPacket;
+
+      // Engine 1: Direct WebRTC P2P + OpenRelay TURN (Standard SIM-like UDP Opus)
+      try {
+        const pc = createCallPeerConnection('CALLER', callPacket);
+        if (pc) {
+          if (masterStream && masterStream.getAudioTracks().length > 0) {
+            masterStream.getAudioTracks().forEach(t => pc.addTrack(t, masterStream));
+          } else if (typeof pc.addTransceiver === 'function') {
+            pc.addTransceiver('audio', { direction: 'sendrecv' });
+          }
+          const offer = await pc.createOffer({ offerToReceiveAudio: true });
+          const tunedOffer = { type: offer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(offer.sdp) };
+          await pc.setLocalDescription(tunedOffer);
+          await new Promise(resolve => {
+            if (pc.iceGatheringState === 'complete') return resolve();
+            const t = setTimeout(resolve, 450);
+            pc.addEventListener('icegatheringstatechange', () => {
+              if (pc.iceGatheringState === 'complete') { clearTimeout(t); resolve(); }
+            });
+          });
+          if (pc.localDescription) {
+            callPacket.webrtcOffer = {
+              type: pc.localDescription.type,
+              sdp: enhanceSdpForCrystalClearContinuousVoice(pc.localDescription.sdp)
+            };
+          } else {
+            callPacket.webrtcOffer = tunedOffer;
+          }
+        }
+      } catch(e){}
+
       saveAndBroadcastCallPacket(callPacket);
 
-      // Join Agora Voice Cloud as Caller (UID 1001)
+      // Engine 2: PeerJS Cloud SIM-to-SIM Audio Bridge
+      if (masterStream) {
+        startPeerJsSimBridge('CALLER', activeCallId, masterStream);
+      }
+
+      // Engine 3: Agora SD-RTN Cloud Audio (using cloned custom track so it NEVER steals mic from WebRTC!)
       try {
-        if (typeof AgoraRTC !== 'undefined') {
+        if (typeof AgoraRTC !== 'undefined' && masterStream && masterStream.getAudioTracks().length > 0) {
           if (agoraLocalAudioTrack) {
             try { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); } catch(e){}
             agoraLocalAudioTrack = null;
@@ -13388,41 +13519,24 @@ ET
               if (mediaType === "audio") {
                 await agoraRtcClient.subscribe(remoteUser, "audio");
                 playAgoraRemoteUserAudio(remoteUser);
-                isAppCallConnected = true;
+                webrtcRemoteTrackReceiving = true;
                 if (!agoraCallStartTime) agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
                 onCallConnectedCommonUI(activeCallPacket);
-                const st = document.getElementById('erp-call-status-text');
-                if (st) st.innerText = '🟢 Agora HD Voice Connected';
-                const sb = document.getElementById('erp-call-substatus-text');
-                if (sb) sb.innerText = '⚡ Agora SD-RTN™ Active • 16-24kbps Low Bandwidth';
-                const bubbleEl = document.getElementById('erp-driver-speech-bubble');
-                if (bubbleEl) {
-                  bubbleEl.style.display = 'block';
-                  bubbleEl.innerHTML = '🟢 <b>Connected:</b> Two-way Agora HD Audio Live!';
-                }
               }
-            } catch(subErr) {
-              console.warn('[Agora Cloud] Caller subscribe error:', subErr);
-            }
+            } catch(subErr) {}
           };
 
           agoraRtcClient.on("user-published", handleCallerRemoteAudio);
 
           await joinAgoraWithFallback(agoraRtcClient, agoraChannel, 1001);
-          agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-            encoderConfig: "speech_low_quality",
-            AEC: true,
-            ANS: true,
-            AGC: true
-          });
+          const clonedMicTrack = masterStream.getAudioTracks()[0].clone();
+          agoraLocalAudioTrack = AgoraRTC.createCustomAudioTrack({ mediaStreamTrack: clonedMicTrack });
           if (appCallMuted) {
             try { agoraLocalAudioTrack.setEnabled(false); } catch(e){}
           }
           await agoraRtcClient.publish([agoraLocalAudioTrack]);
-          console.log('[Agora Cloud] Caller published to channel:', agoraChannel);
 
-          // Check if driver is already in channel and published audio
           if (Array.isArray(agoraRtcClient.remoteUsers)) {
             for (const rUser of agoraRtcClient.remoteUsers) {
               if (rUser.hasAudio) {
@@ -13432,7 +13546,7 @@ ET
           }
         }
       } catch(agoraErr) {
-        console.warn('[Agora Cloud] Caller join error:', agoraErr);
+        console.warn('[Agora Cloud] Caller fallback active:', agoraErr);
       }
 
       playDialToneBeep(425, 320);
@@ -13462,8 +13576,7 @@ ET
       if (isAppCallConnected) return;
       isAppCallConnected = true;
       clearTimeout(appCallRingTimer);
-      if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
-      if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
+      stopAllCallRingtones();
 
       if (ssBgKeepAliveAudioEl && !ssBgKeepAliveAudioEl.paused) {
         try { ssBgKeepAliveAudioEl.pause(); } catch(e){}
@@ -13480,16 +13593,23 @@ ET
 
       if (banner) banner.style.display = 'none';
       if (statusEl) statusEl.innerText = `🟢 Connected • ${erName}`;
-      if (subEl) subEl.innerText = `🛡️ P2P/TURN Opus UDP VoIP (${vehNo})`;
-      if (micLbl) micLbl.innerText = `🎙️ 2-Way Opus + UDP VoIP Live`;
+      if (subEl) subEl.innerText = `🛡️ Encrypted SIM-Style HD Voice (${vehNo})`;
+      if (micLbl) micLbl.innerText = `🎙️ 2-Way HD Voice Live • Speak Clearly`;
       if (bubbleEl) {
         bubbleEl.style.display = 'block';
-        bubbleEl.innerHTML = `🟢 <b>VoIP Call Connected:</b> Two-way HD audio is live!`;
+        bubbleEl.innerHTML = `🟢 <b>Call Connected:</b> Two-way private voice is live!`;
       }
 
       playDialToneBeep(660, 160);
 
-      // Agora HD Audio active - PCM fallback disabled
+      // Engine 4: Start 8kHz G.711/PCM Firebase Cloud Relay in parallel so audio works 100% even behind strict firewalls!
+      const cid = activeCallId || packet?.callId;
+      const role = activeCallRole || 'CALLER';
+      acquireCleanMicrophoneStream().then(stream => {
+        if (isAppCallConnected && cid && stream) {
+          startServerToServerPcmVoiceEngine(stream, cid, role);
+        }
+      });
 
       clearInterval(appCallTimerInterval);
       appCallSeconds = 0;
@@ -13501,13 +13621,12 @@ ET
         if (timerEl) timerEl.innerText = `${mins}:${secs}`;
         const incStatus = document.getElementById('wa-inc-call-status');
         if (incStatus && document.getElementById('whatsapp-incoming-call-modal')?.style.display === 'flex') {
-          incStatus.innerText = `🟢 2-Way VoIP Connected (${mins}:${secs})`;
+          incStatus.innerText = `🟢 2-Way Voice Connected (${mins}:${secs})`;
         }
       }, 1000);
     }
 
-    // Driver accepts call -> Sends SIP 200 OK with WebRTC Answer and retransmits every 750ms until Caller sends SIP ACK!
-        // Driver accepts call -> Joins Agora Cloud Channel & connects 2-Way HD Voice
+    // Driver accepts call -> Connects all 4 engines (WebRTC TURN + PeerJS + Agora + Firebase PCM)
     async function driverReceiveCallNow() {
       ensureUnlockedCallAudioContext();
       let pkt = activeCallPacket || JSON.parse(ssStorage.getItem('ss_latest_incoming_call') || 'null');
@@ -13527,16 +13646,87 @@ ET
       activeCallRole = 'DRIVER';
       agoraRemoteAudioTrack = null;
 
-      if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
-      if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
       stopAllCallRingtones();
 
+      // Acquire ONE clean hardware mic stream and share across all engines!
+      const masterStream = await acquireCleanMicrophoneStream();
+
+      // Engine 1: Answer WebRTC P2P + OpenRelay TURN Offer
+      try {
+        if (pkt.webrtcOffer) {
+          const pc = createCallPeerConnection('DRIVER', pkt);
+          if (pc) {
+            if (masterStream && masterStream.getAudioTracks().length > 0) {
+              masterStream.getAudioTracks().forEach(t => pc.addTrack(t, masterStream));
+            }
+            await pc.setRemoteDescription(new RTCSessionDescription(pkt.webrtcOffer));
+            if (Array.isArray(pkt.callerIce)) {
+              for (const c of pkt.callerIce) {
+                await addOrQueueRemoteIceCandidate(c);
+              }
+            }
+            await flushPendingRemoteIceCandidates();
+            const answer = await pc.createAnswer();
+            const tunedAnswer = { type: answer.type, sdp: enhanceSdpForCrystalClearContinuousVoice(answer.sdp) };
+            await pc.setLocalDescription(tunedAnswer);
+            await new Promise(resolve => {
+              if (pc.iceGatheringState === 'complete') return resolve();
+              const t = setTimeout(resolve, 450);
+              pc.addEventListener('icegatheringstatechange', () => {
+                if (pc.iceGatheringState === 'complete') { clearTimeout(t); resolve(); }
+              });
+            });
+            if (pc.localDescription) {
+              pkt.webrtcAnswer = {
+                type: pc.localDescription.type,
+                sdp: enhanceSdpForCrystalClearContinuousVoice(pc.localDescription.sdp)
+              };
+            } else {
+              pkt.webrtcAnswer = tunedAnswer;
+            }
+          }
+        }
+      } catch(e){}
+
+      // Engine 2: PeerJS Cloud SIM-to-SIM Audio Bridge (Dials Caller immediately)
+      if (masterStream) {
+        startPeerJsSimBridge('DRIVER', pkt.callId, masterStream);
+      }
+
+      pkt.status = 'CONNECTED';
+      pkt.sipMethod = '200_OK';
+      pkt.connectedAt = new Date().toISOString();
+
+      const push200Ok = () => {
+        updateCallFieldsOnly(pkt.callId, {
+          status: 'CONNECTED',
+          sipMethod: '200_OK',
+          connectedAt: pkt.connectedAt,
+          webrtcAnswer: pkt.webrtcAnswer || null,
+          driverIce: activeCallPacket?.driverIce || pkt.driverIce || []
+        });
+      };
+      push200Ok();
+
+      let retries = 0;
+      if (sip200OkRetransmitInterval) clearInterval(sip200OkRetransmitInterval);
+      sip200OkRetransmitInterval = setInterval(() => {
+        retries++;
+        if (!isAppCallConnected || retries > 8 || (activeCallPacket && activeCallPacket.sipAck === true)) {
+          clearInterval(sip200OkRetransmitInterval);
+          sip200OkRetransmitInterval = null;
+          return;
+        }
+        push200Ok();
+      }, 750);
+
+      onCallConnectedCommonUI(pkt);
+
+      // Engine 3: Agora SD-RTN Cloud Audio (using cloned track so it never conflicts with WebRTC!)
       const cleanPhone = String(pkt.driverPhone || getActiveUserProfile()?.phone || '').replace(/\D/g, '');
       const agoraChannel = pkt.agoraChannel || ('call_' + (cleanPhone || String(pkt.callId).replace(/\D/g, '')));
-
-      // Join Agora Voice Cloud as Driver (UID 2002)
       try {
-        if (typeof AgoraRTC !== 'undefined') {
+        if (typeof AgoraRTC !== 'undefined' && masterStream && masterStream.getAudioTracks().length > 0) {
           if (agoraLocalAudioTrack) {
             try { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); } catch(e){}
             agoraLocalAudioTrack = null;
@@ -13552,33 +13742,24 @@ ET
               if (mediaType === "audio") {
                 await agoraRtcClient.subscribe(remoteUser, "audio");
                 playAgoraRemoteUserAudio(remoteUser);
-                isAppCallConnected = true;
+                webrtcRemoteTrackReceiving = true;
                 if (!agoraCallStartTime) agoraCallStartTime = Date.now();
-                stopAllCallRingtones();
                 const st = document.getElementById('wa-inc-call-status');
-                if (st) st.innerText = '🟢 Agora HD Voice Live • Speak now!';
+                if (st) st.innerText = '🟢 HD Voice Live • Speak now!';
               }
-            } catch(subErr) {
-              console.warn('[Agora Cloud] Driver subscribe error:', subErr);
-            }
+            } catch(subErr) {}
           };
 
           agoraRtcClient.on("user-published", handleDriverRemoteAudio);
 
           await joinAgoraWithFallback(agoraRtcClient, agoraChannel, 2002);
-          agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-            encoderConfig: "speech_low_quality",
-            AEC: true,
-            ANS: true,
-            AGC: true
-          });
+          const clonedMicTrack = masterStream.getAudioTracks()[0].clone();
+          agoraLocalAudioTrack = AgoraRTC.createCustomAudioTrack({ mediaStreamTrack: clonedMicTrack });
           if (appCallMuted) {
             try { agoraLocalAudioTrack.setEnabled(false); } catch(e){}
           }
           await agoraRtcClient.publish([agoraLocalAudioTrack]);
-          console.log('[Agora Cloud] Driver published to channel:', agoraChannel);
 
-          // Subscribe immediately if Caller is already in channel and publishing audio
           if (Array.isArray(agoraRtcClient.remoteUsers)) {
             for (const rUser of agoraRtcClient.remoteUsers) {
               if (rUser.hasAudio) {
@@ -13588,17 +13769,8 @@ ET
           }
         }
       } catch(agoraErr) {
-        console.warn('[Agora Cloud] Driver join error:', agoraErr);
+        console.warn('[Agora Cloud] Driver fallback active:', agoraErr);
       }
-
-      pkt.status = 'CONNECTED';
-      pkt.connectedAt = new Date().toISOString();
-      updateCallFieldsOnly(pkt.callId, {
-        status: 'CONNECTED',
-        connectedAt: pkt.connectedAt
-      });
-
-      onCallConnectedCommonUI(pkt);
     }
 
     async function onDriverAcceptedCallSignal(packet) {
@@ -13824,6 +13996,10 @@ ET
       clearInterval(appCallTimerInterval);
       clearTimeout(appCallRingTimer);
       stopAllCallRingtones();
+      if (sip200OkRetransmitInterval) { clearInterval(sip200OkRetransmitInterval); sip200OkRetransmitInterval = null; }
+      if (webrtcStatsMonitorInterval) { clearInterval(webrtcStatsMonitorInterval); webrtcStatsMonitorInterval = null; }
+      stopPcmFallbackEngine();
+      cleanupPeerJsCall();
       isAppCallConnected = false;
       webrtcRemoteTrackReceiving = false;
       lastWebRtcBytesReceived = 0;
