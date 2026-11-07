@@ -165,15 +165,17 @@
   function generateAgoraRtcToken(appId, appCert, channel, uid = 0, expireSeconds = 7200) {
     try {
       const now = Math.floor(Date.now() / 1000);
+      const ts = now + 86400; // 24h token validity timestamp
       const expire = now + expireSeconds;
-      const salt = 1;
+      const salt = Math.floor(Math.random() * 99999999) + 1;
+      const uidStr = (!uid || uid === 0 || uid === "0") ? "" : String(uid);
       
       const privileges = [[1, expire], [2, expire], [3, expire], [4, expire]];
       const msgLen = 4 + 4 + 2 + privileges.length * 6;
       const msgBuf = new Uint8Array(msgLen);
       const view = new DataView(msgBuf.buffer);
       view.setUint32(0, salt, true);
-      view.setUint32(4, expire, true);
+      view.setUint32(4, ts, true);
       view.setUint16(8, privileges.length, true);
       let offset = 10;
       for (const [k, v] of privileges) {
@@ -185,7 +187,7 @@
       const enc = new TextEncoder();
       const appBytes = enc.encode(appId);
       const chBytes = enc.encode(channel);
-      const uidBytes = enc.encode(String(uid));
+      const uidBytes = enc.encode(uidStr);
 
       const totalLen = appBytes.length + chBytes.length + uidBytes.length + msgLen;
       const valBuf = new Uint8Array(totalLen);
@@ -197,17 +199,23 @@
       const sig = pureHmacSha256(appCert, valBuf);
       if (!sig) return null;
 
-      const crcChannel = agoraCrc32(channel);
-      const crcUid = agoraCrc32(String(uid));
+      const crcChannel = agoraCrc32(channel) >>> 0;
+      const crcUid = agoraCrc32(uidStr) >>> 0;
 
-      const contentLen = sig.length + 4 + 4 + 2 + msgLen;
+      // Official Agora 006 PackContent byte format:
+      // 2-byte uint16 LE length of signature (32) + signature bytes
+      // + 4-byte uint32 LE crcChannelName + 4-byte uint32 LE crcUid
+      // + 2-byte uint16 LE length of msgBuf + msgBuf bytes
+      const contentLen = 2 + sig.length + 4 + 4 + 2 + msgLen;
       const content = new Uint8Array(contentLen);
-      content.set(sig, 0);
       const cView = new DataView(content.buffer);
-      cView.setUint32(sig.length, crcChannel, true);
-      cView.setUint32(sig.length + 4, crcUid, true);
-      cView.setUint16(sig.length + 8, msgLen, true);
-      content.set(msgBuf, sig.length + 10);
+      let cOff = 0;
+      cView.setUint16(cOff, sig.length, true); cOff += 2;
+      content.set(sig, cOff); cOff += sig.length;
+      cView.setUint32(cOff, crcChannel, true); cOff += 4;
+      cView.setUint32(cOff, crcUid, true); cOff += 4;
+      cView.setUint16(cOff, msgLen, true); cOff += 2;
+      content.set(msgBuf, cOff);
 
       let binary = "";
       for (let i = 0; i < content.byteLength; i++) {
@@ -220,34 +228,86 @@
     }
   }
 
+  let agoraRemoteAudioTrack = null;
+
+  function playAgoraRemoteUserAudio(remoteUser) {
+    try {
+      if (!remoteUser || !remoteUser.audioTrack) return;
+      agoraRemoteAudioTrack = remoteUser.audioTrack;
+      remoteUser.audioTrack.setVolume(appCallSpeaker ? 100 : 0);
+      remoteUser.audioTrack.play();
+
+      // Also route through pre-unlocked <audio id="ss-remote-call-audio"> for mobile WebView / iOS compatibility
+      const mediaStreamTrack = remoteUser.audioTrack.getMediaStreamTrack ? remoteUser.audioTrack.getMediaStreamTrack() : null;
+      if (mediaStreamTrack) {
+        const remoteStream = new MediaStream([mediaStreamTrack]);
+        const audioEl = document.getElementById('ss-remote-call-audio');
+        if (audioEl) {
+          audioEl.srcObject = remoteStream;
+          audioEl.muted = !appCallSpeaker;
+          audioEl.volume = 1.0;
+          audioEl.play().catch(() => {});
+        }
+      }
+    } catch(e) {
+      console.warn("[Agora Audio Play] Error:", e);
+    }
+  }
+
   async function joinAgoraWithFallback(client, channelName, uid) {
     if (!client || typeof AgoraRTC === 'undefined') return null;
+    try {
+      if (typeof AgoraRTC.onAutoplayFailed === 'function') {
+        AgoraRTC.onAutoplayFailed = () => {
+          if (agoraRemoteAudioTrack) {
+            try { agoraRemoteAudioTrack.play(); } catch(e){}
+          }
+          const audioEl = document.getElementById('ss-remote-call-audio');
+          if (audioEl && audioEl.paused) {
+            audioEl.play().catch(() => {});
+          }
+        };
+      }
+    } catch(e){}
+
     for (let i = 0; i < AGORA_APP_POOL.length; i++) {
       const poolIdx = (currentAgoraPoolIndex + i) % AGORA_APP_POOL.length;
       const cfg = AGORA_APP_POOL[poolIdx];
-      console.log("[Agora Cloud] Attempting connect via " + cfg.name + " (App ID: " + cfg.appId + ")...");
+      console.log("[Agora Cloud] Connecting via " + cfg.name + " (App ID: " + cfg.appId + ")...");
 
-      // Try 1: with generated token
+      // Attempt 1: Token with exact UID (1001 or 2002)
       try {
         const token = generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, uid);
-        await client.join(cfg.appId, channelName, token || null, uid);
-        console.log("[Agora Cloud] Joined channel " + channelName + " using " + cfg.name + " (Token Mode).");
+        await client.join(cfg.appId, channelName, token, uid);
+        console.log("[Agora Cloud] Joined channel " + channelName + " via " + cfg.name + " (UID Token).");
         currentAgoraPoolIndex = poolIdx;
         try { localStorage.setItem('ss_agora_active_pool_idx', String(currentAgoraPoolIndex)); } catch(e){}
         return cfg;
-      } catch(tokenErr) {
-        console.warn("[Agora Cloud] Join with token failed on " + cfg.name + ":", tokenErr);
+      } catch(e1) {
+        console.warn("[Agora Cloud] UID token join failed on " + cfg.name + ":", e1);
       }
 
-      // Try 2: without token (null) for App ID only mode
+      // Attempt 2: Wildcard UID=0 Token
       try {
-        await client.join(cfg.appId, channelName, null, uid);
-        console.log("[Agora Cloud] Joined channel " + channelName + " using " + cfg.name + " (App ID Mode).");
+        const wildcardToken = generateAgoraRtcToken(cfg.appId, cfg.appCert, channelName, 0);
+        await client.join(cfg.appId, channelName, wildcardToken, uid);
+        console.log("[Agora Cloud] Joined channel " + channelName + " via " + cfg.name + " (Wildcard Token).");
         currentAgoraPoolIndex = poolIdx;
         try { localStorage.setItem('ss_agora_active_pool_idx', String(currentAgoraPoolIndex)); } catch(e){}
         return cfg;
-      } catch(nullErr) {
-        console.warn("[Agora Cloud] Join without token failed on " + cfg.name + ":", nullErr);
+      } catch(e2) {
+        console.warn("[Agora Cloud] Wildcard token join failed on " + cfg.name + ":", e2);
+      }
+
+      // Attempt 3: App ID Only (no token / null)
+      try {
+        await client.join(cfg.appId, channelName, null, uid);
+        console.log("[Agora Cloud] Joined channel " + channelName + " via " + cfg.name + " (App ID Mode).");
+        currentAgoraPoolIndex = poolIdx;
+        try { localStorage.setItem('ss_agora_active_pool_idx', String(currentAgoraPoolIndex)); } catch(e){}
+        return cfg;
+      } catch(e3) {
+        console.warn("[Agora Cloud] App ID Mode join failed on " + cfg.name + ":", e3);
       }
     }
     throw new Error('All Agora accounts in pool failed to connect.');
@@ -13260,6 +13320,7 @@ ET
       isAppCallConnected = false;
       activeCallRole = 'CALLER';
       activeCallId = 'CALL-' + Date.now();
+      agoraRemoteAudioTrack = null;
 
       const statusEl = document.getElementById('erp-call-status-text');
       const subEl = document.getElementById('erp-call-substatus-text');
@@ -13312,21 +13373,25 @@ ET
       // Join Agora Voice Cloud as Caller (UID 1001)
       try {
         if (typeof AgoraRTC !== 'undefined') {
-          if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
+          if (agoraLocalAudioTrack) {
+            try { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); } catch(e){}
+            agoraLocalAudioTrack = null;
+          }
+          if (agoraRtcClient) {
+            try { await agoraRtcClient.leave(); } catch(e){}
+            agoraRtcClient = null;
+          }
           agoraRtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "opus" });
 
-          agoraRtcClient.on("user-published", async (remoteUser, mediaType) => {
+          const handleCallerRemoteAudio = async (remoteUser, mediaType) => {
             try {
-              await agoraRtcClient.subscribe(remoteUser, mediaType);
-              if (mediaType === "audio" && remoteUser.audioTrack) {
-                remoteUser.audioTrack.play();
-                try {
-                  const stream = new MediaStream([remoteUser.audioTrack.getMediaStreamTrack()]);
-                  attachCrystalClearRemoteAudio(stream);
-                } catch(e){}
+              if (mediaType === "audio") {
+                await agoraRtcClient.subscribe(remoteUser, "audio");
+                playAgoraRemoteUserAudio(remoteUser);
                 isAppCallConnected = true;
-                agoraCallStartTime = Date.now();
+                if (!agoraCallStartTime) agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
+                onCallConnectedCommonUI(activeCallPacket);
                 const st = document.getElementById('erp-call-status-text');
                 if (st) st.innerText = '🟢 Agora HD Voice Connected';
                 const sb = document.getElementById('erp-call-substatus-text');
@@ -13340,7 +13405,9 @@ ET
             } catch(subErr) {
               console.warn('[Agora Cloud] Caller subscribe error:', subErr);
             }
-          });
+          };
+
+          agoraRtcClient.on("user-published", handleCallerRemoteAudio);
 
           await joinAgoraWithFallback(agoraRtcClient, agoraChannel, 1001);
           agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
@@ -13349,8 +13416,20 @@ ET
             ANS: true,
             AGC: true
           });
+          if (appCallMuted) {
+            try { agoraLocalAudioTrack.setEnabled(false); } catch(e){}
+          }
           await agoraRtcClient.publish([agoraLocalAudioTrack]);
           console.log('[Agora Cloud] Caller published to channel:', agoraChannel);
+
+          // Check if driver is already in channel and published audio
+          if (Array.isArray(agoraRtcClient.remoteUsers)) {
+            for (const rUser of agoraRtcClient.remoteUsers) {
+              if (rUser.hasAudio) {
+                await handleCallerRemoteAudio(rUser, "audio");
+              }
+            }
+          }
         }
       } catch(agoraErr) {
         console.warn('[Agora Cloud] Caller join error:', agoraErr);
@@ -13446,6 +13525,7 @@ ET
       activeCallPacket = pkt;
       activeCallId = pkt.callId;
       activeCallRole = 'DRIVER';
+      agoraRemoteAudioTrack = null;
 
       if (outgoingRingLoop) { clearInterval(outgoingRingLoop); outgoingRingLoop = null; }
       if (incomingRingLoop) { clearInterval(incomingRingLoop); incomingRingLoop = null; }
@@ -13457,20 +13537,23 @@ ET
       // Join Agora Voice Cloud as Driver (UID 2002)
       try {
         if (typeof AgoraRTC !== 'undefined') {
-          if (agoraRtcClient) { try { await agoraRtcClient.leave(); } catch(e){} }
+          if (agoraLocalAudioTrack) {
+            try { agoraLocalAudioTrack.stop(); agoraLocalAudioTrack.close(); } catch(e){}
+            agoraLocalAudioTrack = null;
+          }
+          if (agoraRtcClient) {
+            try { await agoraRtcClient.leave(); } catch(e){}
+            agoraRtcClient = null;
+          }
           agoraRtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "opus" });
 
-          agoraRtcClient.on("user-published", async (remoteUser, mediaType) => {
+          const handleDriverRemoteAudio = async (remoteUser, mediaType) => {
             try {
-              await agoraRtcClient.subscribe(remoteUser, mediaType);
-              if (mediaType === "audio" && remoteUser.audioTrack) {
-                remoteUser.audioTrack.play();
-                try {
-                  const stream = new MediaStream([remoteUser.audioTrack.getMediaStreamTrack()]);
-                  attachCrystalClearRemoteAudio(stream);
-                } catch(e){}
+              if (mediaType === "audio") {
+                await agoraRtcClient.subscribe(remoteUser, "audio");
+                playAgoraRemoteUserAudio(remoteUser);
                 isAppCallConnected = true;
-                agoraCallStartTime = Date.now();
+                if (!agoraCallStartTime) agoraCallStartTime = Date.now();
                 stopAllCallRingtones();
                 const st = document.getElementById('wa-inc-call-status');
                 if (st) st.innerText = '🟢 Agora HD Voice Live • Speak now!';
@@ -13478,7 +13561,9 @@ ET
             } catch(subErr) {
               console.warn('[Agora Cloud] Driver subscribe error:', subErr);
             }
-          });
+          };
+
+          agoraRtcClient.on("user-published", handleDriverRemoteAudio);
 
           await joinAgoraWithFallback(agoraRtcClient, agoraChannel, 2002);
           agoraLocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
@@ -13487,8 +13572,20 @@ ET
             ANS: true,
             AGC: true
           });
+          if (appCallMuted) {
+            try { agoraLocalAudioTrack.setEnabled(false); } catch(e){}
+          }
           await agoraRtcClient.publish([agoraLocalAudioTrack]);
           console.log('[Agora Cloud] Driver published to channel:', agoraChannel);
+
+          // Subscribe immediately if Caller is already in channel and publishing audio
+          if (Array.isArray(agoraRtcClient.remoteUsers)) {
+            for (const rUser of agoraRtcClient.remoteUsers) {
+              if (rUser.hasAudio) {
+                await handleDriverRemoteAudio(rUser, "audio");
+              }
+            }
+          }
         }
       } catch(agoraErr) {
         console.warn('[Agora Cloud] Driver join error:', agoraErr);
@@ -13674,6 +13771,9 @@ ET
 
     function toggleAppCallSpeaker() {
       appCallSpeaker = !appCallSpeaker;
+      if (agoraRemoteAudioTrack) {
+        try { agoraRemoteAudioTrack.setVolume(appCallSpeaker ? 100 : 0); } catch(e){}
+      }
       const audioEl = document.getElementById('ss-remote-call-audio');
       if (audioEl) audioEl.muted = !appCallSpeaker;
       ['btn-erp-speaker', 'btn-wa-inc-speaker'].forEach(id => {
@@ -13689,6 +13789,10 @@ ET
 
       // Agora RTC Clean Teardown
       try {
+        if (agoraRemoteAudioTrack) {
+          try { agoraRemoteAudioTrack.stop(); } catch(e){}
+          agoraRemoteAudioTrack = null;
+        }
         if (agoraLocalAudioTrack) {
           agoraLocalAudioTrack.stop();
           agoraLocalAudioTrack.close();
