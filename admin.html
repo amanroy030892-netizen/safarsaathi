@@ -926,6 +926,7 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
           }
         });
 
+        const confirmedErIds = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_er_ids') || '[]'));
         arr.forEach(item => {
           if (!item || !item.id) return;
           if (item.removedByAdmin === true || removedIds.has(item.id)) {
@@ -935,11 +936,23 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
           }
           const existing = byId[item.id];
           if (!existing) {
+            if (confirmedErIds.has(item.id)) {
+              item.adminUtrStatus = 'CONFIRMED';
+              item.verifiedByAdmin = true;
+              item.status = 'ACTIVE';
+            }
             byId[item.id] = item;
           } else {
             const tNew = Number(item.lastUpdated || new Date(item.postedAt || 0).getTime() || 0);
             const tOld = Number(existing.lastUpdated || new Date(existing.postedAt || 0).getTime() || 0);
-            byId[item.id] = (tNew >= tOld) ? { ...existing, ...item } : { ...item, ...existing };
+            let mergedItem = (tNew >= tOld) ? { ...existing, ...item } : { ...item, ...existing };
+            // IMMUNITY: Once confirmed by Admin, NEVER downgrade back to pending!
+            if (existing.adminUtrStatus === 'CONFIRMED' || existing.verifiedByAdmin === true || confirmedErIds.has(item.id)) {
+              mergedItem.adminUtrStatus = 'CONFIRMED';
+              mergedItem.verifiedByAdmin = true;
+              mergedItem.status = 'ACTIVE';
+            }
+            byId[item.id] = mergedItem;
           }
         });
 
@@ -1356,8 +1369,30 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       if (!cloudRides || !Array.isArray(cloudRides)) return;
       const fakeDemoNames = new Set(['Bikram Das', 'Rahul Saikia', 'Pranab Bora']);
       const fakeDemoIds = new Set(['RIDE-101', 'RIDE-102', 'RIDE-103', 'RIDE-4921', 'RIDE-1902', 'RIDE-3311']);
-      let clean = cloudRides.filter(r => r && !fakeDemoNames.has(r.driverName) && !fakeDemoIds.has(r.id));
-      rides = clean;
+      const confirmedRideIds = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_ride_ids') || '[]'));
+      const byId = {};
+      (Array.isArray(rides) ? rides : []).forEach(r => {
+        if (r && r.id && !fakeDemoIds.has(r.id) && !fakeDemoNames.has(r.driverName)) byId[r.id] = r;
+      });
+
+      cloudRides.forEach(r => {
+        if (!r || !r.id || fakeDemoIds.has(r.id) || fakeDemoNames.has(r.driverName)) return;
+        if (r.removedByAdmin === true) {
+          delete byId[r.id];
+          return;
+        }
+        const existing = byId[r.id];
+        let merged = { ...(existing || {}), ...r };
+        // IMMUNITY: Once confirmed by Admin, NEVER downgrade back to pending!
+        if ((existing && (existing.adminUtrStatus === 'CONFIRMED' || existing.verifiedByAdmin === true)) || confirmedRideIds.has(r.id)) {
+          merged.adminUtrStatus = 'CONFIRMED';
+          merged.verifiedByAdmin = true;
+          merged.status = 'ACTIVE';
+        }
+        byId[r.id] = merged;
+      });
+
+      rides = Object.values(byId);
       localStorage.setItem('ss_rides', JSON.stringify(rides));
       renderAdminVehicles();
       try { renderGlobalLiveUtrQueue(); } catch(e){}
@@ -1876,6 +1911,11 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       r.status = 'ACTIVE';
       r.adminUtrStatus = 'CONFIRMED';
       r.verifiedByAdmin = true;
+      try {
+        const cSet = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_ride_ids') || '[]'));
+        cSet.add(r.id);
+        localStorage.setItem('ss_admin_confirmed_ride_ids', JSON.stringify(Array.from(cSet)));
+      } catch(e){}
       r.lastUpdated = Date.now();
       r.removedByAdmin = false;
       r.approvedAt = new Date().toISOString();
@@ -2482,6 +2522,11 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       item.status = 'ACTIVE';
       item.adminUtrStatus = 'CONFIRMED';
       item.verifiedByAdmin = true;
+      try {
+        const cSet = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_er_ids') || '[]'));
+        cSet.add(item.id);
+        localStorage.setItem('ss_admin_confirmed_er_ids', JSON.stringify(Array.from(cSet)));
+      } catch(e){}
       item.removedByAdmin = false;
       item.postedAt = nowIso;
       item.approvedAt = nowIso;
@@ -2555,8 +2600,10 @@ Manage and publish the sponsor video ad shown on the Profile home screen:
       const box = document.getElementById('adm-global-live-utr-queue');
       if (!box) return;
       const erList = getAdminErickshaws();
-      const pendingErs = erList.filter(er => er.adminUtrStatus !== 'CONFIRMED' && !er.verifiedByAdmin);
-      const pendingCars = (rides || []).filter(r => (r.status || '').toUpperCase() === 'PENDING_APPROVAL' || (r.adminUtrStatus === 'PENDING_ADMIN_CONFIRMATION' && !r.verifiedByAdmin));
+      const confirmedErIds = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_er_ids') || '[]'));
+      const pendingErs = erList.filter(er => !confirmedErIds.has(er.id) && er.adminUtrStatus !== 'CONFIRMED' && !er.verifiedByAdmin);
+      const confirmedRideIds = new Set(JSON.parse(localStorage.getItem('ss_admin_confirmed_ride_ids') || '[]'));
+      const pendingCars = (rides || []).filter(r => !confirmedRideIds.has(r.id) && ((r.status || '').toUpperCase() === 'PENDING_APPROVAL' || (r.adminUtrStatus === 'PENDING_ADMIN_CONFIRMATION' && !r.verifiedByAdmin)));
       const pendingWithdrawals = getAdminWithdrawals().filter(w => w && (w.status || '').toUpperCase() !== 'PAID');
       const allUsersMap = JSON.parse(localStorage.getItem('ss_users_db') || '{}');
       const pendingProfileEdits = Object.values(allUsersMap).filter(u => u && u.pendingProfileEdit && u.pendingProfileEdit.status === 'PENDING_ADMIN_MAIL_APPROVAL');
